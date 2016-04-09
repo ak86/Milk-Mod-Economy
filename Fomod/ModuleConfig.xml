@@ -1,0 +1,553 @@
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://qconsulting.ca/fo3/ModConfig5.0.xsd">
+	<moduleName>Milk Mod Economy</moduleName>
+	<moduleImage path="Fomod\Screens\module.jpg"/>
+	<moduleDependencies>
+		<fileDependency file="Skyrim.esm" state="Active" />
+		<fileDependency file="Update.esm" state="Active" />
+		<fileDependency file="ZaZAnimationPack.esm" state="Active" />
+	</moduleDependencies>
+	<installSteps order="Explicit">	
+		<installStep name="Core Setup">
+			<optionalFileGroups>
+				<group name="CORE" type="SelectExactlyOne">
+					<plugins order="Explicit">
+						<plugin name="CORE">
+							<description>
+								Required files.
+							</description>
+							<image path="Fomod\Screens\MilkLogo.jpg"/>
+							<conditionFlags>
+								<flag name="CoreDefault">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="00_Core" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Required"/>
+							</typeDescriptor>
+						</plugin>
+					</plugins>   
+				</group>
+				<group name="MCM Logo" type="SelectExactlyOne">
+					<plugins order="Explicit">
+						<plugin name="Classic">
+							<description>
+								<![CDATA[Black and white]]>
+							</description>
+							<image path="Fomod\Screens\Logo\Classic\MilkLogo.jpg"/>
+							<conditionFlags>
+								<flag name="LogoClassic">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="04_Logo\Classic" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>
+						<plugin name="Colour">
+							<description>
+								<![CDATA[RGB by Saeros]]>
+							</description>
+							<image path="Fomod\Screens\Logo\Colour\MilkLogo.jpg"/>
+							<conditionFlags>
+								<flag name="LogoColour">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="04_Logo\Colour" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>
+						<plugin name="Colour wBorder">
+							<description>
+								<![CDATA[RGB with white border by Saeros]]>
+							</description>
+							<image path="Fomod\Screens\Logo\ColourBorder\MilkLogo.jpg"/>
+							<conditionFlags>
+								<flag name="LogoColourBorder">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="04_Logo\ColourBorder" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>
+						<plugin name="Colour Milk">
+							<description>
+								<![CDATA[RGB with white border by Lizard2010]]>
+							</description>
+							<image path="Fomod\Screens\Logo\ColourMilk\MilkLogo.jpg"/>
+							<conditionFlags>
+								<flag name="LogoColourMilk">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="04_Logo\ColourMilk" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>
+					</plugins>   
+				</group>
+				<group name="Pre made Milking Cuirass" type="SelectExactlyOne">
+					<plugins order="Explicit">
+						<plugin name="Manga">
+							<description>
+								<![CDATA[Choose this if you want Manga body Milking Cuirass ]]>
+							</description>
+							<image path="Fomod\Screens\MANGA.jpg"/>
+							<conditionFlags>
+								<flag name="Manga">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="01_Body\Manga" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+						<plugin name="CBBE">
+							<description>
+								<![CDATA[Choose this if you want CBBE body Milking Cuirass ]]>
+							</description>
+							<image path="Fomod\Screens\CBBE.jpg"/>
+							<conditionFlags>
+								<flag name="CBBE">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="01_Body\CBBE" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>				
+						<plugin name="UNPB">
+							<description>
+								<![CDATA[Choose this if you want UNPB body Milking Cuirass]]>
+							</description>
+							<image path="Fomod\Screens\UNPB.jpg"/>
+							<conditionFlags>
+								<flag name="UNPB">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="01_Body\UNPB" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+					</plugins>   
+				</group>
+				<group name="Extra" type="SelectAny">
+					<plugins order="Explicit">			
+						<plugin name="Brown Panty">
+							<description>
+								<![CDATA[Replaces Milkcuirass panies with brown version by Saeros]]>
+							</description>
+							<conditionFlags>
+								<flag name="Brown Panty">Brown Panty</flag>
+							</conditionFlags>
+							<files>
+								<folder source="02_Extra\Brown Panty" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>				
+						<plugin name="HDT fix(old)">
+							<description>
+								<![CDATA[Choose this if you are using HDT and want breast animation for milking machine, requires: XPMSE 2.06+ skeleton. YOU SHOULD USE NEWER XPMSE BBP RIG OPTION]]>
+							</description>
+							<conditionFlags>
+								<flag name="HDT">HDT</flag>
+							</conditionFlags>
+							<files>
+								<folder source="02_Extra\HDT Rig" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>				
+					</plugins>   
+				</group>
+				<group name="Patches" type="SelectAny">
+					<plugins order="Explicit">			
+						<plugin name="HF_Patch">
+							<description>
+								<![CDATA[Patch for Hearthfire, adds ability to craft "Jug of Milk" from milk potions at Cooking Pot]]>
+							</description>
+							<conditionFlags>
+								<flag name="HF_Patch\HF">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="03_Patches\HF" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+						<plugin name="ZaZ_Patch">
+							<description>
+								<![CDATA[Patch for ZaZ Animation Pack, will make all dwarven machines from ZaZ pack work as milkpumps, this might conflict with other mods that run scripts on dwarven machines, use at your own risk]]>
+							</description>
+							<conditionFlags>
+								<flag name="ZaZ_Patch\ZaZ">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="03_Patches\ZaZ" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+					</plugins>   
+				</group>
+			</optionalFileGroups>
+		</installStep>
+		<installStep name="Plugins integration">
+			<optionalFileGroups>
+				<group name="0 Read me" type="SelectAny">
+					<plugins order="Explicit">			
+						<plugin name="Read me">
+							<description>
+								<![CDATA[Installing plugin scripts for optional mods. Installing scripts without mod may lead to conflicts.]]>
+							</description>
+							<conditionFlags>
+								<flag name="Read me"></flag>
+							</conditionFlags>
+							<typeDescriptor>
+								<type name="Required"/>
+							</typeDescriptor>
+						</plugin>
+					</plugins>
+				</group>
+				<group name="SL Aroused (Redux) support" type="SelectExactlyOne">
+					<plugins order="Explicit">			
+						<plugin name="Off">
+							<description>
+							</description>
+							<conditionFlags>
+								<flag name="SLA"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\SLA\False" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+						<plugin name="On">
+							<description>
+							</description>
+							<conditionFlags>
+								<flag name="SLA"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\SLA\True" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+					</plugins>   
+				</group>
+				<group name="Schlongs of Skyrim (Full) support" type="SelectExactlyOne">
+					<plugins order="Explicit">			
+							<plugin name="Off">
+							<description>
+							</description>
+							<conditionFlags>
+								<flag name="SOS"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\SOS\False" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+					<plugin name="On">
+							<description>
+								<![CDATA[Futanari support, increase/decrease sos size with futa semen/cum potions.]]>
+							</description>
+							<conditionFlags>
+								<flag name="SOS"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\SOS\True" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+					</plugins>   
+				</group>
+				<group name="DD - Integration support" type="SelectExactlyOne">
+					<plugins order="Explicit">			
+						<plugin name="Off">
+							<description>
+							</description>
+							<conditionFlags>
+								<flag name="DDi"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\DDi\False" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+						<plugin name="On">
+							<description>
+								<![CDATA[Support for DD items.]]>
+							</description>
+							<conditionFlags>
+								<flag name="DDi"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\DDi\True" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+					</plugins>   
+				</group>
+				<group name="ZaZ AP devices support" type="SelectExactlyOne">
+					<plugins order="Explicit">			
+							<plugin name="Off">
+							<description>
+							</description>
+							<conditionFlags>
+								<flag name="ZAZ"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\zbf\False" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+					<plugin name="On">
+							<description>
+								<![CDATA[Support for ZaZ Gag and ZaZ Gag Open for feeding with milkpump.]]>
+							</description>
+							<conditionFlags>
+								<flag name="ZAZ"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\zbf\True" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+					</plugins>   
+				</group>
+				<group name="iNeed support" type="SelectExactlyOne">
+					<plugins order="Explicit">			
+						<plugin name="Off">
+							<description>
+							</description>
+							<conditionFlags>
+								<flag name="iNeed"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\iNeed\False" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+						<plugin name="On">
+							<description>
+								<![CDATA[Adds MME food and drinks to iNeed.]]>
+							</description>
+							<conditionFlags>
+								<flag name="iNeed"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\iNeed\True" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+					</plugins>   
+				</group>
+				<group name="PSQ PlayerSuccubusQuest support" type="SelectExactlyOne">
+					<plugins order="Explicit">			
+						<plugin name="Off">
+							<description>
+							</description>
+							<conditionFlags>
+								<flag name="PSQ"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\PSQ\False" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+						<plugin name="On">
+							<description>
+								<![CDATA[Gem pregnancy detection. Succubus detection. Energy management.]]>
+							</description>
+							<conditionFlags>
+								<flag name="PSQ"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\PSQ\True" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+					</plugins>   
+				</group>
+				<group name="Soulgem Oven III" type="SelectExactlyOne">
+					<plugins order="Explicit">			
+						<plugin name="Off">
+							<description>
+							</description>
+							<conditionFlags>
+								<flag name="SGO3"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\SGO\False" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+						<plugin name="V1">
+							<description>
+								<![CDATA[Gem pregnancy detection variant1, from 2016]]>
+							</description>
+							<conditionFlags>
+								<flag name="SGO3"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\SGO\TrueV1" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+						<plugin name="V2">
+							<description>
+								<![CDATA[Gem pregnancy detection variant2, from 2015]]>
+							</description>
+							<conditionFlags>
+								<flag name="SGO3"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\SGO\TrueV2" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+					</plugins>   
+				</group>
+				<group name="SL Hentai Pregnancy support" type="SelectExactlyOne">
+					<plugins order="Explicit">			
+						<plugin name="Off">
+							<description>
+							</description>
+							<conditionFlags>
+								<flag name="SLHP"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\SLHP\False" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+						<plugin name="On">
+							<description>
+								<![CDATA[Pregnancy detection.]]>
+							</description>
+							<conditionFlags>
+								<flag name="SLHP"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\SLHP\True" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+					</plugins>   
+				</group>
+				<group name="SL Procreation support" type="SelectExactlyOne">
+					<plugins order="Explicit">			
+						<plugin name="Off">
+							<description>
+							</description>
+							<conditionFlags>
+								<flag name="SLP"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\SLP\False" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+						<plugin name="On">
+							<description>
+								<![CDATA[Pregnancy detection.]]>
+							</description>
+							<conditionFlags>
+								<flag name="SLP"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\SLP\True" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+					</plugins>   
+				</group>
+				<group name="UIExtensions support" type="SelectExactlyOne">
+					<plugins order="Explicit">			
+						<plugin name="Off">
+							<description>
+							</description>
+							<conditionFlags>
+								<flag name="UIE"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\UIE\False" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+						<plugin name="On">
+							<description>
+								<![CDATA[Support for uie menu.]]>
+							</description>
+							<conditionFlags>
+								<flag name="UIE"></flag>
+							</conditionFlags>
+							<files>
+								<folder source="05_Plugins\UIE\True" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+					</plugins>   
+				</group>
+			</optionalFileGroups>
+		</installStep>
+	</installSteps>
+</config>		

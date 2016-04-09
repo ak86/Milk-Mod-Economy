@@ -1,0 +1,46 @@
+Version V6.07
+'-----------------------------------------------------------------------------------------------------------------------
+'------Furniture Animations-----
+'-----------------------------------------------------------------------------------------------------------------------
+
+'----------MILK-O-MATIC I ----------- Milking Machine Bound Furniture
+
+fu -a MMEZaZMOMBoundFurn_00Enter ZaZMOMBoundFurnEnter.hkx
+'MME FEEDING
+'NO anal plug, NO probe
++ -o ZaZMOMBoundFurn_05_01 ZaZMOMBoundFurn05.hkx AOZaZMoMB1BCuffs AOZaZMoMB4B1EngineStop AOZaZMoMB2AGag AOZaZMoMB5B2FeedMove AOZaZ4AMOMFLeakyPussy01
+'NO anal plug
++ -o ZaZMOMBoundFurn_05_02 ZaZMOMBoundFurn05.hkx AOZaZMoMB1BCuffs AOZaZMoMB4B1EngineStop AOZaZMoMB2AGag AOZaZMoMB5A1ProbeStop AOZaZMoMB5B2FeedMove AOZaZ4AMOMFLeakyPussy01
+'MME MILKING 
+'NO anal plug, NO probe
++ -o ZaZMOMBoundFurn_11_01 ZaZMOMBoundFurn11.hkx AOZaZMoMB1BCuffs AOZaZMoMB3BMilkLAO AOZaZMoMB3AMilkRAO AOZaZ4AMOMFLeakyPussy02
++ -o ZaZMOMBoundFurn_12_01 ZaZMOMBoundFurn12.hkx AOZaZMoMB1BCuffs AOZaZMoMB3BMilkLAO AOZaZMoMB3AMilkRAO AOZaZ4AMOMFLeakyPussy02
+'NO probe
++ -o ZaZMOMBoundFurn_11_02 ZaZMOMBoundFurn11.hkx AOZaZMoMB1BCuffs AOZaZMoMB4AAnalDrain AOZaZMoMB4B2EngineMoveSlow AOZaZMoMB3BMilkLAO AOZaZMoMB3AMilkRAO AOZaZ4AMOMFLeakyPussy02 
++ -o ZaZMOMBoundFurn_12_02 ZaZMOMBoundFurn12.hkx AOZaZMoMB1BCuffs AOZaZMoMB4AAnalDrain AOZaZMoMB4B3EngineMoveFast AOZaZMoMB3BMilkLAO AOZaZMoMB3AMilkRAO AOZaZ4AMOMFLeakyPussy02 AOZaZ4BMOMFSquirtingPussy02
++ -a MMEZaZMOMBoundFurn_00Exit ZazMOMFurnitureExit.hkx
+
+'---------------------------------------------------------------------------------------
+
+'----------MILK-O-MATIC II ----------- Milking Machine Free -Furniture 
+
+'------------------------------------------
+
+'Milk-O-Matic II  Furniture Version
+
+fu -a MMEZaZMOMFreeFurn_00Enter ZaZMOMFreeFurnEnter.hkx
+'MME FEEDING
+'NO anal plug, NO probe
++ -o ZaZMOMFreeFurn_05_01 ZaZMOMFreeFurn05.hkx AOZaZ1DMOMFEngineStop AOZaZ2CMOMFGag AOZaZ1CMOMFFeederMove AOZaZ4AMOMFLeakyPussy01
+'NO anal plug
++ -o ZaZMOMFreeFurn_05_02 ZaZMOMFreeFurn05.hkx AOZaZ1DMOMFEngineStop AOZaZ2CMOMFGag AOZaZ1CMOMFFeederMove AOZaZ2DMOMFProbeLock AOZaZ4AMOMFLeakyPussy01
+'MME MILKING 
+'NO anal plug, NO probe
++ -o ZaZMOMFreeFurn_11_01 ZaZMOMFreeFurn11.hkx AOZaZ1EMOMFEngineSlow AOZaZ3BMOMMilkL AOZaZ3AMOMMilkR AOZaZ4AMOMFLeakyPussy02
++ -o ZaZMOMFreeFurn_12_01 ZaZMOMFreeFurn12.hkx AOZaZ1FMOMFEngineFast AOZaZ3BMOMMilkL AOZaZ3AMOMMilkR AOZaZ4AMOMFLeakyPussy02
+'NO probe
++ -o ZaZMOMFreeFurn_11_02 ZaZMOMFreeFurn11.hkx AOZaZ1EMOMFEngineSlow AOZaZ1BMOMFAnalDrain AOZaZ3BMOMMilkL AOZaZ3AMOMMilkR AOZaZ4AMOMFLeakyPussy02 
++ -o ZaZMOMFreeFurn_12_02 ZaZMOMFreeFurn12.hkx AOZaZ1FMOMFEngineFast AOZaZ1BMOMFAnalDrain AOZaZ3BMOMMilkL AOZaZ3AMOMMilkR AOZaZ4AMOMFLeakyPussy02 AOZaZ4BMOMFSquirtingPussy02
++ -a MMEZaZMOMFreeFurn_00Exit ZazMOMFurnitureExit.hkx
+
+'---------------------------------------------------------------------------------------

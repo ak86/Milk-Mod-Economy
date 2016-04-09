@@ -1,0 +1,86 @@
+﻿<fomod>
+  <Name>Milk Mod Economy</Name>
+  <Version>27-03-2016</Version>
+  <Author>Ed86</Author>
+  <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
+  <Description>
+  
+Milk Pump locations:
+DawnStar
+Falkreath
+Markarth
+ - outside of dibella's temple
+Orc strongholds (Bound milkpumps)
+Riften
+ - outside of mara's temple
+ - Shor's stone
+Solitude
+ - Dragon's bridge
+ - Morthal
+Whiterun
+ - behind the blacksmith
+ - Riverwood
+ - Rorikstead
+Windhelm
+ - near the blacksmith
+ - Winterhold
+Caravan
+ - Ivarstead
+
+ TODO or not todo list
+*move arrays to (storageutil?) formlists:
+-Milkmaids
+-Milkslaves
+*move strings to separate script
+*UIExtension support
+*add skooma/mead milk, watch what you drink
+*add breast enlargement potion, enlarges breasts by 0.1 in 10 hours
+*add fertility potion (male/futa cum production, not really useful right now)
+
+Dev change log:
+	v 27-03-2016
+added futa version of milkcurass(UNPB based, no bodyslide unless some one makes one)
+partial Multi-row breast(up to 4x2) support for milk production and breast capacity, no support for buffs/debuffs/leaking, manually set breast rows in mcm, you can get armor here http://www.loverslab.com/topic/43325-six-breasted-hdt-enabled-body-bodyslide-compatible/ 
+added mcm toggles to force milkmaid vampire/ww/succubus status/milks
+updated mcm compability page to reflect integration scripts, added Estrus Spider option
+changed default notification key to "9"
+increased game load scripts check from 10 to 30 seconds, should be enough time for mods to load on a new game start with a lot of mods, set it on 30 sec loop, just in case, so if you see warning few times then something is really wrong
+fixed economy message flood
+added option for 2015 variant of sgo3 pregnancy detection
+yet another fix for sgo3
+
+
+	v 07-03-2016
+added check if scripts are working, i've set it to 10 sec after game load which should be plenty of time for mod to load
+yet another minor fix for sgo installation, shouldn't really affect anything
+re-added vamp/werewolf/succubus milks from economy, for now
+
+	v 16-02-2016
+fix for sgo option, if sgo not installed
+fix milking if maid has no milk
+
+	v 13-02-2016
+	Requires: Cleansave
+moved alt milk bottles to main mod, used as replacer for simple race milk
+moved milkpumps
+added sgo3 plugin, which should be more reliable at gem detection
+removed vamp/werewolf/succubus milks from economy
+characters now equip milkcuirass during milking if they have it in their inventory
+increased prices of semen/cum to 1 gold, get rich!
+fix for fnis behaviors
+fix for installer options
+fix for mcm PainSystem toggle
+fix for fnis errors
+fix for cuirass not equipping when using milkpump
+fix for SexLab_SOS-Stapon
+changed get random schlong from drinking futa semen
+removed milkpump milking range
+removed no milk cuirass option for mod installation
+removed CANS
+updated installer
+most likely fixed very rare mod conflict for some ppl mod not working
+changed economy timer to update everyday morning at 9:00 instead every 8h, IF UPDATING, YOU SHOULD DISABLE/ENABLE MOD FROM MCM
+if no SLA installed, random arousal will be chosen (0-100)
+changed vampire/werewolf/EstrusChaurus/EstrusSpider detection
+ </Description>
+</fomod>
