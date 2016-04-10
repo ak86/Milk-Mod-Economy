@@ -847,8 +847,9 @@ event OnOptionSelect(int option)
 			int i = 0
 				while i < MilkQ.MilkMaid.Length
 					if MilkQ.MilkMaid[i] != None
-						Float NeckDelta = (MilkQ.MILKmaid[i].GetActorBase().GetWeight() / 100) - (StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.WeightBase") / 100)
-						MilkQ.MILKmaid[i].GetActorBase().SetWeight(StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.WeightBase"))
+						float MaidWeightBase = MME_Storage.getWeightBasevalue(MilkQ.MILKmaid[i])
+						Float NeckDelta = (MilkQ.MILKmaid[i].GetActorBase().GetWeight() / 100) - (MaidWeightBase/100)
+						MilkQ.MILKmaid[i].GetActorBase().SetWeight(MaidWeightBase)
 						MilkQ.MILKmaid[i].UpdateWeight(NeckDelta)
 					endif
 				i = i + 1
