@@ -59,6 +59,9 @@ SPELL Property MME_MakeMilkslave_Spell Auto
 Armor Property MilkCuirass auto
 Armor Property MilkCuirassFuta auto
 Armor Property ZaZMoMSuctionCups auto
+Armor Property TITS4 auto
+Armor Property TITS6 auto
+Armor Property TITS8 auto
 Sound Property MilkSound Auto
 Sound Property FeedingSound Auto
 Sound Property TakeHoldSound Auto
@@ -1381,8 +1384,8 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				if IsMilkMaid == true
 					AddLeak(akActor)
 					StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.LactacidCount", LactacidCnt)
-					if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.LactacidCount") >= 1
-						StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.LactacidCount", StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.LactacidCount") - 1)
+					if LactacidCnt > 1
+						StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.LactacidCount", - 1)
 					else
 						StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.LactacidCount", 0)
 					endif

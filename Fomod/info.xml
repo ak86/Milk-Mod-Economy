@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>27-03-2016</Version>
+  <Version>10-04-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
@@ -38,8 +38,11 @@ Caravan
 *add fertility potion (male/futa cum production, not really useful right now)
 
 Dev change log:
-	v 27-03-2016
-	123
+	v 10-04-2016
+merged with multi-breast addon
+fixed make maid dialogue, which wasn't respecting available maidslots to player
+minor optimisations
+	
 	v 27-03-2016
 added futa version of milkcurass(UNPB based, no bodyslide unless some one makes one)
 partial Multi-row breast(up to 4x2) support for milk production and breast capacity, no support for buffs/debuffs/leaking, manually set breast rows in mcm, you can get armor here http://www.loverslab.com/topic/43325-six-breasted-hdt-enabled-body-bodyslide-compatible/ 

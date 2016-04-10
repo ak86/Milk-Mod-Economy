@@ -3052,20 +3052,18 @@ state Debug_MM_Maid_BreastRows_Slider
 	event OnSliderAcceptST(float value)
 		StorageUtil.SetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastRows", value)
 		SetSliderOptionValueST(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastRows"))
-		If Game.GetModbyName("MilkMod MB.esp") != 255
-			Form cuirass = MaidlistA[MaidIndex].GetWornForm(Armor.GetMaskForSlot(32))
-			if cuirass == (Game.GetFormFromFile(0x1D8D , "MilkMod MB.esp") || Game.GetFormFromFile(0x0D62 , "MilkMod MB.esp") || Game.GetFormFromFile(0x1D8E , "MilkMod MB.esp"))
-				MaidlistA[MaidIndex].RemoveItem(cuirass)
-			endif
-			if value != (2 || 3 || 4)
-				;do nothing
-			elseif value == 2
-				MaidlistA[MaidIndex].EquipItem(Game.GetFormFromFile(0x1D8D, "MilkMod MB.esp"),true,true)
-			elseif value == 3
-				MaidlistA[MaidIndex].EquipItem(Game.GetFormFromFile(0x0D62, "MilkMod MB.esp"),true,true)
-			elseif value == 4
-				MaidlistA[MaidIndex].EquipItem(Game.GetFormFromFile(0x1D8E, "MilkMod MB.esp"),true,true)
-			endif
+		Form cuirass = MaidlistA[MaidIndex].GetWornForm(Armor.GetMaskForSlot(32))
+		if cuirass == (MilkQ.TITS4 || MilkQ.TITS6 || MilkQ.TITS8)
+			MaidlistA[MaidIndex].RemoveItem(cuirass)
+		endif
+		if value != (2 || 3 || 4)
+			;do nothing
+		elseif value == 2
+			MaidlistA[MaidIndex].EquipItem(MilkQ.TITS4,true,true)
+		elseif value == 3
+			MaidlistA[MaidIndex].EquipItem(MilkQ.TITS6,true,true)
+		elseif value == 4
+			MaidlistA[MaidIndex].EquipItem(MilkQ.TITS8,true,true)
 		endif
 	endEvent
 endState
