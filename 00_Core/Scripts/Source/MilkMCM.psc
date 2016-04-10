@@ -3113,8 +3113,8 @@ state Debug_MM_Maid_BreastBaseSizeModified_Slider
 	endEvent
 
 	event OnSliderAcceptST(float value)
-		StorageUtil.SetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastBase", value)
-		SetSliderOptionValueST(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastBase"), "{2}")
+		StorageUtil.SetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastBaseMod", value)
+		SetSliderOptionValueST(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastBaseMod"), "{2}")
 	endEvent
 endState
 
