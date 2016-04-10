@@ -541,7 +541,7 @@ function Page_MilkMaidDebug()
 	Float MaidMilkGen = StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkGen", missing = 0)
 	Float MaidLevel = StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.Level", missing = 0)
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.TimesMilked", missing = 0)
-	Float MilkTick = (StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastBase", missing = 0) + MaidLevel*StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl", missing = MilkQ.BoobPerLvl) + MaidMilkGen)/3 * (1 + MilkQ.SLA.GetActorArousal(MaidlistA[MaidIndex])/100)
+	Float MilkTick = (MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]) + MaidLevel*StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl", missing = MilkQ.BoobPerLvl) + MaidMilkGen)/3 * (1 + MilkQ.SLA.GetActorArousal(MaidlistA[MaidIndex])/100)
 
 	SetCursorFillMode(TOP_TO_BOTTOM)
 		AddHeaderOption("$MME_MENU_PAGE_Debug_Milk_Maid")
@@ -554,11 +554,11 @@ function Page_MilkMaidDebug()
 				AddSliderOptionST("Debug_MM_MaidTimesMilked_Slider", "$MME_MENU_Times_Milked_(this_level)", MaidTimesMilked as int)
 				AddTextOptionST("Debug_MM_Maid_MilksToNextLevel", "$MME_MENU_Next_Level", ((MaidLevel+1) * MilkQ.TimesMilkedMult - MaidTimesMilked) as int, OPTION_FLAG_DISABLED)	
 				AddSliderOptionST("Debug_MM_Maid_BreastRows_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S21", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastRows", missing = 1))	
-				AddSliderOptionST("Debug_MM_Maid_BreastBaseSize_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S9", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastBase", missing = 1), "{2}")	
+				AddSliderOptionST("Debug_MM_Maid_BreastBaseSize_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S9", MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]), "{2}")
 				AddSliderOptionST("Debug_MM_Maid_BreastBaseSizeModified_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S10", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastBaseMod", missing = 0), "{2}")	
 				AddSliderOptionST("Debug_MM_Maid_MaidBoobIncr_Slider", "$MME_MENU_PAGE_Settings_H2_S3", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobIncr", missing = 0), "{2}")	
 				AddSliderOptionST("Debug_MM_Maid_MaidBoobPerLvl_Slider", "$MME_MENU_PAGE_Settings_H2_S4", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl", missing = 0), "{2}")	
-				AddTextOptionST("Debug_MM_Maid_BreastEffectiveSize", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S11", MilkQ.ReduceFloat(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastBase", missing = 0) + StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastBaseMod", missing = 0) + (StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkCount", missing = 0) * StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobIncr", missing = MilkQ.BoobIncr)) + (MaidLevel + (MaidTimesMilked / ((MaidLevel + 1) * MilkQ.TimesMilkedMult))) * StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl", missing = MilkQ.BoobPerLvl)), OPTION_FLAG_DISABLED)	
+				AddTextOptionST("Debug_MM_Maid_BreastEffectiveSize", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S11", MilkQ.ReduceFloat(MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]) + StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastBaseMod", missing = 0) + (StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkCount", missing = 0) * StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobIncr", missing = MilkQ.BoobIncr)) + (MaidLevel + (MaidTimesMilked / ((MaidLevel + 1) * MilkQ.TimesMilkedMult))) * StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl", missing = MilkQ.BoobPerLvl)), OPTION_FLAG_DISABLED)
 				AddSliderOptionST("Debug_MM_LactacidCount_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S12", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.LactacidCount", missing = 0), "{2}")
 				AddSliderOptionST("Debug_MM_MilkCount_Slider", "Milk [Max =" + ((MaidLevel+2)*2) as int + "]:", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkCount", missing = 0), "{2}")
 				AddSliderOptionST("Debug_MM_MilkGeneration_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S13", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkGen", missing = 0)/3/10, "{2}")
@@ -1531,7 +1531,7 @@ state BreastScale_Toggle
 			if MilkQ.MilkMaid[i] != None
 				akActor = MilkQ.MilkMaid[i]
 				If SKSE.GetPluginVersion("NiOverride") >= 3 && NiOverride.GetScriptVersion() >= 2 && MilkQ.BreastScale != 0
-					Float BreastBase = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastBase", missing = MilkQ.GetNodeScale(akActor, "NPC L Breast"))
+					Float BreastBase = MME_Storage.getBreastsBasevalue(akActor)
 						MilkQ.SetNodeScale(akActor, "NPC L Breast", 1)
 						MilkQ.SetNodeScale(akActor, "NPC R Breast", 1)
 					; Curve fix
@@ -1548,7 +1548,7 @@ state BreastScale_Toggle
 			if MilkQ.MILKSlave[i] != None
 				akActor = MilkQ.MILKSlave[i]
 				If SKSE.GetPluginVersion("NiOverride") >= 3 && NiOverride.GetScriptVersion() >= 2 && MilkQ.BreastScale != 0
-					Float BreastBase = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastBase", missing = MilkQ.GetNodeScale(akActor, "NPC L Breast"))
+					Float BreastBase = MME_Storage.getBreastsBasevalue(akActor)
 						MilkQ.SetNodeScale(akActor, "NPC L Breast", 1)
 						MilkQ.SetNodeScale(akActor, "NPC R Breast", 1)
 					; Curve fix
@@ -3029,15 +3029,15 @@ endState
 
 state Debug_MM_Maid_BreastBaseSize_Slider
 	event OnSliderOpenST()
-		SetSliderDialogStartValue(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastBase", missing = 1))
+		SetSliderDialogStartValue(MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]))
 		SetSliderDialogDefaultValue(1)
 		SetSliderDialogRange(0, 3)
 		SetSliderDialogInterval(0.1)
 	endEvent
 
 	event OnSliderAcceptST(float value)
-		StorageUtil.SetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastBase", value)
-		SetSliderOptionValueST(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastBase"), "{2}")
+		MME_Storage.setBreastsBasevalue(MaidlistA[MaidIndex], value)
+		SetSliderOptionValueST(value, "{2}")
 	endEvent
 endState
 
