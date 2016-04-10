@@ -30,8 +30,7 @@ function initializeActor(actor akActor) global
 	;  c) guard with hasfloatvalue() check?
 	; </please review and remove this comment afterwards>
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod", 0.0)
-
-	;set "MME.MilkMaid.WeightBase" later on
+	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.WeightBase", akActor.GetLeveledActorBase().GetWeight())
 endfunction
 
 function deregisterActor(actor akActor) global
@@ -39,7 +38,7 @@ function deregisterActor(actor akActor) global
 
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.BreastBase")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod")
-
+	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.WeightBase")
 	endfunction
 
 float function getBreastsBaseadjust(actor akActor) global
@@ -81,4 +80,14 @@ endfunction
 function setBreastsBasevalue(actor akActor, float Value) global
 	Debug.Trace("MME_Storage: Triggered setBreastsBasevalue() for actor " + akActor.GetLeveledActorBase().GetName())
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBase", Value)
+endfunction
+
+float function getWeightBasevalue(actor akActor) global
+	Debug.Trace("MME_Storage: Triggered getWeightBasevalue() for actor " + akActor.GetLeveledActorBase().GetName())
+	return StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.WeightBase")
+endfunction
+
+function setWeightBasevalue(actor akActor, float Value) global
+	Debug.Trace("MME_Storage: Triggered setWeightBasevalue() for actor " + akActor.GetLeveledActorBase().GetName())
+	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.WeightBase", Value)
 endfunction

@@ -91,7 +91,6 @@ String[] Property ParasiteLivingArmor Auto
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.BreastRows")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.BoobIncr")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.BoobPerLvl")
-;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.WeightBase")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.TimesMilked")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.MilkingContainerCumsSUM")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.MilkingContainerMilksSUM")
@@ -677,7 +676,6 @@ Function AssignSlot(Actor akActor)
 		Endif
 	EndIf
 	MME_Storage.initializeActor(akActor)
-	StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.WeightBase", akActor.GetLeveledActorBase().GetWeight())
 	Debug.Notification(akActor.GetLeveledActorBase().GetName() + " becomes a Milk Maid")
 	akActor.AddToFaction(MilkMaidFaction)
 EndFunction
@@ -691,7 +689,6 @@ Function AssignSlotSlave(Actor akActor, Int Level, Float Milk)
 	If i != -1
 		MILKSlave[i] = akActor
 		MME_Storage.initializeActor(akActor)
-		StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.WeightBase", akActor.GetLeveledActorBase().GetWeight())
 		StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.Level", Level)
 		StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.MilkCount", Milk)
 		StorageUtil.SetIntValue(akActor,"MME.MilkMaid.IsSlave", 1)
@@ -2330,8 +2327,10 @@ Function MaidRemove(Actor akActor)
 			self.SetNodeScale(akActor, "NPC L Breast P3", 1)
 			self.SetNodeScale(akActor, "NPC R Breast P3", 1)
 	
-		;Float NeckDelta = (akActor.GetLeveledActorBase().GetWeight() / 100) - (StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.WeightBase") / 100)
-		;akActor.GetLeveledActorBase().SetWeight(StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.WeightBase"))
+		; <modified to match updated code in MilkMCM.psc:850-853>
+		;float MaidWeightBase = MME_Storage.getWeightBasevalue(MilkQ.MILKmaid[i])
+		;Float NeckDelta = (akActor.GetLeveledActorBase().GetWeight() / 100) - (MaidWeightBase/100)
+		;akActor.GetLeveledActorBase().SetWeight(MaidWeightBase)
 		;akActor.UpdateWeight(NeckDelta)
 			
 		;remove de/buffs, effects
@@ -2384,7 +2383,6 @@ Function MaidRemove(Actor akActor)
 		MME_Storage.deregisterActor(akActor)
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.BoobIncr")
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.BoobPerLvl")
-		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.WeightBase")
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.TimesMilked")
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM")
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.MilkingContainerMilksSUM")
