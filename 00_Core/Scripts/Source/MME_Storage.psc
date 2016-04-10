@@ -3,6 +3,7 @@ Scriptname MME_Storage Hidden
 ; Varables in StorageUtil
 ; float
 ;	MME.MilkMaid.BreastBase
+;	MME.MilkMaid.BreastBaseMod
 
 ; must NiOverride be considered?
 ; what happens if there is no such bone? (e.g. wrong skeleton or transformed?)
@@ -20,16 +21,36 @@ function initializeActor(actor akActor) global
 	; </sanity check>
 
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBase", BreastL)
+	; <please review and remove this comment afterwards>
+	; might be a good idea to make sure a default value is always set but
+	; this might also introduce subtle breakage if someone has tampered
+	; with this variable before the mod initialises it
+	;  a) keep previous behaviour and leave it out
+	;  b) opt for 'safety-first' and set it
+	;  c) guard with hasfloatvalue() check?
+	; </please review and remove this comment afterwards>
+	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod", 0.0)
+
 	;set "MME.MilkMaid.WeightBase" later on
 endfunction
 
 function deregisterActor(actor akActor) global
 	Debug.Trace("MME_Storage: Triggered deregisterActor() for actor " + akActor.GetLeveledActorBase().GetName())
 
-	; handles just a single value - for now
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.BreastBase")
+	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod")
 
 	endfunction
+
+float function getBreastsBaseadjust(actor akActor) global
+	Debug.Trace("MME_Storage: Triggered getBreastsBaseadjust() for actor " + akActor.GetLeveledActorBase().GetName())
+	return StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod")
+endfunction
+
+function setBreastsBaseadjust(actor akActor, float Value) global
+	Debug.Trace("MME_Storage: Triggered setBreastsBaseadjust() for actor " + akActor.GetLeveledActorBase().GetName())
+	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod", Value)
+endfunction
 
 ; <please review and remove this comment afterwards>
 ;   there were 3 variations for the default value:
