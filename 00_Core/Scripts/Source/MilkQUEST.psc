@@ -91,12 +91,9 @@ String[] Property ParasiteLivingArmor Auto
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.MaidMilkGen")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.MilkCount")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.PainCount")
-;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.BreastBase")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.BreastRows")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.BoobIncr")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.BoobPerLvl")
-;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.BreastBaseMod")
-;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.WeightBase")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.TimesMilked")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.MilkingContainerCumsSUM")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.MilkingContainerMilksSUM")
@@ -494,8 +491,8 @@ Function MilkCycle(Actor akActor, int t)
 	
 	Float LactacidCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.LactacidCount", missing = 0)
 	Float MaidMilkGen = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkGen", missing = 0)
-	Float BreastBase = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastBase", missing = NetImmerse.GetNodeScale(akActor, "NPC L Breast", false))
-	Float BreastBaseMod = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastBaseMod", missing = 0)
+	Float BreastBase = MME_Storage.getBreastsBasevalue(akActor)
+	Float BreastBaseMod = MME_Storage.getBreastsBaseadjust(akActor)
 	Float BreastRows = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastRows", missing = 1)
 	Float MilkCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkCount", missing = 0)
 	Float PainCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.PainCount", missing = 0)
@@ -681,8 +678,7 @@ Function AssignSlot(Actor akActor)
 			return
 		Endif
 	EndIf
-	StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.BreastBase", NetImmerse.GetNodeScale(akActor, "NPC L Breast", false))
-	StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.WeightBase", akActor.GetLeveledActorBase().GetWeight())
+	MME_Storage.initializeActor(akActor)
 	Debug.Notification(akActor.GetLeveledActorBase().GetName() + " becomes a Milk Maid")
 	akActor.AddToFaction(MilkMaidFaction)
 EndFunction
@@ -695,8 +691,7 @@ Function AssignSlotSlave(Actor akActor, Int Level, Float Milk)
 	int i = MILKSlave.Find(none)
 	If i != -1
 		MILKSlave[i] = akActor
-		StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.BreastBase", NetImmerse.GetNodeScale(akActor, "NPC L Breast", false))
-		StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.WeightBase", akActor.GetLeveledActorBase().GetWeight())
+		MME_Storage.initializeActor(akActor)
 		StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.Level", Level)
 		StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.MilkCount", Milk)
 		StorageUtil.SetIntValue(akActor,"MME.MilkMaid.IsSlave", 1)
@@ -757,10 +752,10 @@ Function AssignSlotMaidToSlave(Actor akActor)
 EndFunction
 
 Function CurrentSize(Actor akActor)
-	Float BreastBase = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastBase", missing = NetImmerse.GetNodeScale(akActor, "NPC L Breast", false))
+	Float BreastBase = MME_Storage.getBreastsBasevalue(akActor)
 	Float MaidBoobIncr = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BoobIncr", missing = BoobIncr)
 	Float MaidBoobPerLvl = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BoobPerLvl", missing = BoobPerLvl)
-	Float BreastBaseMod = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastBaseMod", missing = 0)
+	Float BreastBaseMod = MME_Storage.getBreastsBaseadjust(akActor)
 	Float MilkCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkCount", missing = 0)
 	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level", missing = 0)
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.TimesMilked", missing = 0)
@@ -770,7 +765,7 @@ Function CurrentSize(Actor akActor)
 	if BreastUpScale
 		if BreastBase + BreastBaseMod < 1
 			BreastBaseMod = BreastBaseMod + 0.1
-			StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.BreastBaseMod", BreastBaseMod)
+			MME_Storage.setBreastsBaseadjust(akActor, BreastBaseMod)
 		endif
 		BreastBase = BreastBase + BreastBaseMod
 	endif
@@ -2335,8 +2330,10 @@ Function MaidRemove(Actor akActor)
 			self.SetNodeScale(akActor, "NPC L Breast P3", 1)
 			self.SetNodeScale(akActor, "NPC R Breast P3", 1)
 	
-		;Float NeckDelta = (akActor.GetLeveledActorBase().GetWeight() / 100) - (StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.WeightBase") / 100)
-		;akActor.GetLeveledActorBase().SetWeight(StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.WeightBase"))
+		; <modified to match updated code in MilkMCM.psc:850-853>
+		;float MaidWeightBase = MME_Storage.getWeightBasevalue(MilkQ.MILKmaid[i])
+		;Float NeckDelta = (akActor.GetLeveledActorBase().GetWeight() / 100) - (MaidWeightBase/100)
+		;akActor.GetLeveledActorBase().SetWeight(MaidWeightBase)
 		;akActor.UpdateWeight(NeckDelta)
 			
 		;remove de/buffs, effects
@@ -2386,11 +2383,9 @@ Function MaidRemove(Actor akActor)
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.MaidMilkGen")
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.MilkCount")
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.PainCount")
-		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.BreastBase")
+		MME_Storage.deregisterActor(akActor)
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.BoobIncr")
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.BoobPerLvl")
-		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.BreastBaseMod")
-		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.WeightBase")
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.TimesMilked")
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM")
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.MilkingContainerMilksSUM")
