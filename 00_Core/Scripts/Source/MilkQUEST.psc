@@ -117,7 +117,7 @@ Bool Property MilkStory = False Auto
 Bool Property BreastScaleLimit = False Auto
 Bool Property BreastUpScale = False Auto
 Bool Property WeightUpScale = False Auto
-Bool Property PainKills = True Auto
+Bool Property PainKills = False Auto
 Bool Property MaidLvlCap = False Auto
 Bool Property MilkAsMaidTimesMilked = False Auto
 Bool Property MilkLeakTextures = True Auto
@@ -395,13 +395,13 @@ Event OnKeyDown(int keyCode)
 				EndIf
 			EndIf
 			If Target != None && (MILKmaid.find(Target) != -1 || MILKslave.find(Target) != -1)
-				Float MilkCnt = StorageUtil.GetFloatValue(Target,"MME.MilkMaid.MilkCount", missing = 0)
-				Float PainCnt = StorageUtil.GetFloatValue(Target,"MME.MilkMaid.PainCount", missing = 0)
-				Float MaidLevel = StorageUtil.GetFloatValue(Target,"MME.MilkMaid.Level", missing = 0)
+				Float MilkCnt = StorageUtil.GetFloatValue(Target,"MME.MilkMaid.MilkCount")
+				Float PainCnt = StorageUtil.GetFloatValue(Target,"MME.MilkMaid.PainCount")
+				Float MaidLevel = StorageUtil.GetFloatValue(Target,"MME.MilkMaid.Level")
 				Debug.Notification("Maid: " + Target.GetLeveledActorBase().GetName()\
 								+ " Milk: " + ReduceFloat(MilkCnt)\
 								+ " Nipples: " + NState(Target) + " [" + (PainCnt/((MaidLevel+2)*2)*100) as int + "%]"\
-								+ " Lactacid: " + ReduceFloat(StorageUtil.GetFloatValue(Target,"MME.MilkMaid.LactacidCount", missing = 0)))
+								+ " Lactacid: " + ReduceFloat(StorageUtil.GetFloatValue(Target,"MME.MilkMaid.LactacidCount")))
 			EndIf
 		EndIf
 	EndIf
@@ -427,7 +427,7 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 					Debug.SendAnimationEvent(crosshairRef,"IdleForceDefaultState")
 				ElseIf crosshairRef.HasSpell( MilkForSprigganPassive )
 					Debug.notification(crosshairRef.GetLeveledActorBase().GetName() + " is a host for living armor and can not be milked.")
-				ElseIf StorageUtil.GetIntValue(crosshairRef,"MME.MilkMaid.IsSlave", missing = 0 ) == 1 && StorageUtil.GetIntValue(crosshairRef,"MME.MilkMaid.MilkingMode", missing = 0) != 0
+				ElseIf StorageUtil.GetIntValue(crosshairRef,"MME.MilkMaid.IsSlave" ) == 1 && StorageUtil.GetIntValue(crosshairRef,"MME.MilkMaid.MilkingMode") != 0
 					Debug.notification(crosshairRef.GetLeveledActorBase().GetName() + " is a slave and not allowed to be milked.")
 				ElseIf crosshairRef.GetLeveledActorBase().GetSex() == 1
 					MilkSelf.cast(crosshairRef)
@@ -489,15 +489,15 @@ Function MilkCycle(Actor akActor, int t)
 	Float PainTick
 	Float BoobTick
 	
-	Float LactacidCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.LactacidCount", missing = 0)
-	Float MaidMilkGen = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkGen", missing = 0)
+	Float LactacidCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.LactacidCount")
+	Float MaidMilkGen = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkGen")
 	Float BreastBase = MME_Storage.getBreastsBasevalue(akActor)
 	Float BreastBaseMod = MME_Storage.getBreastsBaseadjust(akActor)
 	Float BreastRows = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastRows", missing = 1)
-	Float MilkCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkCount", missing = 0)
-	Float PainCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.PainCount", missing = 0)
-	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level", missing = 0)
-	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.TimesMilked", missing = 0)
+	Float MilkCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkCount")
+	Float PainCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.PainCount")
+	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level")
+	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.TimesMilked")
 
 	Form maidArmor = akActor.GetWornForm(Armor.GetMaskForSlot(32));
 
@@ -602,8 +602,8 @@ Function MilkCycle(Actor akActor, int t)
 	
 	if maidArmor != None  ;&& StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastRows", missing = 1) == 1
 		if (MilkingEquipment.Find(maidArmor.getname()) != -1 || maidArmor == MilkCuirass || maidArmor == MilkCuirassFuta || StringUtil.Find(maidArmor.getname(), "Milk" ) >= 0 || StringUtil.Find(maidArmor.getname(), "Cow" ) >=0)\
-		&& StorageUtil.GetIntValue(akActor,"MME.MilkMaid.MilkingMode", missing = 0) == 2
-			if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid", missing = 0) > 0
+		&& StorageUtil.GetIntValue(akActor,"MME.MilkMaid.MilkingMode") == 2
+			if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") > 0
 				StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.LactacidCount", 1)
 				StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid", -1)
 				if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid
@@ -756,9 +756,9 @@ Function CurrentSize(Actor akActor)
 	Float MaidBoobIncr = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BoobIncr", missing = BoobIncr)
 	Float MaidBoobPerLvl = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BoobPerLvl", missing = BoobPerLvl)
 	Float BreastBaseMod = MME_Storage.getBreastsBaseadjust(akActor)
-	Float MilkCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkCount", missing = 0)
-	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level", missing = 0)
-	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.TimesMilked", missing = 0)
+	Float MilkCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkCount")
+	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level")
+	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.TimesMilked")
 	Float CurrentSize
 	Float CurveFix
 	
@@ -871,13 +871,13 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		anivar = anivar + "_01"
 	endif
 	
-	Float LactacidCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.LactacidCount", missing = 0)
-	Float MilkCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkCount", missing = 0)
-	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level", missing = 0)
-	Float PainCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.PainCount", missing = 0)
-	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.TimesMilked", missing = 0)
-	Float TimesMilked = StorageUtil.GetFloatValue(none,"MME.Progression.TimesMilked", missing = 0)
-	Float TimesMilkedAll = StorageUtil.GetFloatValue(none,"MME.Progression.TimesMilkedAll", missing = 0)
+	Float LactacidCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.LactacidCount")
+	Float MilkCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkCount")
+	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level")
+	Float PainCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.PainCount")
+	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.TimesMilked")
+	Float TimesMilked = StorageUtil.GetFloatValue(none,"MME.Progression.TimesMilked")
+	Float TimesMilkedAll = StorageUtil.GetFloatValue(none,"MME.Progression.TimesMilkedAll")
 
 	if akActor.HasSpell( BeingMilkedPassive )
 		Debug.notification(akActor.GetLeveledActorBase().GetName() + " already being milked, if something went wrong, remove Milking passive spell from Milk Maid debug menu")
@@ -1279,7 +1279,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				elseif PainSystem
 					Pain = Pain(akActor, pain)
 				endif
-				PainCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.PainCount", missing = 0)
+				PainCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.PainCount")
 
 				;if PainCnt >= ((MaidLevel+2)*2) && PainSystem && PainKills && MilkQC.Buffs										;change to apply stacking 1h debuff spell hp/sp/mp -5% or smthing like that
 					;akActor.equipitem(MilkE.OverMilkingEff, true, true) 
@@ -1376,6 +1376,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			cumcount = cumcount + 1
 
 			if akActor.HasSpell(MilkingStage)
+				PainCnt = (PainCnt * 0.80)
 				if IsMilkMaid == true
 					AddLeak(akActor)
 					StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.LactacidCount", LactacidCnt)
@@ -1386,14 +1387,12 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					endif
 					StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.PainCount", PainCnt)
 				endif
-				PainCnt = (PainCnt * 0.80) as int
 				boobgasmcount = boobgasmcount +1
 			elseif akActor.HasSpell(FuckMachineStage)
+				PainCnt = (PainCnt * 0.95)
 				if IsMilkMaid == true
-					PainCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.PainCount", missing = 0)
 					StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.PainCount", PainCnt)
 				endif
-				PainCnt = (PainCnt * 0.95) as int
 			endif
 		endif
 
@@ -1408,9 +1407,9 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		SexLab.ClearMFG(akActor)
 		
 		if IsMilkMaid == true
-			MilkCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkCount", missing = 0)
-			LactacidCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.LactacidCount", missing = 0)
-			MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level", missing = 0)
+			MilkCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkCount")
+			LactacidCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.LactacidCount")
+			MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level")
 		endif
 		
 		if mode == 0 && MilkingType == 1\
@@ -1506,7 +1505,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 						debug.Notification(bottles + " Milk added to container.")
 					elseif (Mode == 0 || CuirassSellsMilk == true) 
 					;&& !(isVampire(akActor) || isWerewolf(akActor) || isSuccubus(akActor)) 							;remove later
-						MilkE.InitiateTrade(bottles + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerMilksSUM", missing = 0) as int, boobgasmcount, akActor, false)
+						MilkE.InitiateTrade(bottles + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerMilksSUM") as int, boobgasmcount, akActor, false)
 						StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkingContainerMilksSUM", 0)
 					elseif Mode == 2 
 					;|| (Mode == 0 && (isVampire(akActor) || isWerewolf(akActor) || isSuccubus(akActor))) 				;remove later
@@ -1529,7 +1528,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 							PlayerREF.AddItem(MME_Cums.GetAt(3), futamilk)
 							PlayerREF.AddItem(MME_Cums.GetAt(2), cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int - futamilk)
 						endif
-						PlayerREF.RemoveItem(MilkE.Gold, (cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM", missing = 0) as int)*2, true)
+						PlayerREF.RemoveItem(MilkE.Gold, (cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int)*2, true)
 						StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkingContainerCumsSUM", 0)
 					endif
 				endif
@@ -1548,8 +1547,8 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 EndFunction
 
 Function PostMilk(Actor akActor)
-	Float MilkCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkCount", missing = 0)
-	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level", missing = 0)
+	Float MilkCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkCount")
+	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level")
 
 	if MilkQC.Buffs != true 
 		if akActor.HasSpell(MilkExhaustion)
@@ -1592,8 +1591,8 @@ Function PostMilk(Actor akActor)
 EndFunction
 
 Function LevelCheck()
-	Float Level = StorageUtil.GetFloatValue(none, "MME.Progression.Level", missing = 0)
-	Float TimesMilked = StorageUtil.GetFloatValue(none, "MME.Progression.TimesMilked", missing = 0)
+	Float Level = StorageUtil.GetFloatValue(none, "MME.Progression.Level")
+	Float TimesMilked = StorageUtil.GetFloatValue(none, "MME.Progression.TimesMilked")
 	If Level < MilkLvlCap
 		If TimesMilked >= (Level + 1) * TimesMilkedMult
 			StorageUtil.AdjustFloatValue(none,"MME.Progression.Level", 1)
@@ -1607,8 +1606,8 @@ Function LevelCheck()
 EndFunction
 
 Function MaidLevelCheck(Actor akActor)
-	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.TimesMilked", missing = 0)
-	Float MaidLevel = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.Level", missing = 0)
+	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.TimesMilked")
+	Float MaidLevel = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.Level")
 	if MaidLevel < MilkLvlCap || !MaidLvlCap
 		if MaidTimesMilked >= (MaidLevel + 1) * TimesMilkedMult
 			StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.Level", 1)
@@ -1626,8 +1625,8 @@ EndFunction
 ;----------------------------------------------------------------------------
 
 Function MilkCycleMSG(Actor akActor)
-	Float MilkCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkCount", missing = 0)
-	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level", missing = 0)
+	Float MilkCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkCount")
+	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level")
 
 	If PlayerREF.GetDistance(akActor) < 500 && (MilkCnt as int) >= 1
 		if MilkCnt >= ((MaidLevel+2)*2) && PiercingCheck(akActor) != 2
@@ -2015,7 +2014,7 @@ Function DLCcheck()
 EndFunction
 
 int Function Milklvl0fix()
-	int milklvl = ((StorageUtil.GetFloatValue(none,"MME.Progression.Level", missing = 0) + 1) / 2) as int
+	int milklvl = ((StorageUtil.GetFloatValue(none,"MME.Progression.Level") + 1) / 2) as int
 	If milklvl < 1
 		return 1
 	Else
@@ -2181,16 +2180,16 @@ Function Milkmaidinfo()
 	while i < MilkMaid.Length
 		if MilkMaid[i] != None
 			msg = msg + ("Maid name: " + MilkMaid[i].GetLeveledActorBase().GetName()\
-							+ " Milk: " + ReduceFloat(StorageUtil.GetFloatValue(MILKmaid[i],"MME.MilkMaid.MilkCount", missing = 0))\
-							+ " Pain: " + (StorageUtil.GetFloatValue(MILKmaid[i],"MME.MilkMaid.PainCount", missing = 0)/((StorageUtil.GetFloatValue(MILKmaid[i],"MME.MilkMaid.Level", missing = 0)+2)*2)*100) as int + "%")
+							+ " Milk: " + ReduceFloat(StorageUtil.GetFloatValue(MILKmaid[i],"MME.MilkMaid.MilkCount"))\
+							+ " Pain: " + (StorageUtil.GetFloatValue(MILKmaid[i],"MME.MilkMaid.PainCount")/((StorageUtil.GetFloatValue(MILKmaid[i],"MME.MilkMaid.Level")+2)*2)*100) as int + "%")
 		endif
 		i = i + 1
 	endwhile
 	while i < MilkSlave.Length
 		if MilkSlave[i] != None
 			msg = msg + ("Slave name: " + MilkSlave[i].GetLeveledActorBase().GetName()\
-							+ " Milk: " + ReduceFloat(StorageUtil.GetFloatValue(MilkSlave[i],"MME.MilkMaid.MilkCount", missing = 0))\
-							+ " Pain: " + (StorageUtil.GetFloatValue(MilkSlave[i],"MME.MilkMaid.PainCount", missing = 0)/((StorageUtil.GetFloatValue(MilkSlave[i],"MME.MilkMaid.Level", missing = 0)+2)*2)*100) as int + "%")
+							+ " Milk: " + ReduceFloat(StorageUtil.GetFloatValue(MilkSlave[i],"MME.MilkMaid.MilkCount"))\
+							+ " Pain: " + (StorageUtil.GetFloatValue(MilkSlave[i],"MME.MilkMaid.PainCount")/((StorageUtil.GetFloatValue(MilkSlave[i],"MME.MilkMaid.Level")+2)*2)*100) as int + "%")
 		endif
 		i = i + 1
 	endwhile
@@ -2524,7 +2523,7 @@ Function VarSetup()
 	SexLabOrgasm = True
 	SexLab3jBreastfeeding = True
 	PainSystem = True
-	PainKills = True
+	PainKills = False
 	WeightUpScale = False					;scale to 100
 	PlayerCantBeMilkmaid = False
 	ZazPumps = False
@@ -2686,7 +2685,7 @@ bool Function isPregnant(Actor akActor)
 	endif
 
 	;SoulGem Oven 2
-	if StorageUtil.GetFloatValue(akActor, "SGO.Gem.Weight", missing = 0) > 0
+	if StorageUtil.GetFloatValue(akActor, "SGO.Gem.Weight") > 0
 		debug.Trace("MilkModEconomy SGO2 Pregnancy: " + akActor.GetLeveledActorBase().GetName())
 		Return True
 	endif
@@ -2698,7 +2697,7 @@ bool Function isPregnant(Actor akActor)
 	endif
 	
 	;PSQ SoulGem Pregnancy 2.15 || PSQ SoulGem Pregnancy 2.16 / SexLab SoulGem Pregnancy
-	if StorageUtil.GetIntValue(akActor, "PSQ_SoulGemPregnancyON", 0) != 0 || StorageUtil.GetIntValue(akActor, "PRG_IsPregnant", missing = 0) != 0
+	if StorageUtil.GetIntValue(akActor, "PSQ_SoulGemPregnancyON", 0) != 0 || StorageUtil.GetIntValue(akActor, "PRG_IsPregnant") != 0
 		debug.Trace("MilkModEconomy SGP/PSQ Pregnancy: " + akActor.GetLeveledActorBase().GetName())
 		Return True
 	endif
@@ -2771,13 +2770,13 @@ Function sendVibrationEvent(string str, actor who, int mpas, int MilkingType)
 endfunction
 
 ;----------------------------------------------------------------------------
-;Exhaustion/Pain Functions
+;Exhaustion/Pain Functions (Called if actor is milkmaid/slave)
 ;----------------------------------------------------------------------------
 
 string Function NState(Actor akActor)
 	String NState
-	Float PainCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.PainCount", missing = 0)
-	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level", missing = 0)
+	Float PainCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.PainCount")
+	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level")
 
 	if PainCnt >= (((MaidLevel+2)*2)-((MaidLevel+2)*2)/10) as int
 		NState = "Sore"
@@ -2792,8 +2791,8 @@ return NState
 EndFunction
 
 int Function Pain(Actor akActor, int pain)
-	Float PainCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.PainCount", missing = 0)
-	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level", missing = 0)
+	Float PainCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.PainCount")
+	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level")
 		string who
 		string how
 

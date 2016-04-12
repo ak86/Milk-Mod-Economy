@@ -5,8 +5,6 @@ Scriptname MME_Storage Hidden
 ;	MME.MilkMaid.BreastBase
 ;	MME.MilkMaid.BreastBaseMod
 
-; must NiOverride be considered?
-; what happens if there is no such bone? (e.g. wrong skeleton or transformed?)
 function initializeActor(actor akActor) global
 	Debug.Trace("MME_Storage: Triggered initializeActor() for actor " + akActor.GetLeveledActorBase().GetName())
 
@@ -21,25 +19,16 @@ function initializeActor(actor akActor) global
 	; </sanity check>
 
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBase", BreastL)
-	; <please review and remove this comment afterwards>
-	; might be a good idea to make sure a default value is always set but
-	; this might also introduce subtle breakage if someone has tampered
-	; with this variable before the mod initialises it
-	;  a) keep previous behaviour and leave it out
-	;  b) opt for 'safety-first' and set it
-	;  c) guard with hasfloatvalue() check?
-	; </please review and remove this comment afterwards>
-	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod", 0.0)
+	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod", 0)
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.WeightBase", akActor.GetLeveledActorBase().GetWeight())
 endfunction
 
 function deregisterActor(actor akActor) global
 	Debug.Trace("MME_Storage: Triggered deregisterActor() for actor " + akActor.GetLeveledActorBase().GetName())
-
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.BreastBase")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.WeightBase")
-	endfunction
+endfunction
 
 float function getBreastsBaseadjust(actor akActor) global
 	Debug.Trace("MME_Storage: Triggered getBreastsBaseadjust() for actor " + akActor.GetLeveledActorBase().GetName())
@@ -51,19 +40,6 @@ function setBreastsBaseadjust(actor akActor, float Value) global
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod", Value)
 endfunction
 
-; <please review and remove this comment afterwards>
-;   there were 3 variations for the default value:
-;   in MilkMCM.psc/MilkQUEST.psc:
-;     StorageUtil.GetFloatValue(<target>, "MME.MilkMaid.BreastBase", missing = 0)
-;     StorageUtil.GetFloatValue(<target>, "MME.MilkMaid.BreastBase", missing = MilkQ.GetNodeScale(akActor, "NPC L Breast"))
-;   in MilkMCM.psc;
-;     StorageUtil.GetFloatValue(<target>, "MME.MilkMaid.BreastBase", missing = 1)
-;
-; => using HasFloatValue() to avoid silent initialisation
-;    ~may~ be unnecessary (but it could help to avoid strange issues with faulty initialisations)
-;    ~may~ incur a performance hit - not tested/benchmarked
-; => must NiOverride be considered when determining default value?
-; </please review and remove this comment afterwards>
 float function getBreastsBasevalue(actor akActor) global
 	Debug.Trace("MME_Storage: Triggered getBreastsBasevalue() for actor " + akActor.GetLeveledActorBase().GetName())
 	if StorageUtil.HasFloatValue(akActor, "MME.MilkMaid.BreastBase")

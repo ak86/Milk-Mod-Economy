@@ -38,7 +38,7 @@ Event OnObjectEquipped( Form akBaseObject, ObjectReference akReference)
 			|| MilkQ.ParasiteLivingArmor.find(akBaseObject.getname()) >= 0
 				Debug.Notification(akBaseObject.getname() + " attaches to your breasts")
 				PlayerREF.AddSpell( MilkQ.MilkForSprigganPassive, false )
-				If StorageUtil.GetFloatValue(PlayerREF,"MME.MilkMaid.LactacidCount", missing = 0) < 1
+				If StorageUtil.GetFloatValue(PlayerREF,"MME.MilkMaid.LactacidCount") < 1
 					StorageUtil.SetFloatValue(PlayerREF,"MME.MilkMaid.LactacidCount", 1)
 				EndIf
 			Else

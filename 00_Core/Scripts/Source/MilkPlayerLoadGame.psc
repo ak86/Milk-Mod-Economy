@@ -74,7 +74,7 @@ Event OnSlaveToggle(Form Sender)
 	actor akActor = Sender as Actor
 	if MilkQ.MILKmaid.find(akActor) == -1 && MilkQ.MILKmaid.find(akActor) == -1
 		Debug.Notification( "Target is not milkmaid/slave" )
-	elseif StorageUtil.GetIntValue(akActor,"MME.MilkMaid.IsSlave", missing = 0) == 0
+	elseif StorageUtil.GetIntValue(akActor,"MME.MilkMaid.IsSlave") == 0
 		StorageUtil.SetIntValue(akActor,"MME.MilkMaid.IsSlave", 1)
 		akActor.AddToFaction(MilkQ.MilkSlaveFaction)
 	elseif StorageUtil.GetIntValue(akActor,"MME.MilkMaid.IsSlave") == 1
@@ -89,8 +89,8 @@ EndEvent
 
 Event OnVibrateStart(string eventName, string argString, float argNum, form sender)
 	If argString == MilkQ.PlayerREF.GetActorBase().GetName() && MilkQ.DDI.IsMilkingBlocked_PiercingsNipple(MilkQ.PlayerREF) && MilkQ.MILKmaid.find(MilkQ.PlayerREF) != -1
-		If StorageUtil.GetFloatValue(MilkQ.PlayerREF,"MME.MilkMaid.MilkCount", missing = 0) >= 1
-			int gush = (StorageUtil.GetFloatValue(MilkQ.PlayerREF,"MME.MilkMaid.MilkCount", missing = 0) * MilkQ.GushPct/100) as int
+		If StorageUtil.GetFloatValue(MilkQ.PlayerREF,"MME.MilkMaid.MilkCount") >= 1
+			int gush = (StorageUtil.GetFloatValue(MilkQ.PlayerREF,"MME.MilkMaid.MilkCount") * MilkQ.GushPct/100) as int
 			if gush < 1
 				gush = 1
 			endif
@@ -153,7 +153,7 @@ Event OnSexLabOrgasm(String _eventName, String _args, Float _argc, Form _sender)
 	While idx < actors.Length && MilkQ.SexLabOrgasm
 		if MilkQ.MILKmaid.Find(actors[idx]) != -1\
 		&& actors[idx].GetActorBase().GetSex() == 1
-			if StorageUtil.GetFloatValue(actors[idx],"MME.MilkMaid.MilkCount", missing = 0) >= 1
+			if StorageUtil.GetFloatValue(actors[idx],"MME.MilkMaid.MilkCount") >= 1
 				if ((animation.HasTag("Anal")\
 					|| animation.HasTag("Vaginal")\
 					|| animation.HasTag("Masturbation")\

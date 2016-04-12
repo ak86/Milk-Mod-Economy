@@ -317,7 +317,7 @@ EndFunction
 Form Function GetMilkType(int milkCount, int boobgasmcount, Actor milkMaid)
 	Race maidRace = milkMaid.GetActorBase().GetRace()
 	int i = MilkQ.MilkMaid.Find(milkMaid)
-	Float MaidLevel = StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.Level", missing = 0)
+	Float MaidLevel = StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.Level")
 
 	if MilkQ.MilkQC.MME_SimpleMilkPotions
 		if MilkQ.isSuccubus(milkMaid) || StorageUtil.GetIntValue(milkMaid,"MME.MilkMaid.IsSuccubus") == 1
@@ -327,13 +327,13 @@ Form Function GetMilkType(int milkCount, int boobgasmcount, Actor milkMaid)
 		elseif MilkQ.isWerewolf(milkMaid) || StorageUtil.GetIntValue(milkMaid,"MME.MilkMaid.IsWerewolf") == 1
 			return MilkQ.MME_Milk_Werewolf.GetAt(0)
 ;drugs and alcohol
-;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.Skooma", missing = 0) > 0
+;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.Skooma") > 0
 ;			return MilkQ.MME_Milk_Werewolf.GetAt(0)
-;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.LeafSkooma", missing = 0) > 0
+;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.LeafSkooma") > 0
 ;			return MilkQ.MME_Milk_Werewolf.GetAt(0)
-;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.Mead", missing = 0) > 0
+;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.Mead") > 0
 ;			return MilkQ.MME_Milk_Werewolf.GetAt(0)
-;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.BBMead", missing = 0) > 0
+;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.BBMead") > 0
 ;			return MilkQ.MME_Milk_Werewolf.GetAt(0)
 
 		elseif maidRace == MME_Races.GetAt(0)
@@ -381,13 +381,13 @@ Form Function GetMilkType(int milkCount, int boobgasmcount, Actor milkMaid)
 			return MilkQ.MME_Milk_Werewolf.GetAt(1)
 
 ;drugs and alcohol
-;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.Skooma", missing = 0) > 0
+;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.Skooma") > 0
 ;			return MilkQ.MME_Milk_Werewolf.GetAt(0)
-;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.LeafSkooma", missing = 0) > 0
+;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.LeafSkooma") > 0
 ;			return MilkQ.MME_Milk_Werewolf.GetAt(0)
-;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.Mead", missing = 0) > 0
+;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.Mead") > 0
 ;			return MilkQ.MME_Milk_Werewolf.GetAt(0)
-;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.BBMead", missing = 0) > 0
+;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.BBMead") > 0
 ;			return MilkQ.MME_Milk_Werewolf.GetAt(0)
 
 		elseif maidRace == MME_Races.GetAt(0)
@@ -433,7 +433,7 @@ int Function CalculateBaseTrade(Potion finalPotion, int finalQty)
 		return 0
 	endif
 	int baseTrade = finalPotion.GetGoldValue() * finalQty
-	Float Level = StorageUtil.GetFloatValue(none,"MME.Progression.Level", missing = 0)
+	Float Level = StorageUtil.GetFloatValue(none,"MME.Progression.Level")
 
 	; Formula below kind of conforms to the way selling does in game, ignoring potions/enchants
 	float priceFactor
