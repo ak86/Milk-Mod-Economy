@@ -1,9 +1,10 @@
 Scriptname MME_Storage Hidden
 
-; Varables in StorageUtil
+; Variables in StorageUtil
 ; float
 ;	MME.MilkMaid.BreastBase
 ;	MME.MilkMaid.BreastBaseMod
+;	MME.MilkMaid.WeightBase
 
 function initializeActor(actor akActor) global
 	Debug.Trace("MME_Storage: Triggered initializeActor() for actor " + akActor.GetLeveledActorBase().GetName())
