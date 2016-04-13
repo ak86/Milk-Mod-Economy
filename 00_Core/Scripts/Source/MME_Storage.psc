@@ -7,18 +7,7 @@ Scriptname MME_Storage Hidden
 
 function initializeActor(actor akActor) global
 	Debug.Trace("MME_Storage: Triggered initializeActor() for actor " + akActor.GetLeveledActorBase().GetName())
-
-	; <sanity check>
-	float BreastL = NetImmerse.GetNodeScale(akActor, "NPC L Breast", false)
-	float BreastR = NetImmerse.GetNodeScale(akActor, "NPC R Breast", false)
-	if (BreastL != BreastR)
-		string ActorName = akActor.GetLeveledActorBase().GetName()
-		Debug.Notification("[MilkModEconomy] " + ActorName + " has differently sized left and right breast!")
-		Debug.Notification("[MilkModEconomy] Asymetric breasts are not supported!")
-	endif
-	; </sanity check>
-
-	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBase", BreastL)
+	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBase", getBreastNodeScale(akActor))
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod", 0)
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.WeightBase", akActor.GetLeveledActorBase().GetWeight())
 endfunction
@@ -66,4 +55,28 @@ endfunction
 function setWeightBasevalue(actor akActor, float Value) global
 	Debug.Trace("MME_Storage: Triggered setWeightBasevalue() for actor " + akActor.GetLeveledActorBase().GetName())
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.WeightBase", Value)
+endfunction
+
+float function getBreastNodeScale(actor akActor) global
+	string ActorName = akActor.GetLeveledActorBase().GetName()
+
+	bool isFirstPerson = false
+	if NetImmerse.HasNode(akActor, "NPC L Breast", isFirstPerson) && NetImmerse.HasNode(akActor, "NPC R Breast", isFirstPerson)
+		float BreastL = NetImmerse.GetNodeScale(akActor, "NPC L Breast", isFirstPerson)
+		float BreastR = NetImmerse.GetNodeScale(akActor, "NPC R Breast", isFirstPerson)
+
+		; <sanity check>
+		if (BreastL != BreastR)
+			Debug.Notification("[MilkModEconomy] " + ActorName + " has differently sized left and right breast!")
+			Debug.Notification("[MilkModEconomy] Asymetric breasts are not supported!")
+		endif
+		; </sanity check>
+
+		return BreastL
+	else
+		Debug.Notification("[MilkModEconomy] Unsupported skeleton - unable to find breast nodes for '" + ActorName + "'!")
+		Debug.Notification("[MilkModEconomy] (Mod will work but breast growth will have no visible effect.)")
+
+		return 1.0
+	endif
 endfunction
