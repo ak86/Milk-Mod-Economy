@@ -864,6 +864,8 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	Bool ZaZGag = zbf.IsWearingZaZGag(akActor)
 	Bool ZaZGagOpen = zbf.IsWearingZaZGag_Open(akActor)
 	
+	String akActorGender = akActorSex(akActor)
+	
 	String anivar = ""
 	if DDBeltOpen == true					;--vaginal probe
 		anivar = anivar + "_02"
@@ -973,7 +975,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 
 		Utility.Wait( 5.0 )															;wait for actor to "sit"
 		If IsMilkingBlocked == false && SLSDBra == false
-			If MilkStory && akActor == PlayerREF && akActor.GetLeveledActorBase().GetSex() == 1
+			If MilkStory && akActor == PlayerREF && akActorGender != "Male"
 				StoryDisplay(0,1,FirstTimeStory)
 			EndIf
 			
@@ -988,7 +990,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 						akActor.additem(ZaZMoMSuctionCups, 1, true)
 						akActor.equipitem(ZaZMoMSuctionCups, true, true)
 					elseif !akActor.IsEquipped(cuirass)
-						if akActorSex(akActor) == "Futa"
+						if akActorGender == "Futa"
 							akActor.additem(MilkCuirassFuta, 1, true)
 							akActor.equipitem(MilkCuirassFuta, true, true)
 						else
@@ -1002,7 +1004,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					akActor.additem(ZaZMoMSuctionCups, 1, true)
 					akActor.equipitem(ZaZMoMSuctionCups, true, true)
 				else
-					if akActorSex(akActor) == "Futa"
+					if akActorGender == "Futa"
 						akActor.additem(MilkCuirassFuta, 1, true)
 						akActor.equipitem(MilkCuirassFuta, true, true)
 					else
@@ -1023,11 +1025,11 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			|| MilkingEquipment.find(cuirass.getname()) >= 0\
 			|| SLSDBra == true
 				Mode = 2
-			ElseIf akActor.GetItemCount(MilkCuirassFuta) > 0 && akActorSex(akActor) == "Futa"
+			ElseIf akActor.GetItemCount(MilkCuirassFuta) > 0 && akActorGender == "Futa"
 				akActor.equipitem(MilkCuirassFuta, true, true)
 				hasInventoryMilkCuirassFuta = true
 				Mode = 2
-			ElseIf akActor.GetItemCount(MilkCuirass) > 0 && akActorSex(akActor) != "Futa"
+			ElseIf akActor.GetItemCount(MilkCuirass) > 0 && akActorGender != "Futa"
 				akActor.equipitem(MilkCuirass, true, true)
 				hasInventoryMilkCuirass = true
 				Mode = 2
@@ -1040,7 +1042,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				Mode = 3
 				int soundInstance02 = TakeHoldSound.Play(akActor)
 				Utility.Wait( 5.0 )													;wait for possession sound to play
-				If MilkStory && akActor == PlayerREF && akActor.GetLeveledActorBase().GetSex() == 1
+				If MilkStory && akActor == PlayerREF && akActorGender != "Male"
 					if StringUtil.Find(cuirass.getname(), "Hermaeus Mora" ) >= 0 || StringUtil.Find(cuirass.getname(), "HM Priestess" ) >= 0
 						StoryDisplay(0,3,FirstTimeStory)
 					elseif StringUtil.Find(cuirass.getname(), "Living Arm" ) >= 0
@@ -1053,11 +1055,11 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			Else
 				akActor.UnequipItem(cuirass, false, true)
 			EndIf
-		ElseIf akActor.GetItemCount(MilkCuirassFuta) > 0 && akActorSex(akActor) == "Futa"
+		ElseIf akActor.GetItemCount(MilkCuirassFuta) > 0 && akActorGender == "Futa"
 			akActor.equipitem(MilkCuirassFuta, true, true)
 			hasInventoryMilkCuirassFuta = true
 			Mode = 2
-		ElseIf akActor.GetItemCount(MilkCuirass) > 0 && akActorSex(akActor) != "Futa"
+		ElseIf akActor.GetItemCount(MilkCuirass) > 0 && akActorGender != "Futa"
 			akActor.equipitem(MilkCuirass, true, true)
 			hasInventoryMilkCuirass = true
 			Mode = 2
@@ -1111,7 +1113,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		endif
 	endif
 	
-	while (((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || akActor.GetParentCell() != PlayerREF.GetParentCell())\
+	while (((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || akActor.IsInLocation(PlayerREF.getCurrentLocation()))\
 			|| (MilkCnt >= 1 && Mode > 0 && ((PainCnt <= (((MaidLevel+2)*2)-((MaidLevel+2)*2)/10)) || PainKills)))\
 			&& (akActor.HasSpell(BeingMilkedPassive) || !IsMilkMaid)
 
@@ -1148,10 +1150,10 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			endif
 			sendVibrationEvent("FeedingStage", akActor, mpas, MilkingType)
 
-			if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid
+			if Plugin_SlSW && akActor == PlayerREF && IsMilkMaid == true && !DisableSkoomaLactacid
 				akActor.equipitem(Game.GetFormFromFile(0x57A7A, "Skyrim.esm"),false,true)
 			endif
-			while duration < Feeding_Duration && (((akActor.GetSitState() <= 3 && akActor.GetSitState()) || akActor.GetParentCell() != PlayerREF.GetParentCell())|| Mode != 0) && (akActor.HasSpell(BeingMilkedPassive) || !IsMilkMaid)
+			while duration < Feeding_Duration && (((akActor.GetSitState() <= 3 && akActor.GetSitState()) || akActor.IsInLocation(PlayerREF.getCurrentLocation()))|| Mode != 0) && (akActor.HasSpell(BeingMilkedPassive) || !IsMilkMaid)
 				LactacidCnt = LactacidCnt + (MaidLevel+2)/Feeding_Duration
 				Utility.Wait(1.0)
 				duration = duration + 1
@@ -1423,7 +1425,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		
 	endwhile
 
-	;debug.Notification("milking done." +akActorSex(akActor)+ " "+isPregnant(akActor))
+	;debug.Notification("milking done." +akActorGender+ " "+isPregnant(akActor))
 	sendVibrationEvent("StopMilkingMachine", akActor, mpas, MilkingType)
 
 ;-----------------------Milking done
@@ -1451,13 +1453,13 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					akActor.RemoveItem(MilkCuirassFuta, 1, true)
 				endif
 			endif
-			If MilkStory && akActor == PlayerREF && akActor.GetLeveledActorBase().GetSex() == 1
+			If MilkStory && akActor == PlayerREF && akActorGender != "Male"
 				Utility.Wait(5.0)											;wait for actor to get off milking pump
 				StoryDisplay(1,1,FirstTimeStory)
 			EndIf
 			Debug.SendAnimationEvent(akActor,"IdleForceDefaultState")
 		elseif Mode == 3
-			If MilkStory && akActor == PlayerREF && akActor.GetLeveledActorBase().GetSex() == 1
+			If MilkStory && akActor == PlayerREF && akActorGender != "Male"
 				if StringUtil.Find(cuirass.getname(), "Hermaeus Mora" ) >= 0 || StringUtil.Find(cuirass.getname(), "HM Priestess" ) >= 0
 					StoryDisplay(1,3,FirstTimeStory)
 				elseif StringUtil.Find(cuirass.getname(), "Living Arm" ) >= 0
@@ -1519,11 +1521,11 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					if StorageUtil.GetIntValue(akActor, "MME.MilkMaid.IsSlave") == 1 || MILKSlave.find(akActor) != -1
 						StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkingContainerCumsSUM", cumcount)
 					elseif Mode == 0 || Mode == 2
-						if akActorSex(akActor) == "Male" 
+						if akActorGender == "Male" 
 							PlayerREF.AddItem(MME_Cums.GetAt(1), cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int)
-						elseif akActorSex(akActor) == "Female" 
+						elseif akActorGender == "Female" 
 							PlayerREF.AddItem(MME_Cums.GetAt(0), cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int)
-						elseif akActorSex(akActor) == "Futa"
+						elseif akActorGender == "Futa"
 							int futamilk = Utility.RandomInt(0, cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int)
 							PlayerREF.AddItem(MME_Cums.GetAt(3), futamilk)
 							PlayerREF.AddItem(MME_Cums.GetAt(2), cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int - futamilk)
