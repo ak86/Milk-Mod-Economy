@@ -710,10 +710,7 @@ Function AssignSlotSlave(Actor akActor, Int Level, Float Milk)
 	int i = MILKSlave.Find(none)
 	If i != -1
 		MILKSlave[i] = akActor
-		MME_Storage.initializeActor(akActor)
-		; reminder - always set the level +before+ setting the milk amount
-		StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.Level", Level)
-		MME_Storage.setMilkCurrent(akActor, Milk)
+		MME_Storage.initializeActor(akActor, Level, Milk)
 		StorageUtil.SetIntValue(akActor,"MME.MilkMaid.IsSlave", 1)
 		akActor.AddToFaction(MilkSlaveFaction)
 	Else
