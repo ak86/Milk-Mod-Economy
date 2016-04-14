@@ -48,6 +48,18 @@ function setBreastsBasevalue(actor akActor, float Value) global
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBase", Value)
 endfunction
 
+float function getLactacidMaximum(actor akActor) global
+	return (StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.Level") + 2) / 2
+endfunction
+
+float function getMilkMaximum(actor akActor) global
+	return (StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.Level") + 2) * 2
+endfunction
+
+float function getPainMaximum(actor akActor) global
+	return (StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.Level") + 2) * 2
+endfunction
+
 float function getWeightBasevalue(actor akActor) global
 	Debug.Trace("MME_Storage: Triggered getWeightBasevalue() for actor " + akActor.GetLeveledActorBase().GetName())
 	return StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.WeightBase")
