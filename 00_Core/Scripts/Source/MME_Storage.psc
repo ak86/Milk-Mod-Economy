@@ -14,11 +14,12 @@ Scriptname MME_Storage Hidden
 ;  -> refetch MilkCurrent after setting/changing it (value may have been truncated to upper limit)
 ;  -> refetch MilkMaximum after milking             (level may have increased and new limit applies)
 
-function initializeActor(actor akActor) global
+function initializeActor(actor akActor, float Level = 0.0, float MilkCnt = 0.0) global
 	Debug.Trace("MME_Storage: Triggered initializeActor() for actor " + akActor.GetLeveledActorBase().GetName())
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBase", getBreastNodeScale(akActor))
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod", 0)
-	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", 0)
+	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.Level", Level)
+	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", MilkCnt)
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.WeightBase", akActor.GetLeveledActorBase().GetWeight())
 endfunction
 
