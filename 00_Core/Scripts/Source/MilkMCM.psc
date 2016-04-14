@@ -328,7 +328,7 @@ function Page_Overview()
 			While i < MilkQ.MilkMaid.Length
 				if MilkQ.MilkMaid[i] != None
 					Float MaidLevel = StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.Level")
-					Float MilkCnt = StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.MilkCount")
+					Float MilkCnt = MME_Storage.getMilkCurrent(MilkQ.MILKmaid[i])
 					Float MilkMax = MME_Storage.getMilkMaximum(MilkQ.MILKmaid[i])
 					Float PainCnt = StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.PainCount")
 					Float PainMax = MME_Storage.getPainMaximum(MilkQ.MILKmaid[i])
@@ -553,6 +553,7 @@ function Page_MilkMaidDebug()
 			AddMenuOptionST("Debug_Milk_Maid_Menu", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S2", Maidlist[MaidIndex])
 			if MaidlistA[MaidIndex] != none
 				float MaidBreastsBaseadjust = MME_Storage.getBreastsBaseadjust(MaidlistA[MaidIndex])
+				float MilkCnt = MME_Storage.getMilkCurrent(MaidlistA[MaidIndex])
 
 				AddTextOptionST("Debug_MM_MaidPregnancy", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S4", MilkQ.isPregnant(MaidlistA[MaidIndex]) as String, OPTION_FLAG_DISABLED)	
 				AddTextOptionST("Debug_MM_MaidGender", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S5", MilkQ.akActorSex(MaidlistA[MaidIndex]) as String, OPTION_FLAG_DISABLED)	
@@ -564,9 +565,9 @@ function Page_MilkMaidDebug()
 				AddSliderOptionST("Debug_MM_Maid_BreastBaseSizeModified_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S10", MaidBreastsBaseadjust, "{2}")
 				AddSliderOptionST("Debug_MM_Maid_MaidBoobIncr_Slider", "$MME_MENU_PAGE_Settings_H2_S3", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobIncr"), "{2}")	
 				AddSliderOptionST("Debug_MM_Maid_MaidBoobPerLvl_Slider", "$MME_MENU_PAGE_Settings_H2_S4", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl"), "{2}")	
-				AddTextOptionST("Debug_MM_Maid_BreastEffectiveSize", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S11", MilkQ.ReduceFloat(MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]) + MaidBreastsBaseadjust + (StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkCount") * StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobIncr", missing = MilkQ.BoobIncr)) + (MaidLevel + (MaidTimesMilked / ((MaidLevel + 1) * MilkQ.TimesMilkedMult))) * StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl", missing = MilkQ.BoobPerLvl)), OPTION_FLAG_DISABLED)
+				AddTextOptionST("Debug_MM_Maid_BreastEffectiveSize", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S11", MilkQ.ReduceFloat(MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]) + MaidBreastsBaseadjust + (MilkCnt*StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobIncr", missing = MilkQ.BoobIncr)) + (MaidLevel + (MaidTimesMilked / ((MaidLevel + 1) * MilkQ.TimesMilkedMult))) * StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl", missing = MilkQ.BoobPerLvl)), OPTION_FLAG_DISABLED)
 				AddSliderOptionST("Debug_MM_LactacidCount_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S12", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.LactacidCount"), "{2}")
-				AddSliderOptionST("Debug_MM_MilkCount_Slider", "Milk [Max =" + MilkMax as int + "]:", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkCount"), "{2}")
+				AddSliderOptionST("Debug_MM_MilkCount_Slider", "Milk [Max =" + MilkMax as int + "]:", MilkCnt, "{2}")
 				AddSliderOptionST("Debug_MM_MilkGeneration_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S13", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkGen")/3/10, "{2}")
 				AddTextOptionST("Debug_MM_Maid_Lactacid_Milk_Production_PH", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S15", MilkQ.ReduceFloat(MilkTick * MilkQ.MilkProdMod/100), OPTION_FLAG_DISABLED)	
 				AddTextOptionST("Debug_MM_Maid_Lactacid_Milk_Production_PP", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S16", MilkQ.ReduceFloat(MilkTick * MilkQ.MilkProdMod/100 * MilkQ.MilkPoll), OPTION_FLAG_DISABLED)	
@@ -3197,15 +3198,19 @@ endState
 
 state Debug_MM_MilkCount_Slider
 	event OnSliderOpenST()
-		SetSliderDialogStartValue(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkCount"))
+		SetSliderDialogStartValue(MME_Storage.getMilkCurrent(MaidlistA[MaidIndex]))
 		SetSliderDialogDefaultValue(0)
-		SetSliderDialogRange(0, 100)
+		; use milk limit as maxiumum value for slider
+		; (so it is no longer possible to have a maid with 'MilkCurrent > MilkMaximum')
+		SetSliderDialogRange(0, MME_Storage.getMilkMaximum(MaidlistA[MaidIndex]))
 		SetSliderDialogInterval(0.01)
 	endEvent
 
 	event OnSliderAcceptST(float value)
-		StorageUtil.SetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkCount", value)
-		SetSliderOptionValueST(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkCount"), "{2}")
+		MME_Storage.setMilkCurrent(MaidlistA[MaidIndex], value)
+		; setMilkCurrent() automatically restricts the provided value to the allowed maximum
+		; -> using getMilkCurrent() guarantees to use the same value for the slider
+		SetSliderOptionValueST(MME_Storage.getMilkCurrent(MaidlistA[MaidIndex]), "{2}")
 	endEvent
 endState
 
