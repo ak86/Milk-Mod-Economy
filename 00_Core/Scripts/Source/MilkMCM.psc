@@ -567,7 +567,11 @@ function Page_MilkMaidDebug()
 				AddSliderOptionST("Debug_MM_Maid_MaidBoobPerLvl_Slider", "$MME_MENU_PAGE_Settings_H2_S4", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl"), "{2}")	
 				AddTextOptionST("Debug_MM_Maid_BreastEffectiveSize", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S11", MilkQ.ReduceFloat(MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]) + MaidBreastsBaseadjust + (MilkCnt*StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobIncr", missing = MilkQ.BoobIncr)) + (MaidLevel + (MaidTimesMilked / ((MaidLevel + 1) * MilkQ.TimesMilkedMult))) * StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl", missing = MilkQ.BoobPerLvl)), OPTION_FLAG_DISABLED)
 				AddSliderOptionST("Debug_MM_LactacidCount_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S12", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.LactacidCount"), "{2}")
-				AddSliderOptionST("Debug_MM_MilkCount_Slider", "Milk [Max =" + MilkMax as int + "]:", MilkCnt, "{2}")
+				; can MilkMax be updated while MCM page is still open?
+				; (currently shows outdated value if MilkMaxBasevalue or MilkMaxScalefactor has been modified)
+				AddSliderOptionST("Debug_MM_MilkCount_Slider", "Milk stored[Max =" + MilkMax as int + "]:", MilkCnt, "{2}")
+				AddSliderOptionST("Debug_MM_MilkMax_Basevalue_Slider", "Milk Limit (base value):", MME_Storage.getMilkMaxBasevalue(MaidlistA[MaidIndex]), "{2}")
+				AddSliderOptionST("Debug_MM_MilkMax_Scalefactor_Slider", "Milk Limit (level scale factor):", MME_Storage.getMilkMaxScalefactor(MaidlistA[MaidIndex]), "{2}")
 				AddSliderOptionST("Debug_MM_MilkGeneration_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S13", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkGen")/3/10, "{2}")
 				AddTextOptionST("Debug_MM_Maid_Lactacid_Milk_Production_PH", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S15", MilkQ.ReduceFloat(MilkTick * MilkQ.MilkProdMod/100), OPTION_FLAG_DISABLED)	
 				AddTextOptionST("Debug_MM_Maid_Lactacid_Milk_Production_PP", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S16", MilkQ.ReduceFloat(MilkTick * MilkQ.MilkProdMod/100 * MilkQ.MilkPoll), OPTION_FLAG_DISABLED)	
@@ -3211,6 +3215,34 @@ state Debug_MM_MilkCount_Slider
 		; setMilkCurrent() automatically restricts the provided value to the allowed maximum
 		; -> using getMilkCurrent() guarantees to use the same value for the slider
 		SetSliderOptionValueST(MME_Storage.getMilkCurrent(MaidlistA[MaidIndex]), "{2}")
+	endEvent
+endState
+
+state Debug_MM_MilkMax_Basevalue_Slider
+	event OnSliderOpenST()
+		SetSliderDialogStartValue(MME_Storage.getMilkMaxBasevalue(MaidlistA[MaidIndex]))
+		SetSliderDialogDefaultValue(0)
+		SetSliderDialogRange(0, 20)
+		SetSliderDialogInterval(0.25)
+	endEvent
+
+	event OnSliderAcceptST(float value)
+		MME_Storage.setMilkMaxBasevalue(MaidlistA[MaidIndex], value)
+		SetSliderOptionValueST(value, "{2}")
+	endEvent
+endState
+
+state Debug_MM_MilkMax_Scalefactor_Slider
+	event OnSliderOpenST()
+		SetSliderDialogStartValue(MME_Storage.getMilkMaxScalefactor(MaidlistA[MaidIndex]))
+		SetSliderDialogDefaultValue(0)
+		SetSliderDialogRange(-5, 5)
+		SetSliderDialogInterval(0.05)
+	endEvent
+
+	event OnSliderAcceptST(float value)
+		MME_Storage.setMilkMaxScalefactor(MaidlistA[MaidIndex], value)
+		SetSliderOptionValueST(value, "{2}")
 	endEvent
 endState
 
