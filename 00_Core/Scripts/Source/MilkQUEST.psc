@@ -1113,7 +1113,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		endif
 	endif
 	
-	while (((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || akActor.IsInLocation(PlayerREF.getCurrentLocation()))\
+	while (((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || akActor.GetParentCell() != PlayerREF.GetParentCell())\
 			|| (MilkCnt >= 1 && Mode > 0 && ((PainCnt <= (((MaidLevel+2)*2)-((MaidLevel+2)*2)/10)) || PainKills)))\
 			&& (akActor.HasSpell(BeingMilkedPassive) || !IsMilkMaid)
 
