@@ -61,6 +61,8 @@ Location Property locTheFrozenHearth Auto
 Location Property locCollegeofWinterhold Auto
 Location Property locFourShieldsTavern Auto
 Location Property locFrostfruitInn Auto
+Location Property locKynesgrove Auto
+Location Property locKarthwasten Auto
 ;HF DLC
 Location Property locHeljarchenHall Auto
 Location Property locWindstadManor Auto
@@ -515,7 +517,7 @@ int Function GetMarketIndexFromLocation(Location marketLocation)
 		return 1
 	elseif locName == locFalkreath.GetName() || locName == locWindpeakInn.GetName()
 		return 2
-	elseif locName == locMarkarth.GetName() || locName == locOldHroldan.GetName() || locName == locOldHroldanInn.GetName()
+	elseif locName == locMarkarth.GetName() || locName == locOldHroldan.GetName() || locName == locOldHroldanInn.GetName() || locName == locKarthwasten.GetName()
 		return 3
 	elseif locName == locMorKhazgur.GetName() || locName == locDushnikhYal.GetName() || locName == locNarzulbur.GetName() || locName == locLargashbur.GetName()
 		return 4
@@ -525,7 +527,7 @@ int Function GetMarketIndexFromLocation(Location marketLocation)
 		return 6
 	elseif locName == locWhiterun.GetName() || locName == locRiverwood.GetName() || locName == locSleepingGiantInn.GetName() || locName == locRorikstead.GetName() || locName == locFrostfruitInn.GetName()
 		return 7
-	elseif locName == locWindhelm.GetName() || locName == locWinterhold.GetName() || locName == locTheFrozenHearth.GetName() || locName == locCollegeofWinterhold.GetName()
+	elseif locName == locWindhelm.GetName() || locName == locWinterhold.GetName() || locName == locTheFrozenHearth.GetName() || locName == locCollegeofWinterhold.GetName() || locName == locKynesgrove.GetName()
 		return 8
 		
 	;DLC

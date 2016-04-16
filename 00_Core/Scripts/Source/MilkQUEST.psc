@@ -80,6 +80,8 @@ int[] Property armslot Auto
 String[] Property MilkingEquipment Auto
 String[] Property BasicLivingArmor Auto
 String[] Property ParasiteLivingArmor Auto
+Alias[] Property AliasRef  Auto  
+Package Property MilkPackage  Auto  
 
 ;Varables in StorageUtil
 ;FormListClear(none,"MME.MilkMaid.List")					;not used
@@ -389,6 +391,7 @@ Event OnKeyDown(int keyCode)
 			Else
 				if MILKmaid.find(PlayerRef) != -1
 					Target = PlayerRef
+					;Alias[0].AddScriptPackage MilkPackage
 				Else
 					Debug.Notification("Player is not a milk maid.")
 					Return
@@ -465,6 +468,7 @@ Function ActorCheck(int t)
 				MilkCycle(MilkMaid[i] , t)
 			endif
 		endif
+		;(GetNthAlias(Alias[0])).ForceRefTo(PlayerRef)
 		i = i + 1
 	EndWhile
 	i = 0
@@ -500,7 +504,7 @@ Function MilkCycle(Actor akActor, int t)
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.TimesMilked")
 
 	Form maidArmor = akActor.GetWornForm(Armor.GetMaskForSlot(32));
-
+	
 	if t > ((MaidLevel+2)*2) && BreastScaleLimit
 		t = ((MaidLevel+2)*2) as int
 	endif
@@ -860,6 +864,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	Bool SLSDBra = SLSD.IsMilkingBlocked_Bra_SLSD(akActor)
 	Bool hasInventoryMilkCuirass = false
 	Bool hasInventoryMilkCuirassFuta = false
+	Bool bControlsDisabled = false
 
 	Bool ZaZGag = zbf.IsWearingZaZGag(akActor)
 	Bool ZaZGagOpen = zbf.IsWearingZaZGag_Open(akActor)
@@ -882,8 +887,10 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	Float TimesMilkedAll = StorageUtil.GetFloatValue(none,"MME.Progression.TimesMilkedAll")
 
 	if akActor.HasSpell( BeingMilkedPassive )
-		Debug.notification(akActor.GetLeveledActorBase().GetName() + " already being milked, if something went wrong, remove Milking passive spell from Milk Maid debug menu")
-		return
+		if MilkingType != 1						;prevents msg spam from aidrivenplayer bound milkpump, since its activates script endlessly,
+			Debug.notification(akActor.GetLeveledActorBase().GetName() + " already being milked, if something went wrong, remove Milking passive spell from Milk Maid debug menu")
+		endif
+		return									; prevents multiple scripts running
 	endif
 
 	if MILKmaid.find(akActor) != -1 || MILKSlave.find(akActor) != -1
@@ -946,7 +953,10 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		endif
 		
 		if MilkingType == 1 && PlayerREF == akActor
-			Game.DisablePlayerControls(1, 1, 0, 0, 1, 1, 0) ;(True,True,False,False,True,True,True,True,0)
+			;Game.DisablePlayerControls(1, 1, 0, 0, 1, 1, 0) ;(True,True,False,False,True,True,True,True,0)
+			Game.SetPlayerAIDriven(true)
+			Game.DisablePlayerControls()
+			bControlsDisabled = true
 			if MilkMsgs
 				debug.Notification("You feel Milk Pump secure your body, removing your ability to move.")
 			endif
@@ -1102,18 +1112,23 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 
 ;-----------------------Feeding/Milking/Fuck machine
 
-	if IsMilkMaid == false && PlayerREF.GetDistance(akActor) < 500
-		int ButtonPressed = (MakeMilkMaid).Show()
-		if ButtonPressed == 0
-			AssignSlot(akActor)
-			if MILKmaid.find(akActor) != -1
-				akActor.AddSpell( BeingMilkedPassive, false )
-				IsMilkMaid = true
+	if IsMilkMaid == false && PlayerREF.GetDistance(akActor) < 500		;add npc/recheck player with milkcuirass(since its forced by checkforspriggan)
+		if MILKmaid.find(akActor) != -1
+			int ButtonPressed = (MakeMilkMaid).Show()
+			if ButtonPressed == 0
+				AssignSlot(akActor)
+				if MILKmaid.find(akActor) != -1
+					akActor.AddSpell( BeingMilkedPassive, false )
+					IsMilkMaid = true
+				endif
 			endif
+		else
+			akActor.AddSpell( BeingMilkedPassive, false )
+			IsMilkMaid = true
 		endif
 	endif
 	
-	while (((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || akActor.IsInLocation(PlayerREF.getCurrentLocation()))\
+	while (((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || !akActor.IsInLocation(PlayerREF.getCurrentLocation()))\
 			|| (MilkCnt >= 1 && Mode > 0 && ((PainCnt <= (((MaidLevel+2)*2)-((MaidLevel+2)*2)/10)) || PainKills)))\
 			&& (akActor.HasSpell(BeingMilkedPassive) || !IsMilkMaid)
 
@@ -1182,7 +1197,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			Sound.SetInstanceVolume(soundInstance01, 1.0)
 			
 			;milkpump animation selector
-			If Mode == 0
+			If Mode == 0 && (akActor.GetSitState() <= 3 && akActor.GetSitState() > 0)
 				if MilkingType == 0
 					if mpas == 1
 						Debug.SendAnimationEvent(akActor,("ZaZMOMFreeFurn_11"+anivar))
@@ -1298,17 +1313,19 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			Sound.SetInstanceVolume(soundInstance01, 1.0)
 			
 			;milkpump animation selector
-			if MilkingType == 0
-				if mpas == 1
-					Debug.SendAnimationEvent(akActor,("ZaZMOMFreeFurn_07"+anivar))
-				elseif mpas == 2
-					Debug.SendAnimationEvent(akActor,("ZaZMOMFreeFurn_08"+anivar))
-				endif
-			elseif MilkingType == 1
-				if mpas == 1
-					Debug.SendAnimationEvent(akActor,("ZaZMOMBoundFurn_07"+anivar))
-				elseif mpas == 2
-					Debug.SendAnimationEvent(akActor,("ZaZMOMBoundFurn_08"+anivar))
+			If Mode == 0 && (akActor.GetSitState() <= 3 && akActor.GetSitState() > 0)
+				if MilkingType == 0
+					if mpas == 1
+						Debug.SendAnimationEvent(akActor,("ZaZMOMFreeFurn_07"+anivar))
+					elseif mpas == 2
+						Debug.SendAnimationEvent(akActor,("ZaZMOMFreeFurn_08"+anivar))
+					endif
+				elseif MilkingType == 1
+					if mpas == 1
+						Debug.SendAnimationEvent(akActor,("ZaZMOMBoundFurn_07"+anivar))
+					elseif mpas == 2
+						Debug.SendAnimationEvent(akActor,("ZaZMOMBoundFurn_08"+anivar))
+					endif
 				endif
 			endif
 			sendVibrationEvent("FuckMachineStage", akActor, mpas, MilkingType)
@@ -1416,10 +1433,12 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		
 		if mode == 0 && MilkingType == 1\
 		&& (MilkCnt < 1 || ((PainCnt >= (((MaidLevel+2)*2)-((MaidLevel+2)*2)/10)) && !PainKills))\
-		&& PlayerREF == akActor && IsMilkingBlocked == false
+		&& PlayerREF == akActor && IsMilkingBlocked == false && bControlsDisabled == true
 			Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
-			if MilkMsgs
-				debug.Notification("Milk Pump had milked everything it could from you, and releases its bounds from your body.")
+			Game.SetPlayerAIDriven(false)
+			bControlsDisabled = false
+			if MilkMsgs 
+				debug.Notification("Milk Pump had milked everything it could from you, and releases its bounds, you are free to leave.")
 			endif
 		endif
 		
@@ -1537,7 +1556,11 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			endif
 		endif
 	endif
-
+	
+	;justincase
+	Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
+	Game.SetPlayerAIDriven(false)
+	
 	if Mode == 3 && MilkQC.Buffs && IsMilkMaid == true
 		akActor.AddSpell( MilkExhaustion, false )
 		akActor.AddSpell( MilkMentalExhaustion, false )

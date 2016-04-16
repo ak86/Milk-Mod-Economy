@@ -92,48 +92,43 @@
 						</plugin>
 					</plugins>   
 				</group>
-				<group name="Pre made Milking Cuirass" type="SelectExactlyOne">
+				<group name="MilkPumps" type="SelectExactlyOne">
 					<plugins order="Explicit">
-						<plugin name="Manga">
+						<plugin name="None">
 							<description>
-								<![CDATA[Choose this if you want Manga body Milking Cuirass ]]>
+								<![CDATA[No placed milkpumps]]>
 							</description>
-							<image path="Fomod\Screens\MANGA.jpg"/>
 							<conditionFlags>
-								<flag name="Manga">Active</flag>
 							</conditionFlags>
 							<files>
-								<folder source="01_Body\Manga" destination=""/>
 							</files>
 							<typeDescriptor>
 								<type name="Optional"/>
 							</typeDescriptor>				
 						</plugin>
-						<plugin name="CBBE">
+						<plugin name="Basic">
 							<description>
-								<![CDATA[Choose this if you want CBBE body Milking Cuirass ]]>
+								<![CDATA[Basic placement of milkpumps]]>
 							</description>
-							<image path="Fomod\Screens\CBBE.jpg"/>
+							<image path="Fomod\Screens\MPBasic.jpg"/>
 							<conditionFlags>
-								<flag name="CBBE">Active</flag>
 							</conditionFlags>
 							<files>
-								<folder source="01_Body\CBBE" destination=""/>
+								<folder source="02_Extra\MilkPumps Basic" destination=""/>
 							</files>
 							<typeDescriptor>
 								<type name="Optional"/>
 							</typeDescriptor>
 						</plugin>				
-						<plugin name="UNPB">
+						<plugin name="Fancy">
 							<description>
-								<![CDATA[Choose this if you want UNPB body Milking Cuirass]]>
+								<![CDATA[All inclusive 5* milking barns]]>
 							</description>
-							<image path="Fomod\Screens\UNPB.jpg"/>
+							<image path="Fomod\Screens\MPFancy.jpg"/>
 							<conditionFlags>
-								<flag name="UNPB">Active</flag>
 							</conditionFlags>
 							<files>
-								<folder source="01_Body\UNPB" destination=""/>
+								<folder source="02_Extra\MilkPumps Fancy" destination=""/>
 							</files>
 							<typeDescriptor>
 								<type name="Optional"/>

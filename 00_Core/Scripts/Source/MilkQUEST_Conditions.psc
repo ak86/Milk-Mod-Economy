@@ -42,3 +42,10 @@ Float Property MME_TargetMilk Auto Conditional
 Int Property MME_CanBeConvertedFromSlaveToMaid Auto Conditional
 Int Property MME_CanBeConvertedFromMaidToSlave Auto Conditional
 Int Property MME_FreeMaidSlots Auto Conditional
+
+;----------------------------------------------------------------------------
+;Dialogues Alias conditions
+;----------------------------------------------------------------------------
+
+Float[] Property MaidAliasMilk  Auto  Conditional
+Float[] Property MaidAliasMaxMilk  Auto  Conditional
