@@ -139,6 +139,55 @@
 						</plugin>
 					</plugins>   
 				</group>
+				<group name="Pre made Milking Cuirass" type="SelectExactlyOne">
+					<plugins order="Explicit">
+						<plugin name="Manga">
+							<description>
+								<![CDATA[Choose this if you want Manga body Milking Cuirass ]]>
+							</description>
+							<image path="Fomod\Screens\MANGA.jpg"/>
+							<conditionFlags>
+								<flag name="Manga">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="01_Body\Manga" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+						<plugin name="CBBE">
+							<description>
+								<![CDATA[Choose this if you want CBBE body Milking Cuirass ]]>
+							</description>
+							<image path="Fomod\Screens\CBBE.jpg"/>
+							<conditionFlags>
+								<flag name="CBBE">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="01_Body\CBBE" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>				
+						<plugin name="UNPB">
+							<description>
+								<![CDATA[Choose this if you want UNPB body Milking Cuirass]]>
+							</description>
+							<image path="Fomod\Screens\UNPB.jpg"/>
+							<conditionFlags>
+								<flag name="UNPB">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="01_Body\UNPB" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+					</plugins>   
+				</group>
 				<group name="Extra" type="SelectAny">
 					<plugins order="Explicit">			
 						<plugin name="Brown Panty">
