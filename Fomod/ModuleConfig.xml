@@ -99,6 +99,7 @@
 								<![CDATA[No placed milkpumps]]>
 							</description>
 							<conditionFlags>
+								<flag name="MilkumpNone">None</flag>
 							</conditionFlags>
 							<files>
 							</files>
@@ -112,6 +113,7 @@
 							</description>
 							<image path="Fomod\Screens\MPBasic.jpg"/>
 							<conditionFlags>
+								<flag name="MilkumpBasic">Basic</flag>
 							</conditionFlags>
 							<files>
 								<folder source="02_Extra\MilkPumps Basic" destination=""/>
@@ -126,6 +128,7 @@
 							</description>
 							<image path="Fomod\Screens\MPFancy.jpg"/>
 							<conditionFlags>
+								<flag name="MilkumpFancy">Fancy</flag>
 							</conditionFlags>
 							<files>
 								<folder source="02_Extra\MilkPumps Fancy" destination=""/>
