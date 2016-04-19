@@ -1,5 +1,7 @@
 Scriptname MME_Storage Hidden
 
+MilkQUEST Property MilkQ Auto
+
 ; Variables in StorageUtil
 ; float
 ;	MME.MilkMaid.BreastBase
@@ -99,40 +101,54 @@ float function updateMilkCurrent(actor akActor) global
 	Debug.Trace("MME_Storage: Triggered updateMilkCurrent() for actor " + akActor.GetLeveledActorBase().GetName())
 	; intentionally avoiding getMilkCurrent() and fetching value directly
 	float MilkCur = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkCount")
-	float MilkMax = getMilkMaximum(akActor)
 
-	if MilkCur <= MilkMax
-		Debug.Trace("  -> " + MilkCur + " <=  " + MilkMax)
-		return MilkCur
+	if isMilkMaxEnforced(akActor)
+		float MilkMax = getMilkMaximum(akActor)
+		if MilkCur <= MilkMax
+			Debug.Trace("  -> " + MilkCur + " <=  " + MilkMax)
+			return MilkCur
+		else
+			Debug.Trace("  -> " + MilkCur + " >  " + MilkMax)
+			StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", MilkMax)
+			return MilkMax
+		endif
 	else
-		Debug.Trace("  -> " + MilkCur + " >  " + MilkMax)
-		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", MilkMax)
-		return MilkMax
+		return MilkCur
 	endif
 endfunction
 
 function setMilkCurrent(actor akActor, float Value) global
 	Debug.Trace("MME_Storage: Triggered setMilkCurrent() for actor " + akActor.GetLeveledActorBase().GetName())
-	float MilkMax = getMilkMaximum(akActor)
-	if Value <= MilkMax
-		Debug.Trace("  -> " + Value + " <=  " + MilkMax)
-		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", Value)
+
+	if isMilkMaxEnforced(akActor)
+		float MilkMax = getMilkMaximum(akActor)
+		if Value <= MilkMax
+			Debug.Trace("  -> " + Value + " <=  " + MilkMax)
+			StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", Value)
+		else
+			Debug.Trace("  -> " + Value + " >  " + MilkMax)
+			StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", MilkMax)
+		endif
 	else
-		Debug.Trace("  -> " + Value + " >  " + MilkMax)
-		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", MilkMax)
+		Debug.Trace("  -> " + Value + " (no limit enforced)")
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", Value)
 	endif
 endfunction
 
 function changeMilkCurrent(actor akActor, float Delta) global
 	Debug.Trace("MME_Storage: Triggered changeMilkCurrent() for actor " + akActor.GetLeveledActorBase().GetName())
 	float MilkCur = getMilkCurrent(akActor)
-	float MilkMax = getMilkMaximum(akActor)
 
-	if (MilkCur + Delta) <= MilkMax
-		StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkCount", Delta)
+	if isMilkMaxEnforced(akActor)
+		float MilkMax = getMilkMaximum(akActor)
+		if (MilkCur + Delta) <= MilkMax
+			StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkCount", Delta)
+		else
+			Debug.Trace("MME_Storage.changeMilkCurrent(): " + akActor.GetLeveledActorBase().GetName() + " -> " + (MilkCur + Delta) + ">" + MilkMax)
+			StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", MilkMax)
+		endif
 	else
-		Debug.Trace("MME_Storage.changeMilkCurrent(): " + akActor.GetLeveledActorBase().GetName() + " -> " + (MilkCur + Delta) + ">" + MilkMax)
-		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", MilkMax)
+		StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkCount", Delta)
 	endif
 endfunction
 
@@ -151,6 +167,12 @@ float function getMilkMaximum(actor akActor) global
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMaximum", MilkMax)
 		return MilkMax
 	endif
+endfunction
+
+; this function currently just returns the global value - it is intended to
+; return an actor-specific value later on (but use global value as fallback)
+bool function isMilkMaxEnforced(actor akActor) global
+	return MilkQ.BreastScaleLimit
 endfunction
 
 float function getMilkMaxBasevalue(actor akActor) global
