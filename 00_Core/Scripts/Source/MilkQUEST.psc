@@ -88,7 +88,6 @@ Package Property MilkPackage  Auto
 ;UnsetFloatValue(none,"MME.Progression.Level")
 ;UnsetFloatValue(none,"MME.Progression.TimesMilked"
 ;UnsetFloatValue(none,"MME.Progression.TimesMilkedAll")
-;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.Level")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.LactacidCount")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.MaidMilkGen")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.PainCount")
@@ -515,7 +514,7 @@ Function MilkCycle(Actor akActor, int t)
 	Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 	Float MilkMax = MME_Storage.getMilkMaximum(akActor)
 	Float PainCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.PainCount")
-	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level")
+	Float MaidLevel = MME_Storage.getMaidLevel(akActor)
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.TimesMilked")
 
 	Form maidArmor = akActor.GetWornForm(Armor.GetMaskForSlot(32));
@@ -789,7 +788,7 @@ Function CurrentSize(Actor akActor)
 	Float MaidBoobPerLvl = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BoobPerLvl", missing = BoobPerLvl)
 	Float BreastBaseMod = MME_Storage.getBreastsBaseadjust(akActor)
 	Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
-	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level")
+	Float MaidLevel = MME_Storage.getMaidLevel(akActor)
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.TimesMilked")
 	Float CurrentSize
 	Float CurveFix
@@ -910,7 +909,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	Float LactacidMax = MME_Storage.getLactacidMaximum(akActor)
 	Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 	Float MilkMax = MME_Storage.getMilkMaximum(akActor)
-	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level")
+	Float MaidLevel = MME_Storage.getMaidLevel(akActor)
 	Float PainCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.PainCount")
 	Float PainMax = MME_Storage.getPainMaximum(akActor)
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.TimesMilked")
@@ -1463,7 +1462,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		if IsMilkMaid == true
 			MilkCnt = MME_Storage.getMilkCurrent(akActor)
 			LactacidCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.LactacidCount")
-			MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level")
+			MaidLevel = MME_Storage.getMaidLevel(akActor)
 		endif
 		
 		if mode == 0 && MilkingType == 1\
@@ -1609,7 +1608,7 @@ EndFunction
 Function PostMilk(Actor akActor)
 	Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 	Float MilkMax = MME_Storage.getMilkMaximum(akActor)
-	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level")
+	Float MaidLevel = MME_Storage.getMaidLevel(akActor)
 
 	if MilkQC.Buffs != true 
 		if akActor.HasSpell(MilkExhaustion)
@@ -1668,10 +1667,10 @@ EndFunction
 
 Function MaidLevelCheck(Actor akActor)
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.TimesMilked")
-	Float MaidLevel = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.Level")
+	Float MaidLevel = MME_Storage.getMaidLevel(akActor)
 	if MaidLevel < MilkLvlCap || !MaidLvlCap
 		if MaidTimesMilked >= (MaidLevel + 1) * TimesMilkedMult
-			StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.Level", 1)
+			MME_Storage.setMaidLevel(akActor, MaidLevel + 1)
 			StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.TimesMilked", 0)
 			if MilkMsgs && MaidLevel + 1 <= MilkLvlCap
 				debug.Notification(akActor.GetLeveledActorBase().getname() + " has gained a Milk maid level!")
@@ -2444,7 +2443,6 @@ Function MaidRemove(Actor akActor)
 		
 		;remove variables from StorageUtil
 		StorageUtil.UnsetStringValue(akActor,"MME.MilkMaid.Name")
-		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.Level")
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.LactacidCount")
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.MaidMilkGen")
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.PainCount")
@@ -2858,7 +2856,7 @@ EndFunction
 
 int Function Pain(Actor akActor, int pain)
 	Float PainCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.PainCount")
-	Float MaidLevel = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.Level")
+	Float MaidLevel = MME_Storage.getMaidLevel(akActor)
 	Float PainMax = MME_Storage.getPainMaximum(akActor)
 		string who
 		string how

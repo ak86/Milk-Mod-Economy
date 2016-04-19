@@ -327,7 +327,7 @@ function Page_Overview()
 			int i = 0
 			While i < MilkQ.MilkMaid.Length
 				if MilkQ.MilkMaid[i] != None
-					Float MaidLevel = StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.Level")
+					Float MaidLevel = MME_Storage.getMaidLevel(MilkQ.MILKmaid[i])
 					Float MilkCnt = MME_Storage.getMilkCurrent(MilkQ.MILKmaid[i])
 					Float MilkMax = MME_Storage.getMilkMaximum(MilkQ.MILKmaid[i])
 					Float PainCnt = StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.PainCount")
@@ -542,7 +542,7 @@ endfunction
 
 function Page_MilkMaidDebug()
 	Float MaidMilkGen = StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkGen")
-	Float MaidLevel = StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.Level")
+	Float MaidLevel = MME_Storage.getMaidLevel(MaidlistA[MaidIndex])
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.TimesMilked")
 	Float MilkTick = (MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]) + MaidLevel*StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl", missing = MilkQ.BoobPerLvl) + MaidMilkGen)/3 * (1 + MilkQ.SLA.GetActorArousal(MaidlistA[MaidIndex])/100)
 	Float MilkMax = MME_Storage.getMilkMaximum(MaidlistA[MaidIndex])
@@ -3020,15 +3020,15 @@ endState
 
 state Debug_MM_MaidLevel_Slider
 	event OnSliderOpenST()
-		SetSliderDialogStartValue(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.Level"))
+		SetSliderDialogStartValue(MME_Storage.getMaidLevel(MaidlistA[MaidIndex]))
 		SetSliderDialogDefaultValue(0)
 		SetSliderDialogRange(0, 100)
 		SetSliderDialogInterval(1)
 	endEvent
 
 	event OnSliderAcceptST(float value)
-		StorageUtil.SetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.Level", value)
-		SetSliderOptionValueST(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.Level"))
+		MME_Storage.setMaidLevel(MaidlistA[MaidIndex], value)
+		SetSliderOptionValueST(value)
 	endEvent
 endState
 
