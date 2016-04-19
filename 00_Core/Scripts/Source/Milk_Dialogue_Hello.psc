@@ -19,7 +19,7 @@ Actor akSpeaker = akSpeakerRef as Actor
 
 ;checks pc milk
 if MilkQ.PlayerREF.GetLeveledActorBase().GetSex() == 1
-	MilkQ.MilkQC.MME_TargetMilk = StorageUtil.GetFloatValue(MilkQ.PlayerREF,"MME.MilkMaid.MilkCount")
+	MilkQ.MilkQC.MME_TargetMilk = MME_Storage.getMilkCurrent(MilkQ.PlayerREF)
 endif
 
 if akSpeaker.GetLeveledActorBase().GetSex() == 1
@@ -58,7 +58,7 @@ if akSpeaker.GetLeveledActorBase().GetSex() == 1
 	endif
 
 ;checks npc milk
-	MilkQ.MilkQC.MME_SubjectMilk = StorageUtil.GetFloatValue(akSpeaker,"MME.MilkMaid.MilkCount")
+	MilkQ.MilkQC.MME_SubjectMilk = MME_Storage.getMilkCurrent(akSpeaker)
 	
 	if MilkQ.IsNamedMaid(akSpeaker) != 0 && MilkQ.MilkQC.MME_SubjectMilk == 0
 		MilkQ.MilkQC.MME_SubjectMilk = Utility.RandomInt(4)
