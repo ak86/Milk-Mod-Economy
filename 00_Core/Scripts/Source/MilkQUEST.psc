@@ -486,6 +486,21 @@ Function ActorCheck(int t)
 	SendModEvent( "MME_MilkCycleComplete" )
 EndFunction
 
+Function UpdateActors()
+	int idx1 = 0
+	While idx1 < MilkMaid.Length
+		MME_Storage.updateMilkCurrent(MilkMaid[idx1])
+		CurrentSize(MilkMaid[idx1])
+		idx1 = idx1 + 1
+	EndWhile
+	int idx2 = 0
+	While idx2 < MilkSlave.Length
+		MME_Storage.updateMilkCurrent(MilkSlave[idx2])
+		CurrentSize(MilkSlave[idx2])
+		idx2 = idx2 + 1
+	EndWhile
+EndFunction
+
 Function MilkCycle(Actor akActor, int t)
 	Float MilkTick
 	Float MilkTickCycle
@@ -599,11 +614,11 @@ Function MilkCycle(Actor akActor, int t)
 
 	StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.LactacidCount", LactacidCnt)
 	StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.MilkGen", MaidMilkGen)
-	MME_Storage.setMilkCurrent(akActor, MilkCnt)
+	MME_Storage.setMilkCurrent(akActor, MilkCnt, BreastScaleLimit)
 	StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.PainCount", PainCnt)
 
 	; setMilkCurrent() automatically restricts the provided value to the maximum allowed value
-	; and never stores an invalid value (Current > Maximum)
+	; and never stores an invalid value (Current > Maximum) if a maximum value is enforced
 	;  -> make absolutely sure never to use a stale 'MilkCnt' otherwise MilkCnt
 	;     and setMilkCurrent() +will+ diverge at this point
 	;  -> simply comparing known 'MilkCur' and 'MilkMax' is not enough since the maid / slave
@@ -1296,7 +1311,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					MilkCnt = MilkCnt - 1 * gush
 					StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.TimesMilked", 1 * gush)
 					MaidLevelCheck(akActor)
-					MME_Storage.setMilkCurrent(akActor, MilkCnt)
+					MME_Storage.setMilkCurrent(akActor, MilkCnt, BreastScaleLimit)
 					; refetch to make sure we have the correct value (with applied max-limit)
 					; (just to be sure to avoid any chance that there is MilkCnt>MilkMax because the maid
 					;  generates more milk during a milking cycle then is being drained by milking)

@@ -567,11 +567,15 @@ function Page_MilkMaidDebug()
 				AddSliderOptionST("Debug_MM_Maid_MaidBoobPerLvl_Slider", "$MME_MENU_PAGE_Settings_H2_S4", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl"), "{2}")	
 				AddTextOptionST("Debug_MM_Maid_BreastEffectiveSize", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S11", MilkQ.ReduceFloat(MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]) + MaidBreastsBaseadjust + (MilkCnt*StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobIncr", missing = MilkQ.BoobIncr)) + (MaidLevel + (MaidTimesMilked / ((MaidLevel + 1) * MilkQ.TimesMilkedMult))) * StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl", missing = MilkQ.BoobPerLvl)), OPTION_FLAG_DISABLED)
 				AddSliderOptionST("Debug_MM_LactacidCount_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S12", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.LactacidCount"), "{2}")
-				; can MilkMax be updated while MCM page is still open?
-				; (currently shows outdated value if MilkMaxBasevalue or MilkMaxScalefactor has been modified)
-				AddSliderOptionST("Debug_MM_MilkCount_Slider", "Milk stored[Max =" + MilkMax as int + "]:", MilkCnt, "{2}")
-				AddSliderOptionST("Debug_MM_MilkMax_Basevalue_Slider", "Milk Limit (base value):", MME_Storage.getMilkMaxBasevalue(MaidlistA[MaidIndex]), "{2}")
-				AddSliderOptionST("Debug_MM_MilkMax_Scalefactor_Slider", "Milk Limit (level scale factor):", MME_Storage.getMilkMaxScalefactor(MaidlistA[MaidIndex]), "{2}")
+				if MilkQ.BreastScaleLimit
+					; can MilkMax be updated while MCM page is still open?
+					; (currently shows outdated value if MilkMaxBasevalue or MilkMaxScalefactor has been modified)
+					AddSliderOptionST("Debug_MM_MilkCount_Slider", "Milk stored [Max = " + MilkQ.ReduceFloat(MilkMax) + "]:", MilkCnt, "{2}")
+					AddSliderOptionST("Debug_MM_MilkMax_Basevalue_Slider", "Milk Limit (base value):", MME_Storage.getMilkMaxBasevalue(MaidlistA[MaidIndex]), "{2}")
+					AddSliderOptionST("Debug_MM_MilkMax_Scalefactor_Slider", "Milk Limit (level scale factor):", MME_Storage.getMilkMaxScalefactor(MaidlistA[MaidIndex]), "{2}")
+				else
+					AddSliderOptionST("Debug_MM_MilkCount_Slider", "Milk stored [unlimited]:", MilkCnt, "{2}")
+				endif
 				AddSliderOptionST("Debug_MM_MilkGeneration_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S13", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkGen")/3/10, "{2}")
 				AddTextOptionST("Debug_MM_Maid_Lactacid_Milk_Production_PH", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S15", MilkQ.ReduceFloat(MilkTick * MilkQ.MilkProdMod/100), OPTION_FLAG_DISABLED)	
 				AddTextOptionST("Debug_MM_Maid_Lactacid_Milk_Production_PP", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S16", MilkQ.ReduceFloat(MilkTick * MilkQ.MilkProdMod/100 * MilkQ.MilkPoll), OPTION_FLAG_DISABLED)	
@@ -1593,10 +1597,13 @@ state Hotkey_Toggle
 	endEvent
 endState
 
+; this setting also enforces the maximum milk limit
 state BreastScaleLimit_Toggle
 	event OnSelectST()
 		if !MilkQ.BreastScaleLimit
 			MilkQ.BreastScaleLimit = true
+			; make sure MilkCurrent is valid for all actors
+			MilkQ.UpdateActors()
 		else
 			MilkQ.BreastScaleLimit = false
 		endif
@@ -3204,17 +3211,20 @@ state Debug_MM_MilkCount_Slider
 	event OnSliderOpenST()
 		SetSliderDialogStartValue(MME_Storage.getMilkCurrent(MaidlistA[MaidIndex]))
 		SetSliderDialogDefaultValue(0)
-		; use milk limit as maxiumum value for slider
-		; (so it is no longer possible to have a maid with 'MilkCurrent > MilkMaximum')
-		SetSliderDialogRange(0, MME_Storage.getMilkMaximum(MaidlistA[MaidIndex]))
+		if MilkQ.BreastScaleLimit
+			; use maximum milk limit as maximum value for slider
+			; (so it is no longer possible to have a maid with 'MilkCurrent > MilkMaximum')
+			SetSliderDialogRange(0, MME_Storage.getMilkMaximum(MaidlistA[MaidIndex]))
+		else
+			SetSliderDialogRange(0, 100)
+		endif
 		SetSliderDialogInterval(0.01)
 	endEvent
 
 	event OnSliderAcceptST(float value)
-		MME_Storage.setMilkCurrent(MaidlistA[MaidIndex], value)
-		; setMilkCurrent() automatically restricts the provided value to the allowed maximum
-		; -> using getMilkCurrent() guarantees to use the same value for the slider
-		SetSliderOptionValueST(MME_Storage.getMilkCurrent(MaidlistA[MaidIndex]), "{2}")
+		; guaranteed to be 'x <= MilkMax' (if the limit applies)
+		MME_Storage.setMilkCurrent(MaidlistA[MaidIndex], value, MilkQ.BreastScaleLimit)
+		SetSliderOptionValueST(value, "{2}")
 	endEvent
 endState
 

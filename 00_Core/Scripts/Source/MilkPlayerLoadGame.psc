@@ -103,7 +103,7 @@ Event OnVibrateStart(string eventName, string argString, float argNum, form send
 			else
 				StorageUtil.AdjustFloatValue(MilkQ.PlayerREF, "MME.MilkMaid.MilkGen", MilkQ.MilkGenValue/3/10 * gush)
 			endif
-			MME_Storage.changeMilkCurrent(MilkQ.PlayerREF, -1*gush) 
+			MME_Storage.changeMilkCurrent(MilkQ.PlayerREF, -1*gush, MilkQ.BreastScaleLimit)
 			Debug.Notification("Nipple piercing vibrations forces milk from your breasts.")
 			MilkQ.PostMilk(MilkQ.PlayerREF)
 			MilkQ.AddMilkFx(MilkQ.PlayerREF, 2)
@@ -164,7 +164,7 @@ Event OnSexLabOrgasm(String _eventName, String _args, Float _argc, Form _sender)
 					&& ((!MilkQ.DDi.IsMilkingBlocked_Bra(actors[idx]) && !MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(actors[idx]))\
 					|| (MilkQ.DDi.IsMilkingBlocked_Bra(actors[idx]) && MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(actors[idx]))))
 					
-					MME_Storage.changeMilkCurrent(actors[idx], -1)
+					MME_Storage.changeMilkCurrent(actors[idx], -1, MilkQ.BreastScaleLimit)
 					MilkQ.PostMilk(actors[idx])
 					MilkQ.AddMilkFx(actors[idx], 2)
 					
