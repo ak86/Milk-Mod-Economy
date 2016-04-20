@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>10-04-2016</Version>
+  <Version>20-04-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
@@ -38,12 +38,16 @@ Caravan
 *add fertility potion (male/futa cum production, not really useful right now)
 
 Dev change log:
-	v 16-04-2016 git
+	v 20-04-2016 git
+some fixes
+	
+	v 17-04-2016 git
 added Kynesgrove and Karthwasten to economy
 removed keywords form tits armors
 moved pumps to separate esp
 added alternate pumps by EinarrTheRed
 slightly tweaked bound milkpumps script
+some fixes
 
 	v 10-04-2016
 merged with multi-breast addon

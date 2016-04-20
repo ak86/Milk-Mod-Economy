@@ -1,7 +1,6 @@
 Scriptname MilkPlayerLoadGame extends ReferenceAlias  
 
 MilkQUEST Property MilkQ Auto
-GlobalVariable Property MME_Status_Global Auto
 
 ;----------------------------------------------------------------------------
 ;Events
@@ -88,26 +87,27 @@ EndEvent
 ;----------------------------------------------------------------------------
 
 Event OnVibrateStart(string eventName, string argString, float argNum, form sender)
-	If argString == MilkQ.PlayerREF.GetActorBase().GetName() && MilkQ.DDI.IsMilkingBlocked_PiercingsNipple(MilkQ.PlayerREF) && MilkQ.MILKmaid.find(MilkQ.PlayerREF) != -1
-		float MilkCnt = MME_Storage.getMilkCurrent(MilkQ.PlayerREF)
+	Actor akActor = MilkQ.PlayerRef
+	If argString == akActor.GetActorBase().GetName() && MilkQ.DDI.IsMilkingBlocked_PiercingsNipple(akActor) && (MilkQ.MILKmaid.find(akActor) != -1 || MilkQ.MILKSlave.find(akActor) != -1)
+		float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 		If MilkCnt >= 1
 			int gush = (MilkCnt*MilkQ.GushPct/100) as int
 			if gush < 1
 				gush = 1
 			endif
-			if StorageUtil.GetFloatValue(MilkQ.PlayerREF, "MME.MilkMaid.MilkGen") == 0 
+			if StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkGen") == 0 
 				if Utility.RandomInt(0, 100) < 25
-					Debug.Notification(MilkQ.PlayerREF.GetLeveledActorBase().GetName() + "'s breasts has started lactating.")
-					StorageUtil.AdjustFloatValue(MilkQ.PlayerREF, "MME.MilkMaid.MilkGen", MilkQ.MilkGenValue/3/10 * gush)
+					Debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s breasts has started lactating.")
+					StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", MilkQ.MilkGenValue/3/10 * gush)
 				endif
 			else
-				StorageUtil.AdjustFloatValue(MilkQ.PlayerREF, "MME.MilkMaid.MilkGen", MilkQ.MilkGenValue/3/10 * gush)
+				StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", MilkQ.MilkGenValue/3/10 * gush)
 			endif
-			MME_Storage.changeMilkCurrent(MilkQ.PlayerREF, -1*gush, MilkQ.BreastScaleLimit)
+			MME_Storage.changeMilkCurrent(akActor, -1*gush, MilkQ.BreastScaleLimit)
 			Debug.Notification("Nipple piercing vibrations forces milk from your breasts.")
-			MilkQ.PostMilk(MilkQ.PlayerREF)
-			MilkQ.AddMilkFx(MilkQ.PlayerREF, 2)
-			MilkQ.AddLeak(MilkQ.PlayerREF)
+			MilkQ.PostMilk(akActor)
+			MilkQ.AddMilkFx(akActor, 2)
+			MilkQ.AddLeak(akActor)
 		EndIf
 	EndIf
 EndEvent
@@ -258,7 +258,8 @@ Function Maintenance()
 		MilkQ.MilkQC.MME_BreasfeedingAnimationsCheck = False
 		Debug.Trace("MilkModEconomy 3J Breastfeeding animations NOT found")
 	endif
-	MME_Status_Global.SetValue(1)
+	MilkQ.MME_Status_Global.SetValue(1)
+	Debug.Trace("MilkModEconomy status set to " + MilkQ.MME_Status_Global.GetValue() + ", should be 1")
 	Debug.Trace("MilkModEconomy maintenance done")
 EndFunction
 

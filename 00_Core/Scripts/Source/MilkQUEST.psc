@@ -27,6 +27,7 @@ MME_UIE property UIE auto
 Actor Property PlayerREF Auto
 Message Property MakeMilkMaid Auto
 GlobalVariable Property MME_NPCComments Auto
+GlobalVariable Property MME_Status_Global Auto
 
 SPELL Property MilkCritical Auto
 SPELL Property MilkExhaustion Auto
@@ -571,59 +572,39 @@ Function MilkCycle(Actor akActor, int t)
 	If MilkAsMaidTimesMilked
 		StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.TimesMilked", MilkTick)
 		MaidLevelCheck(akActor)
+		MilkMax = MME_Storage.getMilkMaximum(akActor)
 	EndIf
-	; ^--- the maid's / slave's level (and the maximum milk amount) may have increased now
-	; (but the script continues with the old values - unsure whether this is intended or a bug)
 
 	Paintick = MilkTick + MilkMax/10
 	MilkTick = MilkTick + MilkCnt
+	PainCnt = PainCnt - paintick
 	
 	if LactacidCnt < 0
 		LactacidCnt = 0
+	endif
+	
+	if PainCnt < 0
+		PainCnt = 0
 	endif
 
 	RemoveMilkFx1(akActor)
 	RemoveMilkFx2(akActor)
 	SLA.UpdateActorExposure(akActor, t)
 
-	If BreastScaleLimit 
-		if MilkTick > MilkMax && PiercingCheck(akActor) != 2
-			MilkCnt = MilkMax as int
-			AddMilkFx(akActor, 1)
-			AddLeak(akActor)
-		else 
-			MilkCnt = MilkTick
+	if MilkTick > MilkMax && PiercingCheck(akActor) != 2
+		if BreastScaleLimit 
+			MilkCnt = MilkMax
+		else
+			MilkCnt = MilkTick - (MilkTick * GushPct/100) - MilkTick / MilkMax 
 		endif
-	else
-		if MilkTick > MilkMax && PiercingCheck(akActor) != 2
-			MilkTick = MilkTick - 1 * MilkTick / MilkMax
-			; suspicious calculation, please review
-			;  variant a) MilkTick - MilkTick / MilkMax
-			;  variant b) (MilkTick - 1) * MilkTick / MilkMax
-			AddMilkFx(akActor, 1)
-			AddLeak(akActor)
-		endif
-		MilkCnt = MilkTick
+		AddMilkFx(akActor, 1)
+		AddLeak(akActor)
 	endif
-
-	PainCnt = PainCnt - paintick
-	if PainCnt < 0
-		PainCnt = 0
-	endif
-
+	
 	StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.LactacidCount", LactacidCnt)
 	StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.MilkGen", MaidMilkGen)
-	MME_Storage.setMilkCurrent(akActor, MilkCnt, BreastScaleLimit)
 	StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.PainCount", PainCnt)
-
-	; setMilkCurrent() automatically restricts the provided value to the maximum allowed value
-	; and never stores an invalid value (Current > Maximum) if a maximum value is enforced
-	;  -> make absolutely sure never to use a stale 'MilkCnt' otherwise MilkCnt
-	;     and setMilkCurrent() +will+ diverge at this point
-	;  -> simply comparing known 'MilkCur' and 'MilkMax' is not enough since the maid / slave
-	;     may have leveled up (and increased the allowed maximum)
-	MilkCnt = MME_Storage.getMilkCurrent(akActor)
-	MilkMax = MME_Storage.getMilkMaximum(akActor)
+	MME_Storage.setMilkCurrent(akActor, MilkCnt, BreastScaleLimit)
 
 	CurrentSize(akActor)
 	PostMilk(akActor)
