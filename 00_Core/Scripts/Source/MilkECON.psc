@@ -319,7 +319,8 @@ EndFunction
 Form Function GetMilkType(int milkCount, int boobgasmcount, Actor milkMaid)
 	Race maidRace = milkMaid.GetActorBase().GetRace()
 	int i = MilkQ.MilkMaid.Find(milkMaid)
-	Float MaidLevel = StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.Level")
+	Float MaidLevel = MME_Storage.getMaidLevel(MilkQ.MILKmaid[i])
+	Float MilkMax = MME_Storage.getMilkMaximum(MilkQ.MILKmaid[i])
 
 	if MilkQ.MilkQC.MME_SimpleMilkPotions
 		if MilkQ.isSuccubus(milkMaid) || StorageUtil.GetIntValue(milkMaid,"MME.MilkMaid.IsSuccubus") == 1
@@ -365,13 +366,13 @@ Form Function GetMilkType(int milkCount, int boobgasmcount, Actor milkMaid)
 	elseif boobgasmcount == 0
 		if milkCount == 0
 			return None
-		elseif milkCount <= (MaidLevel + 2 ) * 2 * 0.25
+		elseif milkCount <= MilkMax * 0.25
 			return MilkQ.MME_Milk_Basic.GetAt(0)
-		elseif milkCount <= (MaidLevel + 2 ) * 2 * 0.50
+		elseif milkCount <= MilkMax * 0.50
 			return MilkQ.MME_Milk_Basic.GetAt(1)
-		elseif milkCount <= (MaidLevel + 2 ) * 2 * 0.75
+		elseif milkCount <= MilkMax * 0.75
 			return MilkQ.MME_Milk_Basic.GetAt(2)
-		elseif milkCount > (MaidLevel + 2 ) * 2 * 0.75
+		elseif milkCount > MilkMax * 0.75
 			return MilkQ.MME_Milk_Basic.GetAt(3)
 		endif
 	else
