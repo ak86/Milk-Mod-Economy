@@ -534,7 +534,7 @@ int Function GetMarketIndexFromLocation(Location marketLocation)
 	;DLC
 	elseif locName == locHeljarchenHall.GetName() || locName == locWindstadManor.GetName()										;MilkQ.Plugin_HearthFires
 		return 1
-	elseif locName == locLakeviewManor.GetName() ; MilkQ.Plugin_HearthFires && 
+	elseif locName == locLakeviewManor.GetName() 																				;MilkQ.Plugin_HearthFires
 		return 2
 	elseif locName == locFortDawnguard.GetName() || locName == locDayspringCanyon.GetName()										;MilkQ.Plugin_Dawnguard
 		return 5

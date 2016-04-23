@@ -38,6 +38,34 @@ Caravan
 *add fertility potion (male/futa cum production, not really useful right now)
 
 Dev change log:
+	v 23-04-2016 git
+increased cum/semen price to 2gold
+normal MilkPump feeding now requires lactacid
+switched to default simple potions
+ww/vampire/succubus milk, cant be sold through normal trade any more
+some fixes
+
+
+added trade dialogues:
+Khajiits merchants:
+-buy all milk					needs trade script
+-trade Lactacid for milk		+
+orc merchants(wisewoman):
+-buy normal and race milk		needs trade script/dialogue text
+inns:							need to check inns for economy
+-buy race milk					needs trade script/dialogue text
+alchemists: 					needs trade script
+-buy ww/vampire/succubus milk	needs trade script/dialogue text
+-buy cum/semen x2, futa x10		+
+-sell Lactacid for 100g			+
+Fences:
+-buy all milk					needs correct trade script, not count towards economy, prices are higher than normal trade
+farmers:
+-buy normal milk				needs trade script/dialogue text
+-sell Lactacid for 100g			+
+
+
+	
 	v 20-04-2016 git
 some fixes
 	

@@ -167,9 +167,9 @@ Float Property LactacidDecayRate Auto
 FormList Property MME_Cums Auto
 FormList Property MME_Foods Auto
 FormList Property MME_Milks Auto
+FormList Property MME_Milk_Basic Auto
 FormList Property MME_Milk_Altmer Auto
 FormList Property MME_Milk_Argonian Auto
-FormList Property MME_Milk_Basic Auto
 FormList Property MME_Milk_Bosmer Auto
 FormList Property MME_Milk_Breton Auto
 FormList Property MME_Milk_Dunmer Auto
@@ -879,7 +879,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	
 	String akActorGender = akActorSex(akActor)
 	
-	String anivar = ""
+	String anivar = ""						;custom animations by MME for DD belt
 	if DDBeltOpen == true					;--vaginal probe
 		anivar = anivar + "_02"
 	elseif DDBelt == true					;-anal plug -vaginal probe
@@ -1156,8 +1156,13 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		;FEEDING STAGE
 		If Feeding == true && Mode == 0 && akActor.GetLeveledActorBase().GetSex() == 1 && (LactacidCnt < LactacidMax || (FeedOnce && ForcedFeeding))\
 		&& ((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || akActor.IsInLocation(PlayerREF.getCurrentLocation()))\
-		&& (DDGag == false || DDGagOpen == true) && (ZaZGag == false || ZaZGagOpen == true)
-	
+		&& ((DDGag == false || DDGagOpen == true) && (ZaZGag == false || ZaZGagOpen == true))\
+		&& ((MilkingType == 0 && LactacidMax > LactacidCnt && (PlayerREF.GetItemCount(MME_Milks.GetAt(0)) > Math.Floor(LactacidMax - LactacidCnt)\
+		|| akActor.GetItemCount(MME_Milks.GetAt(0)) > Math.Floor(LactacidMax - LactacidCnt)\
+		|| StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") > Math.Floor(LactacidMax - LactacidCnt)))\
+		|| MilkingType == 1 || !IsMilkMaid || akActor.IsInFaction(MilkSlaveFaction))
+			; this doesn't count if both actor and player have lactacid bottles but who cares, no one will ever find xD
+
 			;debug.Notification("feeding cycle")
 			akActor.AddSpell(FeedingStage, false)
 			
@@ -1165,29 +1170,34 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				soundInstance03 = FeedingSound.Play(akActor)
 				Sound.SetInstanceVolume(soundInstance03, 1.0)
 			endif
-			
-			if IsMilkMaid && MilkMsgs && PlayerREF.GetDistance(akActor) < 500
-				debug.Notification(akActor.GetLeveledActorBase().GetName() + " is being fed Lactacid" )
-			endif
 			if MilkingType == 0
 				Debug.SendAnimationEvent(akActor,("ZaZMOMFreeFurn_05"+anivar))
 			elseif MilkingType == 1
 				Debug.SendAnimationEvent(akActor,("ZaZMOMBoundFurn_05"+anivar))
 			endif
+			
+			if IsMilkMaid && MilkMsgs && PlayerREF.GetDistance(akActor) < 500
+				debug.Notification(akActor.GetLeveledActorBase().GetName() + " is being fed Lactacid" )
+			endif
 			sendVibrationEvent("FeedingStage", akActor, mpas, MilkingType)
 
-			if Plugin_SlSW && akActor == PlayerREF && IsMilkMaid == true && !DisableSkoomaLactacid
-				akActor.equipitem(Game.GetFormFromFile(0x57A7A, "Skyrim.esm"),false,true)
-			endif
 			while duration < Feeding_Duration && (((akActor.GetSitState() <= 3 && akActor.GetSitState()) || akActor.IsInLocation(PlayerREF.getCurrentLocation()))|| Mode != 0) && (akActor.HasSpell(BeingMilkedPassive) || !IsMilkMaid)
-				LactacidCnt = LactacidCnt + (MaidLevel+2)/Feeding_Duration
-				Utility.Wait(1.0)
-				duration = duration + 1
+				if IsMilkMaid == true && (PlayerREF.GetItemCount(MME_Milks.GetAt(0)) > 0 || akActor.GetItemCount(MME_Milks.GetAt(0)) > 0 || akActor.IsInFaction(MilkSlaveFaction))
+					akActor.EquipItem(MME_Milks.GetAt(0))
+					if MilkingType == 0 && !akActor.IsInFaction(MilkSlaveFaction)
+						if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1 
+							StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid", -1)
+						elseif IsMilkMaid == true && akActor.GetItemCount(MME_Milks.GetAt(0)) > 0
+							akActor.RemoveItem(MME_Milks.GetAt(0))
+						elseif PlayerREF.GetItemCount(MME_Milks.GetAt(0)) > 0
+							PlayerREF.RemoveItem(MME_Milks.GetAt(0))
+						endif
+					endif
+				endif
+				Utility.Wait(10.0)
+				duration = duration + 10
 			endwhile
 
-			if IsMilkMaid
-				StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.LactacidCount", LactacidCnt)
-			endif
 			duration = 0
 			Sound.StopInstance(soundInstance03)
 			FeedOnce = false
@@ -1198,7 +1208,8 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		endif
 		
 		;MILKING STAGE
-		if (((MilkCnt >= 1 || ((FuckMachine == false || DDBelt == true) && Mode == 0)) || !IsMilkMaid) && (((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || akActor.IsInLocation(PlayerREF.getCurrentLocation())) || Mode > 0))\
+		if (((MilkCnt >= 1 || ((FuckMachine == false || DDBelt == true) && Mode == 0)) || !IsMilkMaid)\
+		&& (((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || akActor.IsInLocation(PlayerREF.getCurrentLocation())) || Mode > 0))\
 		&& IsMilkingBlocked == false && akActor.GetLeveledActorBase().GetSex() == 1\
 		&& ((PainCnt <= PainMax*0.9) || PainKills)
 
@@ -1619,7 +1630,7 @@ Function PostMilk(Actor akActor)
 			akActor.AddSpell(WellMilkedArray[MaidLevel as int], false)
 		elseif MilkCnt / MilkMax >= 0.6
 			int min = Math.Ceiling(MilkMax*0.6)												;ie lv10 cei(14.4) = 14 lv1 cei(3.6) = 4
-			int diff = (MilkCnt - min) as int 													;if its = 0 it means its first tick above 0.6
+			int diff = (MilkCnt - min) as int 												;if its = 0 it means its first tick above 0.6
 			if diff > 24
 				diff = 24
 			endif
@@ -2538,7 +2549,7 @@ Function VarSetup()
 	MilkQC.ExhaustionMode = 0
 	MME_NPCComments.SetValue(0)
 	MilkQC.MME_DialogueMilking = True
-	MilkQC.MME_SimpleMilkPotions = False
+	MilkQC.MME_SimpleMilkPotions = True
 	ForcedFeeding = False
 	FixedMilkGen = False
 	FixedMilkGen4Followers = False
