@@ -672,9 +672,10 @@ Function MilkCycle(Actor akActor, int t)
 	endIf
 EndFunction
 
-Function AssignSlot(Actor akActor)
+Bool Function AssignSlot(Actor akActor)
 	If akActor == PlayerREF
 		MILKmaid[0] = akActor
+		return true
 	Else
 		int i = 1
 		int count = 0
@@ -689,12 +690,13 @@ Function AssignSlot(Actor akActor)
 			MILKmaid[i] = akActor
 		Else
 			Debug.notification("No more Milk Maid slots")
-			return
+			return false
 		Endif
 	EndIf
 	MME_Storage.initializeActor(akActor)
 	Debug.Notification(akActor.GetLeveledActorBase().GetName() + " becomes a Milk Maid")
 	akActor.AddToFaction(MilkMaidFaction)
+	return true
 EndFunction
 
 Function AssignSlotSlave(Actor akActor, Int Level, Float Milk)
@@ -1127,8 +1129,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		if MILKmaid.find(akActor) == -1
 			int ButtonPressed = (MakeMilkMaid).Show()
 			if ButtonPressed == 0
-				AssignSlot(akActor)
-				if MILKmaid.find(akActor) != -1
+				if AssignSlot(akActor)
 					akActor.AddSpell( BeingMilkedPassive, false )
 					IsMilkMaid = true
 				endif
