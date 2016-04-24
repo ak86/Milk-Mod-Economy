@@ -672,29 +672,36 @@ Function MilkCycle(Actor akActor, int t)
 	endIf
 EndFunction
 
-Function AssignSlot(Actor akActor)
+Bool Function AssignSlot(Actor akActor)
 	If akActor == PlayerREF
 		MILKmaid[0] = akActor
+		return true
 	Else
+		int MaxMaids  = Milklvl0fix()
+		int ListCount = MilkMaid.Length
 		int i = 1
-		int count = 0
-		While i < MilkMaid.Length && Milklvl0fix() > count
+
+		Debug.Trace("MilkQUEST.AssignSlot(): MaxMaids = " + MaxMaids + ", ListCount = " + ListCount)
+		While (i <= MaxMaids) && (i < ListCount)
+			Debug.Trace("MilkQUEST.AssignSlot(): Testing slot " + i)
 			If MilkMaid[i] == None
-				count = count + 1
+				Debug.Trace(" ... slot " + i + " is empty.")
+				MME_Storage.initializeActor(akActor)
+				akActor.AddToFaction(MilkMaidFaction)
+				MILKmaid[i] = akActor
+				Debug.Notification(akActor.GetLeveledActorBase().GetName() + " becomes a Milk Maid")
+				Debug.Trace(" ... assigned slot " + i + " to " + akActor.GetLeveledActorBase().GetName())
+				Return True
+			Else
+				Debug.Trace(" ... slot " + i + " is already in use.")
 			EndIf
 			i = i + 1
 		EndWhile
-		i = MILKmaid.Find(none,1)
-		If i != -1 && count >= 1
-			MILKmaid[i] = akActor
-		Else
-			Debug.notification("No more Milk Maid slots")
-			return
-		Endif
+
+		Debug.notification("No more Milk Maid slots")
+		Debug.Trace(" ... unable to find an empty slot for " + akActor.GetLeveledActorBase().GetName())
+		Return False
 	EndIf
-	MME_Storage.initializeActor(akActor)
-	Debug.Notification(akActor.GetLeveledActorBase().GetName() + " becomes a Milk Maid")
-	akActor.AddToFaction(MilkMaidFaction)
 EndFunction
 
 Function AssignSlotSlave(Actor akActor, Int Level, Float Milk)
@@ -1124,11 +1131,11 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 ;-----------------------Feeding/Milking/Fuck machine
 
 	if IsMilkMaid == false && PlayerREF.GetDistance(akActor) < 500		;add npc/recheck player with milkcuirass(since its forced by checkforspriggan)
-		if MILKmaid.find(akActor) != -1
+		if MILKmaid.find(akActor) == -1
 			int ButtonPressed = (MakeMilkMaid).Show()
 			if ButtonPressed == 0
-				AssignSlot(akActor)
-				if MILKmaid.find(akActor) != -1
+				if AssignSlot(akActor)
+					Debug.Trace("MilkQUEST.Milking(): AssignSlot() succeeded.")
 					akActor.AddSpell( BeingMilkedPassive, false )
 					IsMilkMaid = true
 				endif
