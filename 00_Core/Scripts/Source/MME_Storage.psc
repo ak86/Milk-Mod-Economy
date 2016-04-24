@@ -240,7 +240,7 @@ function updateMilkMaximum(actor akActor) global
 	if MilkMax >= MinValue
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMaximum", MilkMax)
 	else
-		Debug.Trace("MilkModEconomy: User provided values would result to MilkMax close to 0.")
+		Debug.Trace("MilkModEconomy: User provided values would result in MilkMax = " + MilkMax)
 		Debug.Trace("MilkModEconomy: Clamping MilkMax to " + MinValue + " instead.")
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMaximum", MinValue)
 	endif
