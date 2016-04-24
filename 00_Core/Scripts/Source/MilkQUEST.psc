@@ -690,7 +690,7 @@ Bool Function AssignSlot(Actor akActor)
 				akActor.AddToFaction(MilkMaidFaction)
 				MILKmaid[i] = akActor
 				Debug.Notification(akActor.GetLeveledActorBase().GetName() + " becomes a Milk Maid")
-				Debug.Trace(" ... assigned slot " + i " to " + akActor.GetLeveledActorBase().GetName())
+				Debug.Trace(" ... assigned slot " + i + " to " + akActor.GetLeveledActorBase().GetName())
 				Return True
 			Else
 				Debug.Trace(" ... slot " + i + " is already in use.")
