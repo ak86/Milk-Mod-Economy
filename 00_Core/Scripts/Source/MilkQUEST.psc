@@ -1124,7 +1124,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 ;-----------------------Feeding/Milking/Fuck machine
 
 	if IsMilkMaid == false && PlayerREF.GetDistance(akActor) < 500		;add npc/recheck player with milkcuirass(since its forced by checkforspriggan)
-		if MILKmaid.find(akActor) != -1
+		if MILKmaid.find(akActor) == -1
 			int ButtonPressed = (MakeMilkMaid).Show()
 			if ButtonPressed == 0
 				AssignSlot(akActor)
