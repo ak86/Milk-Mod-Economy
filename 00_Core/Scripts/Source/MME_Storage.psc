@@ -164,7 +164,7 @@ endfunction
 
 float function getMilkMaxBasevalue(actor akActor) global
 	Debug.Trace("MME_Storage: Triggered getMilkMaxBasevalue() for actor " + akActor.GetLeveledActorBase().GetName())
-	return StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkMax.Basevalue")
+	return StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkMax.Basevalue", missing = 2)
 endfunction
 
 function setMilkMaxBasevalue(actor akActor, float Value) global
@@ -175,7 +175,7 @@ endfunction
 
 float function getMilkMaxScalefactor(actor akActor) global
 	Debug.Trace("MME_Storage: Triggered getMilkMaxScalefactor() for actor " + akActor.GetLeveledActorBase().GetName())
-	return StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkMax.Scalefactor")
+	return StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkMax.Scalefactor", missing = 1)
 endfunction
 
 function setMilkMaxScalefactor(actor akActor, float Value) global
