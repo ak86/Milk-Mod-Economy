@@ -224,19 +224,25 @@ endfunction
 
 ; original formula to calculate the maximum milk limit was '(Level+2)*2'
 float function calculateMilkLimit(actor akActor, float Level) global
-	float BreastCount     = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastCount")
-	float MilkBasevalue   = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkMax.Basevalue")
-	float MilkScalefactor = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkMax.Scalefactor")
+	float BreastCount     = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastCount", missing = 2)
+	float MilkBasevalue   = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkMax.Basevalue", missing = 2)
+	float MilkScalefactor = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkMax.Scalefactor", missing = 1)
 
 	return (MilkBasevalue + Level*MilkScalefactor)*BreastCount
 endfunction
 
 function updateMilkMaximum(actor akActor) global
 	float MilkMax = calculateMilkLimit(akActor, StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.Level"))
-	if MilkMax > 0
+
+	; MilkMax must never be zero, it would lead to errors
+	; (everything greater then 0 is fine, pick a sensible minimum value)
+	float MinValue = 0.5
+	if MilkMax >= MinValue
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMaximum", MilkMax)
 	else
-		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMaximum", 0)
+		Debug.Trace("MilkModEconomy: User provided values would result to MilkMax close to 0.")
+		Debug.Trace("MilkModEconomy: Clamping MilkMax to " + MinValue + " instead.")
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMaximum", MinValue)
 	endif
 	updateMilkCurrent(akActor)
 endfunction
