@@ -2590,8 +2590,10 @@ Function VarSetup()
 
 	NotificationKey = 10
 	HotkeyMode = 0
-	RegisterForKey(NotificationKey)
 	crosshairRef = None
+	
+	RegisterForKey(NotificationKey)
+	RegisterForCrosshairRef()
 
 	MilkE.divnull = 10
 	MilkE.InitializeMilkProperties()

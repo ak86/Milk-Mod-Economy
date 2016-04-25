@@ -38,6 +38,10 @@ Caravan
 *add fertility potion (male/futa cum production, not really useful right now)
 
 Dev change log:
+
+	v 25-04-2016 git
+fixed missing missing RegisterForCrosshairRef()
+	
 	v 23-04-2016 git
 increased cum/semen price to 2gold
 normal MilkPump feeding now requires lactacid
