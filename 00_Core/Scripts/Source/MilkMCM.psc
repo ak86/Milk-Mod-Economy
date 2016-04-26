@@ -3231,7 +3231,7 @@ endState
 state Debug_MM_MilkMax_Basevalue_Slider
 	event OnSliderOpenST()
 		SetSliderDialogStartValue(MME_Storage.getMilkMaxBasevalue(MaidlistA[MaidIndex]))
-		SetSliderDialogDefaultValue(0)
+		SetSliderDialogDefaultValue(2)
 		SetSliderDialogRange(0, 20)
 		SetSliderDialogInterval(0.25)
 	endEvent
@@ -3245,7 +3245,7 @@ endState
 state Debug_MM_MilkMax_Scalefactor_Slider
 	event OnSliderOpenST()
 		SetSliderDialogStartValue(MME_Storage.getMilkMaxScalefactor(MaidlistA[MaidIndex]))
-		SetSliderDialogDefaultValue(0)
+		SetSliderDialogDefaultValue(1)
 		SetSliderDialogRange(-5, 5)
 		SetSliderDialogInterval(0.05)
 	endEvent
