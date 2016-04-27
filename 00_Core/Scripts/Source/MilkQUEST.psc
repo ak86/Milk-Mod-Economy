@@ -2434,7 +2434,6 @@ Function MaidRemove(Actor akActor)
 		EndIf
 		
 		;remove variables from StorageUtil
-		StorageUtil.UnsetStringValue(akActor,"MME.MilkMaid.Name")
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.LactacidCount")
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.MaidMilkGen")
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.PainCount")

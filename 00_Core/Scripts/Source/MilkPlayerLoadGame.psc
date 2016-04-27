@@ -173,7 +173,7 @@ Event OnSexLabOrgasm(String _eventName, String _args, Float _argc, Form _sender)
 						MilkQ.AddLeak(actors[idx])
 					EndIf
 					If MilkQ.MilkMsgs == true
-						Debug.Notification("Orgasm forces milk from " + StorageUtil.GetStringValue(actors[idx],"MME.MilkMaid.Name") + " breasts.")
+						Debug.Notification("Orgasm forces milk from " + actors[idx].GetLeveledActorBase().GetName() + "'s breasts.")
 					EndIf
 				EndIf
 			endif
