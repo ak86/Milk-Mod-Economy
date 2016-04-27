@@ -39,8 +39,8 @@ Event OnObjectEquipped( Form akBaseObject, ObjectReference akReference)
 					Debug.Notification(akArmorName + " attaches to your breasts")
 				endif
 				akActor.AddSpell( MilkQ.MilkForSprigganPassive, false )
-				If StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.LactacidCount") < 1
-					StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.LactacidCount", 1)
+				If MME_Storage.getLactacidCurrent(akActor) < 1
+					MME_Storage.setLactacidCurrent(akActor, 1)
 				EndIf
 			Else
 				if akActor == MilkQ.PlayerREf

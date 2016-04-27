@@ -89,7 +89,6 @@ Package Property MilkPackage  Auto
 ;UnsetFloatValue(none,"MME.Progression.Level")
 ;UnsetFloatValue(none,"MME.Progression.TimesMilked"
 ;UnsetFloatValue(none,"MME.Progression.TimesMilkedAll")
-;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.LactacidCount")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.MaidMilkGen")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.PainCount")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.BreastRows")
@@ -403,7 +402,7 @@ Event OnKeyDown(int keyCode)
 				Debug.Notification("Maid: " + Target.GetLeveledActorBase().GetName()\
 								+ " Milk: " + ReduceFloat(MilkCnt)\
 								+ " Nipples: " + NState(Target) + " [" + (PainCnt/PainMax*100) as int + "%]"\
-								+ " Lactacid: " + ReduceFloat(StorageUtil.GetFloatValue(Target,"MME.MilkMaid.LactacidCount")))
+								+ " Lactacid: " + ReduceFloat(MME_Storage.getLactacidCurrent(Target)))
 			EndIf
 		EndIf
 	EndIf
@@ -507,7 +506,7 @@ Function MilkCycle(Actor akActor, int t)
 	Float PainTick
 	Float BoobTick
 	
-	Float LactacidCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.LactacidCount")
+	Float LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
 	Float MaidMilkGen = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkGen")
 	Float BreastBase = MME_Storage.getBreastsBasevalue(akActor)
 	Float BreastBaseMod = MME_Storage.getBreastsBaseadjust(akActor)
@@ -601,7 +600,7 @@ Function MilkCycle(Actor akActor, int t)
 		AddLeak(akActor)
 	endif
 	
-	StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.LactacidCount", LactacidCnt)
+	MME_Storage.setLactacidCurrent(akActor, LactacidCnt)
 	StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.MilkGen", MaidMilkGen)
 	StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.PainCount", PainCnt)
 	MME_Storage.setMilkCurrent(akActor, MilkCnt, BreastScaleLimit)
@@ -617,7 +616,7 @@ Function MilkCycle(Actor akActor, int t)
 		if (MilkingEquipment.Find(maidArmor.getname()) != -1 || maidArmor == MilkCuirass || maidArmor == MilkCuirassFuta || StringUtil.Find(maidArmor.getname(), "Milk" ) >= 0 || StringUtil.Find(maidArmor.getname(), "Cow" ) >=0)\
 		&& StorageUtil.GetIntValue(akActor,"MME.MilkMaid.MilkingMode") == 2
 			if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") > 0
-				StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.LactacidCount", 1)
+				MME_Storage.changeLactacidCurrent(akActor, 1)
 				StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid", -1)
 				if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid
 					akActor.equipitem(Game.GetFormFromFile(0x57A7A, "Skyrim.esm"),false,true)	;skooma
@@ -634,7 +633,12 @@ Function MilkCycle(Actor akActor, int t)
 		|| StringUtil.Find(maidArmor.getname(), "Tentacle Parasite" ) >= 0\
 		|| BasicLivingArmor.find(maidArmor.getname()) >= 0\
 		|| ParasiteLivingArmor.find(maidArmor.getname()) >= 0
-			StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.LactacidCount", 1 * t)
+			MME_Storage.changeLactacidCurrent(akActor, 1 * t)
+			; which purpose does '1*t' serve in the above statement?
+			; reason                    suggested action
+			;  none                  --> replace with 't'
+			;  conversion to int     --> replace with '(t as int)' to make it more obvious
+			;  ???                   --> describe purpose
 			if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid
 				akActor.equipitem(Game.GetFormFromFile(0x57A7A, "Skyrim.esm"),false,true)	;skooma
 			endif
@@ -664,7 +668,8 @@ Function MilkCycle(Actor akActor, int t)
 	endif
 	
 	If MILKSlave.Find(akActor) != -1
-		StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.LactacidCount", 1 * t)
+		MME_Storage.changeLactacidCurrent(akActor, 1 * t)
+		;  same comment as line 636
 		MilkMax = MME_Storage.getMilkMaximum(akActor)
 		if MilkCnt > MilkMax
 			MilkSelf.cast(akActor)
@@ -886,7 +891,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		anivar = anivar + "_01"
 	endif
 	
-	Float LactacidCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.LactacidCount")
+	Float LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
 	Float LactacidMax = MME_Storage.getLactacidMaximum(akActor)
 	Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 	Float MilkMax = MME_Storage.getMilkMaximum(akActor)
@@ -1424,11 +1429,10 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				PainCnt = (PainCnt * 0.80)
 				if IsMilkMaid == true
 					AddLeak(akActor)
-					StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.LactacidCount", LactacidCnt)
 					if LactacidCnt > 1
-						StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.LactacidCount", - 1)
+						MME_Storage.setLactacidCurrent(akActor, LactacidCnt - 1)
 					else
-						StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.LactacidCount", 0)
+						MME_Storage.setLactacidCurrent(akActor, 0)
 					endif
 					StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.PainCount", PainCnt)
 				endif
@@ -1453,7 +1457,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		
 		if IsMilkMaid == true
 			MilkCnt = MME_Storage.getMilkCurrent(akActor)
-			LactacidCnt = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.LactacidCount")
+			LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
 			MaidLevel = MME_Storage.getMaidLevel(akActor)
 		endif
 		
@@ -2434,7 +2438,6 @@ Function MaidRemove(Actor akActor)
 		EndIf
 		
 		;remove variables from StorageUtil
-		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.LactacidCount")
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.MaidMilkGen")
 		StorageUtil.UnsetFloatValue(akActor,"MME.MilkMaid.PainCount")
 		MME_Storage.deregisterActor(akActor)

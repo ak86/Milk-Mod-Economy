@@ -5,6 +5,7 @@ Scriptname MME_Storage Hidden
 ;	MME.MilkMaid.BreastBase
 ;	MME.MilkMaid.BreastBaseMod
 ;	MME.MilkMaid.BreastCount
+;	MME.MilkMaid.LactacidCount
 ;	MME.MilkMaid.Level
 ;	MME.MilkMaid.MilkCount
 ;	MME.MilkMaid.MilkMaximum
@@ -25,6 +26,7 @@ function initializeActor(actor akActor, float Level = 0.0, float MilkCnt = 0.0) 
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBase", getBreastNodeScale(akActor))
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod", 0)
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastCount", 2)
+	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.LactacidCount", 0)
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.Level", Level)
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", MilkCnt)
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMax.Basevalue", 2)
@@ -39,6 +41,7 @@ function deregisterActor(actor akActor) global
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.BreastBase")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.BreastCount")
+	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.LactacidCount")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.Level")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.MilkCount")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.MilkMaximum")
@@ -73,6 +76,43 @@ endfunction
 function setBreastsBasevalue(actor akActor, float Value) global
 	Debug.Trace("MME_Storage: Triggered setBreastsBasevalue() for actor " + akActor.GetLeveledActorBase().GetName())
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBase", Value)
+endfunction
+
+float function getLactacidCurrent(actor akActor) global
+	Debug.Trace("MME_Storage: Triggered getLactacidCurrent() for actor " + akActor.GetLeveledActorBase().GetName())
+	return StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.LactacidCount")
+endfunction
+
+; verifies whether the provided value is inside the allowed range
+;
+; provided value   resulting 'LactacidCurrent'   return value
+;        x < 0              0                       false
+;   0 <= x <= Max           x                       true
+;        x > Max           Max                      false
+bool function setLactacidCurrent(actor akActor, float Value) global
+	Debug.Trace("MME_Storage: Triggered setLactacidCurrent() for actor " + akActor.GetLeveledActorBase().GetName())
+	float LactacidMax = getLactacidMaximum(akActor)
+
+	if Value < 0
+		Debug.Trace("MME_Storage: Provided values would result in LactacidCurrent = " + Value)
+		Debug.Trace("MME_Storage: Clamping LactacidCurrent to 0 instead.")
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.LactacidCount", 0)
+		return false
+	elseif Value > LactacidMax
+		Debug.Trace("MME_Storage: Provided values would result in LactacidCurrent = " + Value)
+		Debug.Trace("MME_Storage: Clamping LactacidCurrent to " + LactacidMax + " instead.")
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.LactacidCount", LactacidMax)
+		return false
+	else
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.LactacidCount", Value)
+		return true
+	endif
+endfunction
+
+bool function changeLactacidCurrent(actor akActor, float Delta) global
+	Debug.Trace("MME_Storage: Triggered changeLactacidCurrent() for actor " + akActor.GetLeveledActorBase().GetName())
+	float Value = getLactacidCurrent(akActor)
+	return setLactacidCurrent(akActor, Value + Delta)
 endfunction
 
 float function getLactacidMaximum(actor akActor) global
