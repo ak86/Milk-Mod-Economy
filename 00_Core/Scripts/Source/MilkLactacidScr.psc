@@ -20,7 +20,7 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 				endif
 				Debug.Notification( akTarget.GetLeveledActorBase().getname() + " feels revitalised, exhaustion is gone!" )
 			endif
-			StorageUtil.AdjustFloatValue(akTarget,"MME.MilkMaid.LactacidCount", 1)
+			MME_Storage.changeLactacidCurrent(akTarget, 1)
 		else 
 			int ButtonPressed = (MilkQ.MakeMilkMaid).Show()
 			if ButtonPressed == 0
@@ -28,7 +28,7 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 				MilkQ.AssignSlot(akTarget)
 				if MilkQ.MILKmaid.find(akTarget) != -1 
 					Utility.Wait( 1.0 )
-					StorageUtil.AdjustFloatValue(akTarget,"MME.MilkMaid.LactacidCount", 1)
+					MME_Storage.changeLactacidCurrent(akTarget, 1)
 				EndIf
 			EndIf
 			if akTarget == MilkQ.PlayerREF
