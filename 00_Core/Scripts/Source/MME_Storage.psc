@@ -33,6 +33,7 @@ function initializeActor(actor akActor, float Level = 0.0, float MilkCnt = 0.0) 
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMax.Scalefactor", 1)
 	; BreastCount, MilkMax.Basevalue and MilkMax.Scalefactor must be set before 'calculateMilkLimit()'
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMaximum", calculateMilkLimit(akActor, Level))
+	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.PainCount", 0)
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.WeightBase", akActor.GetLeveledActorBase().GetWeight())
 endfunction
 
@@ -47,6 +48,7 @@ function deregisterActor(actor akActor) global
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.MilkMaximum")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.MilkMax.Basevalue")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.MilkMax.Scalefactor")
+	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.PainCount")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.WeightBase")
 endfunction
 
@@ -222,6 +224,37 @@ function setMilkMaxScalefactor(actor akActor, float Value) global
 	Debug.Trace("MME_Storage: Triggered setMilkMaxScalefactor() for actor " + akActor.GetLeveledActorBase().GetName())
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMax.Scalefactor", Value)
 	updateMilkMaximum(akActor)
+endfunction
+
+float function getPainCurrent(actor akActor) global
+	Debug.Trace("MME_Storage: Triggered getPainCurrent() for actor " + akActor.GetLeveledActorBase().GetName())
+	return StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.PainCount")
+endfunction
+
+; verifies whether the provided value is inside the allowed range
+;
+; provided value   resulting 'PainCurrent'   return value
+;        x < 0              0                   false
+;   0 <= x <= Max           x                   true
+;        x > Max           Max                  false
+bool function setPainCurrent(actor akActor, float Value) global
+	Debug.Trace("MME_Storage: Triggered setPainCurrent() for actor " + akActor.GetLeveledActorBase().GetName())
+	float PainMax = getPainMaximum(akActor)
+
+	if Value < 0
+		Debug.Trace("MME_Storage: Provided values would result in PainCurrent = " + Value)
+		Debug.Trace("MME_Storage: Clamping PainCurrent to 0 instead.")
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.PainCount", 0)
+		return false
+	elseif Value > PainMax
+		Debug.Trace("MME_Storage: Provided values would result in PainCurrent = " + Value)
+		Debug.Trace("MME_Storage: Clamping PainCurrent to " + PainMax + " instead.")
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.PainCount", PainMax)
+		return false
+	else
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.PainCount", Value)
+		return true
+	endif
 endfunction
 
 float function getPainMaximum(actor akActor) global

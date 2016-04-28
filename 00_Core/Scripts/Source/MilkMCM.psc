@@ -330,7 +330,7 @@ function Page_Overview()
 					Float MaidLevel = MME_Storage.getMaidLevel(MilkQ.MILKmaid[i])
 					Float MilkCnt = MME_Storage.getMilkCurrent(MilkQ.MILKmaid[i])
 					Float MilkMax = MME_Storage.getMilkMaximum(MilkQ.MILKmaid[i])
-					Float PainCnt = StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.PainCount")
+					Float PainCnt = MME_Storage.getPainCurrent(MilkQ.MILKmaid[i])
 					Float PainMax = MME_Storage.getPainMaximum(MilkQ.MILKmaid[i])
 					AddTextOption(MilkQ.MilkMaid[i].GetLeveledActorBase().GetName(), "")
 					AddTextOption("$MME_MENU_PAGE_Overview_Milkmaid_Level" , MaidLevel as int)
@@ -579,7 +579,7 @@ function Page_MilkMaidDebug()
 				AddSliderOptionST("Debug_MM_MilkGeneration_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S13", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkGen")/3/10, "{2}")
 				AddTextOptionST("Debug_MM_Maid_Lactacid_Milk_Production_PH", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S15", MilkQ.ReduceFloat(MilkTick * MilkQ.MilkProdMod/100), OPTION_FLAG_DISABLED)	
 				AddTextOptionST("Debug_MM_Maid_Lactacid_Milk_Production_PP", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S16", MilkQ.ReduceFloat(MilkTick * MilkQ.MilkProdMod/100 * MilkQ.MilkPoll), OPTION_FLAG_DISABLED)	
-				AddSliderOptionST("Debug_MM_PainCount_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S17", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.PainCount"), "{2}")
+				AddSliderOptionST("Debug_MM_PainCount_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S17", MME_Storage.getPainCurrent(MaidlistA[MaidIndex]), "{2}")
 				AddTextOptionST("Debug_MM_Maid_Pain_Reduction_PH", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S18",  MilkQ.ReduceFloat((MilkTick + MilkMax/10) * MilkQ.MilkProdMod/100), OPTION_FLAG_DISABLED)
 				AddTextOptionST("Debug_MM_Maid_Pain_Reduction_PP", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S19",  MilkQ.ReduceFloat((MilkTick + MilkMax/10) * MilkQ.MilkProdMod/100 * MilkQ.MilkPoll), OPTION_FLAG_DISABLED)
 
@@ -3153,15 +3153,15 @@ endState
 
 state Debug_MM_PainCount_Slider
 	event OnSliderOpenST()
-		SetSliderDialogStartValue(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.PainCount"))
+		SetSliderDialogStartValue(MME_Storage.getPainCurrent(MaidlistA[MaidIndex]))
 		SetSliderDialogDefaultValue(0)
-		SetSliderDialogRange(0, 100)
+		SetSliderDialogRange(0, MME_Storage.getPainMaximum(MaidlistA[MaidIndex]))
 		SetSliderDialogInterval(0.01)
 	endEvent
 
 	event OnSliderAcceptST(float value)
-		StorageUtil.SetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.PainCount", value)
-		SetSliderOptionValueST(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.PainCount"), "{2}")
+		MME_Storage.setPainCurrent(MaidlistA[MaidIndex], value)
+		SetSliderOptionValueST(value, "{2}")
 	endEvent
 endState
 
