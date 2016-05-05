@@ -725,9 +725,7 @@ function Page_PluginChecks()
 		
 		AddTextOption("PSQ PlayerSuccubusQuest", MilkQ.Plugin_PSQ, OPTION_FLAG_DISABLED)
 			if MilkQ.Plugin_PSQ
-				AddTextOption("	SuccubusEnergy", (Game.GetFormFromFile(0x1d89, "PSQ PlayerSuccubusQuest.esm") as GlobalVariable).GetValue(), OPTION_FLAG_DISABLED)
-				AddTextOption("	PlayerIsSuccubus", (Game.GetFormFromFile(0x2850, "PSQ PlayerSuccubusQuest.esm") as GlobalVariable).GetValue(), OPTION_FLAG_DISABLED)
-				AddTextOption("	FemaleSchlong", (Game.GetFormFromFile(0x6460, "PSQ PlayerSuccubusQuest.esm") as Armor).GetName(), OPTION_FLAG_DISABLED)
+				AddTextOption("	PlayerIsSuccubus", (Game.GetFormFromFile(0xDAF, "PSQ PlayerSuccubusQuest.esm") as GlobalVariable).GetValue(), OPTION_FLAG_DISABLED)
 			endif
 		AddTextOption("*PSQ Integration Script", MilkQ.PSQ.IsIntegraged(), OPTION_FLAG_DISABLED)
 		AddTextOption("HentaiPregnancy", MilkQ.Plugin_HentaiPregnancy, OPTION_FLAG_DISABLED)
