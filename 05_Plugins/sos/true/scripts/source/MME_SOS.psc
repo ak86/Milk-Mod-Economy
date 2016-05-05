@@ -14,8 +14,10 @@ bool Function GetSOS(Actor akActor)
 			addon = sosScript.GetActiveAddon(akActor)
 			Faction addonFaction = SOS_Data.GetFaction(addon)
 			if addonFaction != none
-				if addonFaction.getname() !=  "SOS_Addon_InvFemSchlong_Faction" || addonFaction.getname() !=  "SOS_Addon_PHF_Faction"
-					hasSchlong = akActor.IsInFaction(SOS_SchlongifiedFaction)
+				if addonFaction.getname() == "SOS No Schlong for Females" || addonFaction.getname() == "SOS Pubic Hair for Females"
+					return hasSchlong
+				else
+					return akActor.IsInFaction(SOS_SchlongifiedFaction)
 				endif
 			endif
 		endif
@@ -59,7 +61,9 @@ Function IncreaseSOS(Actor akActor)
 			if SOS_Data.GetGender(rndSchlong) == (1 || 2)
 				Faction addonFaction = SOS_Data.GetFaction(rndSchlong)
 				if addonFaction != none
-					if addonFaction.getname() !=  "SOS_Addon_InvFemSchlong_Faction" || addonFaction.getname() !=  "SOS_Addon_PHF_Faction"
+					if addonFaction.getname() == "SOS No Schlong for Females" || addonFaction.getname() == "SOS Pubic Hair for Females"
+						return 
+					else
 						SOS_API.get().SetSchlong(akActor, rndSchlong)
 					endif
 				endif
