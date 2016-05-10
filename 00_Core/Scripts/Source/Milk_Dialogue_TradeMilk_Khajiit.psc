@@ -6,14 +6,11 @@ Scriptname Milk_Dialogue_TradeMilk_Khajiit Extends TopicInfo Hidden
 Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
-AKSpeaker.AddToFaction(Game.GetFormFromFile(0x6D620, "MilkModNEW.esp") as faction)
-AKSpeaker.ShowBarterMenu()
-utility.wait(1)
-AKSpeaker.RemoveFromFaction(Game.GetFormFromFile(0x6D620, "MilkModNEW.esp") as faction)
+MilkQ.MilkE.InitiateDialogueTrade(MilkQ.PlayerREF, 5)
 ;END CODE
 EndFunction
 ;END FRAGMENT
 
 ;END FRAGMENT CODE - Do not edit anything between this and the begin comment
 
-Quest Property MilkQ  Auto  
+MilkQuest Property MilkQ  Auto  

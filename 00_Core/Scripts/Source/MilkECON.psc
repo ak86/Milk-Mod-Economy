@@ -5,6 +5,8 @@ MilkQUEST Property MilkQ Auto
 
 MiscObject Property Gold Auto
 Message Property MilkTrade Auto
+Message Property MilkTradeDialogue Auto
+Message Property MilkTradeDialogue5 Auto
 
 int Property MilkEcoCaravan Auto
 int Property MilkEcoDawnstar Auto
@@ -34,18 +36,34 @@ Perk Property Haggling40 Auto
 Perk Property Haggling60 Auto
 Perk Property Haggling80 Auto
 
-Location Property locDawnstar Auto
-Location Property locWindpeakInn Auto
-Location Property locDawnstarSanctuary Auto
-Location Property locFalkreath Auto
-Location Property locDeadMansDrink Auto
-Location Property locMarkarth Auto
-Location Property locOldHroldan Auto
-Location Property locOldHroldanInn Auto
+;Inns
+Location Property DawnstarWindpeakInnLocation Auto
+Location Property FalkreathDeadMansDrinkLocation Auto
+Location Property OldHroldanInnLocation Auto
+Location Property MarkarthSilverBloodInnLocation Auto
+Location Property RiftenBeeandBarbLocation Auto
+Location Property IvarsteadVilemyrInnLocation Auto
+Location Property DragonBridgeFourShieldsTavernLocation Auto
+Location Property MorthalMoorsideInnLocation Auto
+Location Property SolitudeWinkingSkeeverLocation Auto
+Location Property RiverwoodSleepingGiantInnLocation Auto
+Location Property WhiterunBanneredMareLocation Auto
+Location Property RoriksteadFrostfruitInnLocation Auto
+Location Property WindhelmCandlehearthHallLocation Auto
+Location Property WindhelmNewGnisisCornerclubLocation Auto
+Location Property WinterholdTheFrozenHearthLocation Auto
+Location Property KynesgroveBraidwoodInnLocation Auto
+;orc
 Location Property locMorKhazgur Auto
 Location Property locDushnikhYal Auto
 Location Property locNarzulbur Auto
 Location Property locLargashbur Auto
+;skyrim
+Location Property locDawnstar Auto
+Location Property locDawnstarSanctuary Auto
+Location Property locFalkreath Auto
+Location Property locMarkarth Auto
+Location Property locOldHroldan Auto
 Location Property locRiften Auto
 Location Property locShorsStone Auto
 Location Property locSolitude Auto
@@ -53,14 +71,10 @@ Location Property locDragonBridge Auto
 Location Property locMorthal Auto
 Location Property locWhiterun Auto
 Location Property locRiverwood Auto
-Location Property locSleepingGiantInn Auto
 Location Property locRorikstead Auto
 Location Property locWindhelm Auto
 Location Property locWinterhold Auto
-Location Property locTheFrozenHearth Auto
 Location Property locCollegeofWinterhold Auto
-Location Property locFourShieldsTavern Auto
-Location Property locFrostfruitInn Auto
 Location Property locKynesgrove Auto
 Location Property locKarthwasten Auto
 ;HF DLC
@@ -81,6 +95,7 @@ Potion Property OverMilkingEff Auto
 Potion Property MilkpumpFeedingBottle Auto
 
 FormList Property MME_Races Auto
+Formlist Property MilkTypeFormList Auto
 
 ;Length - 10
 Int[] PrevMilkEcos
@@ -248,6 +263,127 @@ Function InitiateTrade(int MilkCount, int boobgasmcount, Actor akActor, bool mob
 	endif
 endFunction
 
+Function InitiateDialogueTrade(Actor akActor, int MilkType)
+	;MilkType=1 - normal milk
+	;MilkType=2 - race milk 
+	;MilkType=3 - both milk(1+2)
+	;MilkType=4 - vampire/ww/succ milk
+	;MilkType=5 - fence milk(all)
+	
+	Potion finalPotion
+	int i
+	int raceIndex
+	int finalQty
+	int upkeep
+	int baseTrade
+	int finalbaseTrade
+	int milkTax
+	int ButtonPressed = 1
+	MilkTypeFormList.revert()
+	
+	if MilkQ.MilkQC.MME_SimpleMilkPotions == true && (MilkType == 1 || MilkType == 2)	;fix if user has normal potions and have SimpleMilkPotions enabled
+		MilkType = 3
+	endif
+	
+	if MilkType == 1
+		MilkTypeFormList = MilkQ.MME_Milk_Basic
+	elseif MilkType == 2
+		MilkTypeFormList = MilkQ.MME_Milk_Race
+	elseif MilkType == 3
+		i = 0
+		while i < MilkQ.MME_Milk_Basic.GetSize()
+			MilkTypeFormList.AddForm(MilkQ.MME_Milk_Basic.GetAt(i))
+			i = i + 1
+		endwhile
+		i = 0
+		while i < MilkQ.MME_Milk_Race.GetSize()
+			MilkTypeFormList.AddForm(MilkQ.MME_Milk_Race.GetAt(i))
+			i = i + 1
+		endwhile
+	elseif MilkType == 4
+		MilkTypeFormList = MilkQ.MME_Milk_Special
+	elseif MilkType == 5
+		i = 0
+		while i < MilkQ.MME_Milk_Basic.GetSize()
+			MilkTypeFormList.AddForm(MilkQ.MME_Milk_Basic.GetAt(i))
+			i = i + 1
+		endwhile
+		i = 0
+		while i < MilkQ.MME_Milk_Race.GetSize()
+			MilkTypeFormList.AddForm(MilkQ.MME_Milk_Race.GetAt(i))
+			i = i + 1
+		endwhile
+		i = 0
+		while i < MilkQ.MME_Milk_Special.GetSize()
+			MilkTypeFormList.AddForm(MilkQ.MME_Milk_Special.GetAt(i))
+			i = i + 1
+		endwhile
+	endif
+	Utility.wait(1)
+		
+	i = 0
+	int marketIndex = GetMarketIndexFromLocation(akActor.GetCurrentLocation())
+		Debug.Notification("1 " + MilkTypeFormList.GetSize())
+	while i < MilkTypeFormList.GetSize()
+		if akActor.GetItemCount(MilkTypeFormList.GetAt(i)) > 0
+			finalPotion = MilkTypeFormList.GetAt(i) as potion
+			finalQty = akActor.GetItemCount(MilkTypeFormList.GetAt(i))
+			;Debug.Notification(akActor.GetItemCount(MilkTypeFormList.GetAt(i)) + " " + (MilkTypeFormList.GetAt(i) as potion).GetName())
+			raceIndex = GetRaceIndexFromMilk(finalPotion)
+			upkeep = upkeep + GetUpKeepCost(akActor.GetItemCount(MilkTypeFormList.GetAt(i)))
+			baseTrade = CalculateBaseTrade(finalPotion, finalQty) * MilkQ.MilkPriceMod
+			if MilkDemands[marketIndex] == raceIndex								; multiply value of baseTrade after tax is calculated
+				finalbaseTrade = baseTrade * 3
+			else
+				finalbaseTrade = baseTrade
+			endif
+			milkTax = CalculateServiceTax(marketIndex, finalbaseTrade)
+		endif
+		i = i + 1
+	endwhile
+	;Debug.Notification("marketIndex "+marketIndex+" MilkDemands[marketIndex] "+MilkDemands[marketIndex]+" raceIndex "+raceIndex)
+	;Debug.Notification("upkeep "+upkeep+" baseTrade "+baseTrade+" finalbaseTrade "+finalbaseTrade)
+
+	if MilkType == 5 || marketIndex == 4  || marketIndex == 0
+		upkeep = 0
+		milkTax = 0
+		ButtonPressed = (MilkTradeDialogue5).Show(finalbaseTrade)
+	else
+		ButtonPressed = (MilkTradeDialogue).Show(finalbaseTrade, upkeep, milkTax)
+	endif
+	if ButtonPressed == 0
+		SellMilkDialogue(marketIndex, finalbaseTrade, milkTax , upkeep, akActor)
+		RemoveMilk(akActor)
+	endif
+endFunction
+
+Function RemoveMilk(Actor akActor)
+	int i = 0
+	while i < MilkTypeFormList.GetSize()
+		if akActor.GetItemCount(MilkTypeFormList.GetAt(i)) > 0
+			akActor.removeitem(MilkTypeFormList.GetAt(i), akActor.GetItemCount(MilkTypeFormList.GetAt(i)))
+		endif
+		i = i + 1
+	endwhile
+endFunction
+
+Function SellMilkDialogue(int marketIndex, int baseTrade, int milkTax, int upkeep, Actor akActor)
+	int finalPayout = baseTrade
+	finalPayout = finalPayout - milkTax - upkeep
+	if finalPayout < 0
+		finalPayout = 0
+	endif
+	akActor.AddItem(Gold, finalPayout)
+	
+	if upkeep > 0
+		akActor.RemoveItem(Gold, upkeep, true)
+		Debug.Notification("You've made " + finalPayout + " gold. You've been charged " + upkeep + " gold for upkeep.")
+	else
+		Debug.Notification("You've made " + finalPayout + " gold.")
+	endif
+	UpdateEconomy(marketIndex, baseTrade)
+endFunction
+
 Function SellMilk(int marketIndex, int baseTrade, int milkTax, int upkeep, Actor akActor)
 	UpdateEconomy(marketIndex, baseTrade)
 
@@ -318,70 +454,21 @@ EndFunction
 
 Form Function GetMilkType(int milkCount, int boobgasmcount, Actor milkMaid)
 	Race maidRace = milkMaid.GetActorBase().GetRace()
-	int i = MilkQ.MilkMaid.Find(milkMaid)
-	Float MaidLevel = MME_Storage.getMaidLevel(MilkQ.MILKmaid[i])
-	Float MilkMax = MME_Storage.getMilkMaximum(MilkQ.MILKmaid[i])
-
+	Float MaidLevel = MME_Storage.getMaidLevel(milkMaid)
+	Float MilkMax = MME_Storage.getMilkMaximum(milkMaid)
+	
 	if MilkQ.MilkQC.MME_SimpleMilkPotions
+		boobgasmcount = boobgasmcount + milkCount
+	endif
+	
+	if boobgasmcount > 0
+		;mod detection || mcm manual override
 		if MilkQ.isSuccubus(milkMaid) || StorageUtil.GetIntValue(milkMaid,"MME.MilkMaid.IsSuccubus") == 1
 			return MilkQ.MME_Milk_Succubus.GetAt(0)
 		elseif MilkQ.isVampire(milkMaid) || StorageUtil.GetIntValue(milkMaid,"MME.MilkMaid.IsVampire") == 1
 			return MilkQ.MME_Milk_Vampire.GetAt(0)
 		elseif MilkQ.isWerewolf(milkMaid) || StorageUtil.GetIntValue(milkMaid,"MME.MilkMaid.IsWerewolf") == 1
 			return MilkQ.MME_Milk_Werewolf.GetAt(0)
-;drugs and alcohol
-;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.Skooma") > 0
-;			return MilkQ.MME_Milk_Werewolf.GetAt(0)
-;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.LeafSkooma") > 0
-;			return MilkQ.MME_Milk_Werewolf.GetAt(0)
-;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.Mead") > 0
-;			return MilkQ.MME_Milk_Werewolf.GetAt(0)
-;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.BBMead") > 0
-;			return MilkQ.MME_Milk_Werewolf.GetAt(0)
-
-		elseif maidRace == MME_Races.GetAt(0)
-			return MilkQ.MME_Milk_Altmer.GetAt(0)
-		elseif maidRace == MME_Races.GetAt(1)
-			return MilkQ.MME_Milk_Argonian.GetAt(0)
-		elseif maidRace == MME_Races.GetAt(2)
-			return MilkQ.MME_Milk_Bosmer.GetAt(0)
-		elseif maidRace == MME_Races.GetAt(3)
-			return MilkQ.MME_Milk_Breton.GetAt(0)
-		elseif maidRace == MME_Races.GetAt(4)
-			return MilkQ.MME_Milk_Dunmer.GetAt(0)
-		elseif maidRace == MME_Races.GetAt(5)
-			return MilkQ.MME_Milk_Imperial.GetAt(0)
-		elseif maidRace == MME_Races.GetAt(6)
-			return MilkQ.MME_Milk_Khajiit.GetAt(0)
-		elseif maidRace == MME_Races.GetAt(7)
-			return MilkQ.MME_Milk_Nord.GetAt(0)
-		elseif maidRace == MME_Races.GetAt(8)
-			return MilkQ.MME_Milk_Orc.GetAt(0)
-		elseif maidRace == MME_Races.GetAt(9)
-			return MilkQ.MME_Milk_Redguard.GetAt(0)
-		else 	;maidRace = CustomRace
-			return MilkQ.MME_Milk_Exotic.GetAt(0)
-		endif
-		
-	elseif boobgasmcount == 0
-		if milkCount == 0
-			return None
-		elseif milkCount <= MilkMax * 0.25
-			return MilkQ.MME_Milk_Basic.GetAt(0)
-		elseif milkCount <= MilkMax * 0.50
-			return MilkQ.MME_Milk_Basic.GetAt(1)
-		elseif milkCount <= MilkMax * 0.75
-			return MilkQ.MME_Milk_Basic.GetAt(2)
-		elseif milkCount > MilkMax * 0.75
-			return MilkQ.MME_Milk_Basic.GetAt(3)
-		endif
-	else
-		if MilkQ.isSuccubus(milkMaid) || StorageUtil.GetIntValue(milkMaid,"MME.MilkMaid.IsSuccubus") == 1
-			return MilkQ.MME_Milk_Succubus.GetAt(1)
-		elseif MilkQ.isVampire(milkMaid) || StorageUtil.GetIntValue(milkMaid,"MME.MilkMaid.IsVampire") == 1
-			return MilkQ.MME_Milk_Vampire.GetAt(1)
-		elseif MilkQ.isWerewolf(milkMaid) || StorageUtil.GetIntValue(milkMaid,"MME.MilkMaid.IsWerewolf") == 1
-			return MilkQ.MME_Milk_Werewolf.GetAt(1)
 
 ;drugs and alcohol
 ;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.Skooma") > 0
@@ -416,11 +503,25 @@ Form Function GetMilkType(int milkCount, int boobgasmcount, Actor milkMaid)
 		else 	;maidRace = Custom Race
 			return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Exotic, MaidLevel)
 		endif
+	else
+		if milkCount == 0
+			return None
+		elseif milkCount <= MilkMax * 0.25
+			return MilkQ.MME_Milk_Basic.GetAt(0)
+		elseif milkCount <= MilkMax * 0.50
+			return MilkQ.MME_Milk_Basic.GetAt(1)
+		elseif milkCount <= MilkMax * 0.75
+			return MilkQ.MME_Milk_Basic.GetAt(2)
+		elseif milkCount > MilkMax * 0.75
+			return MilkQ.MME_Milk_Basic.GetAt(3)
+		endif
 	endif
 EndFunction
 
 Form Function GetMilkTypeHelper(int milkCount, Formlist FLST, float MaidLevel)
-	if MaidLevel < 3
+	if MilkQ.MilkQC.MME_SimpleMilkPotions
+		return FLST.GetAt(0)
+	elseif MaidLevel < 3
 		return FLST.GetAt(1)
 	elseif MaidLevel < 6
 		return FLST.GetAt(2)
@@ -500,6 +601,7 @@ EndFunction
 int Function CalculateServiceTaxHelper(int varEco, int basePayout)
 	float fBasePayout = basePayout as float
 	int fee = 0
+	
 	if varEco < 0
 		fee = (fBasePayout * 0.8) as int
 	elseif varEco < 200/(MilkQ.TimesMilkedMult/divnull)
@@ -509,26 +611,37 @@ int Function CalculateServiceTaxHelper(int varEco, int basePayout)
 	elseif varEco < 600/(MilkQ.TimesMilkedMult/divnull)
 		fee = (fBasePayout * 0.1) as int
 	endif
+	
 	return fee
 EndFunction
 
 int Function GetMarketIndexFromLocation(Location marketLocation)
 	string locName = marketLocation.GetName()
-	if locName == locDawnstar.GetName() || locName == locWindpeakInn.GetName() || locName == locDawnstarSanctuary.GetName()
+	
+	;milkpump locations
+	;inn locations
+	if locName == locDawnstar.GetName() || locName == locDawnstarSanctuary.GetName()\
+	|| locName == DawnstarWindpeakInnLocation.GetName()
 		return 1
-	elseif locName == locFalkreath.GetName() || locName == locWindpeakInn.GetName()
+	elseif locName == locFalkreath.GetName()\
+	|| locName == FalkreathDeadMansDrinkLocation.GetName()
 		return 2
-	elseif locName == locMarkarth.GetName() || locName == locOldHroldan.GetName() || locName == locOldHroldanInn.GetName() || locName == locKarthwasten.GetName()
+	elseif locName == locMarkarth.GetName() || locName == locOldHroldan.GetName() || locName == locKarthwasten.GetName()\
+	|| locName == OldHroldanInnLocation.GetName() || locName == MarkarthSilverBloodInnLocation.GetName()
 		return 3
 	elseif locName == locMorKhazgur.GetName() || locName == locDushnikhYal.GetName() || locName == locNarzulbur.GetName() || locName == locLargashbur.GetName()
 		return 4
-	elseif locName == locRiften.GetName() || locName == locShorsStone.GetName()
+	elseif locName == locRiften.GetName() || locName == locShorsStone.GetName()\
+	|| locName == RiftenBeeandBarbLocation.GetName() || locName == IvarsteadVilemyrInnLocation.GetName()
 		return 5
-	elseif locName == locSolitude.GetName() || locName == locDragonBridge.GetName() || locName == locFourShieldsTavern.GetName() || locName == locMorthal.GetName()
+	elseif locName == locSolitude.GetName() || locName == locDragonBridge.GetName() || locName == locMorthal.GetName()\
+	|| locName == DragonBridgeFourShieldsTavernLocation.GetName() || locName == MorthalMoorsideInnLocation.GetName() || locName == SolitudeWinkingSkeeverLocation.GetName()
 		return 6
-	elseif locName == locWhiterun.GetName() || locName == locRiverwood.GetName() || locName == locSleepingGiantInn.GetName() || locName == locRorikstead.GetName() || locName == locFrostfruitInn.GetName()
+	elseif locName == locWhiterun.GetName() || locName == locRiverwood.GetName() || locName == locRorikstead.GetName()\
+	|| locName == RiverwoodSleepingGiantInnLocation.GetName() || locName == WhiterunBanneredMareLocation.GetName() || locName == RoriksteadFrostfruitInnLocation.GetName()
 		return 7
-	elseif locName == locWindhelm.GetName() || locName == locWinterhold.GetName() || locName == locTheFrozenHearth.GetName() || locName == locCollegeofWinterhold.GetName() || locName == locKynesgrove.GetName()
+	elseif locName == locWindhelm.GetName() || locName == locWinterhold.GetName() || locName == locCollegeofWinterhold.GetName() || locName == locKynesgrove.GetName()\
+	|| locName == WindhelmCandlehearthHallLocation.GetName() || locName == WindhelmNewGnisisCornerclubLocation.GetName() || locName == WinterholdTheFrozenHearthLocation.GetName() || locName == KynesgroveBraidwoodInnLocation.GetName()
 		return 8
 		
 	;DLC
@@ -549,28 +662,62 @@ EndFunction
 
 int Function GetRaceIndexFromRace(Race maidRace)
 
-	if maidRace == MME_Races.GetAt(0)
+	if maidRace == MME_Races.GetAt(0)	;highelf
 		return 1
-	elseif maidRace == MME_Races.GetAt(1)
+	elseif maidRace == MME_Races.GetAt(1)	;argonian
 		return 2
-	elseif maidRace == MME_Races.GetAt(2)
+	elseif maidRace == MME_Races.GetAt(2)	;woodelf
 		return 3
-	elseif maidRace == MME_Races.GetAt(3)
+	elseif maidRace == MME_Races.GetAt(3)	;breton
 		return 4
-	elseif maidRace == MME_Races.GetAt(4)
+	elseif maidRace == MME_Races.GetAt(4)	;darkelf
 		return 5
-	elseif maidRace == MME_Races.GetAt(5)
+	elseif maidRace == MME_Races.GetAt(5)	;imperial
 		return 6
-	elseif maidRace == MME_Races.GetAt(6)
+	elseif maidRace == MME_Races.GetAt(6)	;khajiit
 		return 7
-	elseif maidRace == MME_Races.GetAt(7)
+	elseif maidRace == MME_Races.GetAt(7)	;nord
 		return 8
-	elseif maidRace == MME_Races.GetAt(8)
+	elseif maidRace == MME_Races.GetAt(8)	;orc
 		return 9
-	elseif maidRace == MME_Races.GetAt(9)
+	elseif maidRace == MME_Races.GetAt(9)	;redguard
 		return 10
-	else 				;maidRace == CustomRace
+	else 									;exotic
 		return 11
+	endif
+EndFunction
+
+int Function GetRaceIndexFromMilk(Potion Milk)
+	if MilkQ.MME_Milk_Altmer.Find(Milk) != -1			;highelf
+		return 1
+	elseif MilkQ.MME_Milk_Argonian.Find(Milk) != -1		;argonian
+		return 2
+	elseif MilkQ.MME_Milk_Bosmer.Find(Milk) != -1		;woodelf
+		return 3
+	elseif MilkQ.MME_Milk_Breton.Find(Milk) != -1		;breton
+		return 4
+	elseif MilkQ.MME_Milk_Dunmer.Find(Milk) != -1		;darkelf
+		return 5
+	elseif MilkQ.MME_Milk_Imperial.Find(Milk) != -1		;imperial
+		return 6
+	elseif MilkQ.MME_Milk_Khajiit.Find(Milk) != -1		;khajiit
+		return 7
+	elseif MilkQ.MME_Milk_Nord.Find(Milk) != -1			;nord
+		return 8
+	elseif MilkQ.MME_Milk_Orc.Find(Milk) != -1			;orc
+		return 9
+	elseif MilkQ.MME_Milk_Redguard.Find(Milk) != -1		;redguard
+		return 10
+	elseif MilkQ.MME_Milk_Vampire.Find(Milk) != -1		;vampire
+		return 11
+	elseif MilkQ.MME_Milk_Werewolf.Find(Milk) != -1		;werewolf
+		return 12
+	elseif MilkQ.MME_Milk_Succubus.Find(Milk) != -1		;succubus
+		return 13
+	elseif MilkQ.MME_Milk_Exotic.Find(Milk) != -1		;exotic
+		return 13
+	else 												;basic
+		return 14
 	endif
 EndFunction
 
@@ -579,29 +726,32 @@ Function UpdateEconomy(int marketIndex, int basePayout)
 	; Cannot count on the arrays
 	
 	if marketIndex == 0
-		newValue = MilkEcoCaravan - basePayout
+		newValue = MilkEcoCaravan
 	elseif marketIndex == 1
-		newValue = MilkEcoDawnstar - basePayout
+		newValue = MilkEcoDawnstar
 	elseif marketIndex == 2
-		newValue = MilkEcoFalkreath - basePayout
+		newValue = MilkEcoFalkreath 
 	elseif marketIndex == 3
-		newValue = MilkEcoMarkarth - basePayout
+		newValue = MilkEcoMarkarth
 	elseif marketIndex == 4
-		newValue = MilkEcoOrc - basePayout
+		newValue = MilkEcoOrc
 	elseif marketIndex == 5
-		newValue = MilkEcoRiften - basePayout
+		newValue = MilkEcoRiften
 	elseif marketIndex == 6
-		newValue = MilkEcoSolitude - basePayout
+		newValue = MilkEcoSolitude
 	elseif marketIndex == 7
-		newValue = MilkEcoWhiterun - basePayout
+		newValue = MilkEcoWhiterun
 	elseif marketIndex == 8
-		newValue = MilkEcoWindhelm - basePayout
+		newValue = MilkEcoWindhelm
 	elseif marketIndex == 9
-		newValue = MilkEcoMorrowind - basePayout
+		newValue = MilkEcoMorrowind
 	endif	
 
-	if newValue < -500/(MilkQ.TimesMilkedMult/divnull)
-		newValue = -500/(MilkQ.TimesMilkedMult/divnull)
+	newValue = newValue - basePayout
+	if divnull != 0 && MilkQ.TimesMilkedMult != 0
+		if newValue < -500/(MilkQ.TimesMilkedMult/divnull)
+			newValue = -500/(MilkQ.TimesMilkedMult/divnull)
+		endif
 	endif
 
 	if newValue < 0 && MilkQ.MilkEMsgs

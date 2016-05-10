@@ -166,6 +166,8 @@ FormList Property MME_Cums Auto
 FormList Property MME_Foods Auto
 FormList Property MME_Milks Auto
 FormList Property MME_Milk_Basic Auto
+FormList Property MME_Milk_Race Auto
+FormList Property MME_Milk_Special Auto		;MME_Milk_Succubus+MME_Milk_Vampire+MME_Milk_Werewolf
 FormList Property MME_Milk_Altmer Auto
 FormList Property MME_Milk_Argonian Auto
 FormList Property MME_Milk_Bosmer Auto
@@ -1161,9 +1163,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		If Feeding == true && Mode == 0 && akActor.GetLeveledActorBase().GetSex() == 1 && (LactacidCnt < LactacidMax || (FeedOnce && ForcedFeeding))\
 		&& ((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || akActor.IsInLocation(PlayerREF.getCurrentLocation()))\
 		&& ((DDGag == false || DDGagOpen == true) && (ZaZGag == false || ZaZGagOpen == true))\
-		&& ((MilkingType == 0 && LactacidMax > LactacidCnt && (PlayerREF.GetItemCount(MME_Milks.GetAt(0)) > Math.Floor(LactacidMax - LactacidCnt)\
-		|| akActor.GetItemCount(MME_Milks.GetAt(0)) > Math.Floor(LactacidMax - LactacidCnt)\
-		|| StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") > Math.Floor(LactacidMax - LactacidCnt)))\
+		&& ((MilkingType == 0 && LactacidMax > LactacidCnt && (PlayerREF.GetItemCount(MME_Milks.GetAt(0)) > 0 || akActor.GetItemCount(MME_Milks.GetAt(0)) > 0 || StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1))\
 		|| MilkingType == 1 || !IsMilkMaid || akActor.IsInFaction(MilkSlaveFaction))
 			; this doesn't count if both actor and player have lactacid bottles but who cares, no one will ever find xD
 
@@ -1186,20 +1186,31 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			sendVibrationEvent("FeedingStage", akActor, mpas, MilkingType)
 
 			while duration < Feeding_Duration && (((akActor.GetSitState() <= 3 && akActor.GetSitState()) || akActor.IsInLocation(PlayerREF.getCurrentLocation()))|| Mode != 0) && (akActor.HasSpell(BeingMilkedPassive) || !IsMilkMaid)
-				if IsMilkMaid == true && (PlayerREF.GetItemCount(MME_Milks.GetAt(0)) > 0 || akActor.GetItemCount(MME_Milks.GetAt(0)) > 0 || akActor.IsInFaction(MilkSlaveFaction))
-					akActor.EquipItem(MME_Milks.GetAt(0))
-					if MilkingType == 0 && !akActor.IsInFaction(MilkSlaveFaction)
-						if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1 
-							StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid", -1)
-						elseif IsMilkMaid == true && akActor.GetItemCount(MME_Milks.GetAt(0)) > 0
-							akActor.RemoveItem(MME_Milks.GetAt(0))
-						elseif PlayerREF.GetItemCount(MME_Milks.GetAt(0)) > 0
-							PlayerREF.RemoveItem(MME_Milks.GetAt(0))
+				if IsMilkMaid == true
+					if MilkingType == 1
+						akActor.EquipItem(MME_Milks.GetAt(0), true, true)
+					elseif akActor.IsInFaction(MilkMaidFaction)
+						if (PlayerREF.GetItemCount(MME_Milks.GetAt(0)) > 0 || akActor.GetItemCount(MME_Milks.GetAt(0)) > 0 || StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1)
+							akActor.EquipItem(MME_Milks.GetAt(0), true, true)
+							if MilkingType == 0 && !akActor.IsInFaction(MilkSlaveFaction)
+								if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1 
+									StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid", -1)
+								elseif akActor.GetItemCount(MME_Milks.GetAt(0)) > 0
+									akActor.RemoveItem(MME_Milks.GetAt(0))
+								elseif PlayerREF.GetItemCount(MME_Milks.GetAt(0)) > 0
+									PlayerREF.RemoveItem(MME_Milks.GetAt(0))
+								endif
+							endif
 						endif
+					elseif akActor.IsInFaction(MilkSlaveFaction)
+						akActor.EquipItem(MME_Milks.GetAt(0), true, true)
+					elseif StorageUtil.GetIntValue(akActor, "MME.MilkMaid.IsSlave") == 1 && (akActor.GetItemCount(MME_Milks.GetAt(0)) > 0 || StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1)
+						akActor.EquipItem(MME_Milks.GetAt(0), true, true)
 					endif
 				endif
 				Utility.Wait(10.0)
 				duration = duration + 10
+				LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
 			endwhile
 
 			duration = 0
@@ -1428,8 +1439,8 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				PainCnt = (PainCnt * 0.80)
 				if IsMilkMaid == true
 					AddLeak(akActor)
-					if LactacidCnt > 1
-						MME_Storage.setLactacidCurrent(akActor, LactacidCnt - 1)
+					if MME_Storage.getLactacidCurrent(akActor) > 1
+						MME_Storage.changeLactacidCurrent(akActor, - 1)
 					else
 						MME_Storage.setLactacidCurrent(akActor, 0)
 					endif
@@ -1456,7 +1467,6 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		
 		if IsMilkMaid == true
 			MilkCnt = MME_Storage.getMilkCurrent(akActor)
-			LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
 			MaidLevel = MME_Storage.getMaidLevel(akActor)
 		endif
 		
@@ -1548,18 +1558,21 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				endif
 
 				if Mode == 0 || Mode == 2
+					if Mode == 0 && MilkingType == 1 && MilkE.GetMarketIndexFromLocation(akActor.GetCurrentLocation()) == 4
+						bottles = bottles / 2 
+						boobgasmcount = boobgasmcount / 2 
+					endif
 					if MILKSlave.find(akActor) != -1
 						StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkingContainerMilksSUM", bottles)
 					elseif StorageUtil.GetIntValue(akActor, "MME.MilkMaid.IsSlave") == 1
 						StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkingContainerMilksSUM", bottles)
 						debug.Notification(bottles + " Milk added to container.")
-					elseif (Mode == 0 || CuirassSellsMilk == true) 
-					;&& !(isVampire(akActor) || isWerewolf(akActor) || isSuccubus(akActor)) 							;remove later
+					elseif CuirassSellsMilk == true																			;old, sells milk through milkpump or with cuirass
 						MilkE.InitiateTrade(bottles + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerMilksSUM") as int, boobgasmcount, akActor, false)
 						StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkingContainerMilksSUM", 0)
-					elseif Mode == 2 
-					;|| (Mode == 0 && (isVampire(akActor) || isWerewolf(akActor) || isSuccubus(akActor))) 				;remove later
-						MilkE.InitiateTrade(bottles, boobgasmcount, akActor, true)
+					else																									;new, gives milk to actor
+						MilkE.InitiateTrade(bottles + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerMilksSUM") as int, boobgasmcount, akActor, true)
+						StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkingContainerMilksSUM", 0)
 					endif
 				endif
 			endif

@@ -6,8 +6,7 @@ Scriptname Milk_Dialogue_TradeMilk_Alchemy Extends TopicInfo Hidden
 Function Fragment_0(ObjectReference akSpeakerRef)
 Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
-MilkQ.PlayerREF.additem(MilkQ.MME_Milks.GetAt(0), 1)
-	MilkQ.PlayerREF.removeitem(MilkQ.MilkE.Gold, 100)
+MilkQ.MilkE.InitiateDialogueTrade(MilkQ.PlayerREF, 4)
 ;END CODE
 EndFunction
 ;END FRAGMENT

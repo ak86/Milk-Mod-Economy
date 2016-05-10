@@ -26,8 +26,8 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 			if ButtonPressed == 0
 				;insert quest here
 				MilkQ.AssignSlot(akTarget)
+				Utility.Wait( 1.0 )
 				if MilkQ.MILKmaid.find(akTarget) != -1 
-					Utility.Wait( 1.0 )
 					MME_Storage.changeLactacidCurrent(akTarget, 1)
 				EndIf
 			EndIf
@@ -40,7 +40,7 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 				Game.ForceThirdPerson()
 				Game.ShakeCamera(none, Utility.RandomFloat(0.5 , 1), 10)
 			endif
-			If !StorageUtil.GetIntValue(akTarget,"IsBoundStrict")
+			If !StorageUtil.GetIntValue(akTarget,"IsBoundStrict") && !(akTarget.GetSitState() <= 3 && akTarget.GetSitState() > 0)
 				Debug.SendAnimationEvent(akTarget,"ZaZAPCHorFd")
 			EndIf
 			MilkQ.SexLab.PickVoice(akTarget).Moan(akTarget, Utility.RandomInt (70, 100), false)
@@ -54,7 +54,9 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 			If MilkQ.MilkStory
 				Debug.Messagebox(akTarget.GetLeveledActorBase().GetName() + " just had a breast induced orgasm!")
 			EndIf
-			Debug.SendAnimationEvent(akTarget,"IdleForceDefaultState")
+			if !StorageUtil.GetIntValue(akTarget,"IsBoundStrict") && !(akTarget.GetSitState() <= 3 && akTarget.GetSitState() > 0)
+				Debug.SendAnimationEvent(akTarget,"IdleForceDefaultState")
+			endif
 			if akTarget == MilkQ.PlayerREF
 				Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 			endif

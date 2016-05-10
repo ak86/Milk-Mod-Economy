@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>05-05-2016</Version>
+  <Version>10-05-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
@@ -39,6 +39,43 @@ Caravan
 
 Dev change log:
 
+	v 10-05-2016 git
+fixed some previous git edits i didnt like( ie. mcm debug caps)
+fixed some bugs
+made some edits to use dialogues instead of old trade system
+added more dialogues
+some dialogues needs fixing, inns working, everything else im not sure, like arcadia which for some reason is not considered alchemist ?:S maybe i should rewrite faction detection to try use script detection instead of CK conditions
+
+
+	v 09-05-2016 git
+done msgboxes and dialogues
+added Inns to economy
+Khajiits, orcs and fencers dont pay milkpump upkep and local tax
+orcs milkpumps are generous enough to provide you free lactacid, they'll take half the milk though, but who cares its all about process
+
+	v 06-05-2016 git
+added trade dialogue economy script
+needs correct msgboxes and dialogue texts for traders
+needs testing
+
+added trade dialogues:
+Khajiits merchants:
+-buy all milk
+-trade Lactacid for milk
+orc merchants(wisewoman):
+-buy normal and race milk
+inns:
+-buy race milk
+alchemists: 					
+-buy ww/vampire/succubus milk
+-buy cum/semen x2, futa x10
+-sell Lactacid for 100g
+Fences:
+-buy all milk
+farmers:
+-buy normal milk
+-sell Lactacid for 100g
+
 	v 05-05-2016 git
 fix for psq integration
 fix for "SOS No Schlong for Females" and "SOS Pubic Hair for Females"
@@ -53,27 +90,6 @@ switched to default simple potions
 ww/vampire/succubus milk, cant be sold through normal trade any more
 some fixes
 
-
-added trade dialogues:
-Khajiits merchants:
--buy all milk					needs trade script
--trade Lactacid for milk		+
-orc merchants(wisewoman):
--buy normal and race milk		needs trade script/dialogue text
-inns:							need to check inns for economy
--buy race milk					needs trade script/dialogue text
-alchemists: 					needs trade script
--buy ww/vampire/succubus milk	needs trade script/dialogue text
--buy cum/semen x2, futa x10		+
--sell Lactacid for 100g			+
-Fences:
--buy all milk					needs correct trade script, not count towards economy, prices are higher than normal trade
-farmers:
--buy normal milk				needs trade script/dialogue text
--sell Lactacid for 100g			+
-
-
-	
 	v 20-04-2016 git
 some fixes
 	
