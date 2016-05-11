@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>10-05-2016</Version>
+  <Version>11-05-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
@@ -38,6 +38,10 @@ Caravan
 *add fertility potion (male/futa cum production, not really useful right now)
 
 Dev change log:
+
+	v 11-05-2016 git
+fixed milk gen
+some script edits
 
 	v 10-05-2016 git
 fixed some previous git edits i didnt like( ie. mcm debug caps)
