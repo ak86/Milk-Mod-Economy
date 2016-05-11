@@ -94,11 +94,18 @@ endfunction
 bool function setLactacidCurrent(actor akActor, float Value) global
 	Debug.Trace("MME_Storage: Triggered setLactacidCurrent() for actor " + akActor.GetLeveledActorBase().GetName())
 	float LactacidMax = getLactacidMaximum(akActor)
-
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
+	
 	if Value < 0
 		Debug.Trace("MME_Storage: Provided values would result in LactacidCurrent = " + Value)
 		Debug.Trace("MME_Storage: Clamping LactacidCurrent to 0 instead.")
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.LactacidCount", 0)
+		return false
+	elseif Value > LactacidMax && MilkQ.BreastScaleLimit
+		Debug.Trace("MME_Storage: Provided values would result in LactacidCurrent = " + Value)
+		Debug.Trace("MME_Storage: BreastScaleLimit is " + MilkQ.BreastScaleLimit)
+		Debug.Trace("MME_Storage: Clamping LactacidCurrent to " + LactacidMax + " instead.")
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.LactacidCount", LactacidMax)
 		return false
 	else
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.LactacidCount", Value)
@@ -136,14 +143,20 @@ float function updateMilkCurrent(actor akActor) global
 	Debug.Trace("MME_Storage: Triggered updateMilkCurrent() for actor " + akActor.GetLeveledActorBase().GetName())
 	float MilkCur = getMilkCurrent(akActor)
 	float MilkMax = getMilkMaximum(akActor)
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 
 	if MilkCur <= MilkMax
 		Debug.Trace("  -> " + MilkCur + " <=  " + MilkMax)
 		return MilkCur
-	else
+	elseif MilkQ.BreastScaleLimit
 		Debug.Trace("  -> " + MilkCur + " >  " + MilkMax)
+		Debug.Trace("MME_Storage: BreastScaleLimit is " + MilkQ.BreastScaleLimit)
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", MilkMax)
 		return MilkMax
+	else 
+		Debug.Trace("  -> " + MilkCur + " >  " + MilkMax)
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", MilkMax)
+		return MilkCur
 	endif
 endfunction
 
@@ -283,7 +296,7 @@ float function getBreastNodeScale(actor akActor) global
 
 		return BreastL
 	else
-		Debug.Notification("[MilkModEconomy] Unsupported skeleton - unable to find breast nodes for '" + ActorName + "'!")
+		Debug.Notification("[MilkModEconomy] Unsupported skeleton or armor - unable to find breast nodes for '" + ActorName + "'!")
 		Debug.Notification("[MilkModEconomy] (Mod will work but breast growth will have no visible effect.)")
 
 		return 1.0
@@ -302,8 +315,7 @@ endfunction
 function updateMilkMaximum(actor akActor) global
 	float MilkMax = calculateMilkLimit(akActor, StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.Level"))
 
-	; MilkMax must never be zero, it would lead to errors
-	; MilkMax must be at least 1 to enable milking
+	; MilkMax must be >=1 to enable milking
 	float MinValue = 1
 	if MilkMax >= MinValue
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMaximum", MilkMax)
