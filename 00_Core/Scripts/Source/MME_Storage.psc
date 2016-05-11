@@ -162,8 +162,9 @@ endfunction
 
 function setMilkCurrent(actor akActor, float Value, bool enforceMaxValue) global
 	Debug.Trace("MME_Storage: Triggered setMilkCurrent() for actor " + akActor.GetLeveledActorBase().GetName())
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 
-	if enforceMaxValue
+	if enforceMaxValue && MilkQ.PiercingCheck(akActor) != 2
 		float MilkMax = getMilkMaximum(akActor)
 		if Value <= MilkMax
 			Debug.Trace("  -> " + Value + " <=  " + MilkMax)
@@ -181,8 +182,9 @@ endfunction
 function changeMilkCurrent(actor akActor, float Delta, bool enforceMaxValue) global
 	Debug.Trace("MME_Storage: Triggered changeMilkCurrent() for actor " + akActor.GetLeveledActorBase().GetName())
 	float MilkCur = getMilkCurrent(akActor)
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 
-	if enforceMaxValue
+	if enforceMaxValue && MilkQ.PiercingCheck(akActor) != 2
 		float MilkMax = getMilkMaximum(akActor)
 		if (MilkCur + Delta) <= MilkMax
 			StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkCount", Delta)

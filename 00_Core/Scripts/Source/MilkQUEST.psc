@@ -493,11 +493,11 @@ Function UpdateActors()
 		CurrentSize(MilkMaid[idx1])
 		idx1 = idx1 + 1
 	EndWhile
-	int idx2 = 0
-	While idx2 < MilkSlave.Length
-		MME_Storage.updateMilkCurrent(MilkSlave[idx2])
-		CurrentSize(MilkSlave[idx2])
-		idx2 = idx2 + 1
+	idx1 = 0
+	While idx1 < MilkSlave.Length
+		MME_Storage.updateMilkCurrent(MilkSlave[idx1])
+		CurrentSize(MilkSlave[idx1])
+		idx1 = idx1 + 1
 	EndWhile
 EndFunction
 
@@ -576,7 +576,7 @@ Function MilkCycle(Actor akActor, int t)
 	EndIf
 
 	Paintick = MilkTick + MilkMax/10
-	MilkTick = MilkTick + MilkCnt
+	MilkCnt = MilkTick + MilkCnt
 	PainCnt = PainCnt - paintick
 	
 	if LactacidCnt < 0
@@ -591,16 +591,16 @@ Function MilkCycle(Actor akActor, int t)
 	RemoveMilkFx2(akActor)
 	SLA.UpdateActorExposure(akActor, t)
 
-	if MilkTick > MilkMax && PiercingCheck(akActor) != 2
-		if BreastScaleLimit 
+	if MilkCnt > MilkMax && PiercingCheck(akActor) != 2
+		If BreastScaleLimit
 			MilkCnt = MilkMax
 		else
-			MilkCnt = MilkTick - (MilkTick * GushPct/100) - MilkTick / MilkMax 
+			MilkCnt = MilkCnt - 1 * MilkCnt / MilkMax
 		endif
 		AddMilkFx(akActor, 1)
 		AddLeak(akActor)
 	endif
-	
+
 	MME_Storage.setLactacidCurrent(akActor, LactacidCnt)
 	StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.MilkGen", MaidMilkGen)
 	MME_Storage.setPainCurrent(akActor, PainCnt)
@@ -634,12 +634,7 @@ Function MilkCycle(Actor akActor, int t)
 		|| StringUtil.Find(maidArmor.getname(), "Tentacle Parasite" ) >= 0\
 		|| BasicLivingArmor.find(maidArmor.getname()) >= 0\
 		|| ParasiteLivingArmor.find(maidArmor.getname()) >= 0
-			MME_Storage.changeLactacidCurrent(akActor, 1 * t)
-			; which purpose does '1*t' serve in the above statement?
-			; reason                    suggested action
-			;  none                  --> replace with 't'
-			;  conversion to int     --> replace with '(t as int)' to make it more obvious
-			;  ???                   --> describe purpose
+			MME_Storage.changeLactacidCurrent(akActor, t)
 			if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid
 				akActor.equipitem(Game.GetFormFromFile(0x57A7A, "Skyrim.esm"),false,true)	;skooma
 			endif
@@ -669,8 +664,7 @@ Function MilkCycle(Actor akActor, int t)
 	endif
 	
 	If MILKSlave.Find(akActor) != -1
-		MME_Storage.changeLactacidCurrent(akActor, 1 * t)
-		;  same comment as line 636
+		MME_Storage.changeLactacidCurrent(akActor, t)
 		MilkMax = MME_Storage.getMilkMaximum(akActor)
 		if MilkCnt > MilkMax
 			MilkSelf.cast(akActor)
@@ -1318,9 +1312,9 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.TimesMilked", 1 * gush)
 					MaidLevelCheck(akActor)
 					MME_Storage.setMilkCurrent(akActor, MilkCnt, BreastScaleLimit)
-					; refetch to make sure we have the correct value (with applied max-limit)
-					; (just to be sure to avoid any chance that there is MilkCnt>MilkMax because the maid
-					;  generates more milk during a milking cycle then is being drained by milking)
+						; refetch to make sure we have the correct value (with applied max-limit)
+						; (just to be sure to avoid any chance that there is MilkCnt>MilkMax because the maid
+						;  generates more milk during a milking cycle then is being drained by milking)
 					MilkCnt = MME_Storage.getMilkCurrent(akActor)
 					CurrentSize(akActor)
 					if PlayerREF.GetDistance(akActor) < 500 && MilkMsgs && MilkCntMsgs
