@@ -120,7 +120,7 @@ bool function changeLactacidCurrent(actor akActor, float Delta) global
 endfunction
 
 float function getLactacidMaximum(actor akActor) global
-	return (StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.Level") + 2) / 2
+	return (StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.Level") + 2) / 2 + 4
 endfunction
 
 float function getMaidLevel(actor akActor) global
