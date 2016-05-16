@@ -4,13 +4,13 @@ Scriptname Milk_Dialogue_TradeLactacid_Khajiit Extends TopicInfo Hidden
 
 ;BEGIN FRAGMENT Fragment_0
 Function Fragment_0(ObjectReference akSpeakerRef)
-Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
-	int i = 1
+	Actor akSpeaker = akSpeakerRef as Actor
+	int i = 0
 	while i < MilkQ.MME_Milks.GetSize()
 		if MilkQ.PlayerREF.GetItemCount(MilkQ.MME_Milks.GetAt(i)) > 0
-			MilkQ.PlayerREF.removeitem(MilkQ.MME_Milks.GetAt(0))
-			MilkQ.PlayerREF.additem(MilkQ.MME_Milks.GetAt(0), 1)
+			MilkQ.PlayerREF.removeitem(MilkQ.MME_Milks.GetAt(i))
+			MilkQ.PlayerREF.additem(MilkQ.MME_Util_Potions.GetAt(0), 1)
 			return
 		endif
 		i = i + 1

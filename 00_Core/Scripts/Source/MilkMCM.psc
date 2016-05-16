@@ -559,7 +559,7 @@ function Page_MilkMaidDebug()
 				AddSliderOptionST("Debug_MM_MaidLevel_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S6", MaidLevel as int)
 				AddSliderOptionST("Debug_MM_MaidTimesMilked_Slider", "$MME_MENU_Times_Milked_(this_level)", MaidTimesMilked as int)
 				AddTextOptionST("Debug_MM_Maid_MilksToNextLevel", "$MME_MENU_Next_Level", ((MaidLevel+1) * MilkQ.TimesMilkedMult - MaidTimesMilked) as int, OPTION_FLAG_DISABLED)	
-				AddTextOption("$MME_MENU_PAGE_Debug_MM_Maid_Breast", , OPTION_FLAG_DISABLED)
+				AddTextOption("$MME_MENU_PAGE_Debug_MM_Maid_Breast", OPTION_FLAG_DISABLED)
 				AddSliderOptionST("Debug_MM_Maid_BreastRows_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S21", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastRows", missing = 1))	
 				AddSliderOptionST("Debug_MM_Maid_BreastBaseSize_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S9", MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]), "{2}")
 				AddSliderOptionST("Debug_MM_Maid_BreastBaseSizeModified_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S10", MaidBreastsBaseadjust, "{2}")
@@ -3089,7 +3089,7 @@ state Debug_MM_Maid_MaidBoobIncr_Slider
 	event OnSliderOpenST()
 		SetSliderDialogStartValue(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobIncr"))
 		SetSliderDialogDefaultValue(0.05)
-		SetSliderDialogRange(0.0, 0.3)
+		SetSliderDialogRange(-1, 0.3)
 		SetSliderDialogInterval(0.01)
 	endEvent
 
@@ -3101,13 +3101,16 @@ state Debug_MM_Maid_MaidBoobIncr_Slider
 		endif
 		SetSliderOptionValueST(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobIncr"), "{2}")
 	endEvent
+	event OnHighlightST()
+		SetInfoText("$MME_Slider_Highlight_Disable")
+	endEvent
 endState
 
 state Debug_MM_Maid_MaidBoobPerLvl_Slider
 	event OnSliderOpenST()
 		SetSliderDialogStartValue(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl"))
 		SetSliderDialogDefaultValue(0.07)
-		SetSliderDialogRange(0.0, 0.2)
+		SetSliderDialogRange(-1, 0.2)
 		SetSliderDialogInterval(0.01)
 	endEvent
 
@@ -3118,6 +3121,9 @@ state Debug_MM_Maid_MaidBoobPerLvl_Slider
 			StorageUtil.UnsetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl")
 		endif
 		SetSliderOptionValueST(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl"), "{2}")
+	endEvent
+	event OnHighlightST()
+		SetInfoText("$MME_Slider_Highlight_Disable")
 	endEvent
 endState
 

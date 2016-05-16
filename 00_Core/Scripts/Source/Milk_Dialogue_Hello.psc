@@ -5,10 +5,10 @@ MilkQUEST Property MilkQ Auto
 
 ;BEGIN FRAGMENT Fragment_2
 Function Fragment_2(ObjectReference akSpeakerRef)
-Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
 ;MilkModEconomy milking dialogue script(fill up Milk conditions)
 ;GetSex(): 0 - male, 1 - female
+	Actor akSpeaker = akSpeakerRef as Actor
 
 ;MilkQ.MilkQC Dialogue Variables reset
 	MilkQ.MilkQC.MME_TargetMilk = 0

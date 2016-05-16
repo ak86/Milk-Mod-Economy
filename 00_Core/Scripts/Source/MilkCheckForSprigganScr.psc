@@ -35,6 +35,10 @@ Event OnObjectEquipped( Form akBaseObject, ObjectReference akReference)
 			|| StringUtil.Find(akArmorName, "Tentacle Armor" ) >= 0\
 			|| MilkQ.BasicLivingArmor.find(akArmorName) >= 0)\
 			|| MilkQ.ParasiteLivingArmor.find(akArmorName) >= 0
+				if akActor == MilkQ.PlayerREf && StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastRows", missing = 1) > 1 && akActor.GetWornForm(Armor.GetMaskForSlot(32)) == akBaseObject
+					Debug.Notification(akArmorName + " attaches to your breasts, absorbing your additional breast rows")
+					StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.BreastRows", 1)
+				endif
 				if akActor == MilkQ.PlayerREf
 					Debug.Notification(akArmorName + " attaches to your breasts")
 				endif

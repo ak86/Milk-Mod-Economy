@@ -4,9 +4,9 @@ Scriptname Milk_Dialogue_TradeMilk_Fence Extends TopicInfo Hidden
 
 ;BEGIN FRAGMENT Fragment_0
 Function Fragment_0(ObjectReference akSpeakerRef)
-Actor akSpeaker = akSpeakerRef as Actor
 ;BEGIN CODE
-MilkQ.MilkE.InitiateDialogueTrade(MilkQ.PlayerREF, 5)
+	Actor akSpeaker = akSpeakerRef as Actor
+	MilkQ.MilkE.InitiateDialogueTrade(MilkQ.PlayerREF, 5)
 ;END CODE
 EndFunction
 ;END FRAGMENT
