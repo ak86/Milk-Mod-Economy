@@ -2839,11 +2839,11 @@ int Function PiercingCheck(Actor akActor)
 EndFunction
 
 int Function IsNamedMaid(Actor akActor)
-	if StringUtil.Find(akActor.GetLeveledActorBase().getname(), "Milkmaid" ) >= 0
+	if StringUtil.Find(akActor.getname(), "Milkmaid" ) >= 0
 		return 1
-	elseif StringUtil.Find(akActor.GetLeveledActorBase().getname(), "Milkslave" ) >= 0
+	elseif StringUtil.Find(akActor.getname(), "Milkslave" ) >= 0
 		return 2
-	elseif StringUtil.Find(akActor.GetLeveledActorBase().getname(), "Cow" ) >= 0
+	elseif StringUtil.Find(akActor.getname(), "Cow" ) >= 0
 		return 3
 	else
 		return 0
