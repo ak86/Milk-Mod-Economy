@@ -323,7 +323,7 @@ Function InitiateDialogueTrade(Actor akActor, int MilkType)
 		
 	i = 0
 	int marketIndex = GetMarketIndexFromLocation(akActor.GetCurrentLocation())
-		Debug.Notification("1 " + MilkTypeFormList.GetSize())
+		;Debug.Notification("1 " + MilkTypeFormList.GetSize())
 	while i < MilkTypeFormList.GetSize()
 		if akActor.GetItemCount(MilkTypeFormList.GetAt(i)) > 0
 			finalPotion = MilkTypeFormList.GetAt(i) as potion

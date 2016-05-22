@@ -2584,7 +2584,7 @@ Function VarSetup()
 	MilkQC.ExhaustionMode = 0
 	MME_NPCComments.SetValue(0)
 	MilkQC.MME_DialogueMilking = True
-	MilkQC.MME_SimpleMilkPotions = True
+	MilkQC.MME_SimpleMilkPotions = False
 	ForcedFeeding = False
 	FixedMilkGen = False
 	FixedMilkGen4Followers = False

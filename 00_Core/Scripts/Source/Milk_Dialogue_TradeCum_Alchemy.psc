@@ -9,22 +9,22 @@ Function Fragment_0(ObjectReference akSpeakerRef)
 	int i = 0
 	int gold = 0
 	if MilkQ.PlayerREF.GetItemCount(MilkQ.MME_Cums.GetAt(i)) > 0
-		gold = gold + MilkQ.MilkE.CalculateBaseTrade(MilkQ.MME_Cums.GetAt(i) as Potion, MilkQ.PlayerREF.GetItemCount(MilkQ.MME_Cums.GetAt(i))) * 2
+		gold = gold + (MilkQ.MME_Cums.GetAt(i) as Potion).GetGoldValue() * MilkQ.PlayerREF.GetItemCount(MilkQ.MME_Cums.GetAt(i))
 		MilkQ.PlayerREF.removeitem(MilkQ.MME_Cums.GetAt(i), MilkQ.PlayerREF.GetItemCount(MilkQ.MME_Cums.GetAt(i)))
 	endif
 	i = i + 1
 	if MilkQ.PlayerREF.GetItemCount(MilkQ.MME_Cums.GetAt(i)) > 0
-		gold = gold + MilkQ.MilkE.CalculateBaseTrade(MilkQ.MME_Cums.GetAt(i) as Potion, MilkQ.PlayerREF.GetItemCount(MilkQ.MME_Cums.GetAt(i))) * 2
+		gold = gold + (MilkQ.MME_Cums.GetAt(i) as Potion).GetGoldValue() * MilkQ.PlayerREF.GetItemCount(MilkQ.MME_Cums.GetAt(i))
 		MilkQ.PlayerREF.removeitem(MilkQ.MME_Cums.GetAt(i), MilkQ.PlayerREF.GetItemCount(MilkQ.MME_Cums.GetAt(i)))
 	endif
 	i = i + 1
 	if MilkQ.PlayerREF.GetItemCount(MilkQ.MME_Cums.GetAt(i)) > 0
-		gold = gold + MilkQ.MilkE.CalculateBaseTrade(MilkQ.MME_Cums.GetAt(i) as Potion, MilkQ.PlayerREF.GetItemCount(MilkQ.MME_Cums.GetAt(i))) * 10
+		gold = gold + (MilkQ.MME_Cums.GetAt(i) as Potion).GetGoldValue() * MilkQ.PlayerREF.GetItemCount(MilkQ.MME_Cums.GetAt(i)) * 2
 		MilkQ.PlayerREF.removeitem(MilkQ.MME_Cums.GetAt(i), MilkQ.PlayerREF.GetItemCount(MilkQ.MME_Cums.GetAt(i)))
 	endif
 	i = i + 1
 	if MilkQ.PlayerREF.GetItemCount(MilkQ.MME_Cums.GetAt(i)) > 0
-		gold = gold + MilkQ.MilkE.CalculateBaseTrade(MilkQ.MME_Cums.GetAt(i) as Potion, MilkQ.PlayerREF.GetItemCount(MilkQ.MME_Cums.GetAt(i))) * 10
+		gold = gold + (MilkQ.MME_Cums.GetAt(i) as Potion).GetGoldValue() * MilkQ.PlayerREF.GetItemCount(MilkQ.MME_Cums.GetAt(i)) * 2
 		MilkQ.PlayerREF.removeitem(MilkQ.MME_Cums.GetAt(i), MilkQ.PlayerREF.GetItemCount(MilkQ.MME_Cums.GetAt(i)))
 	endif
 
