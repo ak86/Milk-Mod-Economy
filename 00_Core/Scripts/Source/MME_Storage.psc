@@ -23,20 +23,24 @@ Scriptname MME_Storage Hidden
 function initializeActor(actor akActor, float Level = 0.0, float MilkCnt = 0.0) global
 	Debug.Trace("MME_Storage: Triggered initializeActor() for actor " + akActor.GetLeveledActorBase().GetName())
 
-	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBase", getBreastNodeScale(akActor))
-	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod", 0)
-	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastCount", 2)
-	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BoobIncr", -1)
-	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BoobPerLvl", -1)
-	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.LactacidCount", 0)
-	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.Level", Level)
-	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", MilkCnt)
-	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMax.Basevalue", 2)
-	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMax.Scalefactor", 1)
-	; BreastCount, MilkMax.Basevalue and MilkMax.Scalefactor must be set before 'calculateMilkLimit()'
-	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMaximum", calculateMilkLimit(akActor, Level))
-	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.PainCount", 0)
-	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.WeightBase", akActor.GetLeveledActorBase().GetWeight())
+	if StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastCount") > 0
+		Debug.Trace("MME_Storage: actor " + akActor.GetLeveledActorBase().GetName() + " is already initialized, skipping")
+	else
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBase", getBreastNodeScale(akActor))
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod", 0)
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastCount", 2)
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BoobIncr", -1)
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BoobPerLvl", -1)
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.LactacidCount", 0)
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.Level", Level)
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", MilkCnt)
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMax.Basevalue", 2)
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMax.Scalefactor", 1)
+		; BreastCount, MilkMax.Basevalue and MilkMax.Scalefactor must be set before 'calculateMilkLimit()'
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMaximum", calculateMilkLimit(akActor, Level))
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.PainCount", 0)
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.WeightBase", akActor.GetLeveledActorBase().GetWeight())
+	endif
 endfunction
 
 function deregisterActor(actor akActor) global

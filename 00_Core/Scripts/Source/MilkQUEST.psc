@@ -698,21 +698,30 @@ Function AssignSlot(Actor akActor)
 	If akActor == PlayerREF
 		MILKmaid[0] = akActor
 	Else
-		int i = 1
+		int i = 0
 		int count = 0
-		While i < MilkMaid.Length && Milklvl0fix() > count
-			If MilkMaid[i] == None
-				count = count + 1
-			EndIf
-			i = i + 1
-		EndWhile
-		i = MILKmaid.Find(none,1)
-		If i != -1 && count >= 1
-			MILKmaid[i] = akActor
-		Else
+		int t = MILKmaid.Find(none,1)
+
+		If t == -1
 			Debug.notification("No more Milk Maid slots")
 			return
-		Endif
+		Else
+			While i < MilkMaid.Length
+				i = i + 1
+				If MilkMaid[i] != None
+					count = count + 1
+				EndIf
+			EndWhile
+			
+			;Debug.notification(MilkMaid.Length + " " + count + " " + Milklvl0fix )
+
+			If count >= Milklvl0fix()
+				Debug.notification("No more Milk Maid slots")
+				return
+			Else
+				MILKmaid[t] = akActor
+			Endif
+		EndIf
 	EndIf
 	MME_Storage.initializeActor(akActor)
 	Debug.Notification(akActor.GetLeveledActorBase().GetName() + " becomes a Milk Maid")
@@ -739,25 +748,12 @@ EndFunction
 Function AssignSlotSlaveToMaid(Actor akActor)
 	int i = MILKSlave.Find(akActor)
 	If i != -1
-		MILKSlave[i] = none
-		i = 1
-		int count = 0
-		While i < MilkMaid.Length && Milklvl0fix() > count
-			If MilkMaid[i] == None
-				count = count + 1
-			EndIf
-			i = i + 1
-		EndWhile
-		i = MILKmaid.Find(none,1)
-		If i != -1 && count >= 1
-			MILKmaid[i] = akActor
-		Else
-			Debug.notification("No more Milk Maid slots")
-			return
-		Endif
-		StorageUtil.SetIntValue(akActor,"MME.MilkMaid.IsSlave", 0)
-		akActor.RemoveFromFaction(MilkSlaveFaction)
-		akActor.AddToFaction(MilkMaidFaction)
+		AssignSlot(akActor)
+		if akActor.isInFaction(MilkMaidFaction)
+			StorageUtil.SetIntValue(akActor,"MME.MilkMaid.IsSlave", 0)
+			akActor.RemoveFromFaction(MilkSlaveFaction)
+			MILKSlave[i] = none
+		endif
 	Else
 		Debug.notification("Actor is not a Milk Slave, something wrong in calling Function AssignSlotSlaveToMaid")
 		return
@@ -767,7 +763,6 @@ EndFunction
 Function AssignSlotMaidToSlave(Actor akActor)
 	int i = MilkMaid.Find(akActor)
 	If i != -1
-		MilkMaid[i] = none
 		i = 1
 		i = MILKSlave.Find(none,1)
 		If i != -1
@@ -779,6 +774,7 @@ Function AssignSlotMaidToSlave(Actor akActor)
 		StorageUtil.SetIntValue(akActor,"MME.MilkMaid.IsSlave", 1)
 		akActor.AddToFaction(MilkSlaveFaction)
 		akActor.RemoveFromFaction(MilkMaidFaction)
+		MilkMaid[i] = none
 	Else
 		Debug.notification("Actor is not a Milk maid, something wrong in calling Function AssignSlotMaidToSlave")
 		return
@@ -2106,6 +2102,7 @@ EndFunction
 
 int Function Milklvl0fix()
 	int milklvl = ((StorageUtil.GetFloatValue(none,"MME.Progression.Level") + 1) / 2) as int
+	;Debug.notification(milklvl) 		;0.5 => int 0
 	If milklvl < 1
 		return 1
 	Else
