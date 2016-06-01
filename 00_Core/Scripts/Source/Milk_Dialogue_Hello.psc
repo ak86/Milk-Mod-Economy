@@ -16,6 +16,8 @@ Function Fragment_2(ObjectReference akSpeakerRef)
 	MilkQ.MilkQC.MME_CanbeconvertedfromSlaveToMaid = 0
 	MilkQ.MilkQC.MME_CanBeConvertedFromMaidToSlave = 0
 	MilkQ.MilkQC.MME_FreeMaidSlots = 0
+	MilkQ.MilkQC.MME_SubjectMaid = false
+	MilkQ.MilkQC.MME_SubjectSlave = false
 
 ;checks pc milk
 if MilkQ.PlayerREF.GetLeveledActorBase().GetSex() == 1
@@ -37,6 +39,7 @@ if akSpeaker.GetLeveledActorBase().GetSex() == 1
 
 ;checks if npc can be transferred from slave to maid
 	if MilkQ.MILKSlave.Find(akSpeaker) != -1
+		MilkQ.MilkQC.MME_SubjectSlave = true
 		int i = 1
 		int count = 0
 		While i < MilkQ.MilkMaid.Length && MilkQ.Milklvl0fix() > count
@@ -52,6 +55,7 @@ if akSpeaker.GetLeveledActorBase().GetSex() == 1
 
 ;checks if npc can be transferred from maid to slave
 	if MilkQ.MilkMaid.Find(akSpeaker) != -1
+		MilkQ.MilkQC.MME_SubjectMaid = true
 		If MilkQ.MILKSlave.Find(none,1) != -1
 			MilkQ.MilkQC.MME_CanBeConvertedFromMaidToSlave = 1
 		Endif

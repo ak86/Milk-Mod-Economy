@@ -5,6 +5,7 @@ MilkQUEST Property MilkQ Auto
 ;----------------------------------------------------------------------------
 ;Events
 ;----------------------------------------------------------------------------
+
 Event OnInit()
 	Debug.Trace("MilkModEconomy 1st run, initializing")
 	MilkQ.VarSetup()
@@ -82,6 +83,21 @@ Event OnSlaveToggle(Form Sender)
 	endif
 EndEvent
 
+Event OnSleepStop(bool abInterrupted)
+	Int i = 0
+	while i < MilkQ.MILKmaid.length
+		if MilkQ.MILKmaid[i] != none && MilkQ.MILKmaid[i].GetActorBase().GetSex() == 1
+			if StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.AdjustBreastRow") != 0
+				StorageUtil.AdjustFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.BreastRows", StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.AdjustBreastRow"))
+				MilkQ.MultibreastChange(MilkQ.MILKmaid[i])
+				StorageUtil.SetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.AdjustBreastRow", 0) 						;reset
+			endif
+		endif
+		i += 1
+	endWhile
+	self.RegisterForSleep()
+endEvent
+
 ;----------------------------------------------------------------------------
 ;DDI hooks
 ;----------------------------------------------------------------------------
@@ -127,7 +143,7 @@ Event OnSexLabStart(String _eventName, String _args, Float _argc, Form _sender)
 	&& MilkQ.SexLab3jBreastfeeding
 		if MilkQ.MILKmaid.Find(actors[0]) != -1\
 		&& !actors[0].HasSpell( MilkQ.BeingMilkedPassive )\
-		&& actors[0].GetActorBase().GetSex() == 1
+		&& actors[0].GetLeveledActorBase().GetSex() == 1
 			MilkQ.Milking(actors[0], 0, 4, 0)
 			actors[1].equipitem(MilkQ.MME_Milk_Basic.GetAt(0), true, true)
 		endif
@@ -153,7 +169,7 @@ Event OnSexLabOrgasm(String _eventName, String _args, Float _argc, Form _sender)
 
 	While idx < actors.Length && MilkQ.SexLabOrgasm
 		if MilkQ.MILKmaid.Find(actors[idx]) != -1\
-		&& actors[idx].GetActorBase().GetSex() == 1
+		&& actors[idx].GetLeveledActorBase().GetSex() == 1
 			if MME_Storage.getMilkCurrent(actors[idx]) >= 1
 				if ((animation.HasTag("Anal")\
 					|| animation.HasTag("Vaginal")\
@@ -215,6 +231,19 @@ Event OnLocationChange(Location akOldLoc, Location akNewLoc)
 	UpdateSize()
 EndEvent
 
+Function UpdateSize()
+	if MilkQ.MILKmaid as Bool && MilkQ.MilkFlag && MilkQ.BreastScale == 2
+		Debug.Trace("MilkModEconomy, BreastScale = NiE, LocationChange/GameLoad updating breast size")
+		Int i = 0
+		while i < MilkQ.MILKmaid.length
+			if MilkQ.MILKmaid[i] != none && MilkQ.MILKmaid[i].GetLeveledActorBase().GetSex() == 1 && MilkQ.MILKmaid[i].IsInLocation(MilkQ.PlayerREF.getCurrentLocation())
+				MilkQ.CurrentSize(MilkQ.MILKmaid[i])
+			endIf
+			i += 1
+		endWhile
+	endIf
+EndFunction
+
 Function Maintenance()
 	Debug.Trace("MilkModEconomy OnPlayerLoadGame")
 	if PapyrusUtil.GetVersion() < 28
@@ -250,6 +279,7 @@ Function Maintenance()
 	MilkQ.DebuffArraySet()
 	MilkQ.BuffArraySet()
 	self.UpdateSize()
+	self.RegisterForSleep()
 
 	if 	MilkQ.SexLab.AnimSlots.GetbyRegistrar("zjBreastFeedingVar") && MilkQ.SexLab.AnimSlots.GetbyRegistrar("zjBreastFeeding")
 		MilkQ.MilkQC.MME_BreasfeedingAnimationsCheck = True
@@ -261,17 +291,4 @@ Function Maintenance()
 	MilkQ.MME_Status_Global.SetValue(1)
 	Debug.Trace("MilkModEconomy status set to " + MilkQ.MME_Status_Global.GetValue() + ", should be 1")
 	Debug.Trace("MilkModEconomy maintenance done")
-EndFunction
-
-Function UpdateSize()
-	if MilkQ.MILKmaid as Bool && MilkQ.MilkFlag && MilkQ.BreastScale == 2
-		Int i = 0
-		while i < MilkQ.MILKmaid.length
-			if MilkQ.MILKmaid[i] != none && MilkQ.MILKmaid[i].GetActorBase().GetSex() == 1 && MilkQ.MILKmaid[i].IsInLocation(MilkQ.PlayerREF.getCurrentLocation())
-				Debug.Trace("MilkModEconomy, BreastScale = NiE, LocationChange/GameLoad updating breast size", 0)
-				MilkQ.CurrentSize(MilkQ.MILKmaid[i])
-			endIf
-			i += 1
-		endWhile
-	endIf
 EndFunction

@@ -293,12 +293,12 @@ Function InitiateDialogueTrade(Actor akActor, int MilkType)
 		i = 0
 		while i < MilkQ.MME_Milk_Basic.GetSize()
 			MilkTypeFormList.AddForm(MilkQ.MME_Milk_Basic.GetAt(i))
-			i = i + 1
+			i += 1
 		endwhile
 		i = 0
 		while i < MilkQ.MME_Milk_Race.GetSize()
 			MilkTypeFormList.AddForm(MilkQ.MME_Milk_Race.GetAt(i))
-			i = i + 1
+			i += 1
 		endwhile
 	elseif MilkType == 4
 		MilkTypeFormList = MilkQ.MME_Milk_Special
@@ -306,17 +306,17 @@ Function InitiateDialogueTrade(Actor akActor, int MilkType)
 		i = 0
 		while i < MilkQ.MME_Milk_Basic.GetSize()
 			MilkTypeFormList.AddForm(MilkQ.MME_Milk_Basic.GetAt(i))
-			i = i + 1
+			i += 1
 		endwhile
 		i = 0
 		while i < MilkQ.MME_Milk_Race.GetSize()
 			MilkTypeFormList.AddForm(MilkQ.MME_Milk_Race.GetAt(i))
-			i = i + 1
+			i += 1
 		endwhile
 		i = 0
 		while i < MilkQ.MME_Milk_Special.GetSize()
 			MilkTypeFormList.AddForm(MilkQ.MME_Milk_Special.GetAt(i))
-			i = i + 1
+			i += 1
 		endwhile
 	endif
 	Utility.wait(1)
@@ -339,7 +339,7 @@ Function InitiateDialogueTrade(Actor akActor, int MilkType)
 			endif
 			milkTax = CalculateServiceTax(marketIndex, finalbaseTrade)
 		endif
-		i = i + 1
+		i += 1
 	endwhile
 	;Debug.Notification("marketIndex "+marketIndex+" MilkDemands[marketIndex] "+MilkDemands[marketIndex]+" raceIndex "+raceIndex)
 	;Debug.Notification("upkeep "+upkeep+" baseTrade "+baseTrade+" finalbaseTrade "+finalbaseTrade)

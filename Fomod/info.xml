@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>25-05-2016</Version>
+  <Version>01-06-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
@@ -38,6 +38,14 @@ Caravan
 *rearrange dialogues
 
 Dev change log:
+
+	v 01-06-2016 git
+added breast reduction potion
+added maid dialogues for breast inc/dec potions
+added breast inc/dec potions has 5%/25% chance to add/remove breast, upon triggering effect will cause Exhaustion and with pain system will hurt(50% of health) until you sleep
+added mcm slider for adjusting breast row addition chance
+fix for milkmax not taking into account BreastRows
+simplified milk generation formulas, so now even i can understand what they do xD
 
 	v 25-05-2016 git
 fix for maid slots

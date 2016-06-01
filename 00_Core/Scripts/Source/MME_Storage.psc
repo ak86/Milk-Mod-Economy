@@ -23,22 +23,20 @@ Scriptname MME_Storage Hidden
 function initializeActor(actor akActor, float Level = 0.0, float MilkCnt = 0.0) global
 	Debug.Trace("MME_Storage: Triggered initializeActor() for actor " + akActor.GetLeveledActorBase().GetName())
 
-	if StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastCount") > 0
+	if StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastCount") > 0						;for maid<->slave conversion
 		Debug.Trace("MME_Storage: actor " + akActor.GetLeveledActorBase().GetName() + " is already initialized, skipping")
 	else
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBase", getBreastNodeScale(akActor))
-		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod", 0)
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastCount", 2)
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastRows", 1)
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BoobIncr", -1)
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BoobPerLvl", -1)
-		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.LactacidCount", 0)
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.Level", Level)
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", MilkCnt)
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMax.Basevalue", 2)
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMax.Scalefactor", 1)
 		; BreastCount, MilkMax.Basevalue and MilkMax.Scalefactor must be set before 'calculateMilkLimit()'
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMaximum", calculateMilkLimit(akActor, Level))
-		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.PainCount", 0)
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.WeightBase", akActor.GetLeveledActorBase().GetWeight())
 	endif
 endfunction
@@ -49,6 +47,8 @@ function deregisterActor(actor akActor) global
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.BreastBaseModPotion")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.BreastCount")
+	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.BreastRows")
+	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.AdjustBreastRow")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.BoobIncr")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.BoobPerLvl")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.LactacidCount")
@@ -57,8 +57,18 @@ function deregisterActor(actor akActor) global
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.MilkMaximum")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.MilkMax.Basevalue")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.MilkMax.Scalefactor")
+	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.MaidMilkGen")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.PainCount")
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.WeightBase")
+	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.TimesMilked")
+	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.MilkingContainerCumsSUM")
+	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.MilkingContainerMilksSUM")
+	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.MilkingContainerLactacid")
+	StorageUtil.UnsetIntValue(akActor, "MME.MilkMaid.MilkingMode")
+	StorageUtil.UnsetIntValue(akActor, "MME.MilkMaid.IsSlave")
+	StorageUtil.UnsetIntValue(akActor, "MME.MilkMaid.IsSuccubus")
+	StorageUtil.UnsetIntValue(akActor, "MME.MilkMaid.IsVampire")
+	StorageUtil.UnsetIntValue(akActor, "MME.MilkMaid.IsWerewolf")
 endfunction
 
 float function getBreastsBaseadjust(actor akActor) global
@@ -316,11 +326,12 @@ endfunction
 
 ; original formula to calculate the maximum milk limit was '(Level+2)*2'
 float function calculateMilkLimit(actor akActor, float Level) global
+	float BreastRows     = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastRows", missing = 1)
 	float BreastCount     = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastCount", missing = 2)
 	float MilkBasevalue   = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkMax.Basevalue", missing = 2)
 	float MilkScalefactor = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkMax.Scalefactor", missing = 1)
 
-	return (MilkBasevalue + Level*MilkScalefactor)*BreastCount
+	return (MilkBasevalue + Level*MilkScalefactor)*BreastCount*BreastRows
 endfunction
 
 function updateMilkMaximum(actor akActor) global

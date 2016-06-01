@@ -28,6 +28,7 @@ Bool Property Milk_RaceEffect = True Auto Conditional
 Bool Property Milk_SkillsEffect = True Auto Conditional
 Bool Property Milk_LactacidEffect = True Auto Conditional
 Bool Property Milk_RNDEffect = True Auto Conditional
+Int Property BrestEnlargement_MultiBreast_Effect Auto Conditional
 
 ;----------------------------------------------------------------------------
 ;Dialogues
@@ -35,6 +36,9 @@ Bool Property Milk_RNDEffect = True Auto Conditional
 
 Bool Property MME_BreasfeedingAnimationsCheck = False Auto Conditional
 Bool Property MME_DialogueMilking = True Auto Conditional
+
+Bool Property MME_SubjectMaid Auto Conditional
+Bool Property MME_SubjectSlave Auto Conditional
 
 Float Property MME_SubjectMilk Auto Conditional
 Float Property MME_TargetMilk Auto Conditional

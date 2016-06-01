@@ -770,6 +770,7 @@ function Page_Spell_Constructor()
 	
 		AddEmptyOption()
 			SkoomaLactacidEffect_T = AddToggleOption("$DisableLactacidSkoomaEffect", MilkQ.DisableSkoomaLactacid)
+			AddSliderOptionST("Spell_Constructor_BreastRowChance_Slider", "$AddBreastRowChance", MilkQ.MilkQC.BrestEnlargement_MultiBreast_Effect)
 endfunction
 
 function Page_ArmorManagement()
@@ -3069,19 +3070,7 @@ state Debug_MM_Maid_BreastRows_Slider
 	event OnSliderAcceptST(float value)
 		StorageUtil.SetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastRows", value)
 		SetSliderOptionValueST(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BreastRows"))
-		Form cuirass = MaidlistA[MaidIndex].GetWornForm(Armor.GetMaskForSlot(32))
-		if cuirass == (MilkQ.TITS4 || MilkQ.TITS6 || MilkQ.TITS8)
-			MaidlistA[MaidIndex].RemoveItem(cuirass)
-		endif
-		if value != (2 || 3 || 4)
-			;do nothing
-		elseif value == 2
-			MaidlistA[MaidIndex].EquipItem(MilkQ.TITS4,true,true)
-		elseif value == 3
-			MaidlistA[MaidIndex].EquipItem(MilkQ.TITS6,true,true)
-		elseif value == 4
-			MaidlistA[MaidIndex].EquipItem(MilkQ.TITS8,true,true)
-		endif
+		MilkQ.MultiBreastChange(MaidlistA[MaidIndex])
 	endEvent
 endState
 
@@ -3322,6 +3311,20 @@ state Debug_Milk_Maid_Menu
 
 	event OnHighlightST()
 		SetInfoText("$MME_MENU_PAGE_Debug_Milk_Maid_H1_S2_Higlight")
+	endEvent
+endState
+
+state Spell_Constructor_BreastRowChance_Slider
+	event OnSliderOpenST()
+		SetSliderDialogStartValue(MilkQ.MilkQC.BrestEnlargement_MultiBreast_Effect)
+		SetSliderDialogDefaultValue(5)
+		SetSliderDialogRange(0, 100)
+		SetSliderDialogInterval(1)
+	endEvent
+
+	event OnSliderAcceptST(float value)
+		MilkQ.MilkQC.BrestEnlargement_MultiBreast_Effect = value as int
+		SetSliderOptionValueST(value)
 	endEvent
 endState
 
