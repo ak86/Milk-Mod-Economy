@@ -1,43 +1,26 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>01-06-2016</Version>
+  <Version>04-06-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
   
-Milk Pump locations:
-DawnStar
-Falkreath
-Markarth
- - outside of dibella's temple
-Orc strongholds (Bound milkpumps)
-Riften
- - outside of mara's temple
- - Shor's stone
-Solitude
- - Dragon's bridge
- - Morthal
-Whiterun
- - behind the blacksmith
- - Riverwood
- - Rorikstead
-Windhelm
- - near the blacksmith
- - Winterhold
-Caravan
- - Ivarstead
-
  TODO or not todo list
-*move arrays to (storageutil?) formlists:
+*move arrays to (storageutil?)(actorrefs?)(formlists?):
 -Milkmaids
 -Milkslaves
 *move strings to separate script
 *UIExtension support
 *add skooma/mead milk, watch what you drink
-*add fertility potion (male/futa cum production, not really useful right now)
-*rearrange dialogues
+*add fertility potion (male/futa cum production, not really useful right now, maybe someday...)
 
 Dev change log:
+
+	v 04-06-2016 git
+fixed milkmaid milkgen not being removed(reset) when milkmaid reset
+added/fixed multiple breasts(body armor) not being removed when milkmaid reset
+added BreastRows to mcm milk production formula(now displayed value (almost?) match what milkmaid will get(unless something happens, ex: breast inc/dec effect trigger))
+copied bound milkpumps from Basic to MilkMod_MilkPumpsFancy.esp by EinarrTheRed, since they were not included
 
 	v 01-06-2016 git
 added breast reduction potion

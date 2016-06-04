@@ -81,15 +81,15 @@ int[] Property armslot Auto
 String[] Property MilkingEquipment Auto
 String[] Property BasicLivingArmor Auto
 String[] Property ParasiteLivingArmor Auto
-Alias[] Property AliasRef  Auto  
-Package Property MilkPackage  Auto  
+Alias[] Property AliasRef  Auto
+Package Property MilkPackage  Auto
 
 ;Varables in StorageUtil
 ;FormListClear(none,"MME.MilkMaid.List")					;not used
 ;UnsetFloatValue(none,"MME.Progression.Level")
 ;UnsetFloatValue(none,"MME.Progression.TimesMilked"
 ;UnsetFloatValue(none,"MME.Progression.TimesMilkedAll")
-;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.MaidMilkGen")
+;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.MilkGen")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.BreastRows")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.BoobIncr")
 ;UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.BoobPerLvl")
@@ -491,12 +491,14 @@ EndFunction
 Function UpdateActors()
 	int idx1 = 0
 	While idx1 < MilkMaid.Length
+		MME_Storage.updateMilkMaximum(MilkMaid[idx1])
 		MME_Storage.updateMilkCurrent(MilkMaid[idx1])
 		CurrentSize(MilkMaid[idx1])
 		idx1 += 1
 	EndWhile
 	idx1 = 0
 	While idx1 < MilkSlave.Length
+		MME_Storage.updateMilkMaximum(MilkMaid[idx1])
 		MME_Storage.updateMilkCurrent(MilkSlave[idx1])
 		CurrentSize(MilkSlave[idx1])
 		idx1 += 1
@@ -519,7 +521,6 @@ Function MilkCycle(Actor akActor, int t)
 	Float PainCnt = MME_Storage.getPainCurrent(akActor)
 	
 	Form maidArmor = akActor.GetWornForm(Armor.GetMaskForSlot(32))
-
 
 	if 	StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastBaseModPotion") != 0
 		if 	StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastBaseModPotion") > 0
@@ -556,12 +557,12 @@ Function MilkCycle(Actor akActor, int t)
 		BoobTick = BreastBase
 	endif
 	
-	if t > MilkMax && BreastScaleLimit
-		t = MilkMax as int
-	endif
-	
 	if BoobTick <= 0
 		BoobTick = 0.01
+	endif
+
+	if t > MilkMax && BreastScaleLimit
+		t = MilkMax as int
 	endif
 
 	Int tmod = t
@@ -581,7 +582,7 @@ Function MilkCycle(Actor akActor, int t)
 		elseif MaidMilkGen > 0
 			MilkTickCycle = (BoobTick + MaidMilkGen)/3 
 			if !(LactacidCnt > 0)
-				MilkTickCycle = MilkTickCycle/10
+				MilkTickCycle /= 10
 			endif
 			
 			MilkTick += MilkTickCycle * (1 + SLA.GetActorArousal(akActor)/100) * MilkProdMod/100 * BreastRows
@@ -599,7 +600,7 @@ Function MilkCycle(Actor akActor, int t)
 			LactacidCnt -= MaidMilkGen
 		endif
 		
-		tmod = tmod - 1
+		tmod -= 1
 	endwhile
 
 	If MilkAsMaidTimesMilked
@@ -609,8 +610,8 @@ Function MilkCycle(Actor akActor, int t)
 	EndIf
 
 	Paintick = MilkTick + MilkMax/10
-	MilkCnt = MilkTick + MilkCnt
-	PainCnt = PainCnt - paintick
+	MilkCnt += MilkTick
+	PainCnt -= paintick
 	
 	if LactacidCnt < 0
 		LactacidCnt = 0
@@ -1953,6 +1954,15 @@ Function MultiBreastChange(Actor akActor)
 	Float BreastRows = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastRows")
 	Form cuirass = akActor.GetWornForm(Armor.GetMaskForSlot(32))
 	
+	if !akActor.IsInFaction(MilkSlaveFaction) && !akActor.IsInFaction(MilkMaidFaction)
+		if cuirass == (TITS4 || TITS6 || TITS8)
+			debug.Trace("MilkModEconomy MultiBreastChange() "+akActor.GetLeveledActorBase().GetName()+" is not maid/slave and has multi breast, removing")
+			akActor.RemoveItem(cuirass, 1, true)
+		endif
+		debug.Trace("MilkModEconomy MultiBreastChange() "+akActor.GetLeveledActorBase().GetName()+" is not maid/slave exiting")
+		return
+	endif
+	
 	if BreastRows < 1
 		debug.Trace("MilkModEconomy MultiBreastChange() "+akActor.GetLeveledActorBase().GetName()+" BreastRows < 1, resetting to 1")
 		BreastRows = 1
@@ -2541,6 +2551,7 @@ Function MaidRemove(Actor akActor)
 		MME_Storage.deregisterActor(akActor)
 		akActor.RemoveFromFaction(MilkMaidFaction)
 		akActor.RemoveFromFaction(MilkSlaveFaction)
+		MultiBreastChange(akActor)
 	EndIf
 EndFunction
 
