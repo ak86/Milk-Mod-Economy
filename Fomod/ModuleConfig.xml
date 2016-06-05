@@ -124,7 +124,7 @@
 						</plugin>				
 						<plugin name="Fancy">
 							<description>
-								<![CDATA[All inclusive 5* milking barns]]>
+								<![CDATA[All inclusive 5* milking barns by EinarrTheRed]]>
 							</description>
 							<image path="Fomod\Screens\MPFancy.jpg"/>
 							<conditionFlags>
@@ -260,7 +260,7 @@
 					<plugins order="Explicit">			
 						<plugin name="Read me">
 							<description>
-								<![CDATA[Installing plugin scripts for optional mods. Installing scripts without mod may lead to conflicts.]]>
+								<![CDATA[Installing plugin scripts for optional mods. Installing scripts without mod may lead to mod conflicts and mods not working.]]>
 							</description>
 							<conditionFlags>
 								<flag name="Read me"></flag>
@@ -473,7 +473,7 @@
 						</plugin>
 						<plugin name="V1">
 							<description>
-								<![CDATA[Gem pregnancy detection variant1, from 2016]]>
+								<![CDATA[Gem pregnancy detection variant1(script based), from 2016]]>
 							</description>
 							<conditionFlags>
 								<flag name="SGO3"></flag>
@@ -487,7 +487,7 @@
 						</plugin>
 						<plugin name="V2">
 							<description>
-								<![CDATA[Gem pregnancy detection variant2, from 2015]]>
+								<![CDATA[Gem pregnancy detection variant2(from Storageutil), from 2015]]>
 							</description>
 							<conditionFlags>
 								<flag name="SGO3"></flag>

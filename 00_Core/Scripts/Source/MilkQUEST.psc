@@ -138,6 +138,7 @@ Bool Property PlayerCantBeMilkmaid = False Auto
 Bool Property ECTrigger = True Auto
 Bool Property ECCrowdControl = True Auto
 Bool Property ZazPumps = False Auto
+Bool Property UseFutaMilkCuirass = False Auto
 
 Int Property BreastScale = 0 Auto
 Int Property TimesMilkedMult Auto
@@ -568,9 +569,9 @@ Function MilkCycle(Actor akActor, int t)
 	Int tmod = t
 	while tmod != 0
 		if LactacidCnt > 0 || ((MaidMilkGen > 0 || isPregnant(akActor)) && (MilkCnt + MilkTick <= MilkMax))
-			MaidMilkGen += MilkGenValue
+			MaidMilkGen += MilkGenValue * BreastRows
 		else
-			MaidMilkGen -= MilkGenValue/2
+			MaidMilkGen -= MilkGenValue/2 * BreastRows
 			if MaidMilkGen < 0
 				MaidMilkGen = 0
 			endif
@@ -578,14 +579,14 @@ Function MilkCycle(Actor akActor, int t)
 		
 		if (FixedMilkGen || (akActor != PlayerREF && FixedMilkGen4Followers ))										;cheats
 			MilkTickCycle = (BoobTick + MaidMilkGen)/3 
-			MilkTick += MilkTickCycle * (1 + SLA.GetActorArousal(akActor)/100) * MilkProdMod/100 * BreastRows
+			MilkTick += MilkTickCycle * (1 + SLA.GetActorArousal(akActor)/100) * MilkProdMod/100
 		elseif MaidMilkGen > 0
 			MilkTickCycle = (BoobTick + MaidMilkGen)/3 
 			if !(LactacidCnt > 0)
 				MilkTickCycle /= 10
 			endif
 			
-			MilkTick += MilkTickCycle * (1 + SLA.GetActorArousal(akActor)/100) * MilkProdMod/100 * BreastRows
+			MilkTick += MilkTickCycle * (1 + SLA.GetActorArousal(akActor)/100) * MilkProdMod/100
 		endif
 		
 		;if  WeightUpScale && akActor.GetLeveledActorBase().GetWeight() + 1 < 100 && LactacidCnt > 0
@@ -949,6 +950,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.TimesMilked")
 	Float TimesMilked = StorageUtil.GetFloatValue(none,"MME.Progression.TimesMilked")
 	Float TimesMilkedAll = StorageUtil.GetFloatValue(none,"MME.Progression.TimesMilkedAll")
+	Float BreastRows = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastRows", missing = 1)
 
 	if akActor.HasSpell( BeingMilkedPassive )
 		if MilkingType != 1						;prevents msg spam from aidrivenplayer bound milkpump, since its activates script endlessly,
@@ -1053,7 +1055,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				StoryDisplay(0,1,FirstTimeStory)
 			EndIf
 			
-			if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastRows", missing = 1) != 1
+			if BreastRows != 1
 				;do nothing
 			elseif cuirass != None
 				if !(cuirass == MilkCuirass || cuirass == MilkCuirassFuta) && !((StringUtil.Find(cuirass.getname(), "Milk" ) >= 0) || (MilkingEquipment.find(cuirass.getname()) >= 0))
@@ -1064,7 +1066,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 						akActor.additem(ZaZMoMSuctionCups, 1, true)
 						akActor.equipitem(ZaZMoMSuctionCups, true, true)
 					elseif !akActor.IsEquipped(cuirass)
-						if akActorGender == "Futa"
+						if akActorGender == "Futa" && UseFutaMilkCuirass == true
 							akActor.additem(MilkCuirassFuta, 1, true)
 							akActor.equipitem(MilkCuirassFuta, true, true)
 						else
@@ -1078,7 +1080,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					akActor.additem(ZaZMoMSuctionCups, 1, true)
 					akActor.equipitem(ZaZMoMSuctionCups, true, true)
 				else
-					if akActorGender == "Futa"
+					if akActorGender == "Futa" && UseFutaMilkCuirass == true
 						akActor.additem(MilkCuirassFuta, 1, true)
 						akActor.equipitem(MilkCuirassFuta, true, true)
 					else
@@ -1092,18 +1094,18 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		;do nothing
 	elseIf MilkCnt >= 1
 		if cuirass != None
-			if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastRows", missing = 1) != 1
+			if BreastRows != 1
 				Mode = 1
 			ElseIf StringUtil.Find(cuirass.getname(), "Milk" ) >= 0 \
 			|| StringUtil.Find(cuirass.getname(), "Cow" ) >= 0 \
 			|| MilkingEquipment.find(cuirass.getname()) >= 0\
 			|| SLSDBra == true
 				Mode = 2
-			ElseIf akActor.GetItemCount(MilkCuirassFuta) > 0 && akActorGender == "Futa"
+			ElseIf akActor.GetItemCount(MilkCuirassFuta) > 0 && akActorGender == "Futa" && UseFutaMilkCuirass == true
 				akActor.equipitem(MilkCuirassFuta, true, true)
 				hasInventoryMilkCuirassFuta = true
 				Mode = 2
-			ElseIf akActor.GetItemCount(MilkCuirass) > 0 && akActorGender != "Futa"
+			ElseIf akActor.GetItemCount(MilkCuirass) > 0 && (akActorGender != "Futa" || UseFutaMilkCuirass != true)
 				akActor.equipitem(MilkCuirass, true, true)
 				hasInventoryMilkCuirass = true
 				Mode = 2
@@ -1129,11 +1131,11 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			Else
 				akActor.UnequipItem(cuirass, false, true)
 			EndIf
-		ElseIf akActor.GetItemCount(MilkCuirassFuta) > 0 && akActorGender == "Futa"
+		ElseIf akActor.GetItemCount(MilkCuirassFuta) > 0 && akActorGender == "Futa" && UseFutaMilkCuirass == true
 			akActor.equipitem(MilkCuirassFuta, true, true)
 			hasInventoryMilkCuirassFuta = true
 			Mode = 2
-		ElseIf akActor.GetItemCount(MilkCuirass) > 0 && akActorGender != "Futa"
+		ElseIf akActor.GetItemCount(MilkCuirass) > 0 && (akActorGender != "Futa" || UseFutaMilkCuirass != true)
 			akActor.equipitem(MilkCuirass, true, true)
 			hasInventoryMilkCuirass = true
 			Mode = 2
@@ -1203,6 +1205,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		else 
 			mpas = 1
 		endif
+		SLA.UpdateActorExposure(akActor, mpas)
 
 		Utility.Wait(1.0)
 
@@ -1336,36 +1339,24 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				duration += 1
 			endwhile
 			
-			if MilkCnt >= 1
-				bottles +=  1
-				if !IsMilkMaid
+			if !IsMilkMaid
+				if MilkCnt >= 1
+					bottles += 1
 					MilkCnt -= 1
 				endif
-			endif
-
-			if IsMilkMaid
+			else
 				int gush = (MilkCnt * GushPct/100) as int
-				float MilkGen
 				
 				if gush < 1
 					gush = 1
 				endif
 				
-				if gush > 1
-					bottles += gush
+				if SLA.GetActorArousal(akActor) > 98
+					gush *= BreastRows as int
 				endif
 				
-				MilkGen = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkGen") /3 /10 *gush
-				if MilkGen == 0 
-					if Utility.RandomInt(0, 100) < 15
-						debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s breasts has started lactating.")
-						StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", MilkGen)
-					endif
-				else
-					StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", MilkGen)
-				endif
-
-				if MilkCnt >= 1
+				if MilkCnt >= gush
+					bottles += gush
 					MilkCnt -= gush
 					StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.TimesMilked", gush)
 					MaidLevelCheck(akActor)
@@ -1378,15 +1369,24 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					if PlayerREF.GetDistance(akActor) < 500 && MilkMsgs && MilkCntMsgs
 						debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s remaining capacity: " + MilkCnt + ", Milked capacity: " + bottles)
 					endif
-					if mode == 1
+					if mode == 1 || akActor.GetWornForm(Armor.GetMaskForSlot(32)) == (None || TITS4 || TITS6 || TITS8)
 						AddMilkFx(akActor, 1)
 						AddLeak(akActor)
 					endif
 				endif
 				
-				if mode > 0 && PainSystem
+				if StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkGen") == 0 
+					if Utility.RandomInt(0, 100) < 15
+						debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s breasts has started lactating.")
+						StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", MilkGenValue / 3 / 10 * gush)
+					endif
+				else
+					StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", MilkGenValue / 3 / 10 * gush)
+				endif
+
+				if mode > 0 && PainSystem																					;mobile milking pain x2
 					Pain = Pain(akActor, pain) * 2
-				elseif PainSystem
+				elseif PainSystem																							;milkpump milking pain
 					Pain = Pain(akActor, pain)
 				endif
 				PainCnt = MME_Storage.getPainCurrent(akActor)
@@ -1457,13 +1457,12 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					akActor.DamageActorValue("Magicka", 0.25 * akActor.GetBaseActorValue("Magicka"))
 				endif
 				Utility.Wait(1.0)
-				duration = duration + 1
+				duration += 1
 			endwhile
 		endif
 
 		;Cycle wrap-up
 		
-		SLA.UpdateActorExposure(akActor, mpas)
 
 		if SLA.GetActorArousal(akActor) > 98 && (akActor.HasSpell(MilkingStage) || akActor.HasSpell(FuckMachineStage))
 			Int exposureValue = ((((bottles + 1) / (MilkCnt + bottles + 1)) * 3 * -20.0)/(1+SLA.GetActorExposureRate(akActor)/3)) as Int
@@ -1529,7 +1528,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			Game.SetPlayerAIDriven(false)
 			bControlsDisabled = false
 			if MilkMsgs 
-				debug.Notification("Milk Pump had milked everything it could from you, and releases its bounds, you are free to leave.")
+				debug.Notification("Milk Pump has milked you dry and releases its bounds.")
 			endif
 		endif
 		
@@ -1551,7 +1550,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		endif
 
 		if Mode == 0
-			if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastRows", missing = 1) == 1
+			if BreastRows == 1
 				if akActor.IsEquipped(ZaZMoMSuctionCups)
 					akActor.UnequipItem(ZaZMoMSuctionCups, false, true)
 					akActor.RemoveItem(ZaZMoMSuctionCups, 1, true)
@@ -1579,7 +1578,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				endif
 			EndIf
 		endif
-		If cuirass != None && StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastRows", missing = 1) == 1
+		If cuirass != None && BreastRows == 1
 			If cuirass != None && SLSDBra == false
 				if !akActor.IsEquipped(cuirass)
 					akActor.EquipItem(cuirass, false, true)
@@ -2684,6 +2683,7 @@ Function VarSetup()
 	WeightUpScale = False					;scale to 100
 	PlayerCantBeMilkmaid = False
 	ZazPumps = False
+	UseFutaMilkCuirass = False
 	
 	ECTrigger = True
 	ECCrowdControl = True
@@ -2757,6 +2757,8 @@ Function SetNodeScale(Actor akActor, string nodeName, float value)
 			Endif
 			NetImmerse.SetNodeScale(akActor, nodeName, value, false)
 		Endif
+	Elseif nodeName == ("NPC L Breast" || "NPC R Breast" || "NPC L Breast01" || "NPC R Breast01")
+		Debug.Notification("MilkModEconomy " + nodeName + " was not found, check your armor/body/skeleton")
 	Endif
 EndFunction
 

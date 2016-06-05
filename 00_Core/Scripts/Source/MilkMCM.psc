@@ -419,6 +419,7 @@ function Page_Milking_Config()
 			else
 				AddTextOptionST("Milking_MilkWithZaZMoMSuctionCups_Toggle", "$MME_MENU_PAGE_Milking_H3_S5", "$MME_MENU_PAGE_Milking_H3_S5.3")
 			endif
+			AddToggleOptionST("FutaMilkCuirass_Toggle", "$MME_MENU_PAGE_Milking_H3_S17", MilkQ.UseFutaMilkCuirass)
 			AddToggleOptionST("Feeding_Toggle", "$MME_MENU_PAGE_Milking_H3_S8", MilkQ.Feeding)
 			AddToggleOptionST("ForcedFeeding_Toggle", "$MME_MENU_PAGE_Milking_H3_S14", MilkQ.ForcedFeeding)
 			AddSliderOptionST("Feeding_Duration_Slider", "$MME_MENU_PAGE_Milking_H3_S9.1", MilkQ.Feeding_Duration, "$MME_MENU_PAGE_Milking_H3_S9.2")
@@ -2773,6 +2774,17 @@ state Milking_MilkWithZaZMoMSuctionCups_Toggle
 	
 	event OnHighlightST()
 		SetInfoText("$MME_MENU_PAGE_Milking_H3_S5_Higlight")
+	endEvent
+endState
+
+state FutaMilkCuirass_Toggle
+	event OnSelectST()
+		if !MilkQ.UseFutaMilkCuirass
+			MilkQ.UseFutaMilkCuirass = true
+		else
+			MilkQ.UseFutaMilkCuirass = false
+		endif
+		SetToggleOptionValueST(MilkQ.UseFutaMilkCuirass)
 	endEvent
 endState
 
