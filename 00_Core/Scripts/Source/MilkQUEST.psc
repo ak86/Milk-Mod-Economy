@@ -139,6 +139,7 @@ Bool Property ECTrigger = True Auto
 Bool Property ECCrowdControl = True Auto
 Bool Property ZazPumps = False Auto
 Bool Property UseFutaMilkCuirass = False Auto
+Bool Property FreeLactacid = False Auto
 
 Int Property BreastScale = 0 Auto
 Int Property TimesMilkedMult Auto
@@ -1214,7 +1215,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		&& ((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || akActor.IsInLocation(PlayerREF.getCurrentLocation()))\
 		&& ((DDGag == false || DDGagOpen == true) && (ZaZGag == false || ZaZGagOpen == true))\
 		&& ((MilkingType == 0 && LactacidMax > LactacidCnt && (PlayerREF.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || akActor.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1))\
-		|| MilkingType == 1 || !IsMilkMaid || akActor.IsInFaction(MilkSlaveFaction))
+		|| MilkingType == 1 || !IsMilkMaid || akActor.IsInFaction(MilkSlaveFaction) || FreeLactacid == true)
 			; this doesn't count if both actor and player have lactacid bottles but who cares, no one will ever find xD
 
 			;debug.Notification("feeding cycle")
@@ -1237,7 +1238,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 
 			while duration < Feeding_Duration && (((akActor.GetSitState() <= 3 && akActor.GetSitState()) || akActor.IsInLocation(PlayerREF.getCurrentLocation()))|| Mode != 0) && (akActor.HasSpell(BeingMilkedPassive) || !IsMilkMaid)
 				if IsMilkMaid == true
-					if MilkingType == 1
+					if MilkingType == 1 || FreeLactacid == true
 						akActor.EquipItem(MME_Util_Potions.GetAt(0), true, true)
 					elseif akActor.IsInFaction(MilkMaidFaction)
 						if (PlayerREF.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || akActor.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1)
@@ -1257,10 +1258,10 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					elseif StorageUtil.GetIntValue(akActor, "MME.MilkMaid.IsSlave") == 1 && (akActor.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1)
 						akActor.EquipItem(MME_Util_Potions.GetAt(0), true, true)
 					endif
+					LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
 				endif
 				Utility.Wait(10.0)
 				duration = duration + 10
-				LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
 			endwhile
 
 			duration = 0
@@ -1345,6 +1346,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					MilkCnt -= 1
 				endif
 			else
+				MilkCnt = MME_Storage.getMilkCurrent(akActor)
 				int gush = (MilkCnt * GushPct/100) as int
 				
 				if gush < 1
@@ -1462,7 +1464,6 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		endif
 
 		;Cycle wrap-up
-		
 
 		if SLA.GetActorArousal(akActor) > 98 && (akActor.HasSpell(MilkingStage) || akActor.HasSpell(FuckMachineStage))
 			Int exposureValue = ((((bottles + 1) / (MilkCnt + bottles + 1)) * 3 * -20.0)/(1+SLA.GetActorExposureRate(akActor)/3)) as Int
@@ -1518,6 +1519,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		
 		if IsMilkMaid == true
 			MilkCnt = MME_Storage.getMilkCurrent(akActor)
+			LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
 			MaidLevel = MME_Storage.getMaidLevel(akActor)
 		endif
 		
@@ -2684,6 +2686,7 @@ Function VarSetup()
 	PlayerCantBeMilkmaid = False
 	ZazPumps = False
 	UseFutaMilkCuirass = False
+	FreeLactacid = False
 	
 	ECTrigger = True
 	ECCrowdControl = True

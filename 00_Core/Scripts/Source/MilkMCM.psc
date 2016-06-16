@@ -512,6 +512,7 @@ function Page_Debug()
 			AddToggleOptionST("Debug_FixedMilkGen4Followers_Toggle", "$MME_MENU_PAGE_Debug_H2_S4", MilkQ.FixedMilkGen4Followers)
 			AddToggleOptionST("Debug_CuirassSellsMilk_Toggle", "$MME_MENU_PAGE_Debug_H2_S5", MilkQ.CuirassSellsMilk)
 			AddToggleOptionST("Debug_MilkAsMaidTimesMilked_Toggle", "$MME_MENU_PAGE_Debug_H2_S7", MilkQ.MilkAsMaidTimesMilked)
+			AddToggleOptionST("Debug_FreeLactacid_Toggle", "$MME_MENU_PAGE_Debug_H2_S8", MilkQ.FreeLactacid)
 
 		AddHeaderOption("$MME_MENU_PAGE_Debug_Maintenance_Header")
 			AddTextOptionST("Debug_ResetMaids_Toggle", "$MME_MENU_PAGE_Debug_H3_S1", "")
@@ -1830,6 +1831,17 @@ state Debug_MilkAsMaidTimesMilked_Toggle
 			MilkQ.MilkAsMaidTimesMilked = false
 		endif
 		SetToggleOptionValueST(MilkQ.MilkAsMaidTimesMilked)
+	endEvent
+endState
+
+state Debug_FreeLactacid_Toggle
+	event OnSelectST()
+		if !MilkQ.FreeLactacid
+			MilkQ.FreeLactacid = true
+		else
+			MilkQ.FreeLactacid = false
+		endif
+		SetToggleOptionValueST(MilkQ.FreeLactacid)
 	endEvent
 endState
 

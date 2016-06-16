@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>05-06-2016</Version>
+  <Version>13-06-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
@@ -16,24 +16,26 @@
 
 Dev change log:
 
-	v 05-06-2016 git
+	v 13-06-2016
+fix for milk count if character's milk is increased during milking 
+
+	v 07-06-2016
+added mcm->debug->cheat-> milking:free lactacid
+
+	v 05-06-2016
 fixed huge milkgen from milking
 added breastrows modifier to milking
 added option to use normal cuirass instead of futa
 added warning if breast nodes dont exist
-
-	v 04-06-2016 git
 fixed milkmaid milkgen not being removed(reset) when milkmaid reset
 added/fixed multiple breasts(body armor) not being removed when milkmaid reset
 added BreastRows to mcm milk production formula(now displayed value (almost?) match what milkmaid will get(unless something happens, ex: breast inc/dec effect trigger))
 copied bound milkpumps from Basic to MilkMod_MilkPumpsFancy.esp by EinarrTheRed, since they were not included
-
-	v 01-06-2016 git
 added breast reduction potion
 added maid dialogues for breast inc/dec potions
 added breast inc/dec potions has 5%/25% chance to add/remove breast, upon triggering effect will cause Exhaustion and with pain system will hurt(50% of health) until you sleep
-added mcm slider for adjusting breast row addition chance
-fix for milkmax not taking into account BreastRows
+added mcm slider for adjusting breast row addition chance(you need to set it manually if you update)
+fix for storage milkmax not taking into account BreastRows
 simplified milk generation formulas, so now even i can understand what they do xD
 
 	v 25-05-2016 git
