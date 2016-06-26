@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>13-06-2016</Version>
+  <Version>17-06-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
@@ -15,6 +15,16 @@
 *add fertility potion (male/futa cum production, not really useful right now, maybe someday...)
 
 Dev change log:
+
+	v 17-06-2016
+	beggar drunken favor dialogues
+	
+	
+	v 17-06-2016
+added (not)bound milkpumps only esps, requires cell reset(or console disable/enable) to change between pumps scripts
+moved milkpumps selection to separate install step, maybe some ppl will actually read what they install
+slight change to economy trading script, this should improve its speed by ~0.0001 second
+slightly changed milkpump milking, feeding stage now feeds lactacid in 1 go and then moves to other stages
 
 	v 13-06-2016
 fix for milk count if character's milk is increased during milking 

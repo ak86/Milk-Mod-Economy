@@ -5,11 +5,12 @@
 		<fileDependency file="Skyrim.esm" state="Active" />
 		<fileDependency file="Update.esm" state="Active" />
 		<fileDependency file="ZaZAnimationPack.esm" state="Active" />
+		<fileDependency file="SexLab.esm" state="Active" />
 	</moduleDependencies>
 	<installSteps order="Explicit">	
 		<installStep name="Core Setup">
 			<optionalFileGroups>
-				<group name="CORE" type="SelectExactlyOne">
+				<group name="CORE group" type="SelectAny">
 					<plugins order="Explicit">
 						<plugin name="CORE">
 							<description>
@@ -89,53 +90,6 @@
 							<typeDescriptor>
 								<type name="Optional"/>
 							</typeDescriptor>
-						</plugin>
-					</plugins>   
-				</group>
-				<group name="MilkPumps" type="SelectExactlyOne">
-					<plugins order="Explicit">
-						<plugin name="None">
-							<description>
-								<![CDATA[No placed milkpumps]]>
-							</description>
-							<conditionFlags>
-								<flag name="MilkumpNone">None</flag>
-							</conditionFlags>
-							<files>
-							</files>
-							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
-						</plugin>
-						<plugin name="Basic">
-							<description>
-								<![CDATA[Basic placement of milkpumps]]>
-							</description>
-							<image path="Fomod\Screens\MPBasic.jpg"/>
-							<conditionFlags>
-								<flag name="MilkumpBasic">Basic</flag>
-							</conditionFlags>
-							<files>
-								<folder source="02_Extra\MilkPumps Basic" destination=""/>
-							</files>
-							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>
-						</plugin>				
-						<plugin name="Fancy">
-							<description>
-								<![CDATA[All inclusive 5* milking barns by EinarrTheRed]]>
-							</description>
-							<image path="Fomod\Screens\MPFancy.jpg"/>
-							<conditionFlags>
-								<flag name="MilkumpFancy">Fancy</flag>
-							</conditionFlags>
-							<files>
-								<folder source="02_Extra\MilkPumps Fancy" destination=""/>
-							</files>
-							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
 						</plugin>
 					</plugins>   
 				</group>
@@ -245,6 +199,118 @@
 							</conditionFlags>
 							<files>
 								<folder source="03_Patches\ZaZ" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+					</plugins>   
+				</group>
+			</optionalFileGroups>
+		</installStep>
+		<installStep name="Milk Pumps Selection">
+			<optionalFileGroups>
+				<group name="MilkPumps" type="SelectExactlyOne">
+					<plugins order="Explicit">
+						<plugin name="None">
+							<description>
+								<![CDATA[No placed milkpumps]]>
+							</description>
+							<image path="Fomod\Screens\MPNO.jpg"/>
+							<conditionFlags>
+								<flag name="MilkumpNone">None</flag>
+							</conditionFlags>
+							<files>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+						<plugin name="Basic">
+							<description>
+								<![CDATA[Basic placement of milkpumps, not bound in towns, bound in orc strongholds]]>
+							</description>
+							<image path="Fomod\Screens\MPBasic.jpg"/>
+							<conditionFlags>
+								<flag name="MilkumpBasic">Basic</flag>
+							</conditionFlags>
+							<files>
+								<folder source="02_Extra\MilkPumps Basic" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>				
+						<plugin name="BasicNB">
+							<description>
+								<![CDATA[Basic placement of milkpumps, all pumps are not bound]]>
+							</description>
+							<image path="Fomod\Screens\MPBasic.jpg"/>
+							<conditionFlags>
+								<flag name="MilkumpBasicNB">Basic not bound</flag>
+							</conditionFlags>
+							<files>
+								<folder source="02_Extra\MilkPumps Basic NB" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>				
+						<plugin name="BasicB">
+							<description>
+								<![CDATA[Basic placement of milkpumps, all pumps are bound]]>
+							</description>
+							<image path="Fomod\Screens\MPBasic.jpg"/>
+							<conditionFlags>
+								<flag name="MilkumpBasicB">Basic bound</flag>
+							</conditionFlags>
+							<files>
+								<folder source="02_Extra\MilkPumps Basic B" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>				
+						<plugin name="Fancy">
+							<description>
+								<![CDATA[All inclusive 5* milking barns by EinarrTheRed, not bound in towns, bound in orc strongholds]]>
+							</description>
+							<image path="Fomod\Screens\MPFancy.jpg"/>
+							<conditionFlags>
+								<flag name="MilkumpFancy">Fancy</flag>
+							</conditionFlags>
+							<files>
+								<folder source="02_Extra\MilkPumps Fancy" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>				
+						<plugin name="Fancy NB">
+							<description>
+								<![CDATA[All inclusive 5* milking barns by EinarrTheRed, all pumps are not bound]]>
+							</description>
+							<image path="Fomod\Screens\MPFancy.jpg"/>
+							<conditionFlags>
+								<flag name="MilkumpFancyNB">Fancy NB</flag>
+							</conditionFlags>
+							<files>
+								<folder source="02_Extra\MilkPumps Fancy NB" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>				
+						<plugin name="Fancy B">
+							<description>
+								<![CDATA[All inclusive 5* milking barns by EinarrTheRed, all pumps are bound]]>
+							</description>
+							<image path="Fomod\Screens\MPFancy.jpg"/>
+							<conditionFlags>
+								<flag name="MilkumpFancyB">Fancy B</flag>
+							</conditionFlags>
+							<files>
+								<folder source="02_Extra\MilkPumps Fancy B" destination=""/>
 							</files>
 							<typeDescriptor>
 								<type name="Optional"/>
@@ -580,7 +646,7 @@
 						</plugin>
 						<plugin name="On">
 							<description>
-								<![CDATA[Support for uie menu.]]>
+								<![CDATA[Support for uie menu(not working, placeholder).]]>
 							</description>
 							<conditionFlags>
 								<flag name="UIE"></flag>

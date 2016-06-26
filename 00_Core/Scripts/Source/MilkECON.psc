@@ -219,23 +219,38 @@ EndFunction
 ;----C-O-R-E----F-U-N-C-T-I-O-N-S----\
 ;---------------------------------------------------------------------------------------------------------------------
 
-; Could be modified to take an actor instead of a race
 Function InitiateTrade(int MilkCount, int boobgasmcount, Actor akActor, bool mobilemilking)
 	Race maidRace = akActor.GetActorBase().GetRace()
 	int marketIndex = GetMarketIndexFromLocation(akActor.GetCurrentLocation())
 	int raceIndex = GetRaceIndexFromRace(maidRace)
 
-	Potion NfinalPotion = GetMilkType(milkCount, 0, akActor) as Potion
-	int NfinalQty = GetMilkQty(milkCount-boobgasmcount)
-	int Nupkeep = GetUpKeepCost(milkCount-boobgasmcount)
-	int NbaseTrade = CalculateBaseTrade(NfinalPotion, NfinalQty) * MilkQ.MilkPriceMod
-	int NmilkTax = CalculateServiceTax(marketIndex, NbaseTrade)
+	Potion NfinalPotion = none
+	int NfinalQty = 0
+	int Nupkeep = 0
+	int NbaseTrade = 0
+	int NmilkTax = 0
 
-	Potion BfinalPotion = GetMilkType(boobgasmcount, boobgasmcount, akActor) as Potion
-	int BfinalQty = boobgasmcount
-	int Bupkeep = GetUpKeepCost(boobgasmcount)
-	int BbaseTrade = CalculateBaseTrade(BfinalPotion, BfinalQty) * MilkQ.MilkPriceMod
-	int BmilkTax = CalculateServiceTax(marketIndex, BbaseTrade)
+	Potion BfinalPotion = none
+	int BfinalQty = 0
+	int Bupkeep = 0
+	int BbaseTrade = 0
+	int BmilkTax = 0
+	
+	if (milkCount - boobgasmcount) > 0
+		NfinalPotion = GetMilkType(milkCount, 0, akActor) as Potion
+		NfinalQty = GetMilkQty(milkCount-boobgasmcount)
+		Nupkeep = GetUpKeepCost(milkCount-boobgasmcount)
+		NbaseTrade = CalculateBaseTrade(NfinalPotion, NfinalQty) * MilkQ.MilkPriceMod
+		NmilkTax = CalculateServiceTax(marketIndex, NbaseTrade)
+	endif
+	
+	if boobgasmcount > 0
+		BfinalPotion = GetMilkType(boobgasmcount, boobgasmcount, akActor) as Potion
+		BfinalQty = boobgasmcount
+		Bupkeep = GetUpKeepCost(boobgasmcount)
+		BbaseTrade = CalculateBaseTrade(BfinalPotion, BfinalQty) * MilkQ.MilkPriceMod
+		BmilkTax = CalculateServiceTax(marketIndex, BbaseTrade)
+	endif
 
 	; multiply value of baseTrade after tax is calculated
 	if MilkDemands[marketIndex] == raceIndex

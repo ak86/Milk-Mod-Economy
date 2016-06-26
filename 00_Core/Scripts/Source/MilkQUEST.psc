@@ -1211,7 +1211,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		Utility.Wait(1.0)
 
 		;FEEDING STAGE
-		If Feeding == true && Mode == 0 && akActor.GetLeveledActorBase().GetSex() == 1 && (LactacidCnt < LactacidMax || (FeedOnce && ForcedFeeding))\
+		while Feeding == true && Mode == 0 && akActor.GetLeveledActorBase().GetSex() == 1 && (LactacidCnt < LactacidMax || (FeedOnce && ForcedFeeding))\
 		&& ((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || akActor.IsInLocation(PlayerREF.getCurrentLocation()))\
 		&& ((DDGag == false || DDGagOpen == true) && (ZaZGag == false || ZaZGagOpen == true))\
 		&& ((MilkingType == 0 && LactacidMax > LactacidCnt && (PlayerREF.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || akActor.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1))\
@@ -1267,7 +1267,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			duration = 0
 			Sound.StopInstance(soundInstance03)
 			FeedOnce = false
-		Endif
+		endwhile
 
 		if akActor.HasSpell(FeedingStage)
 			akActor.RemoveSpell( FeedingStage )
