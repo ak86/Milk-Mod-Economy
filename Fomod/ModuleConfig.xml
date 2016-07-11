@@ -204,6 +204,20 @@
 								<type name="Optional"/>
 							</typeDescriptor>				
 						</plugin>
+						<plugin name="MME_Sandbox">
+							<description>
+								<![CDATA[Patch enables sandbox for milkpumps, any npc can use pumps]]>
+							</description>
+							<conditionFlags>
+								<flag name="Sandbox_Patch\Sandbox">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="03_Patches\Sandbox" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
 					</plugins>   
 				</group>
 			</optionalFileGroups>
