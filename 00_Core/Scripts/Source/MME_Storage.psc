@@ -327,11 +327,11 @@ endfunction
 ; original formula to calculate the maximum milk limit was '(Level+2)*2'
 float function calculateMilkLimit(actor akActor, float Level) global
 	float BreastRows     = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastRows", missing = 1)
-	float BreastCount     = 2
+	float BreastsPerRow   = 2
 	float MilkBasevalue   = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkMax.Basevalue", missing = 2)
 	float MilkScalefactor = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkMax.Scalefactor", missing = 1)
 
-	return (MilkBasevalue + Level*MilkScalefactor)*BreastCount*BreastRows
+	return (MilkBasevalue + Level*MilkScalefactor)*BreastRows*BreastsPerRow
 endfunction
 
 function updateMilkMaximum(actor akActor) global
