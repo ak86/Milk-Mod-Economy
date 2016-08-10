@@ -2813,34 +2813,37 @@ bool hasSchlong = False
 EndFunction
 
 bool Function isVampire(Actor akActor)
-	If StringUtil.Find(akActor.GetRace().getname(), "Vampire") >= 0 || StorageUtil.GetIntValue(milkMaid,"MME.MilkMaid.IsVampire") == 1
-		Return True
-	elseif akActor.HasSpell(Game.GetFormFromFile(0xed0a8, "Skyrim.esm") as Spell) || akActor.HasSpell(Game.GetFormFromFile(0x10fb30, "Skyrim.esm") as Spell) ; VampireVampirism || VampirePoisonResist
-		Return True
-	elseif PlayerVampireQuest.VampireStatus != 0 && akActor == PlayerRef
+	; VampireVampirism
+	; VampirePoisonResist
+	If StringUtil.Find(akActor.GetRace().getname(), "Vampire") >= 0\
+	|| StorageUtil.GetIntValue(akActor,"MME.MilkMaid.IsVampire") == 1\
+	|| akActor.HasSpell(Game.GetFormFromFile(0xed0a8, "Skyrim.esm") as Spell)\
+	|| akActor.HasSpell(Game.GetFormFromFile(0x10fb30, "Skyrim.esm") as Spell)
 		Return True
 	endif
 	Return False
 EndFunction
 
 bool Function isWerewolf(Actor akActor)
-	If StringUtil.Find(akActor.GetRace().getname(), "Werewolf") >= 0 || StringUtil.Find(akActor.GetRace().getname(), "Werebeast") >= 0 || StorageUtil.GetIntValue(milkMaid,"MME.MilkMaid.IsWerewolf") == 1
-		Return True
-	elseif akActor.HasSpell(Game.GetFormFromFile(0x92c48, "Skyrim.esm") as Spell) || akActor.HasSpell(Game.GetFormFromFile(0xf5ba0, "Skyrim.esm") as Spell) ; WerewolfChange || WerewolfImmunity
-		Return True
-	elseif CHScript.PlayerHasBeastBlood == 1 && akActor == PlayerRef
+	; WerewolfChange
+	; WerewolfImmunity
+	If StringUtil.Find(akActor.GetRace().getname(), "Werewolf") >= 0\
+	|| StringUtil.Find(akActor.GetRace().getname(), "Werebeast") >= 0\
+	|| StorageUtil.GetIntValue(akActor,"MME.MilkMaid.IsWerewolf") == 1\
+	|| akActor.HasSpell(Game.GetFormFromFile(0x92c48, "Skyrim.esm") as Spell)\
+	|| akActor.HasSpell(Game.GetFormFromFile(0xf5ba0, "Skyrim.esm") as Spell)
 		Return True
 	endif
 	Return False
 EndFunction
 
 bool Function isSuccubus(Actor akActor)
-	If StringUtil.Find(akActor.GetRace().getname(), "Succubus") >= 0 || StorageUtil.GetIntValue( akActor, "Angrim_iSuccubusCurse") > 0 || StorageUtil.GetIntValue(milkMaid,"MME.MilkMaid.IsSuccubus") == 1
+	If StringUtil.Find(akActor.GetRace().getname(), "Succubus") >= 0\
+	|| StorageUtil.GetIntValue(akActor, "Angrim_iSuccubusCurse") > 0\
+	|| StorageUtil.GetIntValue(akActor, "_SLH_isSuccubus") > 0\
+	|| StorageUtil.GetIntValue(akActor, "PSQ_PlayerIsSuccubus") > 0\
+	|| StorageUtil.GetIntValue(akActor, "MME.MilkMaid.IsSuccubus") > 0
 		Return True
-	elseif Plugin_PSQ && akActor == PlayerRef
-		if (Game.GetFormFromFile(0xDAF, "PSQ PlayerSuccubusQuest.esm") as GlobalVariable).GetValue() == 1 		;PlayerIsSuccubus
-			Return True
-		endif
 	endif
 	Return False
 EndFunction
