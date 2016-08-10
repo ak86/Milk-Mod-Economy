@@ -140,6 +140,7 @@ Bool Property ECCrowdControl = True Auto
 Bool Property ZazPumps = False Auto
 Bool Property UseFutaMilkCuirass = False Auto
 Bool Property FreeLactacid = False Auto
+Bool Property BellyScale = True Auto
 
 Int Property BreastScale = 0 Auto
 Int Property TimesMilkedMult Auto
@@ -882,6 +883,10 @@ Function CurrentSize(Actor akActor)
 		;FPS
 		;NetImmerse.SetNodeScale(akActor, "NPC L GenitalsScrotum [LGenScrot]", CurrentSize, true)
 		;NetImmerse.SetNodeScale(akActor, "NPC R GenitalsScrotum [RGenScrot]", CurrentSize, true)
+	endif
+	if BellyScale && akActor.GetLeveledActorBase().GetSex() == 1
+		Float LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
+		self.SetNodeScale(akActor, "NPC Belly", 1 + LactacidCnt / 2)
 	endif
 EndFunction
 
@@ -2644,6 +2649,7 @@ Function VarSetup()
 	DisableSkoomaLactacid = False
 	DialogueForceMilkSlave = False
 	BreastScale = 0							;scaling is enabled
+	BellyScale = true						;scaling is enabled
 	BreastScaleLimit = False				;limit to BoobMAX
 	BreastUpScale = False	;scale to 1
 	MilkQC.Buffs = True
@@ -2760,7 +2766,12 @@ Function SetNodeScale(Actor akActor, string nodeName, float value)
 			Endif
 			NetImmerse.SetNodeScale(akActor, nodeName, value, false)
 		Endif
-	Elseif nodeName == ("NPC L Breast" || "NPC R Breast" || "NPC L Breast01" || "NPC R Breast01")
+	Elseif nodeName == "NPC L Breast"\
+		|| nodeName == "NPC R Breast"\
+		|| nodeName == "NPC L Breast01"\
+		|| nodeName == "NPC R Breast01"\
+		|| nodeName == "NPC Belly")
+
 		Debug.Notification("MilkModEconomy " + nodeName + " was not found, check your armor/body/skeleton")
 	Endif
 EndFunction
