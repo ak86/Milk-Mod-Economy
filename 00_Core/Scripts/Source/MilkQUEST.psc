@@ -2770,7 +2770,7 @@ Function SetNodeScale(Actor akActor, string nodeName, float value)
 		|| nodeName == "NPC R Breast"\
 		|| nodeName == "NPC L Breast01"\
 		|| nodeName == "NPC R Breast01"\
-		|| nodeName == "NPC Belly")
+		|| nodeName == "NPC Belly"
 
 		Debug.Notification("MilkModEconomy " + nodeName + " was not found, check your armor/body/skeleton")
 	Endif

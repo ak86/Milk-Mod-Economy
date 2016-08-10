@@ -577,7 +577,7 @@ function Page_MilkMaidDebug()
 				AddSliderOptionST("Debug_MM_Maid_MaidBoobIncr_Slider", "$MME_MENU_PAGE_Settings_H2_S3", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobIncr"), "{2}")	
 				AddSliderOptionST("Debug_MM_Maid_MaidBoobPerLvl_Slider", "$MME_MENU_PAGE_Settings_H2_S4", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl"), "{2}")
 				AddTextOptionST("Debug_MM_Maid_BreastEffectiveSize", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S11", MilkQ.ReduceFloat(MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]) + MaidBreastsBaseadjust + (MilkCnt*MaidBoobIncr) + (MaidLevel + (MaidTimesMilked / ((MaidLevel + 1) * MilkQ.TimesMilkedMult))) * MaidBoobPerLvl), OPTION_FLAG_DISABLED)
-				AddTextOptionST("Debug_MM_Maid_BellyScaleEffectiveSize", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S22", MME_Storage.getLactacidCurrent(MaidlistA[MaidIndex])/2, "{2}", OPTION_FLAG_DISABLED)
+				AddTextOptionST("Debug_MM_Maid_BellyScaleEffectiveSize", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S22", MilkQ.ReduceFloat(MME_Storage.getLactacidCurrent(MaidlistA[MaidIndex])/2), OPTION_FLAG_DISABLED)
 				AddSliderOptionST("Debug_MM_LactacidCount_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S12", MME_Storage.getLactacidCurrent(MaidlistA[MaidIndex]), "{2}")
 				if MilkQ.BreastScaleLimit
 					; can MilkMax be updated while MCM page is still open?
