@@ -19,6 +19,8 @@ Dev change log:
 	v 17-06-2016
 *beggar drunken favor dialogues
 added sandbox patch	
+added belly node scaling based on lactacid/2
+fix for sos
 	
 	v 17-06-2016
 added (not)bound milkpumps only esps, requires cell reset(or console disable/enable) to change between pumps scripts
