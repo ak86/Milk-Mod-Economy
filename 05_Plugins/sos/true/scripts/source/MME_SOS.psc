@@ -58,7 +58,7 @@ Function IncreaseSOS(Actor akActor)
 		int rnd = Utility.RandomInt(0, SOS_Data.countAddons() - 1)
 		Form rndSchlong = SOS_Data.getAddon(rnd)
 		if rndSchlong != none
-			if SOS_Data.GetGender(rndSchlong) == (1 || 2)
+			if SOS_Data.GetGender(rndSchlong) == 1 || SOS_Data.GetGender(rndSchlong) ==  2
 				Faction addonFaction = SOS_Data.GetFaction(rndSchlong)
 				if addonFaction != none
 					if addonFaction.getname() == "SOS No Schlong for Females" || addonFaction.getname() == "SOS Pubic Hair for Females"
