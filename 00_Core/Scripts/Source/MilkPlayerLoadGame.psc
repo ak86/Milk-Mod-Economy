@@ -87,8 +87,10 @@ Event OnSleepStop(bool abInterrupted)
 	Int i = 0
 	while i < MilkQ.MILKmaid.length
 		if MilkQ.MILKmaid[i] != none && MilkQ.MILKmaid[i].GetActorBase().GetSex() == 1
-			if StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.AdjustBreastRow") != 0
-				StorageUtil.AdjustFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.BreastRows", StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.AdjustBreastRow"))
+			int BreastRowsAdjust = StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.AdjustBreastRow") as int
+			if BreastRowsAdjust != 0
+				int BreastRows = MME_Storage.getBreastRows(MilkQ.MILKmaid[i])
+				MME_Storage.setBreastRows(MilkQ.MILKmaid[i], BreastRows + BreastRowsAdjust)
 				MilkQ.MultibreastChange(MilkQ.MILKmaid[i])
 				StorageUtil.SetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.AdjustBreastRow", 0) 						;reset
 			endif
