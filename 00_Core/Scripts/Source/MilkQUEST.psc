@@ -458,7 +458,7 @@ EndEvent
 Function ActorCheck(int t)
 	debug.Trace("MilkModEconomy ActorCheck cycle")
 	int i = 0
-	If MilkMaid[i] != PlayerRef && PlayerRef.GetLeveledActorBase().GetSex() == 1 && isPregnant(PlayerRef) && !PlayerCantBeMilkmaid
+	If MilkMaid[i] != PlayerRef && PlayerRef.GetLeveledActorBase().GetSex() == 1 && isPregnant(PlayerRef)
 		debug.Trace("MilkModEconomy Player is not milkmaid, but pregnant and female, making player milkmaid")
 		AssignSlot(PlayerRef)
 	EndIf
@@ -727,6 +727,9 @@ EndFunction
 
 Function AssignSlot(Actor akActor)
 	If akActor == PlayerREF
+		if PlayerCantBeMilkmaid == true
+			return
+		endif
 		MILKmaid[0] = akActor
 	Else
 		int i = 0
