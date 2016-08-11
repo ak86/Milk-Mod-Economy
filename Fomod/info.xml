@@ -28,6 +28,8 @@ changed DD vibration script, reduced lactation start chance to 5%, but now it al
 added check to lactacid, so mme animation wont start if actor in SL scene
 changed mcm option to block pc pregnancy condition to block any way of becoming milkmaid
 removed msgboxes asking if player want to be milk maid, bcz noone cares if you want or not 
+set default fuckmachine mode to false, so maids stays in milking mode
+removed lactacid reduction from milking boobgasm
 
 	
 	v 17-06-2016

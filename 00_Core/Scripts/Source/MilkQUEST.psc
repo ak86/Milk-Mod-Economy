@@ -128,7 +128,7 @@ Bool Property MilkWerewolfTransform = False Auto
 Bool Property MilkingDrainsSP = True Auto
 Bool Property MilkingDrainsMP = True Auto
 Bool Property Feeding = True Auto
-Bool Property FuckMachine = True Auto
+Bool Property FuckMachine = False Auto
 Bool Property MilkWithZaZMoMSuctionCups = False Auto
 Bool Property SexLabOrgasm = True Auto
 Bool Property SexLab3jBreastfeeding = True Auto
@@ -1503,11 +1503,6 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				PainCnt *= 0.8
 				if IsMilkMaid == true
 					AddLeak(akActor)
-					if MME_Storage.getLactacidCurrent(akActor) > 1
-						MME_Storage.changeLactacidCurrent(akActor, - 1)
-					else
-						MME_Storage.setLactacidCurrent(akActor, 0)
-					endif
 					MME_Storage.setPainCurrent(akActor, PainCnt)
 				endif
 				boobgasmcount += 1
@@ -1538,9 +1533,14 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		if mode == 0 && MilkingType == 1\
 		&& (MilkCnt < 1 || (PainCnt >= PainMax*0.9 && !PainKills))\
 		&& PlayerREF == akActor && bControlsDisabled == true
-			Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
-			Game.SetPlayerAIDriven(false)
-			bControlsDisabled = false
+			if PlayerREF == akActor && bControlsDisabled == true 
+				Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
+				Game.SetPlayerAIDriven(false)
+				bControlsDisabled = false
+			endif
+			if akActor.IsUnconscious()
+				akActor.Setunconscious(false)
+			endif
 			if MilkMsgs 
 				debug.Notification("Milk Pump has milked you dry and releases its bounds.")
 			endif
@@ -2652,7 +2652,7 @@ Function VarSetup()
 	Feeding = True
 	Feeding_Duration = 30
 	Feeding_Sound = 1
-	FuckMachine = True
+	FuckMachine = False
 	FuckMachine_Duration = 5
 	MilkGenValue = 0.06
 	MilkPoll = 1
