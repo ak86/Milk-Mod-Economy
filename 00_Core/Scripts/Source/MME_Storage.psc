@@ -168,6 +168,7 @@ float function setMaidLevel(actor akActor, float Value) global
 	Debug.Trace("MME_Storage: Triggered setMaidLevel() for actor " + akActor.GetLeveledActorBase().GetName())
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.Level", Value)
 	updateMilkMaximum(akActor)
+	return Value
 endfunction
 
 float function getMilkCurrent(actor akActor) global
