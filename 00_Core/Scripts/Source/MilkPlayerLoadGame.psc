@@ -104,21 +104,29 @@ endEvent
 
 Event OnVibrateStart(string eventName, string argString, float argNum, form sender)
 	Actor akActor = MilkQ.PlayerRef
-	If argString == akActor.GetActorBase().GetName() && MilkQ.DDI.IsMilkingBlocked_PiercingsNipple(akActor) && (MilkQ.MILKmaid.find(akActor) != -1 || MilkQ.MILKSlave.find(akActor) != -1)
+
+	If argString == akActor.GetActorBase().GetName() && MilkQ.DDI.IsMilkingBlocked_PiercingsNipple(akActor) && (MilkQ.akActorSex(akActor) == "Female" || MilkQ.akActorSex(akActor) == "Futa")
 		float MilkCnt = MME_Storage.getMilkCurrent(akActor)
-		If MilkCnt >= 1
-			int gush = (MilkCnt*MilkQ.GushPct/100) as int
-			if gush < 1
-				gush = 1
-			endif
-			if StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkGen") == 0 
-				if Utility.RandomInt(0, 100) < 25
-					Debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s breasts has started lactating.")
-					StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", MilkQ.MilkGenValue/3/10 * gush)
+		int gush = (MilkCnt*MilkQ.GushPct/100) as int
+
+		if gush < 1
+			gush = 1
+		endif
+
+		if StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkGen") == 0 
+			if Utility.RandomInt(0, 100) < 5
+				Debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s breasts has started lactating.")
+				if MilkQ.MILKmaid.find(akActor) == -1				; || MilkQ.MILKSlave.find(akActor) != -1
+					MilkQ.AssignSlot(akActor)
+					Utility.Wait( 1.0 )
 				endif
-			else
 				StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", MilkQ.MilkGenValue/3/10 * gush)
 			endif
+		else																				;if MilkQ.MILKmaid.find(akActor) != -1 || MilkQ.MILKSlave.find(akActor) != -1
+			StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", MilkQ.MilkGenValue/3/10 * gush)
+		endif
+
+		If MilkCnt >= 1*gush
 			MME_Storage.changeMilkCurrent(akActor, -1*gush, MilkQ.BreastScaleLimit)
 			Debug.Notification("Nipple piercing vibrations forces milk from your breasts.")
 			MilkQ.PostMilk(akActor)

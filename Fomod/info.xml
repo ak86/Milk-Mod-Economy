@@ -24,6 +24,7 @@ fix for sos
 added _SLH_isSuccubus detection
 changed how succubus/ww/vampire detected
 replaced UNPB milkcuirass with UUNP
+changed DD vibration script, reduced lactation start chance to 5%, but now it also can make player milkmaid if not already
 	
 	v 17-06-2016
 added (not)bound milkpumps only esps, requires cell reset(or console disable/enable) to change between pumps scripts
