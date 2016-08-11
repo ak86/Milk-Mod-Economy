@@ -769,7 +769,7 @@ Function UpdateEconomy(int marketIndex, int basePayout)
 		endif
 	endif
 
-	if newValue < 0 && MilkQ.MilkEMsgs
+	if newValue < 0 && MilkQ.MilkEMsgs && marketIndex == GetMarketIndexFromLocation(Game.GetPlayer().GetCurrentLocation()) && marketIndex != 0
 		Debug.Notification("There is no demand for milk " + MarketNames[marketIndex] + "!")
 	endif
 
@@ -826,11 +826,13 @@ EndFunction
 Function EndMilkEcoCycle()
 	int index = 0
 	while index < 10
-		if PrevMilkEcos[index] < 1000/(MilkQ.TimesMilkedMult/divnull) && CurrMilkEcos[index] == 1000/(MilkQ.TimesMilkedMult/divnull) && MilkQ.MilkEMsgs
-			Debug.Notification("The demand for milk " + MarketNames[index] + " is high!")
-		endif
-		if PrevMilkEcos[index] <= 0 && CurrMilkEcos[index] > 0 && MilkQ.MilkEMsgs
-			Debug.Notification("Milk demand has normalized " + MarketNames[index] + ".")
+		if MilkQ.MilkEMsgs && index == GetMarketIndexFromLocation(Game.GetPlayer().GetCurrentLocation())
+			if PrevMilkEcos[index] < 1000/(MilkQ.TimesMilkedMult/divnull) && CurrMilkEcos[index] == 1000/(MilkQ.TimesMilkedMult/divnull) && MilkQ.MilkEMsgs
+				Debug.Notification("The demand for milk " + MarketNames[index] + " is high!")
+			endif
+			if PrevMilkEcos[index] <= 0 && CurrMilkEcos[index] > 0 && MilkQ.MilkEMsgs
+				Debug.Notification("Milk demand has normalized " + MarketNames[index] + ".")
+			endif
 		endif
 
 		index += 1
@@ -906,7 +908,7 @@ Function MilkEcoDemandEvent()
 		if MilkDemandCDs[i] > 0
 			MilkDemandCDs[i] = MilkDemandCDs[i] - 1
 			if MilkDemandCDs[i] == 0
-				if MilkQ.MilkEMsgs
+				if MilkQ.MilkEMsgs && i == GetMarketIndexFromLocation(Game.GetPlayer().GetCurrentLocation()) && i != 0
 					Debug.Notification("Craze for " + MilkNames[MilkDemands[i]] + " " + MarketNames[i] + " has faded.")
 				endif
 				MilkDemands[i] = 0					; Set demand to nothing
@@ -933,7 +935,7 @@ Function MilkEcoDemandEvent()
 			int milkIndex = Utility.RandomInt(1, 10)
 			MilkDemands[marketIndex] = milkIndex
 			MilkDemandCDs[marketIndex] = 6
-			if MilkQ.MilkEMsgs
+			if MilkQ.MilkEMsgs && marketIndex == GetMarketIndexFromLocation(Game.GetPlayer().GetCurrentLocation()) && marketIndex != 0
 				Debug.Notification(MilkNames[milkIndex] + " craze has begun " + MarketNames[marketIndex]) 
 			endif
 			; if demand is poor, immediately raise to an acceptable level

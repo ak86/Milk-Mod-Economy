@@ -30,6 +30,7 @@ changed mcm option to block pc pregnancy condition to block any way of becoming 
 removed msgboxes asking if player want to be milk maid, bcz noone cares if you want or not 
 set default fuckmachine mode to false, so maids stays in milking mode
 removed lactacid reduction from milking boobgasm
+changed economy messages to show only for current location, excluding khajiits caravans since its most of skyrim
 
 	
 	v 17-06-2016
