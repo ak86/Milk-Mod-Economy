@@ -415,29 +415,30 @@ Event OnKeyDown(int keyCode)
 EndEvent
 
 Event OnKeyUp(Int KeyCode, Float HoldTime)
+	Actor Target = crosshairRef
 	If (!Utility.IsInMenuMode() && NotificationKey == keyCode)
 		If HotkeyMode == 1
 			;create uie
 		Else
-			If crosshairRef ==  none
-				crosshairRef = PlayerRef
+			If Target ==  none
+				Target = PlayerRef
 			EndIf
 			If (Input.IsKeyPressed(42) && Input.IsKeyPressed(54))
-				If crosshairRef.HasSpell( BeingMilkedPassive )
-					crosshairRef.RemoveSpell( BeingMilkedPassive )
+				If Target.HasSpell( BeingMilkedPassive )
+					Target.RemoveSpell( BeingMilkedPassive )
 				EndIf
 			ElseIf (Input.IsKeyPressed(42) || Input.IsKeyPressed(54)) || (HoldTime > 2.0)
-				If crosshairRef.HasSpell( BeingMilkedPassive ) && !StorageUtil.GetIntValue(crosshairRef,"IsBoundStrict")
-					If crosshairRef == PlayerRef
+				If Target.HasSpell( BeingMilkedPassive ) && !StorageUtil.GetIntValue(Target,"IsBoundStrict") && !SexLab.IsActorActive(Target)
+					If Target == PlayerRef
 						Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 					EndIf
-					Debug.SendAnimationEvent(crosshairRef,"IdleForceDefaultState")
-				ElseIf crosshairRef.HasSpell( MilkForSprigganPassive )
-					Debug.notification(crosshairRef.GetLeveledActorBase().GetName() + " is a host for living armor and can not be milked.")
-				ElseIf StorageUtil.GetIntValue(crosshairRef,"MME.MilkMaid.IsSlave" ) == 1 && StorageUtil.GetIntValue(crosshairRef,"MME.MilkMaid.MilkingMode") != 0
-					Debug.notification(crosshairRef.GetLeveledActorBase().GetName() + " is a slave and not allowed to be milked.")
-				ElseIf crosshairRef.GetLeveledActorBase().GetSex() == 1
-					MilkSelf.cast(crosshairRef)
+					Debug.SendAnimationEvent(Target,"IdleForceDefaultState")
+				ElseIf Target.HasSpell( MilkForSprigganPassive )
+					Debug.notification(Target.GetLeveledActorBase().GetName() + " is a host for living armor and can not be milked.")
+				ElseIf StorageUtil.GetIntValue(Target,"MME.MilkMaid.IsSlave" ) == 1 && StorageUtil.GetIntValue(Target,"MME.MilkMaid.MilkingMode") != 0
+					Debug.notification(Target.GetLeveledActorBase().GetName() + " is a slave and not allowed to be milked.")
+				ElseIf Target.GetLeveledActorBase().GetSex() == 1
+					MilkSelf.cast(Target)
 				EndIf
 			EndIf
 		EndIf
@@ -1160,7 +1161,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			return
 		ElseIf !(DDArmbinder == true || DDYoke == true)
 			If IsMilkingBlocked == false
-				If PlayerREF == akActor && !akActor.IsInCombat()
+				If PlayerREF == akActor && !akActor.IsInCombat() && !SexLab.IsActorActive(akActor) && !StorageUtil.GetIntValue(akActor,"IsBoundStrict")
 					Game.ForceThirdPerson()
 					Game.DisablePlayerControls(1, 1, 0, 0, 1, 1, 0) ;(True,True,False,False,True,True,True,True,0)
 					Utility.Wait( 5.0 )												;wait for actor to stop moving (and player to release movement keys)
@@ -1189,16 +1190,19 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 
 	if IsMilkMaid == false && PlayerREF.GetDistance(akActor) < 500		;add npc/recheck player with milkcuirass(since its forced by checkforspriggan)
 		if MILKmaid.find(akActor) == -1
-			int ButtonPressed = (MakeMilkMaid).Show()
-			if ButtonPressed == 0
+			int ButtonPressed
+
+			if akActor != PlayerREF
+				ButtonPressed = (MakeMilkMaid).Show()
+			EndIf
+			
+			if akActor == PlayerREF || ButtonPressed == 0
 				AssignSlot(akActor)
 				if MILKmaid.find(akActor) != -1
-					akActor.AddSpell( BeingMilkedPassive, false )
 					IsMilkMaid = true
 				endif
 			endif
 		else
-			akActor.AddSpell( BeingMilkedPassive, false )
 			IsMilkMaid = true
 		endif
 	endif
@@ -1533,7 +1537,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		
 		if mode == 0 && MilkingType == 1\
 		&& (MilkCnt < 1 || (PainCnt >= PainMax*0.9 && !PainKills))\
-		&& PlayerREF == akActor && IsMilkingBlocked == false && bControlsDisabled == true
+		&& PlayerREF == akActor && bControlsDisabled == true
 			Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 			Game.SetPlayerAIDriven(false)
 			bControlsDisabled = false
@@ -1548,7 +1552,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	sendVibrationEvent("StopMilkingMachine", akActor, mpas, MilkingType)
 
 ;-----------------------Milking done
-	If PlayerREF == akActor
+	If PlayerREF == akActor && !SexLab.IsActorActive(akActor) && bControlsDisabled == true
 		Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 	Endif
 	Utility.Wait(1.0)
@@ -1606,6 +1610,13 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					akActor.equipitem(cuirass, true, true)
 				endif
 			endif
+		endif
+		If Mode != 4
+			If !StorageUtil.GetIntValue(akActor,"IsBoundStrict") && !SexLab.IsActorActive(akActor)
+				Debug.SendAnimationEvent(akActor,"IdleForceDefaultState")
+				;justincase
+				Game.SetPlayerAIDriven(false)
+			EndIf
 		endif
 		if IsMilkMaid == true
 			if bottles > 0

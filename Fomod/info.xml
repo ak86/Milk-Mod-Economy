@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>17-06-2016</Version>
+  <Version>11-08-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
@@ -16,7 +16,7 @@
 
 Dev change log:
 
-	v 17-06-2016
+	v 11-08-2016
 *beggar drunken favor dialogues
 added sandbox patch	
 added belly node scaling based on lactacid/2
@@ -25,6 +25,10 @@ added _SLH_isSuccubus detection
 changed how succubus/ww/vampire detected
 replaced UNPB milkcuirass with UUNP
 changed DD vibration script, reduced lactation start chance to 5%, but now it also can make player milkmaid if not already
+added check to lactacid, so mme animation wont start if actor in SL scene
+changed mcm option to block pc pregnancy condition to block any way of becoming milkmaid
+removed msgboxes asking if player want to be milk maid, bcz noone cares if you want or not 
+
 	
 	v 17-06-2016
 added (not)bound milkpumps only esps, requires cell reset(or console disable/enable) to change between pumps scripts
