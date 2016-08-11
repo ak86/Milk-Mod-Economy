@@ -18,7 +18,6 @@ Dev change log:
 
 	v 11-08-2016
 *beggar drunken favor dialogues
-added sandbox patch	
 added belly node scaling based on lactacid/2
 fix for sos
 added _SLH_isSuccubus detection
@@ -31,6 +30,8 @@ removed msgboxes asking if player want to be milk maid, bcz noone cares if you w
 set default fuckmachine mode to false, so maids stays in milking mode
 removed lactacid reduction from milking boobgasm
 changed economy messages to show only for current location, excluding khajiits caravans since its most of skyrim
+added sandbox patch(incl fix for npc sandbox milking so they probably shouldn't get stuck in animation)
+fix for player getting stuck in bound pumps with ddi items
 
 	
 	v 17-06-2016
