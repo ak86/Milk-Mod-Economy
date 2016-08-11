@@ -125,16 +125,16 @@
 								<type name="Optional"/>
 							</typeDescriptor>
 						</plugin>				
-						<plugin name="UNPB">
+						<plugin name="UUNP">
 							<description>
-								<![CDATA[Choose this if you want UNPB body Milking Cuirass]]>
+								<![CDATA[Choose this if you want UUNP body Milking Cuirass]]>
 							</description>
-							<image path="Fomod\Screens\UNPB.jpg"/>
+							<image path="Fomod\Screens\UUNP.jpg"/>
 							<conditionFlags>
-								<flag name="UNPB">Active</flag>
+								<flag name="UUNP">Active</flag>
 							</conditionFlags>
 							<files>
-								<folder source="01_Body\UNPB" destination=""/>
+								<folder source="01_Body\UUNP" destination=""/>
 							</files>
 							<typeDescriptor>
 								<type name="Optional"/>
