@@ -159,12 +159,17 @@ float function getLactacidMaximum(actor akActor) global
 	return (StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.Level") + 2) / 2 + 4
 endfunction
 
-float function getMaidLevel(actor akActor) global
+; Beware:
+;   'MaidLevel' is stored as a float value for historical reasons,
+;   but fractional values are invalid and potentially break things.
+;    -> Provide an integer value instead.
+
+int function getMaidLevel(actor akActor) global
 	Debug.Trace("MME_Storage: Triggered getMaidLevel() for actor " + akActor.GetLeveledActorBase().GetName())
-	return StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.Level")
+	return StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.Level") as int
 endfunction
 
-float function setMaidLevel(actor akActor, float Value) global
+int function setMaidLevel(actor akActor, int Value) global
 	Debug.Trace("MME_Storage: Triggered setMaidLevel() for actor " + akActor.GetLeveledActorBase().GetName())
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.Level", Value)
 	updateMilkMaximum(akActor)

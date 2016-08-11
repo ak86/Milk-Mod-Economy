@@ -326,14 +326,14 @@ function Page_Overview()
 			int i = 0
 			While i < MilkQ.MilkMaid.Length
 				if MilkQ.MilkMaid[i] != None
-					Float MaidLevel = MME_Storage.getMaidLevel(MilkQ.MILKmaid[i])
+					Int   MaidLevel = MME_Storage.getMaidLevel(MilkQ.MILKmaid[i])
 					Float MilkCnt = MME_Storage.getMilkCurrent(MilkQ.MILKmaid[i])
 					Float MilkMax = MME_Storage.getMilkMaximum(MilkQ.MILKmaid[i])
 					Float PainCnt = MME_Storage.getPainCurrent(MilkQ.MILKmaid[i])
 					Float PainMax = MME_Storage.getPainMaximum(MilkQ.MILKmaid[i])
 					AddTextOption(MilkQ.MilkMaid[i].GetLeveledActorBase().GetName(), "")
-					AddTextOption("$MME_MENU_PAGE_Overview_Milkmaid_Level" , MaidLevel as int)
-					AddTextOption("$MME_MENU_PAGE_Overview_Milkmaid_Times_Milked_(to_level)" , StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.TimesMilked") as int + " (" + ((MaidLevel as int + 1) * MilkQ.TimesMilkedMult as int)+ ")")
+					AddTextOption("$MME_MENU_PAGE_Overview_Milkmaid_Level" , MaidLevel)
+					AddTextOption("$MME_MENU_PAGE_Overview_Milkmaid_Times_Milked_(to_level)" , StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.TimesMilked") as int + " (" + ((MaidLevel + 1) * MilkQ.TimesMilkedMult as int)+ ")")
 					AddTextOption("$MME_MENU_PAGE_Overview_Milkmaid_Lactacid" , MilkQ.ReduceFloat(MME_Storage.getLactacidCurrent(MilkQ.MILKmaid[i])))
 					AddTextOption("$MME_MENU_PAGE_Overview_Milkmaid_Milk" , MilkQ.ReduceFloat(MilkCnt) + " [" + MilkMax as int + "]")
 					AddTextOption("$MME_MENU_PAGE_Overview_Milkmaid_Pain", MilkQ.NState(MilkQ.MilkMaid[i]) + " [" + (PainCnt/PainMax*100) as int + "%]")
@@ -562,12 +562,12 @@ function Page_MilkMaidDebug()
 				float MilkMax = MME_Storage.getMilkMaximum(MaidlistA[MaidIndex])
 				float MilkCnt = MME_Storage.getMilkCurrent(MaidlistA[MaidIndex])
 				float MaidBreastsBaseadjust = MME_Storage.getBreastsBaseadjust(MaidlistA[MaidIndex])
-				float MaidLevel = MME_Storage.getMaidLevel(MaidlistA[MaidIndex])
-				float MilkTick = (MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]) + MaidLevel*MaidBoobPerLvl + MaidMilkGen)/3 * (1 + MilkQ.SLA.GetActorArousal(MaidlistA[MaidIndex])/100)
+				int   MaidLevel = MME_Storage.getMaidLevel(MaidlistA[MaidIndex])
+				float MilkTick = (MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]) + MaidBoobPerLvl*MaidLevel + MaidMilkGen)/3 * (1 + MilkQ.SLA.GetActorArousal(MaidlistA[MaidIndex])/100)
 
 				AddTextOptionST("Debug_MM_MaidPregnancy", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S4", MilkQ.isPregnant(MaidlistA[MaidIndex]) as String, OPTION_FLAG_DISABLED)	
 				AddTextOptionST("Debug_MM_MaidGender", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S5", MilkQ.akActorSex(MaidlistA[MaidIndex]) as String, OPTION_FLAG_DISABLED)	
-				AddSliderOptionST("Debug_MM_MaidLevel_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S6", MaidLevel as int)
+				AddSliderOptionST("Debug_MM_MaidLevel_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S6", MaidLevel)
 				AddSliderOptionST("Debug_MM_MaidTimesMilked_Slider", "$MME_MENU_Times_Milked_(this_level)", MaidTimesMilked as int)
 				AddTextOptionST("Debug_MM_Maid_MilksToNextLevel", "$MME_MENU_Next_Level", ((MaidLevel+1) * MilkQ.TimesMilkedMult - MaidTimesMilked) as int, OPTION_FLAG_DISABLED)	
 				AddTextOption("$MME_MENU_PAGE_Debug_MM_Maid_Breast", "", OPTION_FLAG_DISABLED)
@@ -3073,7 +3073,7 @@ state Debug_MM_MaidLevel_Slider
 	endEvent
 
 	event OnSliderAcceptST(float value)
-		MME_Storage.setMaidLevel(MaidlistA[MaidIndex], value)
+		MME_Storage.setMaidLevel(MaidlistA[MaidIndex], value as int)
 		SetSliderOptionValueST(value)
 	endEvent
 endState

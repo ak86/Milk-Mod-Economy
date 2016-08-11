@@ -822,7 +822,7 @@ Function CurrentSize(Actor akActor)
 	Float MaidBoobPerLvl = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BoobPerLvl")		;fetch individual maid data
 	Float BreastBaseMod = MME_Storage.getBreastsBaseadjust(akActor)
 	Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
-	Float MaidLevel = MME_Storage.getMaidLevel(akActor)
+	Int   MaidLevel = MME_Storage.getMaidLevel(akActor)
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.TimesMilked")
 	Float CurrentSize
 	Float CurveFix
@@ -962,7 +962,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	Float LactacidMax = MME_Storage.getLactacidMaximum(akActor)
 	Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 	Float MilkMax = MME_Storage.getMilkMaximum(akActor)
-	Float MaidLevel = MME_Storage.getMaidLevel(akActor)
+	Int   MaidLevel = MME_Storage.getMaidLevel(akActor)
 	Float PainCnt = MME_Storage.getPainCurrent(akActor)
 	Float PainMax = MME_Storage.getPainMaximum(akActor)
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.TimesMilked")
@@ -1716,7 +1716,7 @@ EndFunction
 Function PostMilk(Actor akActor)
 	Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 	Float MilkMax = MME_Storage.getMilkMaximum(akActor)
-	Float MaidLevel = MME_Storage.getMaidLevel(akActor)
+	Int   MaidLevel = MME_Storage.getMaidLevel(akActor)
 
 	if MilkQC.Buffs != true 
 		if akActor.HasSpell(MilkExhaustion)
@@ -1743,7 +1743,7 @@ Function PostMilk(Actor akActor)
 			if MaidLevel > 24
 				MaidLevel = 24
 			endif
-			akActor.AddSpell(WellMilkedArray[MaidLevel as int], false)
+			akActor.AddSpell(WellMilkedArray[MaidLevel], false)
 		elseif MilkCnt / MilkMax >= 0.6
 			int min = Math.Ceiling(MilkMax*0.6)												;ie lv10 cei(14.4) = 14 lv1 cei(3.6) = 4
 			int diff = (MilkCnt - min) as int 												;if its = 0 it means its first tick above 0.6
@@ -1775,14 +1775,14 @@ EndFunction
 
 Function MaidLevelCheck(Actor akActor)
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.TimesMilked")
-	Float MaidLevel = MME_Storage.getMaidLevel(akActor)
+	Int   MaidLevel = MME_Storage.getMaidLevel(akActor)
 	if MaidLevel < MilkLvlCap || !MaidLvlCap
 		if MaidTimesMilked >= (MaidLevel + 1) * TimesMilkedMult
 			MME_Storage.setMaidLevel(akActor, MaidLevel + 1)
 			StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.TimesMilked", 0)
 			if MilkMsgs && MaidLevel + 1 <= MilkLvlCap
 				debug.Notification(akActor.GetLeveledActorBase().getname() + " has gained a Milk maid level!")
-				MilkMsgHyper((MaidLevel + 1) as int, akActor)
+				MilkMsgHyper((MaidLevel + 1), akActor)
 			endif
 		endif
 	endif
@@ -3001,7 +3001,7 @@ string Function NState(Actor akActor)
 EndFunction
 
 int Function Pain(Actor akActor, int pain)
-	Float MaidLevel = MME_Storage.getMaidLevel(akActor)
+	Int   MaidLevel = MME_Storage.getMaidLevel(akActor)
 	Float PainCnt = MME_Storage.getPainCurrent(akActor)
 	Float PainMax = MME_Storage.getPainMaximum(akActor)
 		string who
@@ -3030,7 +3030,7 @@ int Function Pain(Actor akActor, int pain)
 		endif
 	endif
 
-	PainCnt += (pain - MaidLevel * 0.025) * (1 - SLA.GetActorArousal(akActor) / 100 * 0.25)
+	PainCnt += (pain - 0.025*MaidLevel) * (1 - SLA.GetActorArousal(akActor) / 100 * 0.25)
 	if PiercingCheck(akActor) == 1
 		PainCnt *= 2 
 	endif
