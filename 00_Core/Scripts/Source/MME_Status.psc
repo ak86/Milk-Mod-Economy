@@ -10,6 +10,7 @@ Event OnInit()
 EndEvent
 
 Event OnPlayerLoadGame()
+	UnRegisterForUpdate()
 	RegisterForSingleUpdate(60)
 EndEvent
 
@@ -17,9 +18,65 @@ Event OnUpdate()
 	if MME_Status_Global.GetValue() != 1
 		Debug.Messagebox("MilkModEconomy was not installed correctly, scripts are not running \n this can be false alarm when starting new game but if message keeps repeating, then something is wrong, script will retry check in 60 sec")
 		Debug.Trace("MilkModEconomy MilkPlayerLoadGame.Maintenance() script has not set MME_Status_Global to 1, retry check in 60 sec")
+		MilkPluginsInfo()
 		RegisterForSingleUpdate(60)
 	else
 		Debug.Trace("MilkModEconomy Changed status to 0, shutting down")
 		MME_Status_Global.SetValue(0)
+		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.ddi")
+		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.ineed")
+		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.psq")
+		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.sgo")
+		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.sla")
+		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.slhp")
+		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.slp")
+		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.sos")
+		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.uie")
+		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.zbf")
 	endif
 EndEvent
+
+Function MilkPluginsInfo()
+	String msg = ""
+	String Status = ""
+	int i = 0
+	String [] name = new string[10]
+	Int[] value = new int[10]
+
+	value[0] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.ddi")
+	value[1] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.ineed")
+	value[2] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.psq")
+	value[3] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.sgo")
+	value[4] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.sla")
+	value[5] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.slhp")
+	value[6] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.slp")
+	value[7] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.sos")
+	value[8] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.uie")
+	value[9] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.zbf")
+
+	name[0] = "MME.PluginsCheck.ddi"
+	name[1] = "MME.PluginsCheck.ineed"
+	name[2] = "MME.PluginsCheck.psq"
+	name[3] = "MME.PluginsCheck.sgo"
+	name[4] = "MME.PluginsCheck.sla"
+	name[5] = "MME.PluginsCheck.slhp"
+	name[6] = "MME.PluginsCheck.slp"
+	name[7] = "MME.PluginsCheck.sos"
+	name[8] = "MME.PluginsCheck.uie"
+	name[9] = "MME.PluginsCheck.zbf"
+
+	msg = "MME Plugins info:\n"
+	While i < name.Length
+		if value[i] == 1
+			Status = "off"
+		elseif value[i] == 2
+			Status = "on"
+		else
+			Status = "error"
+		endif
+
+		msg = msg + ("Plugin: " + name[i] + " Status: " + Status + "\n")
+		i += 1
+	endwhile
+	Debug.MessageBox(msg)
+EndFunction

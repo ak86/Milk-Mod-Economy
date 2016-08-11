@@ -1,5 +1,9 @@
 Scriptname MME_SLA extends Quest
 
+Event OnPlayerLoadGame()
+	StorageUtil.SetIntValue(none,"MME.PluginsCheck.sla",1)
+EndEvent
+
 bool Function IsIntegraged ()
 	Return False
 EndFunction

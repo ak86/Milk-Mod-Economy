@@ -1,5 +1,9 @@
 Scriptname MME_zbf extends Quest
 
+Event OnPlayerLoadGame()
+	StorageUtil.SetIntValue(none,"MME.PluginsCheck.zbf",1)
+EndEvent
+
 bool Function IsIntegraged ()
 	Return False
 EndFunction

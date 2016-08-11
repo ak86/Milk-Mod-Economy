@@ -1,5 +1,9 @@
 Scriptname MME_SOS extends Quest
 
+Event OnPlayerLoadGame()
+	StorageUtil.SetIntValue(none,"MME.PluginsCheck.sos",1)
+EndEvent
+
 bool Function IsIntegraged ()
 	Return False
 EndFunction

@@ -32,7 +32,7 @@ removed lactacid reduction from milking boobgasm
 changed economy messages to show only for current location, excluding khajiits caravans since its most of skyrim
 added sandbox patch(incl fix for npc sandbox milking so they probably shouldn't get stuck in animation)
 fix for player getting stuck in bound pumps with ddi items
-
+updated scripts status check, should now show what plugin script is broken
 	
 	v 17-06-2016
 added (not)bound milkpumps only esps, requires cell reset(or console disable/enable) to change between pumps scripts

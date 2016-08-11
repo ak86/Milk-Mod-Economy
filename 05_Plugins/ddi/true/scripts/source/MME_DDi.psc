@@ -1,5 +1,9 @@
 Scriptname MME_DDi extends Quest
 
+Event OnPlayerLoadGame()
+	StorageUtil.SetIntValue(none,"MME.PluginsCheck.ddi",2)
+EndEvent
+
 bool Function IsIntegraged ()
 	Return True
 EndFunction

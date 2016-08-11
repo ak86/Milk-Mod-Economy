@@ -1,5 +1,9 @@
 Scriptname MME_SLHP extends Quest
 
+Event OnPlayerLoadGame()
+	StorageUtil.SetIntValue(none,"MME.PluginsCheck.slhp",2)
+EndEvent
+
 bool Function IsIntegraged ()
 	Return True
 EndFunction

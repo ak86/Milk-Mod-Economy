@@ -1,5 +1,9 @@
 Scriptname MME_ineed extends Quest
 
+Event OnPlayerLoadGame()
+	StorageUtil.SetIntValue(none,"MME.PluginsCheck.ineed",2)
+EndEvent
+
 bool Function IsIntegraged ()
 	Return True
 EndFunction
