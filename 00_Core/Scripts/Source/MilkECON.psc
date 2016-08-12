@@ -469,7 +469,7 @@ EndFunction
 
 Form Function GetMilkType(int milkCount, int boobgasmcount, Actor milkMaid)
 	Race maidRace = milkMaid.GetActorBase().GetRace()
-	Float MaidLevel = MME_Storage.getMaidLevel(milkMaid)
+	Int MaidLevel = MME_Storage.getMaidLevel(milkMaid)
 	Float MilkMax = MME_Storage.getMilkMaximum(milkMaid)
 	
 	if MilkQ.MilkQC.MME_SimpleMilkPotions
@@ -533,7 +533,7 @@ Form Function GetMilkType(int milkCount, int boobgasmcount, Actor milkMaid)
 	endif
 EndFunction
 
-Form Function GetMilkTypeHelper(int milkCount, Formlist FLST, float MaidLevel)
+Form Function GetMilkTypeHelper(int milkCount, Formlist FLST, int MaidLevel)
 	if MilkQ.MilkQC.MME_SimpleMilkPotions
 		return FLST.GetAt(0)
 	elseif MaidLevel < 3

@@ -71,6 +71,23 @@ function deregisterActor(actor akActor) global
 	StorageUtil.UnsetFloatValue(akActor, "MME.MilkMaid.BreastCount")
 endfunction
 
+; Beware:
+;   'BreastRows' is stored as a float value for historical reasons,
+;   but fractional values are invalid and potentially break things.
+;    -> Provide an integer value instead.
+
+int function getBreastRows(actor akActor) global
+	Debug.Trace("MME_Storage: Triggered getBreastRows() for actor " + akActor.GetLeveledActorBase().GetName())
+	int Value = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastRows", missing = 1) as int
+	return verifyIntRange("MME_Storage.getBreastRows()", Value, 1, 4)
+endfunction
+
+int function setBreastRows(actor akActor, int Value) global
+	Debug.Trace("MME_Storage: Triggered setBreastRows() for actor " + akActor.GetLeveledActorBase().GetName())
+	int BreastRows = verifyIntRange("MME_Storage.setBreastRows()", Value, 1, 4)
+	return StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastRows", BreastRows) as int
+endfunction
+
 float function getBreastsBaseadjust(actor akActor) global
 	Debug.Trace("MME_Storage: Triggered getBreastsBaseadjust() for actor " + akActor.GetLeveledActorBase().GetName())
 	return StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod")
@@ -142,15 +159,21 @@ float function getLactacidMaximum(actor akActor) global
 	return (StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.Level") + 2) / 2 + 4
 endfunction
 
-float function getMaidLevel(actor akActor) global
+; Beware:
+;   'MaidLevel' is stored as a float value for historical reasons,
+;   but fractional values are invalid and potentially break things.
+;    -> Provide an integer value instead.
+
+int function getMaidLevel(actor akActor) global
 	Debug.Trace("MME_Storage: Triggered getMaidLevel() for actor " + akActor.GetLeveledActorBase().GetName())
-	return StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.Level")
+	return StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.Level") as int
 endfunction
 
-float function setMaidLevel(actor akActor, float Value) global
+int function setMaidLevel(actor akActor, int Value) global
 	Debug.Trace("MME_Storage: Triggered setMaidLevel() for actor " + akActor.GetLeveledActorBase().GetName())
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.Level", Value)
 	updateMilkMaximum(akActor)
+	return Value
 endfunction
 
 float function getMilkCurrent(actor akActor) global
@@ -326,7 +349,7 @@ endfunction
 
 ; original formula to calculate the maximum milk limit was '(Level+2)*2'
 float function calculateMilkLimit(actor akActor, float Level) global
-	float BreastRows     = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastRows", missing = 1)
+	int   BreastRows      = getBreastRows(akActor)
 	float BreastsPerRow   = 2
 	float MilkBasevalue   = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkMax.Basevalue", missing = 2)
 	float MilkScalefactor = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkMax.Scalefactor", missing = 1)
@@ -347,4 +370,16 @@ function updateMilkMaximum(actor akActor) global
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkMaximum", MinValue)
 	endif
 	updateMilkCurrent(akActor)
+endfunction
+
+int function verifyIntRange(string Caller, int Value, int MinValue, int MaxValue) global
+	if Value < MinValue
+		Debug.Trace("Function '" + Caller + "' provided invalid value '" + Value + "'! (allowed range is " + MinValue + " <= x <= " + MaxValue + ")")
+		return MinValue
+	elseif Value > MaxValue
+		Debug.Trace("Function '" + Caller + "' provided invalid value '" + Value + "'! (allowed range is " + MinValue + " <= x <= " + MaxValue + ")")
+		return MaxValue
+	else
+		return Value
+	endif
 endfunction
