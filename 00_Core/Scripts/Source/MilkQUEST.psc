@@ -519,7 +519,7 @@ Function MilkCycle(Actor akActor, int t)
 	Float MaidMilkGen = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkGen")
 	Float BreastBase = MME_Storage.getBreastsBasevalue(akActor)
 	Float BreastBaseMod = MME_Storage.getBreastsBaseadjust(akActor)
-	Float BreastRows = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastRows", missing = 1)
+	Int   BreastRows = MME_Storage.getBreastRows(akActor)
 	Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 	Float MilkMax = MME_Storage.getMilkMaximum(akActor)
 	Float PainCnt = MME_Storage.getPainCurrent(akActor)
@@ -667,7 +667,7 @@ Function MilkCycle(Actor akActor, int t)
 		endif
 	endif
 		
-	if maidArmor != None && StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastRows", missing = 1) == 1
+	if maidArmor != None && MME_Storage.getBreastRows(akActor) == 1
 		if (MilkingEquipment.Find(maidArmor.getname()) != -1 || maidArmor == MilkCuirass || maidArmor == MilkCuirassFuta || StringUtil.Find(maidArmor.getname(), "Milk" ) >= 0 || StringUtil.Find(maidArmor.getname(), "Cow" ) >=0)\
 		&& StorageUtil.GetIntValue(akActor,"MME.MilkMaid.MilkingMode") == 2
 			if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") > 0
@@ -822,7 +822,7 @@ Function CurrentSize(Actor akActor)
 	Float MaidBoobPerLvl = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BoobPerLvl")		;fetch individual maid data
 	Float BreastBaseMod = MME_Storage.getBreastsBaseadjust(akActor)
 	Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
-	Float MaidLevel = MME_Storage.getMaidLevel(akActor)
+	Int   MaidLevel = MME_Storage.getMaidLevel(akActor)
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.TimesMilked")
 	Float CurrentSize
 	Float CurveFix
@@ -962,13 +962,13 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	Float LactacidMax = MME_Storage.getLactacidMaximum(akActor)
 	Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 	Float MilkMax = MME_Storage.getMilkMaximum(akActor)
-	Float MaidLevel = MME_Storage.getMaidLevel(akActor)
+	Int   MaidLevel = MME_Storage.getMaidLevel(akActor)
 	Float PainCnt = MME_Storage.getPainCurrent(akActor)
 	Float PainMax = MME_Storage.getPainMaximum(akActor)
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.TimesMilked")
 	Float TimesMilked = StorageUtil.GetFloatValue(none,"MME.Progression.TimesMilked")
 	Float TimesMilkedAll = StorageUtil.GetFloatValue(none,"MME.Progression.TimesMilkedAll")
-	Float BreastRows = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastRows", missing = 1)
+	Int BreastRows = MME_Storage.getBreastRows(akActor)
 
 	if MILKmaid.find(akActor) != -1 && MILKSlave.find(akActor) != -1
 		IsMilkMaid = false
@@ -1393,7 +1393,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				endif
 				
 				if SLA.GetActorArousal(akActor) > 98
-					gush *= BreastRows as int
+					gush *= BreastRows
 				endif
 				
 				if MilkCnt >= gush
@@ -1716,7 +1716,7 @@ EndFunction
 Function PostMilk(Actor akActor)
 	Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 	Float MilkMax = MME_Storage.getMilkMaximum(akActor)
-	Float MaidLevel = MME_Storage.getMaidLevel(akActor)
+	Int   MaidLevel = MME_Storage.getMaidLevel(akActor)
 
 	if MilkQC.Buffs != true 
 		if akActor.HasSpell(MilkExhaustion)
@@ -1743,7 +1743,7 @@ Function PostMilk(Actor akActor)
 			if MaidLevel > 24
 				MaidLevel = 24
 			endif
-			akActor.AddSpell(WellMilkedArray[MaidLevel as int], false)
+			akActor.AddSpell(WellMilkedArray[MaidLevel], false)
 		elseif MilkCnt / MilkMax >= 0.6
 			int min = Math.Ceiling(MilkMax*0.6)												;ie lv10 cei(14.4) = 14 lv1 cei(3.6) = 4
 			int diff = (MilkCnt - min) as int 												;if its = 0 it means its first tick above 0.6
@@ -1775,14 +1775,14 @@ EndFunction
 
 Function MaidLevelCheck(Actor akActor)
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.TimesMilked")
-	Float MaidLevel = MME_Storage.getMaidLevel(akActor)
+	Int   MaidLevel = MME_Storage.getMaidLevel(akActor)
 	if MaidLevel < MilkLvlCap || !MaidLvlCap
 		if MaidTimesMilked >= (MaidLevel + 1) * TimesMilkedMult
 			MME_Storage.setMaidLevel(akActor, MaidLevel + 1)
 			StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.TimesMilked", 0)
 			if MilkMsgs && MaidLevel + 1 <= MilkLvlCap
 				debug.Notification(akActor.GetLeveledActorBase().getname() + " has gained a Milk maid level!")
-				MilkMsgHyper((MaidLevel + 1) as int, akActor)
+				MilkMsgHyper((MaidLevel + 1), akActor)
 			endif
 		endif
 	endif
@@ -1999,7 +1999,7 @@ EndFunction
 ;----------------------------------------------------------------------------
 
 Function MultiBreastChange(Actor akActor)
-	Float BreastRows = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastRows")
+	Float BreastRows = MME_Storage.getBreastRows(akActor)
 	Form cuirass = akActor.GetWornForm(Armor.GetMaskForSlot(32))
 	
 	if !akActor.IsInFaction(MilkSlaveFaction) && !akActor.IsInFaction(MilkMaidFaction)
@@ -2013,6 +2013,7 @@ Function MultiBreastChange(Actor akActor)
 		return
 	endif
 	
+<<<<<<< HEAD
 	if BreastRows < 1
 		debug.Trace("MilkModEconomy MultiBreastChange() "+akActor.GetLeveledActorBase().GetName()+" BreastRows < 1, resetting to 1")
 		BreastRows = 1
@@ -2029,6 +2030,12 @@ Function MultiBreastChange(Actor akActor)
 	|| (cuirass == TITS6 && BreastRows != 3)\
 	|| (cuirass == TITS8 && BreastRows != 4)
 		akActor.RemoveItem(cuirass, 1, true)
+=======
+	if cuirass == (TITS4 || TITS6 || TITS8)
+		if cuirass == ((TITS4 && BreastRows != 2) || (TITS6 && BreastRows != 3) || (TITS8 && BreastRows != 4))
+			akActor.RemoveItem(cuirass, 1, true)
+		endif
+>>>>>>> origin/master
 	elseif cuirass != none
 		akActor.UnEquipItem(cuirass)
 	endif
@@ -2452,7 +2459,7 @@ Function AddLeak(Actor akActor)
 	if MilkLeakToggle == true && DDi.IsMilkingBlocked_Bra(akActor) == false && PiercingCheck(akActor) != 2
 		If (akActor.GetWornForm(Armor.GetMaskForSlot(32)) == None || MilkLeakWearArm == true)
 			MilkLeak.cast(akActor)
-		ElseIf StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.BreastRows", missing = 1) != 1
+		ElseIf MME_Storage.getBreastRows(akActor) != 1
 			MilkLeak.cast(akActor)
 		EndIf
 	EndIf
@@ -3006,7 +3013,7 @@ string Function NState(Actor akActor)
 EndFunction
 
 int Function Pain(Actor akActor, int pain)
-	Float MaidLevel = MME_Storage.getMaidLevel(akActor)
+	Int   MaidLevel = MME_Storage.getMaidLevel(akActor)
 	Float PainCnt = MME_Storage.getPainCurrent(akActor)
 	Float PainMax = MME_Storage.getPainMaximum(akActor)
 		string who
@@ -3035,7 +3042,7 @@ int Function Pain(Actor akActor, int pain)
 		endif
 	endif
 
-	PainCnt += (pain - MaidLevel * 0.025) * (1 - SLA.GetActorArousal(akActor) / 100 * 0.25)
+	PainCnt += (pain - 0.025*MaidLevel) * (1 - SLA.GetActorArousal(akActor) / 100 * 0.25)
 	if PiercingCheck(akActor) == 1
 		PainCnt *= 2 
 	endif
