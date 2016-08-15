@@ -2013,7 +2013,6 @@ Function MultiBreastChange(Actor akActor)
 		return
 	endif
 	
-<<<<<<< HEAD
 	if BreastRows < 1
 		debug.Trace("MilkModEconomy MultiBreastChange() "+akActor.GetLeveledActorBase().GetName()+" BreastRows < 1, resetting to 1")
 		BreastRows = 1
@@ -2030,12 +2029,6 @@ Function MultiBreastChange(Actor akActor)
 	|| (cuirass == TITS6 && BreastRows != 3)\
 	|| (cuirass == TITS8 && BreastRows != 4)
 		akActor.RemoveItem(cuirass, 1, true)
-=======
-	if cuirass == (TITS4 || TITS6 || TITS8)
-		if cuirass == ((TITS4 && BreastRows != 2) || (TITS6 && BreastRows != 3) || (TITS8 && BreastRows != 4))
-			akActor.RemoveItem(cuirass, 1, true)
-		endif
->>>>>>> origin/master
 	elseif cuirass != none
 		akActor.UnEquipItem(cuirass)
 	endif
