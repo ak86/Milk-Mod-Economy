@@ -930,7 +930,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		;endif
 		return									; prevents multiple scripts running
 	endif
-	akActor.AddSpell( BeingMilkedPassive, false )
+	akActor.AddSpell( BeingMilkedPassive, false )	; prevents multiple scripts running, if removed, milking will stop
 
 	;Devious Devices management
 	Bool DDArmbinder = DDi.IsMilkingBlocked_Armbinder(akActor)
@@ -1250,6 +1250,11 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		Utility.Wait(1.0)
 
 		;FEEDING STAGE
+		;check if feeding enabled, if actor using milkpump(mode 0), if actor female, if not full of lactacid or (FeedOnce and ForcedFeeding) override enabled
+		;check if actor is sitting or trying to sit and is in same locations as player
+		;check if dd/zaz gags block milking
+		;(check if not bound milking, not full of lactacid, player or actor or actor storageutil has lactacid)\
+		;or bound milking, actor is not maid/slave or actor is slave or FreeLactacid cheat enabled
 		while Feeding == true && Mode == 0 && akActor.GetLeveledActorBase().GetSex() == 1 && (LactacidCnt < LactacidMax || (FeedOnce && ForcedFeeding))\
 		&& ((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || akActor.IsInLocation(PlayerREF.getCurrentLocation()))\
 		&& ((DDGag == false || DDGagOpen == true) && (ZaZGag == false || ZaZGagOpen == true))\
@@ -1274,14 +1279,23 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				debug.Notification(akActor.GetLeveledActorBase().GetName() + " is being fed Lactacid" )
 			endif
 			sendVibrationEvent("FeedingStage", akActor, mpas, MilkingType)
-
-			while duration < Feeding_Duration && (((akActor.GetSitState() <= 3 && akActor.GetSitState()) || akActor.IsInLocation(PlayerREF.getCurrentLocation()))|| Mode != 0) && akActor.HasSpell(BeingMilkedPassive)
+			
+			; feed loop
+			;check if actor is sitting or trying to sit and is in same location as player
+			while duration < Feeding_Duration && ((akActor.GetSitState() <= 3 && akActor.GetSitState()) || akActor.IsInLocation(PlayerREF.getCurrentLocation())) && akActor.HasSpell(BeingMilkedPassive)
+				;if not maid/slave, skip and wait 10s to simulate feeding
 				if IsMilkMaid == true
 					if MilkingType == 1 || FreeLactacid == true
+						;free lactacid for bound milking or cheat
 						akActor.EquipItem(MME_Util_Potions.GetAt(0), true, true)
 					elseif akActor.IsInFaction(MilkMaidFaction)
+						;actor is milkmaid
+						;check player or actor or actor storageutil has lactacid)
 						if (PlayerREF.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || akActor.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1)
+							;Feed lactacid
 							akActor.EquipItem(MME_Util_Potions.GetAt(0), true, true)
+							
+							;if normal milking and actor not slave remove 1 lactacid for actor storageutil, inventory, player inventory
 							if MilkingType == 0 && !akActor.IsInFaction(MilkSlaveFaction)
 								if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1 
 									StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid", -1)
@@ -1293,12 +1307,15 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 							endif
 						endif
 					elseif akActor.IsInFaction(MilkSlaveFaction)
+						;if actor is slave
 						akActor.EquipItem(MME_Util_Potions.GetAt(0), true, true)
 					elseif StorageUtil.GetIntValue(akActor, "MME.MilkMaid.IsSlave") == 1 && (akActor.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1)
+						;something regarding player slavery but its probably never reached since player is always in MilkMaidFaction
 						akActor.EquipItem(MME_Util_Potions.GetAt(0), true, true)
 					endif
 					LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
 				endif
+				
 				Utility.Wait(10.0)
 				duration = duration + 10
 			endwhile
