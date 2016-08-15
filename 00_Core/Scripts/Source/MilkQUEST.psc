@@ -2773,27 +2773,28 @@ Function SetNodeScale(Actor akActor, string nodeName, float value)
 	endif
 	if NetImmerse.HasNode(akActor, nodeName, false)
 		If SKSE.GetPluginVersion("NiOverride") >= 3 && NiOverride.GetScriptVersion() >= 2 && BreastScale == 0		;nioverride
+			; update 1st person view/skeleton (player only)
 			if akActor == Game.GetPlayer()
 				If value != 1.0
-					NiOverride.AddNodeTransformScale(akActor, false, isFemale, nodeName, modName, value)
 					NiOverride.AddNodeTransformScale(akActor, true, isFemale, nodeName, modName, value)
 				Else
-					NiOverride.RemoveNodeTransformScale(akActor, false, isFemale, nodeName, modName)
 					NiOverride.RemoveNodeTransformScale(akActor, true, isFemale, nodeName, modName)
 				Endif
 				NiOverride.UpdateNodeTransform(akActor, true, isFemale, nodeName)
+			endif
+			; update 3rd person view/skeleton (player & NPCs)
+			If value != 1.0
+				NiOverride.AddNodeTransformScale(akActor, false, isFemale, nodeName, modName, value)
 			Else
-				If value != 1.0
-					NiOverride.AddNodeTransformScale(akActor, false, isFemale, nodeName, modName, value)
-				Else
-					NiOverride.RemoveNodeTransformScale(akActor, false, isFemale, nodeName, modName)
-				Endif
+				NiOverride.RemoveNodeTransformScale(akActor, false, isFemale, nodeName, modName)
 			Endif
 			NiOverride.UpdateNodeTransform(akActor, false, isFemale, nodeName)
 		ElseIf akActor.IsInLocation(PlayerREF.getCurrentLocation())													;netimmerse
+			; update 1st person view/skeleton (player only)
 			if akActor == Game.GetPlayer()
 				NetImmerse.SetNodeScale(akActor, nodeName, value, true)
 			Endif
+			; update 3rd person view/skeleton (player & NPCs)
 			NetImmerse.SetNodeScale(akActor, nodeName, value, false)
 		Endif
 	Elseif nodeName == "NPC L Breast"\
