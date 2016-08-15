@@ -1,6 +1,6 @@
 Scriptname MME_SLP extends Quest
 
-Event OnPlayerLoadGame()
+Event OnInit()
 	StorageUtil.SetIntValue(none,"MME.PluginsCheck.slp",2)
 EndEvent
 

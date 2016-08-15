@@ -1,6 +1,6 @@
 Scriptname MME_SLHP extends Quest
 
-Event OnPlayerLoadGame()
+Event OnInit()
 	StorageUtil.SetIntValue(none,"MME.PluginsCheck.slhp",2)
 EndEvent
 

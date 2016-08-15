@@ -1,6 +1,6 @@
 Scriptname MME_DDi extends Quest
 
-Event OnPlayerLoadGame()
+Event OnInit()
 	StorageUtil.SetIntValue(none,"MME.PluginsCheck.ddi",1)
 EndEvent
 

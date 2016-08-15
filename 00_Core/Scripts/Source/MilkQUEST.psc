@@ -2003,7 +2003,9 @@ Function MultiBreastChange(Actor akActor)
 	Form cuirass = akActor.GetWornForm(Armor.GetMaskForSlot(32))
 	
 	if !akActor.IsInFaction(MilkSlaveFaction) && !akActor.IsInFaction(MilkMaidFaction)
-		if cuirass == (TITS4 || TITS6 || TITS8)
+		if cuirass == TITS4\ 
+		|| cuirass == TITS6\
+		|| cuirass == TITS8
 			debug.Trace("MilkModEconomy MultiBreastChange() "+akActor.GetLeveledActorBase().GetName()+" is not maid/slave and has multi breast, removing")
 			akActor.RemoveItem(cuirass, 1, true)
 		endif
@@ -2023,17 +2025,15 @@ Function MultiBreastChange(Actor akActor)
 		StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.BreastRows", 4)
 	endif
 	
-	if cuirass == (TITS4 || TITS6 || TITS8)
-		if cuirass == ((TITS4 && BreastRows != 2) || (TITS6 && BreastRows != 3) || (TITS8 && BreastRows != 4))
-			akActor.RemoveItem(cuirass, 1, true)
-		endif
+	if (cuirass == TITS4 && BreastRows != 2)\ 
+	|| (cuirass == TITS6 && BreastRows != 3)\
+	|| (cuirass == TITS8 && BreastRows != 4)
+		akActor.RemoveItem(cuirass, 1, true)
 	elseif cuirass != none
 		akActor.UnEquipItem(cuirass)
 	endif
 	
-	if BreastRows != ( 2 || 3 || 4 )
-		;do nothing
-	elseif BreastRows == 2
+	if BreastRows == 2
 		akActor.EquipItem(TITS4,true,true)
 	elseif BreastRows == 3
 		akActor.EquipItem(TITS6,true,true)
@@ -2808,13 +2808,6 @@ Function SetNodeScale(Actor akActor, string nodeName, float value)
 			Endif
 			NetImmerse.SetNodeScale(akActor, nodeName, value, false)
 		Endif
-	Elseif nodeName == "NPC L Breast"\
-		|| nodeName == "NPC R Breast"\
-		|| nodeName == "NPC L Breast01"\
-		|| nodeName == "NPC R Breast01"\
-		|| nodeName == "NPC Belly"
-
-		Debug.Notification("MilkModEconomy " + nodeName + " was not found, check your armor/body/skeleton")
 	Endif
 EndFunction
 

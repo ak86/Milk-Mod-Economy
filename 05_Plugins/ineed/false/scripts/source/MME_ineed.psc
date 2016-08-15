@@ -1,6 +1,6 @@
 Scriptname MME_ineed extends Quest
 
-Event OnPlayerLoadGame()
+Event OnInit()
 	StorageUtil.SetIntValue(none,"MME.PluginsCheck.ineed",1)
 EndEvent
 

@@ -1,6 +1,6 @@
 Scriptname MME_SOS extends Quest
 
-Event OnPlayerLoadGame()
+Event OnInit()
 	StorageUtil.SetIntValue(none,"MME.PluginsCheck.sos",2)
 EndEvent
 

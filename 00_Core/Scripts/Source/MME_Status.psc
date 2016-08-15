@@ -2,15 +2,11 @@ Scriptname MME_Status extends Quest
 {MME check script}
 ;Doesn't connect to main mod in anyway, only purpose is to check if MME scripts are initiated
 ;To do this we check MME_Status_Global, which should be set be MME to 1 by maintenance() in MilkPlayerLoadGame script
+;by it self this script is run once when mod is installed, should be registered by alias script to run on playerloadgame
 
 GlobalVariable Property MME_Status_Global Auto
 
 Event OnInit()
-	RegisterForSingleUpdate(60)
-EndEvent
-
-Event OnPlayerLoadGame()
-	UnRegisterForUpdate()
 	RegisterForSingleUpdate(60)
 EndEvent
 
@@ -23,16 +19,6 @@ Event OnUpdate()
 	else
 		Debug.Trace("MilkModEconomy Changed status to 0, shutting down")
 		MME_Status_Global.SetValue(0)
-		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.ddi")
-		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.ineed")
-		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.psq")
-		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.sgo")
-		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.sla")
-		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.slhp")
-		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.slp")
-		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.sos")
-		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.uie")
-		StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.zbf")
 	endif
 EndEvent
 
@@ -42,6 +28,31 @@ Function MilkPluginsInfo()
 	int i = 0
 	String [] name = new string[10]
 	Int[] value = new int[10]
+	;bool ErrorsFound = False
+
+	;individual check to see if scripts working at all, ;stop quest , ;start quest/runs OnInit check
+	Quest.GetQuest("MME_SLA").stop()
+	Quest.GetQuest("MME_SLA").start()
+	Quest.GetQuest("MME_DDi").stop()
+	Quest.GetQuest("MME_DDi").start()
+	Quest.GetQuest("MME_zbf").stop()
+	Quest.GetQuest("MME_zbf").start()
+	Quest.GetQuest("MME_SLHP").stop()
+	Quest.GetQuest("MME_SLHP").start()
+	Quest.GetQuest("MME_SLP").stop()
+	Quest.GetQuest("MME_SLP").start()
+	Quest.GetQuest("MME_PSQ").stop()
+	Quest.GetQuest("MME_PSQ").start()
+	Quest.GetQuest("MME_SGO").stop()
+	Quest.GetQuest("MME_SGO").start()
+	; these scripts connect to MilkQ and will return error if MilkQ script is broken
+	Quest.GetQuest("MME_ineed").stop()
+	Quest.GetQuest("MME_ineed").start()
+	Quest.GetQuest("MME_SOS").stop()
+	Quest.GetQuest("MME_SOS").start()
+	Quest.GetQuest("MME_UIE").stop()
+	Quest.GetQuest("MME_UIE").start()
+	utility.wait(1) ; wait for quests startup and do their OnInit()
 
 	value[0] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.ddi")
 	value[1] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.ineed")
@@ -65,7 +76,7 @@ Function MilkPluginsInfo()
 	name[8] = "MME.PluginsCheck.uie"
 	name[9] = "MME.PluginsCheck.zbf"
 
-	msg = "MME Plugins info:\n"
+	msg = "Milk Mod Economy plugins check:\n"
 	While i < name.Length
 		if value[i] == 1
 			Status = "off"
@@ -73,10 +84,26 @@ Function MilkPluginsInfo()
 			Status = "on"
 		else
 			Status = "error"
+			;ErrorsFound = True
 		endif
 
 		msg = msg + ("Plugin: " + name[i] + " Status: " + Status + "\n")
 		i += 1
 	endwhile
-	Debug.MessageBox(msg)
+	
+	;if ErrorsFound == True
+		Debug.MessageBox(msg)
+	;endif
+	
+	;reset StorageUtil for next run
+	StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.ddi")
+	StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.ineed")
+	StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.psq")
+	StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.sgo")
+	StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.sla")
+	StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.slhp")
+	StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.slp")
+	StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.sos")
+	StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.uie")
+	StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.zbf")
 EndFunction

@@ -1,6 +1,6 @@
 Scriptname MME_zbf extends Quest
 
-Event OnPlayerLoadGame()
+Event OnInit()
 	StorageUtil.SetIntValue(none,"MME.PluginsCheck.zbf",1)
 EndEvent
 

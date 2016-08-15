@@ -551,29 +551,15 @@
 								<type name="Optional"/>
 							</typeDescriptor>				
 						</plugin>
-						<plugin name="V1">
+						<plugin name="On">
 							<description>
-								<![CDATA[Gem pregnancy detection variant1(script based), from 2016]]>
+								<![CDATA[Gem pregnancy detection]]>
 							</description>
 							<conditionFlags>
 								<flag name="SGO3"></flag>
 							</conditionFlags>
 							<files>
-								<folder source="05_Plugins\SGO\TrueV1" destination=""/>
-							</files>
-							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
-						</plugin>
-						<plugin name="V2">
-							<description>
-								<![CDATA[Gem pregnancy detection variant2(from Storageutil), from 2015]]>
-							</description>
-							<conditionFlags>
-								<flag name="SGO3"></flag>
-							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\SGO\TrueV2" destination=""/>
+								<folder source="05_Plugins\SGO\True" destination=""/>
 							</files>
 							<typeDescriptor>
 								<type name="Optional"/>

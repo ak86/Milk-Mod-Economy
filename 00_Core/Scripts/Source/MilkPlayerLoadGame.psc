@@ -296,7 +296,11 @@ Function Maintenance()
 		MilkQ.MilkQC.MME_BreasfeedingAnimationsCheck = False
 		Debug.Trace("MilkModEconomy 3J Breastfeeding animations NOT found")
 	endif
-	MilkQ.MME_Status_Global.SetValue(1)
+	
+	;selfdiagnostic
+	;general check to see if this script working at all and mod have launched, will not launch if milkq and plguins return errors
+	;if not, more detailed info on broken scripts will be shown by MME_Status.MilkPluginsInfo()
+	MilkQ.MME_Status_Global.SetValue(1)	
 	Debug.Trace("MilkModEconomy status set to " + MilkQ.MME_Status_Global.GetValue() + ", should be 1")
 	Debug.Trace("MilkModEconomy maintenance done")
 EndFunction

@@ -1,6 +1,6 @@
 Scriptname MME_SGO extends Quest
 
-Event OnPlayerLoadGame()
+Event OnInit()
 	StorageUtil.SetIntValue(none,"MME.PluginsCheck.sgo",2)
 EndEvent
 

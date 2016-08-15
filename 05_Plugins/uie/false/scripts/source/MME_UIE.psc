@@ -1,6 +1,6 @@
 Scriptname MME_UIE extends Quest
 
-Event OnPlayerLoadGame()
+Event OnInit()
 	StorageUtil.SetIntValue(none,"MME.PluginsCheck.uie",1)
 EndEvent
 

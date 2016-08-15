@@ -1,6 +1,6 @@
 Scriptname MME_PSQ extends Quest
 
-Event OnPlayerLoadGame()
+Event OnInit()
 	StorageUtil.SetIntValue(none,"MME.PluginsCheck.psq",2)
 EndEvent
 

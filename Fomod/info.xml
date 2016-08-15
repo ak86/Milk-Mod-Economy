@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>11-08-2016</Version>
+  <Version>15-08-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
@@ -13,11 +13,11 @@
 *UIExtension support
 *add skooma/mead milk, watch what you drink
 *add fertility potion (male/futa cum production, not really useful right now, maybe someday...)
+*beggar drunken favor dialogues
 
 Dev change log:
 
-	v 11-08-2016
-*beggar drunken favor dialogues
+	v 15-08-2016
 added belly node scaling based on lactacid/2
 fix for sos
 added _SLH_isSuccubus detection
@@ -33,6 +33,8 @@ changed economy messages to show only for current location, excluding khajiits c
 added sandbox patch(incl fix for npc sandbox milking so they probably shouldn't get stuck in animation)
 fix for player getting stuck in bound pumps with ddi items
 updated scripts status check, should now show what plugin script is broken
+fixed armor remove when resetting maid/slave
+removed sgo v1 integration
 	
 	v 17-06-2016
 added (not)bound milkpumps only esps, requires cell reset(or console disable/enable) to change between pumps scripts
