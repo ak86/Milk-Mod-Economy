@@ -278,6 +278,38 @@ function setMilkMaxScalefactor(actor akActor, float Value) global
 	updateMilkMaximum(akActor)
 endfunction
 
+; Please note:
+; - The milk production rate depends on the initial breast node's size, the
+;   breast size increase per maid level, the number of breasts and the base
+;   hourly production rate.
+; - The calculated rate is further modified by actor arousal and global milk
+;   production modifier -> MilkGenRate*ArousalBonus*GlobalMilkProdFactor
+; - Lactacid bonus is no longer included, it must be applied separately.
+; - A tick is expected to occur every two minutes. Changing the tick rate
+;   changes the hourly milk production rate.
+
+float function getMilkProdPerHour(actor akActor) global
+	float MilkGen = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkGen")
+	return calculateMilkProdPerHour(akActor, MilkGen)
+endfunction
+
+float function setMilkProdPerHour(actor akActor, float MilkProdPerHour) global
+	float MilkGen = calculateMilkGen(akActor, MilkProdPerHour)
+	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkGen", MilkGen)
+
+	; return value can be different then provided value
+	return calculateMilkProdPerHour(akActor, MilkGen)
+endfunction
+
+; TODO dynamically adjust allowable maximum or restrict actual production rate to maximum
+; (It is currently possible to have a milk production rate exceeding the maximum
+;  configurable value. This is usually a result of an increased production rate
+;  and/or regular milking.)
+float function getMilkMaxProdPerHour(actor akActor) global
+	; '25' was previously hardcoded in MilkMCM, it has no other significance
+	return calculateMilkProdPerHour(akActor, 25)
+endfunction
+
 float function getPainCurrent(actor akActor) global
 	Debug.Trace("MME_Storage: Triggered getPainCurrent() for actor " + akActor.GetLeveledActorBase().GetName())
 	return StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.PainCount")
@@ -355,6 +387,44 @@ float function calculateMilkLimit(actor akActor, float Level) global
 	float MilkScalefactor = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkMax.Scalefactor", missing = 1)
 
 	return (MilkBasevalue + Level*MilkScalefactor)*BreastRows*BreastsPerRow
+endfunction
+
+; convert 'milk production per hour' to 'MME.MilkMaid.MilkGen'
+float function calculateMilkGen(actor akActor, float MilkProdPerHour) global
+	if MilkProdPerHour <= 0.0
+		return 0.0
+	endif
+
+	float BreastsBasevalue = getBreastsBasevalue(akActor)
+	float BoobPerLvl       = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BoobPerLvl", missing = -1)
+	int   MaidLevel        = getMaidLevel(akActor)
+	int   BreastRows       = getBreastRows(akActor)
+
+	; use default if value is negative (e.g. -1)
+	if BoobPerLvl < 0.0
+		BoobPerLvl = 0.07
+	endif
+
+	return ((MilkProdPerHour/BreastRows)*3*10) - BreastsBasevalue - (BoobPerLvl*MaidLevel)
+endfunction
+
+; convert 'MME.MilkMaid.MilkGen' to 'milk production per hour'
+float function calculateMilkProdPerHour(actor akActor, float MilkGen) global
+	if MilkGen <= 0.0
+		return 0.0
+	endif
+
+	float BreastsBasevalue = getBreastsBasevalue(akActor)
+	float BoobPerLvl       = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BoobPerLvl", missing = -1)
+	int   MaidLevel        = getMaidLevel(akActor)
+	int   BreastRows       = getBreastRows(akActor)
+
+	; use default if value is negative (e.g. -1)
+	if BoobPerLvl < 0.0
+		BoobPerLvl = 0.07
+	endif
+
+	return ((BreastsBasevalue + (BoobPerLvl*MaidLevel) + MilkGen)/3/10)*BreastRows
 endfunction
 
 function updateMilkMaximum(actor akActor) global
