@@ -565,6 +565,24 @@ function Page_MilkMaidDebug()
 				int   MaidLevel = MME_Storage.getMaidLevel(MaidlistA[MaidIndex])
 				float MilkTick = (MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]) + MaidBoobPerLvl*MaidLevel + MaidMilkGen)/3 * (1 + MilkQ.SLA.GetActorArousal(MaidlistA[MaidIndex])/100)
 
+				; arousal provides an additional bonus
+				;  value range: 1 <= x <= 2
+				float ArousalBonus = 1 + (MilkQ.SLA.GetActorArousal(MaidlistA[MaidIndex])/100)
+
+				; global milk production factor
+				;  value range: 0 <= x <= 2
+				float MilkProdFactor = MilkQ.MilkProdMod/100
+
+				; base milk production per hour
+				;   does not include variable effects
+				;   (prefer a static value for configuration)
+				float MilkProdPerHour = MME_Storage.getMilkProdPerHour(MaidlistA[MaidIndex])
+
+				; effective milk production per hour
+				;   includes global milk production and arousal adjustments
+				;   (show what is actually used right now)
+				float MilkProdPerHourEff = MilkProdPerHour * MilkProdFactor * ArousalBonus
+
 				AddTextOptionST("Debug_MM_MaidPregnancy", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S4", MilkQ.isPregnant(MaidlistA[MaidIndex]) as String, OPTION_FLAG_DISABLED)	
 				AddTextOptionST("Debug_MM_MaidGender", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S5", MilkQ.akActorSex(MaidlistA[MaidIndex]) as String, OPTION_FLAG_DISABLED)	
 				AddSliderOptionST("Debug_MM_MaidLevel_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S6", MaidLevel)
@@ -588,9 +606,11 @@ function Page_MilkMaidDebug()
 				else
 					AddSliderOptionST("Debug_MM_MilkCount_Slider", "Milk stored [unlimited]:", MilkCnt, "{2}")
 				endif
-				AddSliderOptionST("Debug_MM_MilkGeneration_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S13", MilkTick * MilkQ.MilkProdMod/100/10*BreastRows, "{2}")
-				AddTextOptionST("Debug_MM_Maid_Lactacid_Milk_Production_PH", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S15", MilkQ.ReduceFloat(MilkTick * MilkQ.MilkProdMod/100 * BreastRows), OPTION_FLAG_DISABLED)
-				AddTextOptionST("Debug_MM_Maid_Lactacid_Milk_Production_PP", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S16", MilkQ.ReduceFloat(MilkTick * MilkQ.MilkProdMod/100 * MilkQ.MilkPoll * BreastRows), OPTION_FLAG_DISABLED)
+				AddSliderOptionST("Debug_MM_MilkGeneration_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S13", MilkProdPerHour, "{2}")
+				; TODO find out how to update the following 3 values after modifying MilkProdPerHour
+				AddTextOptionST("Debug_MM_MilkGeneration_Effective",         "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S14", MilkQ.ReduceFloat(MilkProdPerHourEff                      ), OPTION_FLAG_DISABLED)
+				AddTextOptionST("Debug_MM_Maid_Lactacid_Milk_Production_PH", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S15", MilkQ.ReduceFloat(MilkProdPerHourEff * 10                 ), OPTION_FLAG_DISABLED)
+				AddTextOptionST("Debug_MM_Maid_Lactacid_Milk_Production_PP", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S16", MilkQ.ReduceFloat(MilkProdPerHourEff * 10 * MilkQ.MilkPoll), OPTION_FLAG_DISABLED)
 				AddSliderOptionST("Debug_MM_PainCount_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S17", MME_Storage.getPainCurrent(MaidlistA[MaidIndex]), "{2}")
 				AddTextOptionST("Debug_MM_Maid_Pain_Reduction_PH", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S18",  MilkQ.ReduceFloat((MilkTick + MilkMax/10) * MilkQ.MilkProdMod/100), OPTION_FLAG_DISABLED)
 				AddTextOptionST("Debug_MM_Maid_Pain_Reduction_PP", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S19",  MilkQ.ReduceFloat((MilkTick + MilkMax/10) * MilkQ.MilkProdMod/100 * MilkQ.MilkPoll), OPTION_FLAG_DISABLED)
@@ -3299,15 +3319,15 @@ endState
 
 state Debug_MM_MilkGeneration_Slider
 	event OnSliderOpenST()
-		SetSliderDialogStartValue(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkGen"))
-		SetSliderDialogDefaultValue(0)
-		SetSliderDialogRange(0, 25)
+		SetSliderDialogStartValue(MME_Storage.getMilkProdPerHour(MaidlistA[MaidIndex]))
+		SetSliderDialogDefaultValue(0.05)
+		SetSliderDialogRange(0.0, MME_Storage.getMilkMaxProdPerHour(MaidlistA[MaidIndex]))
 		SetSliderDialogInterval(0.01)
 	endEvent
 
 	event OnSliderAcceptST(float value)
-		StorageUtil.SetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkGen", value)
-		SetSliderOptionValueST(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkGen")/3/10, "{2}")
+		float MilkProdPerHour = MME_Storage.setMilkProdPerHour(MaidlistA[MaidIndex], Value)
+		SetSliderOptionValueST(MilkProdPerHour, "{2}")
 	endEvent
 endState
 
