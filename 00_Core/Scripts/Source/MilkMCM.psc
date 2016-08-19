@@ -607,7 +607,6 @@ function Page_MilkMaidDebug()
 					AddSliderOptionST("Debug_MM_MilkCount_Slider", "Milk stored [unlimited]:", MilkCnt, "{2}")
 				endif
 				AddSliderOptionST("Debug_MM_MilkGeneration_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S13", MilkProdPerHour, "{2}")
-				; TODO find out how to update the following 3 values after modifying MilkProdPerHour
 				AddTextOptionST("Debug_MM_MilkGeneration_Effective",         "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S14", MilkQ.ReduceFloat(MilkProdPerHourEff                      ), OPTION_FLAG_DISABLED)
 				AddTextOptionST("Debug_MM_Maid_Lactacid_Milk_Production_PH", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S15", MilkQ.ReduceFloat(MilkProdPerHourEff * 10                 ), OPTION_FLAG_DISABLED)
 				AddTextOptionST("Debug_MM_Maid_Lactacid_Milk_Production_PP", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S16", MilkQ.ReduceFloat(MilkProdPerHourEff * 10 * MilkQ.MilkPoll), OPTION_FLAG_DISABLED)
@@ -3328,6 +3327,7 @@ state Debug_MM_MilkGeneration_Slider
 	event OnSliderAcceptST(float value)
 		float MilkProdPerHour = MME_Storage.setMilkProdPerHour(MaidlistA[MaidIndex], Value)
 		SetSliderOptionValueST(MilkProdPerHour, "{2}")
+		ForcePageReset()
 	endEvent
 endState
 
