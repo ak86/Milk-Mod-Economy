@@ -1282,8 +1282,8 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			
 			; feed loop
 			;check if actor is sitting or trying to sit and is in same location as player
-			while duration < Feeding_Duration && ((akActor.GetSitState() <= 3 && akActor.GetSitState()) || akActor.IsInLocation(PlayerREF.getCurrentLocation())) && akActor.HasSpell(BeingMilkedPassive)
-				;if not maid/slave, skip and wait 10s to simulate feeding
+			while duration < Feeding_Duration && LactacidCnt < LactacidMax && ((akActor.GetSitState() <= 3 && akActor.GetSitState()) || akActor.IsInLocation(PlayerREF.getCurrentLocation())) && akActor.HasSpell(BeingMilkedPassive)
+				;if not maid/slave, skip and wait to simulate feeding
 				if IsMilkMaid == true
 					if MilkingType == 1 || FreeLactacid == true
 						;free lactacid for bound milking or cheat
@@ -1313,11 +1313,12 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 						;something regarding player slavery but its probably never reached since player is always in MilkMaidFaction
 						akActor.EquipItem(MME_Util_Potions.GetAt(0), true, true)
 					endif
+					CurrentSize(akActor)
 					LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
 				endif
 				
-				Utility.Wait(10.0)
-				duration = duration + 10
+				Utility.Wait(Feeding_Duration)
+				duration += Feeding_Duration
 			endwhile
 
 			duration = 0
@@ -1522,26 +1523,28 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		;Cycle wrap-up
 
 		if SLA.GetActorArousal(akActor) > 98 && (akActor.HasSpell(MilkingStage) || akActor.HasSpell(FuckMachineStage))
-			Int exposureValue = ((((bottles + 1) / (MilkCnt + bottles + 1)) * 3 * -20.0)/(1+SLA.GetActorExposureRate(akActor)/3)) as Int
-			if PlayerREF.GetDistance(akActor) < 500 && MilkMsgs 
-				if akActor.HasSpell(MilkingStage)
-					debug.Notification(akActor.GetLeveledActorBase().GetName() + " is having a boobgasm" )
-				elseif akActor.HasSpell(FuckMachineStage)
-					debug.Notification(akActor.GetLeveledActorBase().GetName() + " is having a orgasm" )
+			if ((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || Mode != 0)
+				Int exposureValue = ((((bottles + 1) / (MilkCnt + bottles + 1)) * 3 * -20.0)/(1+SLA.GetActorExposureRate(akActor)/3)) as Int
+				if PlayerREF.GetDistance(akActor) < 500 && MilkMsgs 
+					if akActor.HasSpell(MilkingStage)
+						debug.Notification(akActor.GetLeveledActorBase().GetName() + " is having a boobgasm" )
+					elseif akActor.HasSpell(FuckMachineStage)
+						debug.Notification(akActor.GetLeveledActorBase().GetName() + " is having a orgasm" )
+					endif
 				endif
+				if akActor == PlayerREF && Game.GetCameraState() != 3
+					Game.ShakeCamera(none, Utility.RandomFloat(0.5 , 1), 5)
+				endIf
+				SexLab.PickVoice(akActor).Moan(akActor, Utility.RandomInt (70, 100), false)
+				if akActor == PlayerREF
+					SendModEvent("PlayerOrgasmStart")
+					Utility.Wait(5.0)
+					SendModEvent("PlayerOrgasmEnd")
+				endIf
+				SLA.UpdateActorOrgasmDate(akActor)
+				SLA.UpdateActorExposure(akActor, exposureValue)
+				cumcount += 1
 			endif
-			if akActor == PlayerREF && Game.GetCameraState() != 3
-				Game.ShakeCamera(none, Utility.RandomFloat(0.5 , 1), 5)
-			endIf
-			SexLab.PickVoice(akActor).Moan(akActor, Utility.RandomInt (70, 100), false)
-			if akActor == PlayerREF
-				SendModEvent("PlayerOrgasmStart")
-				Utility.Wait(5.0)
-				SendModEvent("PlayerOrgasmEnd")
-			endIf
-			SLA.UpdateActorOrgasmDate(akActor)
-			SLA.UpdateActorExposure(akActor, exposureValue)
-			cumcount += 1
 
 			if akActor.HasSpell(MilkingStage)
 				PainCnt *= 0.8
@@ -2238,6 +2241,28 @@ Function DLCcheck()
 		Plugin_SLA = false
 	endif
 	
+	;(another)user stupidity check
+	Int MM = Game.GetModbyName("MilkModNew.esp")
+	Int MMHF = Game.GetModbyName("MilkModNEW HF.esp")
+	Int MMZAZ = Game.GetModbyName("MilkModNEW ZaZ.esp")
+	Int MMMP = Game.GetModbyName("MilkMod_MilkPumpsBasic.esp")
+	Int MMMPB = Game.GetModbyName("MilkMod_MilkPumpsBasicB.esp")
+	Int MMMPNB = Game.GetModbyName("MilkMod_MilkPumpsBasicNB.esp")
+	Int MMMPF = Game.GetModbyName("MilkMod_MilkPumpsFancy.esp")
+	Int MMMPFB = Game.GetModbyName("MilkMod_MilkPumpsFancyB.esp")
+	Int MMMPFNB = Game.GetModbyName("MilkMod_MilkPumpsFancyNB.esp")
+	Int MMS = Game.GetModbyName("MilkMod_MilkPumpsSanbox.esp")
+	If (MM > MMHF && MMHF != 255) || (MM > MMZAZ && MMZAZ != 255)
+		Debug.MessageBox("MME incorrect load order: patches should go after main mod")
+	endif
+	If (MM > MMMP && MMMP != 255) || (MM > MMMPB && MMMPB != 255) || (MM > MMMPNB && MMMPNB != 255)\
+	|| (MM > MMMPF && MMMPF != 255) || (MM > MMMPFB && MMMPFB != 255) || (MM > MMMPFNB && MMMPFNB != 255)
+		Debug.MessageBox("MME incorrect load order: milkpumps should go after main mod")
+	endif
+	If (MMS < MMMP && MMMP != 255) || (MMS < MMMPB && MMMPB != 255) || (MMS < MMMPNB && MMMPNB != 255)\
+	|| (MMS < MMMPF && MMMPF != 255) || (MMS < MMMPFB && MMMPFB != 255) || (MMS < MMMPFNB && MMMPFNB != 255)
+		Debug.MessageBox("MME incorrect load order: sandbox patch should go after milkpumps")
+	endif
 	debug.Trace("MilkModEconomy DCL check done")
 	MMEfoodlistaddon()
 	SlSWfoodlistaddon()
@@ -2695,7 +2720,7 @@ Function VarSetup()
 	BoobMAX = 3
 	BreastCurve = 0.1
 	Feeding = True
-	Feeding_Duration = 30
+	Feeding_Duration = 5
 	Feeding_Sound = 1
 	FuckMachine = False
 	FuckMachine_Duration = 5
