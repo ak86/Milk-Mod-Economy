@@ -29,17 +29,19 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 		else 
 			int ButtonPressed
 			
-			if akTarget != MilkQ.PlayerREF
-				ButtonPressed = (MilkQ.MakeMilkMaid).Show()
-			EndIf
-			
-			if akTarget == MilkQ.PlayerREF || ButtonPressed == 0
-				;insert quest here
-				MilkQ.AssignSlot(akTarget)
-				Utility.Wait( 1.0 )
+			if akTarget == MilkQ.PlayerREF || (MilkQ.MILKmaid.Find(none,1) <= MilkQ.Milklvl0fix() && MilkQ.MILKmaid.Find(none,1) > 0)
+				if akTarget != MilkQ.PlayerREF
+					ButtonPressed = (MilkQ.MakeMilkMaid).Show()
+				EndIf
 				
-				if MilkQ.MILKmaid.find(akTarget) != -1 
-					MME_Storage.changeLactacidCurrent(akTarget, 1)
+				if akTarget == MilkQ.PlayerREF || ButtonPressed == 0
+					;insert quest here
+					MilkQ.AssignSlot(akTarget)
+					Utility.Wait( 1.0 )
+					
+					if MilkQ.MILKmaid.find(akTarget) != -1 
+						MME_Storage.changeLactacidCurrent(akTarget, 1)
+					EndIf
 				EndIf
 			EndIf
 

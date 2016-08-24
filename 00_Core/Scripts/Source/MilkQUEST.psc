@@ -1215,18 +1215,20 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 
 ;-----------------------Feeding/Milking/Fuck machine
 
-	if IsMilkMaid == false && PlayerREF.GetDistance(akActor) < 500		;add npc/recheck player with milkcuirass(since its forced by checkforspriggan)
+	if IsMilkMaid == false && PlayerREF.GetDistance(akActor) < 500		;add npc/player if milking naked option enabled/recheck player with milkcuirass(since its forced by checkforspriggan)
 		if MILKmaid.find(akActor) == -1
 			int ButtonPressed
-
-			if akActor != PlayerREF
-				ButtonPressed = (MakeMilkMaid).Show()
-			EndIf
 			
-			if akActor == PlayerREF || ButtonPressed == 0
-				AssignSlot(akActor)
-				if MILKmaid.find(akActor) != -1
-					IsMilkMaid = true
+			if akActor == PlayerREF || (MILKmaid.Find(none,1) <= Milklvl0fix() && MILKmaid.Find(none,1) > 0)
+				if akActor != PlayerREF
+					ButtonPressed = (MakeMilkMaid).Show()
+				EndIf
+				
+				if akActor == PlayerREF || ButtonPressed == 0
+					AssignSlot(akActor)
+					if MILKmaid.find(akActor) != -1
+						IsMilkMaid = true
+					endif
 				endif
 			endif
 		else
