@@ -167,6 +167,7 @@ Float Property LactacidDecayRate Auto
 
 FormList Property MME_Cums Auto
 FormList Property MME_Foods Auto
+FormList Property MME_Drinks Auto
 FormList Property MME_Milks Auto
 FormList Property MME_Milk_Basic Auto
 FormList Property MME_Milk_Race Auto
@@ -282,7 +283,6 @@ Bool Property Plugin_SlSW = false auto
 ;	int Function Milklvl0fix()												;Milklevel 0 fix since Math.Celling doesn't work, provides 1 maid slot at level 0
 ;	string Function ReduceFloat(String ReduceFloat)							;reduce floating 0.00000 to 0.00
 ;	Function MMEfoodlistaddon()												;Fills inn formlists with milk and khajiit caravans with lactacid
-;	Function iNeedfoodlistaddon()											;Fills iNeed foods and drinks formlists
 ;	Function Milkmaidinfo()													;Milk maid info message box
 ;	Function Modtoggle()													;Milk mod toggle On/Off
 ;	Function AddMilkFx(Actor akActor, int i)								;Add milk leaking textures
@@ -327,7 +327,7 @@ Bool Property Plugin_SlSW = false auto
 ;	bool Function IsWearingHarness (Actor akActor)
 ;	bool Function IsMilkingBlocked_Bra_SLSD (Actor akActor) 				;if true allows solo milking
 ;
-;---SLA check(SLA plugin)---															;if SLA installed passes info to SLA, if not, returns 0
+;---SLA check(SLA plugin)---												;if SLA installed passes info to SLA, if not, returns 0
 ;	int Function GetActorArousal(Actor akActor)
 ;	float Function GetActorExposure(Actor akActor)
 ;	float Function GetActorExposureRate(Actor akActor)
@@ -463,6 +463,7 @@ Function ActorCheck(int t)
 		debug.Trace("MilkModEconomy Player is not milkmaid, but pregnant and female, making player milkmaid")
 		AssignSlot(PlayerRef)
 	EndIf
+	
 	While i < MilkMaid.Length
 		if MilkMaid[i] != None
 			if MilkMaid[i].IsDead()
@@ -476,6 +477,7 @@ Function ActorCheck(int t)
 		;(GetNthAlias(Alias[0])).ForceRefTo(PlayerRef)
 		i += 1
 	EndWhile
+	
 	i = 0
 	While i < MilkSlave.Length
 		if MilkSlave[i] != None
@@ -489,6 +491,7 @@ Function ActorCheck(int t)
 		endif
 		i += 1
 	EndWhile
+	
 	SendModEvent( "MME_MilkCycleComplete" )
 EndFunction
 
@@ -907,23 +910,6 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	;MilkingType == 0 normal/none milkpump
 	;MilkingType == 1 bound/ disable player control
 	
-	Int soundInstance01
-	Int soundInstance03
-	Int pain = 1
-	Int bottles = 0			;times milked
-	Int MlikExpression
-	Int armorcheckloop = 0
-	Int boobgasmcount = 0
-	Int cumcount = 0
-	Int mpas = 1
-	Bool IsMilkMaid = true
-	Bool IsMilkingBlocked = false
-	Bool armf = false
-	Bool FirstTimeStory = false
-	Bool FeedOnce = true
-	Form maidArmor
-	Form cuirass = akActor.GetWornForm(Armor.GetMaskForSlot(32))
-
 	if akActor.HasSpell( BeingMilkedPassive )
 		;if MilkingType != 1						;prevents msg spam from aidrivenplayer bound milkpump, since its activates script endlessly,
 			Debug.notification(akActor.GetLeveledActorBase().GetName() + " already being milked, if something went wrong, remove Milking passive spell from Milk Maid debug menu")
@@ -931,6 +917,24 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		return									; prevents multiple scripts running
 	endif
 	akActor.AddSpell( BeingMilkedPassive, false )	; prevents multiple scripts running, if removed, milking will stop
+
+	Int soundInstance01
+	Int pain = 1
+	Int bottles = 0			;milked milk\times milked
+	Int MlikExpression
+	Int armorcheckloop = 0
+	Int boobgasmcount = 0
+	Int cumcount = 0
+	Int duration = 0
+	Int mpas = 1
+	Bool IsMilkMaid = false
+	Bool IsMilkingBlocked = false
+	Bool armf = false
+	Bool FirstTimeStory = false
+	Bool FeedOnce = true
+	Bool IsFeedingBlocked = false
+	Form maidArmor
+	Form cuirass = akActor.GetWornForm(Armor.GetMaskForSlot(32))
 
 	;Devious Devices management
 	Bool DDArmbinder = DDi.IsMilkingBlocked_Armbinder(akActor)
@@ -970,9 +974,8 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	Float TimesMilkedAll = StorageUtil.GetFloatValue(none,"MME.Progression.TimesMilkedAll")
 	Int BreastRows = MME_Storage.getBreastRows(akActor)
 
-	if MILKmaid.find(akActor) != -1 && MILKSlave.find(akActor) != -1
-		IsMilkMaid = false
-		;Debug.notification("No milkmaid mode")
+	if MILKmaid.find(akActor) != -1 || MILKSlave.find(akActor) != -1
+		IsMilkMaid = true
 	endif
 
 ;-----------------------Milking block check
@@ -991,16 +994,17 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		endif
 	endif
 	
+	;check if bra prevents non milkump milking
 	if Plugin_DDI && IsMilkingBlocked == false
 		if DDi.IsWearingDDMilker(akActor) == false
 			if DDBra == true && SLSDBra == false
 				Debug.Notification("Chastity Bra prevents milking")
 				if mode > 0 && SLSDBra == false
-					akActor.RemoveSpell( BeingMilkedPassive )
 					if PlayerREF == akActor && MilkingType == 1
 						Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 						Game.SetPlayerAIDriven(false)
 					endif
+					akActor.RemoveSpell( BeingMilkedPassive )
 					return
 				else
 					IsMilkingBlocked = true
@@ -1017,36 +1021,34 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 
 	if Mode == 0
 		if Plugin_DDI
-			if DDArmbinder == true
-				Debug.Messagebox("Armbinder prevents using of the device")
-				akActor.RemoveSpell( BeingMilkedPassive )
+			if DDArmbinder == true || DDYoke == true || DDSuit == true
+				if DDArmbinder == true
+					Debug.Messagebox("Armbinder prevents using of the device")
+				elseif DDYoke == true
+					Debug.Messagebox("Yoke prevents using of the device")
+				elseif DDSuit == true
+					Debug.Messagebox("Bondage suit prevents using of the device")
+				endif
 				akActor.Setunconscious(false)
 				if PlayerREF == akActor && MilkingType == 1
 					Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 					Game.SetPlayerAIDriven(false)
 				endif
-				return
-			elseif DDYoke == true
-				Debug.Messagebox("Yoke prevents using of the device")
+				Debug.SendAnimationEvent(akActor,"IdleForceDefaultState")
 				akActor.RemoveSpell( BeingMilkedPassive )
-				akActor.Setunconscious(false)
-				if PlayerREF == akActor && MilkingType == 1
-					Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
-					Game.SetPlayerAIDriven(false)
-				endif
-				return
-			elseif DDSuit == true
-				Debug.Messagebox("Bondage suit prevents using of the device")
-				akActor.RemoveSpell( BeingMilkedPassive )
-				akActor.Setunconscious(false)
-				if PlayerREF == akActor && MilkingType == 1
-					Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
-					Game.SetPlayerAIDriven(false)
-				endif
 				return
 			endif
-			if Feeding && ((ZaZGag == true && ZaZGagOpen == false) || (DDGag == true && DDGagOpen == false))
+		endif
+		
+		if Feeding 
+			if (ZaZGag == true && ZaZGagOpen == false)
+				IsFeedingBlocked = true
 				Debug.Messagebox("Gag prevents feeding")
+			elseif Plugin_DDI
+				if (DDGag == true && DDGagOpen == false)
+					IsFeedingBlocked = true
+					Debug.Messagebox("Gag prevents feeding")
+				endif
 			endif
 		endif
 		
@@ -1084,13 +1086,12 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			endwhile
 			armorcheckloop += 1
 		endwhile
-
-		Utility.Wait( 5.0 )															;wait for actor to "sit"
+		
+		while (akActor.GetSitState() < 3 && akActor.GetSitState() > 0)					;wait for actor to "sit"
+			Utility.Wait( 1.0 )
+		endwhile
+		
 		If IsMilkingBlocked == false && SLSDBra == false
-			If MilkStory && akActor == PlayerREF && akActorGender != "Male"
-				StoryDisplay(0,1,FirstTimeStory)
-			EndIf
-			
 			if BreastRows != 1
 				;do nothing
 			elseif cuirass != None
@@ -1126,6 +1127,10 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					endif
 				endif
 			endif
+			
+			If MilkStory && akActor == PlayerREF && akActorGender != "Male"
+				StoryDisplay(0,1,FirstTimeStory)
+			EndIf
 		EndIf
 	elseif mode == 4
 		;do nothing
@@ -1191,7 +1196,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				If PlayerREF == akActor
 					Game.ForceThirdPerson()
 					Game.DisablePlayerControls(1, 1, 0, 0, 1, 1, 0) ;(True,True,False,False,True,True,True,True,0)
-					Utility.Wait( 5.0 )												;wait for actor to stop moving (and player to release movement keys)
+					Utility.Wait( 1.0 )												;wait for actor to stop moving (and player to release movement keys)
 				EndIf
 				If !StorageUtil.GetIntValue(akActor,"IsBoundStrict") && !akActor.IsInCombat()
 					mpas = Utility.RandomInt (1, 3)
@@ -1211,22 +1216,28 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		return
 	endif
 	
-	sendVibrationEvent("StartMilkingMachine", akActor, mpas, MilkingType)
-
-;-----------------------Feeding/Milking/Fuck machine
-
-	if IsMilkMaid == false && PlayerREF.GetDistance(akActor) < 500		;add npc/player if milking naked option enabled/recheck player with milkcuirass(since its forced by checkforspriggan)
-		if MILKmaid.find(akActor) == -1
+	if IsMilkMaid == false && PlayerREF.GetDistance(akActor) < 500	
+		if MILKmaid.find(akActor) == -1								;recheck if player became milkmaid with milkcuirass, if milking naked option enabled we add player
 			int ButtonPressed
+			int count
+			int C = 0
 			
-			if akActor == PlayerREF || (MILKmaid.Find(none,1) <= Milklvl0fix() && MILKmaid.Find(none,1) > 0)
-				if akActor != PlayerREF
+			While C+1 < MilkMaid.Length								;count taken maid slots
+				C += 1
+				If MilkMaid[C] != None
+					count += 1
+				EndIf
+			EndWhile
+			
+			if akActor == PlayerREF || count < Milklvl0fix()
+				if akActor != PlayerREF								;ask to make npc maid if player have empty maid slots
 					ButtonPressed = (MakeMilkMaid).Show()
 				EndIf
 				
-				if akActor == PlayerREF || ButtonPressed == 0
+				if akActor == PlayerREF || ButtonPressed == 0		;make player/npc maid
 					AssignSlot(akActor)
-					if MILKmaid.find(akActor) != -1
+					
+					if MILKmaid.find(akActor) != -1					;recheck player/npc
 						IsMilkMaid = true
 					endif
 				endif
@@ -1236,12 +1247,31 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		endif
 	endif
 	
-	while (((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || !akActor.IsInLocation(PlayerREF.getCurrentLocation()))\
-			|| (MilkCnt >= 1 && Mode > 0 && ((PainCnt <= PainMax*0.9) || PainKills)))\
+	if IsMilkMaid == false
+		MilkCnt = Utility.RandomInt (1, 2)							;give milk for non maid/slave npc
+		LactacidMax = 4
+		if isPregnant(akActor)
+			MilkCnt = MilkCnt * 2
+		endif
+	endif
+		
+	sendVibrationEvent("StartMilkingMachine", akActor, mpas, MilkingType)
+
+;-----------------------Feeding/Milking/Fuck machine
+
+		;run cycle if:
+		;actor is sitting or trying to sit(milkmump)
+		;or actor is being milked by something other than milkpump(mode 0) and has milk
+		;and pain less than max or pain override enabled
+
+	while ((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0 && Mode == 0)\
+			|| (MilkCnt >= 1 && Mode > 0))\
+			&& ((PainCnt <= PainMax*0.9) || PainKills)\
 			&& akActor.HasSpell(BeingMilkedPassive)
 
 		;debug.Notification("cycle start")
-		float duration = 0
+		;select animation speed and 'enjoyment'
+		
 		if SLA.GetActorArousal(akActor) > 75
 			mpas = 2
 		else 
@@ -1249,93 +1279,88 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		endif
 		SLA.UpdateActorExposure(akActor, mpas)
 
-		Utility.Wait(1.0)
-
 		;FEEDING STAGE
-		;check if feeding enabled, if actor using milkpump(mode 0), if actor female, if not full of lactacid or (FeedOnce and ForcedFeeding) override enabled
-		;check if actor is sitting or trying to sit and is in same locations as player
-		;check if dd/zaz gags block milking
-		;(check if not bound milking, not full of lactacid, player or actor or actor storageutil has lactacid)\
-		;or bound milking, actor is not maid/slave or actor is slave or FreeLactacid cheat enabled
-		while Feeding == true && Mode == 0 && akActor.GetLeveledActorBase().GetSex() == 1 && (LactacidCnt < LactacidMax || (FeedOnce && ForcedFeeding))\
-		&& ((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || akActor.IsInLocation(PlayerREF.getCurrentLocation()))\
-		&& ((DDGag == false || DDGagOpen == true) && (ZaZGag == false || ZaZGagOpen == true))\
-		&& ((MilkingType == 0 && LactacidMax > LactacidCnt && (PlayerREF.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || akActor.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1))\
-		|| MilkingType == 1 || !IsMilkMaid || akActor.IsInFaction(MilkSlaveFaction) || FreeLactacid == true)
-			; this doesn't count if both actor and player have lactacid bottles but who cares, no one will ever find xD
 
-			;debug.Notification("feeding cycle")
-			akActor.AddSpell(FeedingStage, false)
-			
-			if Feeding_Sound == 0 || (Feeding_Sound == 1 && akActor == PlayerRef)
-				soundInstance03 = FeedingSound.Play(akActor)
-				Sound.SetInstanceVolume(soundInstance03, 1.0)
-			endif
-			if MilkingType == 0
-				Debug.SendAnimationEvent(akActor,("ZaZMOMFreeFurn_05"+anivar))
-			elseif MilkingType == 1
-				Debug.SendAnimationEvent(akActor,("ZaZMOMBoundFurn_05"+anivar))
-			endif
-			
-			if IsMilkMaid && MilkMsgs && PlayerREF.GetDistance(akActor) < 500
-				debug.Notification(akActor.GetLeveledActorBase().GetName() + " is being fed Lactacid" )
-			endif
-			sendVibrationEvent("FeedingStage", akActor, mpas, MilkingType)
-			
-			; feed loop
-			;check if actor is sitting or trying to sit and is in same location as player
-			while duration < Feeding_Duration && LactacidCnt < LactacidMax && ((akActor.GetSitState() <= 3 && akActor.GetSitState()) || akActor.IsInLocation(PlayerREF.getCurrentLocation())) && akActor.HasSpell(BeingMilkedPassive)
-				;if not maid/slave, skip and wait to simulate feeding
-				if IsMilkMaid == true
-					if MilkingType == 1 || FreeLactacid == true
-						;free lactacid for bound milking or cheat
-						akActor.EquipItem(MME_Util_Potions.GetAt(0), true, true)
-					elseif akActor.IsInFaction(MilkMaidFaction)
-						;actor is milkmaid
-						;check player or actor or actor storageutil has lactacid)
-						if (PlayerREF.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || akActor.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1)
-							;Feed lactacid
-							akActor.EquipItem(MME_Util_Potions.GetAt(0), true, true)
+		if Mode == 0															;check if using milkpump
+			if Feeding == true													;check if feeding enabled
+				if !IsFeedingBlocked											;feeding not blocked by gags
+					if akActor.GetLeveledActorBase().GetSex() == 1				;check if actor female
+					
+							;check if not full of lactacid or (FeedOnce and ForcedFeeding) override enabled
+							;(check if not bound milking and player or actor or actor storageutil has lactacid)		; this doesn't count if both actor and player have lactacid bottles but who cares, no one will ever find xD
+							;or bound milking or actor is not maid/slave or actor is slave faction or FreeLactacid cheat enabled
+
+						if (LactacidCnt < LactacidMax || (FeedOnce == true && ForcedFeeding))\
+						&& ((MilkingType == 0 && (PlayerREF.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || akActor.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1))\
+						|| MilkingType == 1 || akActor.IsInFaction(MilkSlaveFaction) || FreeLactacid == true || !IsMilkMaid)
 							
-							;if normal milking and actor not slave remove 1 lactacid for actor storageutil, inventory, player inventory
-							if MilkingType == 0 && !akActor.IsInFaction(MilkSlaveFaction)
-								if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1 
-									StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid", -1)
-								elseif akActor.GetItemCount(MME_Util_Potions.GetAt(0)) > 0
-									akActor.RemoveItem(MME_Util_Potions.GetAt(0))
-								elseif PlayerREF.GetItemCount(MME_Util_Potions.GetAt(0)) > 0
-									PlayerREF.RemoveItem(MME_Util_Potions.GetAt(0))
-								endif
+							;debug.Notification("feeding cycle")
+							akActor.AddSpell(FeedingStage, false)
+							if Feeding_Sound == 0 || (Feeding_Sound == 1 && akActor == PlayerRef)				;check if Feeding_Sound enabled or enabled only for player
+								soundInstance01 = FeedingSound.Play(akActor)
+								Sound.SetInstanceVolume(soundInstance01, 1.0)
 							endif
+							
+							;bound/unbound animation +: no anal/vaginal vairations
+							if MilkingType == 0
+								Debug.SendAnimationEvent(akActor,("ZaZMOMFreeFurn_05"+anivar))
+							elseif MilkingType == 1
+								Debug.SendAnimationEvent(akActor,("ZaZMOMBoundFurn_05"+anivar))
+							endif
+							
+							sendVibrationEvent("FeedingStage", akActor, mpas, MilkingType)
+							
+							;if not maid/slave, skip and wait to simulate feeding
+							if IsMilkMaid == true
+								if MilkingType == 1 || FreeLactacid == true											;free lactacid for bound milking or cheat option
+									akActor.EquipItem(MME_Util_Potions.GetAt(3), true, true)						;equip soundless lactacid feeding potion Thirst
+									akActor.EquipItem(MME_Util_Potions.GetAt(4), true, true)						;equip soundless lactacid feeding potion Hunger
+								elseif akActor.IsInFaction(MilkMaidFaction)											;actor is milkmaid
+									
+									;check there is lactacid in player or actor inventory or actor storageutil
+									if (PlayerREF.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || akActor.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1)
+										akActor.EquipItem(MME_Util_Potions.GetAt(3), true, true)					;Feed lactacid Thirst
+										akActor.EquipItem(MME_Util_Potions.GetAt(4), true, true)					;Feed lactacid Hunger
+										
+										if MilkingType == 0															;if normal milking remove 1 lactacid from either actor storageutil, inventory, player inventory
+											if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1 
+												StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid", -1)
+											elseif akActor.GetItemCount(MME_Util_Potions.GetAt(0)) > 0
+												akActor.RemoveItem(MME_Util_Potions.GetAt(0))
+											elseif PlayerREF.GetItemCount(MME_Util_Potions.GetAt(0)) > 0
+												PlayerREF.RemoveItem(MME_Util_Potions.GetAt(0))
+											endif
+										endif
+									endif
+								elseif akActor.IsInFaction(MilkSlaveFaction)										;actor is milkslave, this goes after in case someone smart decides to add slave faction where it dont belong
+									akActor.EquipItem(MME_Util_Potions.GetAt(3), true, true)						;Feed lactacid Thirst
+									akActor.EquipItem(MME_Util_Potions.GetAt(4), true, true)						;Feed lactacid Hunger
+								endif
+								CurrentSize(akActor)																;update body/increase belly
+								LactacidCnt = MME_Storage.getLactacidCurrent(akActor)								;update lactacid value from potions (+1)
+							else
+								LactacidCnt += 1 																	;add lactacid for non maid/slave npc
+							endif
+							
+							Utility.Wait(Feeding_Duration)
+							FeedOnce = false
 						endif
-					elseif akActor.IsInFaction(MilkSlaveFaction)
-						;if actor is slave
-						akActor.EquipItem(MME_Util_Potions.GetAt(0), true, true)
-					elseif StorageUtil.GetIntValue(akActor, "MME.MilkMaid.IsSlave") == 1 && (akActor.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1)
-						;something regarding player slavery but its probably never reached since player is always in MilkMaidFaction
-						akActor.EquipItem(MME_Util_Potions.GetAt(0), true, true)
 					endif
-					CurrentSize(akActor)
-					LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
 				endif
-				
-				Utility.Wait(Feeding_Duration)
-				duration += Feeding_Duration
-			endwhile
-
-			duration = 0
-			Sound.StopInstance(soundInstance03)
-			FeedOnce = false
-		endwhile
-
-		if akActor.HasSpell(FeedingStage)
-			akActor.RemoveSpell( FeedingStage )
+			endif
 		endif
 		
 		;MILKING STAGE
-		if (((MilkCnt >= 1 || ((FuckMachine == false || DDBelt == true) && Mode == 0)) || !IsMilkMaid)\
-		&& (((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || akActor.IsInLocation(PlayerREF.getCurrentLocation())) || Mode > 0))\
-		&& IsMilkingBlocked == false && akActor.GetLeveledActorBase().GetSex() == 1\
+		
+			;milking not blocked;
+			;actor is female
+			;(actor has milk or (( if FuckMachine disabled or belted ) and (not milk maid/slave or using milkpump))
+			;pain less than max or pain override enabled
+
+		if !akActor.HasSpell(FeedingStage)\
+		&& IsMilkingBlocked == false\
+		&& akActor.GetLeveledActorBase().GetSex() == 1\
+		&& (MilkCnt >= 1 || ((FuckMachine == false || DDBelt == true) && Mode == 0))\
 		&& ((PainCnt <= PainMax*0.9) || PainKills)
 
 			;debug.Notification("milking cycle")
@@ -1344,7 +1369,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			Sound.SetInstanceVolume(soundInstance01, 1.0)
 			
 			;milkpump animation selector
-			If Mode == 0 && (akActor.GetSitState() <= 3 && akActor.GetSitState() > 0)
+			If Mode == 0
 				if MilkingType == 0
 					if mpas == 1
 						Debug.SendAnimationEvent(akActor,("ZaZMOMFreeFurn_11"+anivar))
@@ -1361,7 +1386,10 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			Endif
 			sendVibrationEvent("MilkingStage", akActor, mpas, MilkingType)
 			
-			while duration < Milking_Duration && ((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || Mode != 0) && akActor.HasSpell(BeingMilkedPassive)
+			while duration < Milking_Duration\
+				&& ((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || Mode != 0)\
+				&& akActor.HasSpell(BeingMilkedPassive)
+				
 				;if DDGag == false || ZaZGag == false
 					if 	PainCnt >= PainMax
 						MlikExpression = 4
@@ -1459,7 +1487,18 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			Endif
 
 		;FUCK MACHINE STAGE 
-		elseif FuckMachine == true && Mode == 0 && ((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || akActor.IsInLocation(PlayerREF.getCurrentLocation())) && DDBelt == false && akActor.HasSpell(BeingMilkedPassive)
+
+			;FuckMachine enabled
+			;using milkpump
+			;not belted
+			;actor is sitting or trying to sit
+
+		elseif (!akActor.HasSpell(FeedingStage) || !akActor.HasSpell(MilkingStage))\
+		&& FuckMachine == true\
+		&& Mode == 0\
+		&& DDBelt == false\
+		&& (akActor.GetSitState() <= 3 && akActor.GetSitState() > 0)\
+		&& akActor.HasSpell(BeingMilkedPassive)
 
 			;debug.Notification("FuckMachine cycle")
 			akActor.AddSpell(FuckMachineStage, false)
@@ -1467,7 +1506,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			Sound.SetInstanceVolume(soundInstance01, 1.0)
 			
 			;milkpump animation selector
-			If Mode == 0 && (akActor.GetSitState() <= 3 && akActor.GetSitState() > 0)
+			If Mode == 0
 				if MilkingType == 0
 					if mpas == 1
 						Debug.SendAnimationEvent(akActor,("ZaZMOMFreeFurn_07"+anivar))
@@ -1484,7 +1523,10 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			endif
 			sendVibrationEvent("FuckMachineStage", akActor, mpas, MilkingType)
 				
-			while duration < FuckMachine_Duration && ((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0) || Mode != 0) && akActor.HasSpell(BeingMilkedPassive)
+			while duration < FuckMachine_Duration\
+				&& (akActor.GetSitState() <= 3 && akActor.GetSitState() > 0)\
+				&& akActor.HasSpell(BeingMilkedPassive)
+				
 				;if DDGag == false || ZaZGag == false
 					if 	PainCnt >= PainMax
 						MlikExpression = 4
@@ -1563,6 +1605,9 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			endif
 		endif
 
+		if akActor.HasSpell(FeedingStage)
+			akActor.RemoveSpell( FeedingStage )
+		endif
 		if akActor.HasSpell(MilkingStage)
 			akActor.RemoveSpell( MilkingStage )
 		endif
@@ -1579,9 +1624,14 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			MaidLevel = MME_Storage.getMaidLevel(akActor)
 		endif
 		
-		if mode == 0 && MilkingType == 1\
-		&& (MilkCnt < 1 || (PainCnt >= PainMax*0.9 && !PainKills))\
-		&& PlayerREF == akActor && bControlsDisabled == true
+			;milkump mode
+			;bound mode
+			;did we disable pc controls b4?
+		if PlayerREF == akActor\
+		&& mode == 0\
+		&& MilkingType == 1\
+		&& bControlsDisabled == true\
+		&& (MilkCnt < 1 || (PainCnt >= PainMax*0.9 && !PainKills))
 			if PlayerREF == akActor && bControlsDisabled == true 
 				Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 				Game.SetPlayerAIDriven(false)
@@ -1594,7 +1644,6 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				debug.Notification("Milk Pump has milked you dry and releases its bounds.")
 			endif
 		endif
-		
 	endwhile
 
 	;debug.Notification("milking done." +akActorGender+ " "+isPregnant(akActor))
@@ -1603,15 +1652,16 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 ;-----------------------Milking done
 	If PlayerREF == akActor && !SexLab.IsActorActive(akActor) && bControlsDisabled == true
 		Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
+		Game.SetPlayerAIDriven(false)
 	Endif
-	Utility.Wait(1.0)
+	;justincase
+	akActor.Setunconscious(false)
+	
+	while !akActor.GetSitState() == 0					;wait for actor to get off milking pump
+		Utility.Wait( 1.0 )
+	endwhile
+	
 	if IsMilkingBlocked == false
-		If Mode > 0 && Mode != 4
-			If !StorageUtil.GetIntValue(akActor,"IsBoundStrict")
-				Debug.SendAnimationEvent(akActor,"IdleForceDefaultState")
-			EndIf
-		endif
-
 		if Mode == 0
 			if BreastRows == 1
 				if akActor.IsEquipped(ZaZMoMSuctionCups)
@@ -1626,10 +1676,8 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				endif
 			endif
 			If MilkStory && akActor == PlayerREF && akActorGender != "Male"
-				Utility.Wait(5.0)											;wait for actor to get off milking pump
 				StoryDisplay(1,1,FirstTimeStory)
 			EndIf
-			Debug.SendAnimationEvent(akActor,"IdleForceDefaultState")
 		elseif Mode == 3
 			If MilkStory && akActor == PlayerREF && akActorGender != "Male"
 				if StringUtil.Find(cuirass.getname(), "Hermaeus Mora" ) >= 0 || StringUtil.Find(cuirass.getname(), "HM Priestess" ) >= 0
@@ -1641,6 +1689,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				endif
 			EndIf
 		endif
+		
 		If cuirass != None && BreastRows == 1
 			If cuirass != None && SLSDBra == false
 				if !akActor.IsEquipped(cuirass)
@@ -1660,15 +1709,15 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				endif
 			endif
 		endif
+		
 		If Mode != 4
 			If !StorageUtil.GetIntValue(akActor,"IsBoundStrict") && !SexLab.IsActorActive(akActor)
 				Debug.SendAnimationEvent(akActor,"IdleForceDefaultState")
-				;justincase
-				Game.SetPlayerAIDriven(false)
 			EndIf
 		endif
-		if IsMilkMaid == true
-			if bottles > 0
+		
+		if bottles > 0
+			if IsMilkMaid == true
 				LevelCheck()
 				PostMilk(akActor)
 				AddMilkFx(akActor, 2)
@@ -1696,9 +1745,13 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 						StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkingContainerMilksSUM", 0)
 					endif
 				endif
+			else
+				MilkE.InitiateTrade(bottles + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerMilksSUM") as int, boobgasmcount, akActor, true)
 			endif
+		endif
 			
-			if cumcount > 0 
+		if cumcount > 0
+			if IsMilkMaid == true
 				if Mode == 0 || Mode == 2
 					if StorageUtil.GetIntValue(akActor, "MME.MilkMaid.IsSlave") == 1 || MILKSlave.find(akActor) != -1
 						StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkingContainerCumsSUM", cumcount)
@@ -1720,10 +1773,6 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		endif
 	endif
 	
-	;justincase
-	Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
-	Game.SetPlayerAIDriven(false)
-	
 	if Mode == 3 && MilkQC.Buffs && IsMilkMaid == true
 		akActor.AddSpell( MilkExhaustion, false )
 		akActor.AddSpell( MilkMentalExhaustion, false )
@@ -1732,7 +1781,6 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	if akActor.HasSpell( BeingMilkedPassive )
 		akActor.RemoveSpell( BeingMilkedPassive )
 	endif
-	akActor.Setunconscious(false)
 EndFunction
 
 Function PostMilk(Actor akActor)
@@ -2268,7 +2316,7 @@ Function DLCcheck()
 	debug.Trace("MilkModEconomy DCL check done")
 	MMEfoodlistaddon()
 	SlSWfoodlistaddon()
-	iNeedfoodlistaddon()
+	ineed.iNeedfoodlistaddon()
 EndFunction
 
 int Function Milklvl0fix()
@@ -2303,7 +2351,7 @@ Function MMEfoodlistaddon()
 	if LItemSkooma75.GetNthForm(i) != MME_LItemSkooma75RaceMilkLactacid
 		MME_LItemSkooma75RaceMilkLactacid.Revert()
 
-		int t = 0
+		int t = 0																			;add 5 lactacid records to skooma LL list(100-75=25% spawn)
 		MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Util_Potions.GetAt(t), 1, 1)
 		MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Util_Potions.GetAt(t), 1, 1)
 		MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Util_Potions.GetAt(t), 1, 1)
@@ -2387,46 +2435,6 @@ Function SlSWfoodlistaddon()
 		if SLSW_DrugsWOcure.Find(MME_Util_Potions.GetAt(0)) < 0
 			SLSW_DrugsWOcure.AddForm(MME_Util_Potions.GetAt(0))
 			debug.Trace("MilkModEconomy adding Lactacid to SLSW_DrugsWOcure formlist")
-		endif
-	EndIf
-EndFunction
-
-Function iNeedfoodlistaddon()
-	if Plugin_iNeed
-		FormList _SNFood_DrinkNoAlcList = Game.GetFormFromFile(0xBA28, "iNeed.esp") as FormList
-		FormList _SNFood_LightList = Game.GetFormFromFile(0xD6B, "iNeed.esp") as FormList
-		FormList _SNFood_SkoomaList = Game.GetFormFromFile(0x21366, "iNeed.esp") as FormList
-
-		int i = 0
-		debug.Trace("MilkModEconomy adding drinks to iNeed.esp _SNFood_DrinkNoAlcList")
-		While i < MME_Milks.GetSize()
-			_SNFood_DrinkNoAlcList.AddForm(MME_Milks.GetAt(i))
-			i += 1
-		EndWhile
-
-		i = 0
-		While i < MME_Cums.GetSize()
-			_SNFood_DrinkNoAlcList.AddForm(MME_Cums.GetAt(i))
-			i += 1
-		EndWhile
-
-		debug.Trace("MilkModEconomy adding food to iNeed.esp _SNFood_LightList")
-		i = 0
-		While i < MME_Foods.GetSize()
-			_SNFood_LightList.AddForm(MME_Foods.GetAt(i))
-			i += 1
-		EndWhile
-
-		debug.Trace("MilkModEconomy adding food to iNeed.esp _SNFood_LightList")
-		i = 0
-		While i < MME_Foods.GetSize()
-			_SNFood_LightList.AddForm(MME_Foods.GetAt(i))
-			i += 1
-		EndWhile
-		
-		debug.Trace("MilkModEconomy adding Lactacid to iNeed.esp _SNFood_SkoomaList")
-		if _SNFood_SkoomaList.Find(MME_Util_Potions.GetAt(0)) < 0
-			_SNFood_SkoomaList.AddForm(MME_Util_Potions.GetAt(0))
 		endif
 	EndIf
 EndFunction
@@ -2723,7 +2731,7 @@ Function VarSetup()
 	BreastCurve = 0.1
 	Feeding = True
 	Feeding_Duration = 5
-	Feeding_Sound = 1
+	Feeding_Sound = 0
 	FuckMachine = False
 	FuckMachine_Duration = 5
 	MilkGenValue = 0.06

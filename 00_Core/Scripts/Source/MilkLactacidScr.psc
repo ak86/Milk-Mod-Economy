@@ -28,8 +28,17 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 			MME_Storage.changeLactacidCurrent(akTarget, 1)
 		else 
 			int ButtonPressed
+			int count
+			int C = 0
+		
+			While C+1 < MilkQ.MilkMaid.Length
+				C += 1
+				If MilkQ.MilkMaid[C] != None
+					count += 1
+				EndIf
+			EndWhile
 			
-			if akTarget == MilkQ.PlayerREF || (MilkQ.MILKmaid.Find(none,1) <= MilkQ.Milklvl0fix() && MilkQ.MILKmaid.Find(none,1) > 0)
+			if akTarget == MilkQ.PlayerREF || count < MilkQ.Milklvl0fix()
 				if akTarget != MilkQ.PlayerREF
 					ButtonPressed = (MilkQ.MakeMilkMaid).Show()
 				EndIf

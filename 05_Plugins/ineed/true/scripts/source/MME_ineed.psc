@@ -13,14 +13,15 @@ Function iNeedfoodlistaddon()
 	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	int i = 0
 	debug.Trace("MilkModEconomy adding drinks to iNeed.esp")
-	While i < MilkQ.MME_Milks.GetSize()
-		ineed._SNFood_DrinkNoAlcList.AddForm(MilkQ.MME_Milks.GetAt(i))
-		i = i + 1
-	EndWhile
-
 	i = 0
 	While i < MilkQ.MME_Cums.GetSize()
 		ineed._SNFood_DrinkNoAlcList.AddForm(MilkQ.MME_Cums.GetAt(i))
+		i = i + 1
+	EndWhile
+	
+	i = 0
+	While i < MilkQ.MME_Drinks.GetSize()
+		ineed._SNFood_DrinkNoAlcList.AddForm(MilkQ.MME_Drinks.GetAt(i))
 		i = i + 1
 	EndWhile
 

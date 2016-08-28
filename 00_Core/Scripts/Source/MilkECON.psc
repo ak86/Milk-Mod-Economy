@@ -91,9 +91,6 @@ Location Property locTelMithryn Auto
 ;Empty DLC placeholder
 Location Property locMMEEmpty Auto			
 
-Potion Property OverMilkingEff Auto
-Potion Property MilkpumpFeedingBottle Auto
-
 FormList Property MME_Races Auto
 Formlist Property MilkTypeFormList Auto
 
@@ -419,14 +416,15 @@ endFunction
 
 Function KeepMilk(Potion finalPotion, int finalQty, int upkeep, Actor akActor)
 	if finalQty > 0
-		if MilkQ.PlayerREF.GetDistance(akActor) < 250
-			MilkQ.PlayerREF.RemoveItem(Gold, upkeep, true)
-			MilkQ.PlayerREF.AddItem(finalPotion, finalQty)
-			Debug.Notification("You've been charged " + upkeep + " gold for upkeep.")
-		else
-			akActor.RemoveItem(Gold, upkeep, true)
-			akActor.AddItem(finalPotion, finalQty)
+		if MilkQ.MILKmaid.find(akActor) != -1
+			if MilkQ.PlayerREF.GetDistance(akActor) < 250
+				MilkQ.PlayerREF.RemoveItem(Gold, upkeep, true)
+				Debug.Notification("You've been charged " + upkeep + " gold for upkeep.")
+			else
+				akActor.RemoveItem(Gold, upkeep, true)
+			endif
 		endif
+		akActor.AddItem(finalPotion, finalQty)
 	endif
 endFunction
 

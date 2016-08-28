@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>15-08-2016</Version>
+  <Version>28-08-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
@@ -16,6 +16,15 @@
 *beggar drunken favor dialogues
 
 Dev change log:
+
+	v 28-08-2016
+added custom sound descriptor to play milk/potions sounds on actor who's consuming potion instead of skyrim's always on player(this does not include change for skooma that is used by skooma whore mod)
+added soundless lactacid feeding potion to milkpumps
+added 2nd soundless feeding potion to milkpumps to satisfy rnd hunger
+disabled make milkmaid messagebox promt if player has no free maid slots
+npcs( not maids or slaves) that use pumps(if they finish using it/stand up and do something else) get 1-2 milk, pregnant npcs get x2 milk
+added messageboxes to tell you if you have wrong load order(and probably missing milkpumps)
+some other fixes?
 
 	v 15-08-2016
 added belly node scaling based on lactacid/2
