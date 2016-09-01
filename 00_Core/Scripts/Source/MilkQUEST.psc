@@ -428,7 +428,7 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 					Target.RemoveSpell( BeingMilkedPassive )
 				EndIf
 			ElseIf (Input.IsKeyPressed(42) || Input.IsKeyPressed(54)) || (HoldTime > 2.0)
-				If Target.HasSpell( BeingMilkedPassive ) && !StorageUtil.GetIntValue(Target,"IsBoundStrict") && !SexLab.IsActorActive(Target)
+				If Target.HasSpell( BeingMilkedPassive ) && StorageUtil.GetIntValue(Target,"IsBoundStrict") == 0 && !SexLab.IsActorActive(Target)
 					If Target == PlayerRef
 						Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 					EndIf
@@ -1192,13 +1192,13 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			akActor.RemoveSpell( BeingMilkedPassive )
 			return
 		ElseIf !(DDArmbinder == true || DDYoke == true)
-			If IsMilkingBlocked == false && !akActor.IsInCombat() && !SexLab.IsActorActive(akActor) && !StorageUtil.GetIntValue(akActor,"IsBoundStrict")
+			If IsMilkingBlocked == false && !akActor.IsInCombat() && !SexLab.IsActorActive(akActor) && StorageUtil.GetIntValue(akActor,"IsBoundStrict") == 0
 				If PlayerREF == akActor
 					Game.ForceThirdPerson()
 					Game.DisablePlayerControls(1, 1, 0, 0, 1, 1, 0) ;(True,True,False,False,True,True,True,True,0)
 					Utility.Wait( 1.0 )												;wait for actor to stop moving (and player to release movement keys)
 				EndIf
-				If !StorageUtil.GetIntValue(akActor,"IsBoundStrict") && !akActor.IsInCombat()
+				If StorageUtil.GetIntValue(akActor,"IsBoundStrict") == 0 && !akActor.IsInCombat()
 					mpas = Utility.RandomInt (1, 3)
 					if mpas == 1
 						Debug.SendAnimationEvent(akActor,"ZaZAPCHorFA")
@@ -1650,7 +1650,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	sendVibrationEvent("StopMilkingMachine", akActor, mpas, MilkingType)
 
 ;-----------------------Milking done
-	If PlayerREF == akActor && !SexLab.IsActorActive(akActor) && bControlsDisabled == true
+	If PlayerREF == akActor && !SexLab.IsActorActive(akActor)
 		Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 		Game.SetPlayerAIDriven(false)
 	Endif
@@ -1711,7 +1711,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		endif
 		
 		If Mode != 4
-			If !StorageUtil.GetIntValue(akActor,"IsBoundStrict") && !SexLab.IsActorActive(akActor)
+			If StorageUtil.GetIntValue(akActor,"IsBoundStrict") == 0 && !SexLab.IsActorActive(akActor)
 				Debug.SendAnimationEvent(akActor,"IdleForceDefaultState")
 			EndIf
 		endif

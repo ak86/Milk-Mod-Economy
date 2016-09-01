@@ -69,7 +69,7 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 				Game.ShakeCamera(none, Utility.RandomFloat(0.5 , 1), 10)
 			endif
 			
-			If !StorageUtil.GetIntValue(akTarget,"IsBoundStrict") && !(akTarget.GetSitState() <= 3 && akTarget.GetSitState() > 0) && !MilkQ.SexLab.IsActorActive(akTarget)
+			If StorageUtil.GetIntValue(akTarget,"IsBoundStrict") == 0 && !(akTarget.GetSitState() <= 3 && akTarget.GetSitState() > 0) && !MilkQ.SexLab.IsActorActive(akTarget)
 				Debug.SendAnimationEvent(akTarget,"ZaZAPCHorFd")
 			EndIf
 			
@@ -89,7 +89,7 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 				Debug.Messagebox(akTarget.GetLeveledActorBase().GetName() + " just had a breast induced orgasm!")
 			EndIf
 			
-			if !StorageUtil.GetIntValue(akTarget,"IsBoundStrict") && !(akTarget.GetSitState() <= 3 && akTarget.GetSitState() > 0) && !MilkQ.SexLab.IsActorActive(akTarget)
+			if StorageUtil.GetIntValue(akTarget,"IsBoundStrict") == 0 && !(akTarget.GetSitState() <= 3 && akTarget.GetSitState() > 0) && !MilkQ.SexLab.IsActorActive(akTarget)
 				Debug.SendAnimationEvent(akTarget,"IdleForceDefaultState")
 			endif
 			

@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>28-08-2016</Version>
+  <Version>01-09-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
@@ -16,6 +16,9 @@
 *beggar drunken favor dialogues
 
 Dev change log:
+
+	v 01-09-2016
+fix milking return control
 
 	v 28-08-2016
 added custom sound descriptor to play milk/potions sounds on actor who's consuming potion instead of skyrim's always on player(this does not include change for skooma that is used by skooma whore mod)
