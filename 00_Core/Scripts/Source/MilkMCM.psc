@@ -370,10 +370,8 @@ function Page_Settings()
 		AddHeaderOption("$MME_MENU_PAGE_Settings_H2")
 			if MilkQ.BreastScale == 3
 				AddTextOptionST("BreastScale_Toggle", "$MME_MENU_PAGE_Settings_H2_S6", "OFF")
-			elseif MilkQ.BreastScale == 2
-				AddTextOptionST("BreastScale_Toggle", "$MME_MENU_PAGE_Settings_H2_S6", "NetImmerse")
-			elseif MilkQ.BreastScale == 0
-				AddTextOptionST("BreastScale_Toggle", "$MME_MENU_PAGE_Settings_H2_S6", "NiOverride")
+			else
+				AddTextOptionST("BreastScale_Toggle", "$MME_MENU_PAGE_Settings_H2_S6", "ON")
 			endif
 			AddToggleOptionST("BellyScale_Toggle", "$MME_MENU_PAGE_Settings_H2_S8", MilkQ.BellyScale)
 			AddToggleOptionST("BreastScaleLimit_Toggle", "$MME_MENU_PAGE_Settings_H2_S7", MilkQ.BreastScaleLimit)
@@ -1555,56 +1553,18 @@ state MaidLvlCap_Toggle
 	endEvent
 endState
 
-
 state BreastScale_Toggle
 	event OnSelectST()
 		string toggleVal
-		if MilkQ.BreastScale == 2 
+		if MilkQ.BreastScale != 3 
 			MilkQ.BreastScale = 3
 			toggleVal = "Off"
-		elseif MilkQ.BreastScale != 0 && SKSE.GetPluginVersion("NiOverride") >= 3 && NiOverride.GetScriptVersion() >= 2
-			MilkQ.BreastScale = 0
-			toggleVal = "NiOverride"
 		else
-			MilkQ.BreastScale = 2
-			toggleVal = "NetImmerse"
+			MilkQ.BreastScale = 0
+			toggleVal = "ON"
 		endif
 		
-		Actor akActor
-		int i
-		i = 0
-		while i < MilkQ.MilkMaid.Length
-			if MilkQ.MilkMaid[i] != None
-				akActor = MilkQ.MilkMaid[i]
-				If SKSE.GetPluginVersion("NiOverride") >= 3 && NiOverride.GetScriptVersion() >= 2 && MilkQ.BreastScale != 0
-					Float BreastBase = MME_Storage.getBreastsBasevalue(akActor)
-						MilkQ.SetNodeScale(akActor, "NPC L Breast", 1)
-						MilkQ.SetNodeScale(akActor, "NPC R Breast", 1)
-					; Curve fix
-						MilkQ.SetNodeScale(akActor, "NPC L Breast01", 1)
-						MilkQ.SetNodeScale(akActor, "NPC R Breast01", 1)
-				endif
-				MilkQ.CurrentSize(akActor)
-			endif
-			i = i + 1
-		endwhile
-		
-		i = 0
-		while i < MilkQ.MILKSlave.Length
-			if MilkQ.MILKSlave[i] != None
-				akActor = MilkQ.MILKSlave[i]
-				If SKSE.GetPluginVersion("NiOverride") >= 3 && NiOverride.GetScriptVersion() >= 2 && MilkQ.BreastScale != 0
-					Float BreastBase = MME_Storage.getBreastsBasevalue(akActor)
-						MilkQ.SetNodeScale(akActor, "NPC L Breast", 1)
-						MilkQ.SetNodeScale(akActor, "NPC R Breast", 1)
-					; Curve fix
-						MilkQ.SetNodeScale(akActor, "NPC L Breast01", 1)
-						MilkQ.SetNodeScale(akActor, "NPC R Breast01", 1)
-				endif
-				MilkQ.CurrentSize(akActor)
-			endif
-			i = i + 1
-		endwhile
+		MilkQ.UpdateActors()
 		SetTextOptionValueST(toggleVal)
 	endEvent
 	

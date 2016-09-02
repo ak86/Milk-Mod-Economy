@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>01-09-2016</Version>
+  <Version>02-09-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
@@ -16,6 +16,11 @@
 *beggar drunken favor dialogues
 
 Dev change log:
+
+	v 02-09-2016
+fixed log errors
+fixed belly not resetting
+removed nie toggle
 
 	v 01-09-2016
 fix milking return control

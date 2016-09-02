@@ -498,16 +498,21 @@ EndFunction
 Function UpdateActors()
 	int idx1 = 0
 	While idx1 < MilkMaid.Length
-		MME_Storage.updateMilkMaximum(MilkMaid[idx1])
-		MME_Storage.updateMilkCurrent(MilkMaid[idx1])
-		CurrentSize(MilkMaid[idx1])
+		if MilkMaid[idx1] != none
+			MME_Storage.updateMilkMaximum(MilkMaid[idx1])
+			MME_Storage.updateMilkCurrent(MilkMaid[idx1])
+			CurrentSize(MilkMaid[idx1])
+		endif
 		idx1 += 1
 	EndWhile
+	
 	idx1 = 0
 	While idx1 < MilkSlave.Length
-		MME_Storage.updateMilkMaximum(MilkMaid[idx1])
-		MME_Storage.updateMilkCurrent(MilkSlave[idx1])
-		CurrentSize(MilkSlave[idx1])
+		if MilkSlave[idx1] != none
+			MME_Storage.updateMilkMaximum(MilkSlave[idx1])
+			MME_Storage.updateMilkCurrent(MilkSlave[idx1])
+			CurrentSize(MilkSlave[idx1])
+		endif
 		idx1 += 1
 	EndWhile
 EndFunction
@@ -829,71 +834,83 @@ Function CurrentSize(Actor akActor)
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.TimesMilked")
 	Float CurrentSize
 	Float CurveFix
+	Float LactacidCnt
 	
-	if MaidBoobIncr < 0 				;set to general maid data
-		MaidBoobIncr = BoobIncr
-	endif
-	if MaidBoobPerLvl < 0				;set to general maid data
-		MaidBoobPerLvl = BoobPerLvl
-	endif
-	
-	if BreastUpScale
-		if BreastBase + BreastBaseMod < 1
-			BreastBaseMod += 0.1
-			MME_Storage.setBreastsBaseadjust(akActor, BreastBaseMod)
-		endif
-		BreastBase += BreastBaseMod
-	endif
-
-	;MilkCnt = BreastBase - MilkCnt * MaidBoobIncr
-	;if MilkCnt <= BreastBase
-	;	MilkCnt = 0
-	;endif
-
-	CurrentSize = BreastBase + ( MilkCnt * MaidBoobIncr ) + ( MaidLevel + ( MaidTimesMilked / (( MaidLevel + 1 ) * TimesMilkedMult ))) * MaidBoobPerLvl
-
-	if CurrentSize > BoobMAX && BoobMAX != 0
-		CurrentSize = BoobMAX
-	endif
-	
-	If(CurrentSize <= 1)
-		CurveFix = 1.0
+	If BreastScale == 3						;off
+		CurrentSize = 1
+		CurveFix = 1
 	Else
-		CurveFix = 1.0 - (CurrentSize * BreastCurve)
-		If CurveFix < BoobMAX / 10
-			CurveFix = BoobMAX / 10
+		if MaidBoobIncr < 0 				;set to general maid data
+			MaidBoobIncr = BoobIncr
+		endif
+		if MaidBoobPerLvl < 0				;set to general maid data
+			MaidBoobPerLvl = BoobPerLvl
+		endif
+		
+		if BreastUpScale
+			if BreastBase + BreastBaseMod < 1
+				BreastBaseMod += 0.1
+				MME_Storage.setBreastsBaseadjust(akActor, BreastBaseMod)
+			endif
+			BreastBase += BreastBaseMod
+		endif
+
+		;MilkCnt = BreastBase - MilkCnt * MaidBoobIncr
+		;if MilkCnt <= BreastBase
+		;	MilkCnt = 0
+		;endif
+
+		CurrentSize = BreastBase + ( MilkCnt * MaidBoobIncr ) + ( MaidLevel + ( MaidTimesMilked / (( MaidLevel + 1 ) * TimesMilkedMult ))) * MaidBoobPerLvl
+
+		if CurrentSize > BoobMAX && BoobMAX != 0
+			CurrentSize = BoobMAX
+		endif
+		
+		If(CurrentSize <= 1)
+			CurveFix = 1.0
+		Else
+			CurveFix = 1.0 - (CurrentSize * BreastCurve)
+			If CurveFix < BoobMAX / 10
+				CurveFix = BoobMAX / 10
+			EndIf
 		EndIf
-	EndIf
+	Endif
+	
+	if akActor.GetLeveledActorBase().GetSex() == 1
+		if CurrentSize > 0
+			;HDT Female / Vampire Lord
+				self.SetNodeScale(akActor, "NPC L Breast", CurrentSize)
+				self.SetNodeScale(akActor, "NPC R Breast", CurrentSize)
+				
+			;Curve fix
+			;HDT Female / Vampire Lord
+				self.SetNodeScale(akActor, "NPC L Breast01", CurveFix)
+				self.SetNodeScale(akActor, "NPC R Breast01", CurveFix)
 
-	if CurrentSize > 0	&& BreastScale != 3 && akActor.GetLeveledActorBase().GetSex() == 1
-		;HDT Female / Vampire Lord
-			self.SetNodeScale(akActor, "NPC L Breast", CurrentSize)
-			self.SetNodeScale(akActor, "NPC R Breast", CurrentSize)
+			;HDT Werewolf
+				self.SetNodeScale(akActor, "NPC L Breast P1", CurrentSize)
+				self.SetNodeScale(akActor, "NPC R Breast P1", CurrentSize)
+				self.SetNodeScale(akActor, "NPC L Breast P2", CurrentSize)
+				self.SetNodeScale(akActor, "NPC R Breast P2", CurrentSize)
+				self.SetNodeScale(akActor, "NPC L Breast P3", CurrentSize)
+				self.SetNodeScale(akActor, "NPC R Breast P3", CurrentSize)
 			
-		;Curve fix
-		;HDT Female / Vampire Lord
-			self.SetNodeScale(akActor, "NPC L Breast01", CurveFix)
-			self.SetNodeScale(akActor, "NPC R Breast01", CurveFix)
-
-		;HDT Werewolf
-			self.SetNodeScale(akActor, "NPC L Breast P1", CurrentSize)
-			self.SetNodeScale(akActor, "NPC R Breast P1", CurrentSize)
-			self.SetNodeScale(akActor, "NPC L Breast P2", CurrentSize)
-			self.SetNodeScale(akActor, "NPC R Breast P2", CurrentSize)
-			self.SetNodeScale(akActor, "NPC L Breast P3", CurrentSize)
-			self.SetNodeScale(akActor, "NPC R Breast P3", CurrentSize)
+			;Schlong		this is for male/futa but i have no idea about scaling mechanic
+			;NetImmerse.SetNodeScale(akActor, "NPC L GenitalsScrotum [LGenScrot]", CurrentSize, false)
+			;NetImmerse.SetNodeScale(akActor, "NPC R GenitalsScrotum [RGenScrot]", CurrentSize, false)
+			;FPS
+			;NetImmerse.SetNodeScale(akActor, "NPC L GenitalsScrotum [LGenScrot]", CurrentSize, true)
+			;NetImmerse.SetNodeScale(akActor, "NPC R GenitalsScrotum [RGenScrot]", CurrentSize, true)
+		endif
 		
-		
-		;Schlong
-		;NetImmerse.SetNodeScale(akActor, "NPC L GenitalsScrotum [LGenScrot]", CurrentSize, false)
-		;NetImmerse.SetNodeScale(akActor, "NPC R GenitalsScrotum [RGenScrot]", CurrentSize, false)
-		;FPS
-		;NetImmerse.SetNodeScale(akActor, "NPC L GenitalsScrotum [LGenScrot]", CurrentSize, true)
-		;NetImmerse.SetNodeScale(akActor, "NPC R GenitalsScrotum [RGenScrot]", CurrentSize, true)
-	endif
-	if BellyScale && akActor.GetLeveledActorBase().GetSex() == 1
-		Float LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
-		self.SetNodeScale(akActor, "NPC Belly", 1 + LactacidCnt / 2)
+		if akActor.GetLeveledActorBase().GetSex() == 1
+			if BellyScale
+				LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
+			else
+				LactacidCnt = 0
+			endif
+			self.SetNodeScale(akActor, "NPC Belly", 1 + LactacidCnt / 2)
+		endif
 	endif
 EndFunction
 
@@ -2836,9 +2853,8 @@ Function SetNodeScale(Actor akActor, string nodeName, float value)
 		isFemale = false
 	endif
 	if NetImmerse.HasNode(akActor, nodeName, false)
-		If SKSE.GetPluginVersion("NiOverride") >= 3 && NiOverride.GetScriptVersion() >= 2 && BreastScale == 0		;nioverride
-			; update 1st person view/skeleton (player only)
-			if akActor == Game.GetPlayer()
+		If SKSE.GetPluginVersion("NiOverride") >= 3 && NiOverride.GetScriptVersion() >= 2 && BreastScale == 0		;nioverride, if value = 1, mod is removed from skse nio scaling
+			if akActor == Game.GetPlayer()																			;update 1st person view/skeleton (player only)
 				If value != 1.0
 					NiOverride.AddNodeTransformScale(akActor, true, isFemale, nodeName, modName, value)
 				Else
@@ -2846,25 +2862,22 @@ Function SetNodeScale(Actor akActor, string nodeName, float value)
 				Endif
 				NiOverride.UpdateNodeTransform(akActor, true, isFemale, nodeName)
 			endif
-			; update 3rd person view/skeleton (player & NPCs)
-			If value != 1.0
+			If value != 1.0																							;update 3rd person view/skeleton (player & NPCs)
 				NiOverride.AddNodeTransformScale(akActor, false, isFemale, nodeName, modName, value)
 			Else
 				NiOverride.RemoveNodeTransformScale(akActor, false, isFemale, nodeName, modName)
 			Endif
 			NiOverride.UpdateNodeTransform(akActor, false, isFemale, nodeName)
-		ElseIf akActor.IsInLocation(PlayerREF.getCurrentLocation())													;netimmerse
-			; update 1st person view/skeleton (player only)
-			if akActor == Game.GetPlayer()
+		ElseIf akActor.IsInLocation(PlayerREF.getCurrentLocation())													;else netimmerse
+			if akActor == Game.GetPlayer()																			;update 1st person view/skeleton (player only)
 				NetImmerse.SetNodeScale(akActor, nodeName, value, true)
 			Endif
-			; update 3rd person view/skeleton (player & NPCs)
-			NetImmerse.SetNodeScale(akActor, nodeName, value, false)
+			NetImmerse.SetNodeScale(akActor, nodeName, value, false)												;update 3rd person view/skeleton (player & NPCs)
 		Endif
 	Endif
 EndFunction
 
-float Function GetNodeScale(Actor akActor, string nodeName)
+float Function GetNodeScale(Actor akActor, string nodeName)															; not used, i think, but just in case
 	string modName = "MilkModEconomy"
 	bool isFemale = false
 	if akActor.GetLeveledActorBase().GetSex() == 1
@@ -2874,6 +2887,7 @@ float Function GetNodeScale(Actor akActor, string nodeName)
 	endif
 	return NiOverride.GetNodeTransformScale(akActor, false, isFemale, nodeName, modName)
 EndFunction
+
 ;----------------------------------------------------------------------------
 ;Actor status checks
 ;----------------------------------------------------------------------------
