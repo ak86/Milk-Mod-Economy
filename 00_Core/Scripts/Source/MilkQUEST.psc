@@ -116,7 +116,7 @@ Bool Property MilkStory = False Auto
 Bool Property BreastScaleLimit = False Auto
 Bool Property BreastUpScale = False Auto
 Bool Property WeightUpScale = False Auto
-Bool Property PainKills = False Auto
+Bool Property PainKills = True Auto
 Bool Property MaidLvlCap = False Auto
 Bool Property MilkAsMaidTimesMilked = False Auto
 Bool Property MilkLeakTextures = True Auto
@@ -1279,7 +1279,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		;run cycle if:
 		;actor is sitting or trying to sit(milkmump)
 		;or actor is being milked by something other than milkpump(mode 0) and has milk
-		;and pain less than max or pain override enabled
+		;and pain less than max or pain override enabled and not bound milking
 
 	while ((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0 && Mode == 0)\
 			|| (MilkCnt >= 1 && Mode > 0))\
@@ -1361,6 +1361,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 							
 							Utility.Wait(Feeding_Duration)
 							FeedOnce = false
+							Sound.StopInstance(soundInstance01)	
 						endif
 					endif
 				endif
@@ -2318,7 +2319,7 @@ Function DLCcheck()
 	Int MMMPF = Game.GetModbyName("MilkMod_MilkPumpsFancy.esp")
 	Int MMMPFB = Game.GetModbyName("MilkMod_MilkPumpsFancyB.esp")
 	Int MMMPFNB = Game.GetModbyName("MilkMod_MilkPumpsFancyNB.esp")
-	Int MMS = Game.GetModbyName("MilkMod_MilkPumpsSanbox.esp")
+	Int MMS = Game.GetModbyName("MilkModNEW Sanbox.esp")
 	If (MM > MMHF && MMHF != 255) || (MM > MMZAZ && MMZAZ != 255)
 		Debug.MessageBox("MME incorrect load order: patches should go after main mod")
 	endif
@@ -2798,7 +2799,7 @@ Function VarSetup()
 	SexLabOrgasm = True
 	SexLab3jBreastfeeding = True
 	PainSystem = True
-	PainKills = False
+	PainKills = True
 	WeightUpScale = False					;scale to 100
 	PlayerCantBeMilkmaid = False
 	ZazPumps = False

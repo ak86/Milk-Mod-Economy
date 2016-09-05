@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>02-09-2016</Version>
+  <Version>05-09-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
@@ -16,6 +16,12 @@
 *beggar drunken favor dialogues
 
 Dev change log:
+
+	v 05-09-2016
+fixed bound milkpump not milking
+reverted sounds of consumables
+added campfire plugin
+removed upkeep if you keep milk
 
 	v 02-09-2016
 fixed log errors

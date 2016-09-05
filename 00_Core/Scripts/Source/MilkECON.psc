@@ -416,14 +416,6 @@ endFunction
 
 Function KeepMilk(Potion finalPotion, int finalQty, int upkeep, Actor akActor)
 	if finalQty > 0
-		if MilkQ.MILKmaid.find(akActor) != -1
-			if MilkQ.PlayerREF.GetDistance(akActor) < 250
-				MilkQ.PlayerREF.RemoveItem(Gold, upkeep, true)
-				Debug.Notification("You've been charged " + upkeep + " gold for upkeep.")
-			else
-				akActor.RemoveItem(Gold, upkeep, true)
-			endif
-		endif
 		akActor.AddItem(finalPotion, finalQty)
 	endif
 endFunction

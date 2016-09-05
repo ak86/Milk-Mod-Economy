@@ -146,7 +146,7 @@
 					<plugins order="Explicit">			
 						<plugin name="Brown Panty">
 							<description>
-								<![CDATA[Replaces Milkcuirass panies with brown version by Saeros]]>
+								<![CDATA[Replaces Milkcuirass black&white panies with brown version by Saeros]]>
 							</description>
 							<conditionFlags>
 								<flag name="Brown Panty">Brown Panty</flag>
@@ -172,13 +172,28 @@
 								<type name="Optional"/>
 							</typeDescriptor>
 						</plugin>				
+						<plugin name="Campfire addon">
+							<description>
+								<![CDATA[Campfire addon, allows crafting and placing milkpumps]]>
+							</description>
+							<image path="Fomod\Screens\CF.jpg"/>
+							<conditionFlags>
+								<flag name="Campfire">Campfire</flag>
+							</conditionFlags>
+							<files>
+								<folder source="02_Extra\Campfire" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>				
 					</plugins>   
 				</group>
 				<group name="Patches" type="SelectAny">
 					<plugins order="Explicit">			
 						<plugin name="HF_Patch">
 							<description>
-								<![CDATA[Patch for Hearthfire, adds ability to craft "Jug of Milk" from milk potions at Cooking Pot]]>
+								<![CDATA[Plugin for Hearthfire, adds ability to craft "Jug of Milk" from milk potions at Cooking Pot]]>
 							</description>
 							<conditionFlags>
 								<flag name="HF_Patch\HF">Active</flag>

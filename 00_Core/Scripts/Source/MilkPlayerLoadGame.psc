@@ -214,9 +214,15 @@ Event OnSexLabOrgasm(String _eventName, String _args, Float _argc, Form _sender)
 				elseif MilkQ.akActorSex(actors[idx]) == "Female" 
 					MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(0), 1)
 				elseif MilkQ.akActorSex(actors[idx]) == "Futa"
-					int futamilk = Utility.RandomInt(0, 1)
-					MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(3), futamilk)
-					MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(2), 1-futamilk)
+					;if SexLab.GetGender(akActor) == 1		;SL female?
+						;MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(3), 1)
+					;esleif SexLab.GetGender(akActor) == 0	;SL male?
+						;MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(2), 1)
+					;else
+						int futamilk = Utility.RandomInt(0, 1)
+						MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(3), futamilk)
+						MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(2), 1-futamilk)
+					;endif
 				endif
 				MilkQ.PlayerREF.RemoveItem(MilkQ.MilkE.Gold, 2, true)
 			endif
