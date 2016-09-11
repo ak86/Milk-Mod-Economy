@@ -1151,7 +1151,11 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		EndIf
 	elseif mode == 4
 		;do nothing
-	elseIf MilkCnt >= 1
+	elseif MilkCnt < 1
+		Debug.Notification(akActor.GetLeveledActorBase().getname() + " have no milk!")
+		akActor.RemoveSpell( BeingMilkedPassive )
+		return
+	else
 		if cuirass != None
 			if BreastRows != 1
 				Mode = 1
@@ -1159,14 +1163,6 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			|| StringUtil.Find(cuirass.getname(), "Cow" ) >= 0 \
 			|| MilkingEquipment.find(cuirass.getname()) >= 0\
 			|| SLSDBra == true
-				Mode = 2
-			ElseIf akActor.GetItemCount(MilkCuirassFuta) > 0 && akActorGender == "Futa" && UseFutaMilkCuirass == true
-				akActor.equipitem(MilkCuirassFuta, true, true)
-				hasInventoryMilkCuirassFuta = true
-				Mode = 2
-			ElseIf akActor.GetItemCount(MilkCuirass) > 0 && (akActorGender != "Futa" || UseFutaMilkCuirass != true)
-				akActor.equipitem(MilkCuirass, true, true)
-				hasInventoryMilkCuirass = true
 				Mode = 2
 			ElseIf StringUtil.Find(cuirass.getname(), "Spriggan" ) >= 0 \
 				|| StringUtil.Find(cuirass.getname(), "Living Arm" ) >= 0 \
@@ -1187,28 +1183,32 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					endif
 				Endif
 				Sound.StopInstance( soundInstance02 )
-			Else
-				akActor.UnequipItem(cuirass, false, true)
+			ElseIf (DDArmbinder == false && DDYoke == false)
+				If akActor.GetItemCount(MilkCuirassFuta) > 0 && akActorGender == "Futa" && UseFutaMilkCuirass == true
+					akActor.equipitem(MilkCuirassFuta, true, true)
+					hasInventoryMilkCuirassFuta = true
+					Mode = 2
+				ElseIf akActor.GetItemCount(MilkCuirass) > 0 && (akActorGender != "Futa" || UseFutaMilkCuirass != true)
+					akActor.equipitem(MilkCuirass, true, true)
+					hasInventoryMilkCuirass = true
+					Mode = 2
+				Else
+					akActor.UnequipItem(cuirass, false, true)
+				EndIf
 			EndIf
-		ElseIf akActor.GetItemCount(MilkCuirassFuta) > 0 && akActorGender == "Futa" && UseFutaMilkCuirass == true
-			akActor.equipitem(MilkCuirassFuta, true, true)
-			hasInventoryMilkCuirassFuta = true
-			Mode = 2
-		ElseIf akActor.GetItemCount(MilkCuirass) > 0 && (akActorGender != "Futa" || UseFutaMilkCuirass != true)
-			akActor.equipitem(MilkCuirass, true, true)
-			hasInventoryMilkCuirass = true
-			Mode = 2
-		Endif
-		If (Mode == 2 || Mode == 1) && (DDArmbinder == true || DDYoke == true)
-			If akActor == PlayerRef
-				Debug.Notification("With your hands bound there is no way you can be milked without somebody's help")
-			Else
-				Debug.Notification("With hands bound there is no way " + akActor.GetLeveledActorBase().GetName() + " can be milked without somebody's help")
+		ElseIf (DDArmbinder == false && DDYoke == false)
+			If akActor.GetItemCount(MilkCuirassFuta) > 0 && akActorGender == "Futa" && UseFutaMilkCuirass == true
+				akActor.equipitem(MilkCuirassFuta, true, true)
+				hasInventoryMilkCuirassFuta = true
+				Mode = 2
+			ElseIf akActor.GetItemCount(MilkCuirass) > 0 && (akActorGender != "Futa" || UseFutaMilkCuirass != true)
+				akActor.equipitem(MilkCuirass, true, true)
+				hasInventoryMilkCuirass = true
+				Mode = 2
 			EndIf
-			IsMilkingBlocked = true
-			akActor.RemoveSpell( BeingMilkedPassive )
-			return
-		ElseIf !(DDArmbinder == true || DDYoke == true)
+		EndIf
+		
+		If (DDArmbinder == false && DDYoke == false)
 			If IsMilkingBlocked == false && !akActor.IsInCombat() && !SexLab.IsActorActive(akActor) && StorageUtil.GetIntValue(akActor,"IsBoundStrict") == 0
 				If PlayerREF == akActor
 					Game.ForceThirdPerson()
@@ -1226,11 +1226,16 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					endif
 				EndIf
 			EndIf
+		ElseIf Mode == 1
+			If akActor == PlayerRef
+				Debug.Notification("With your hands bound there is no way you can be milked without somebody's help")
+			Else
+				Debug.Notification("With hands bound there is no way " + akActor.GetLeveledActorBase().GetName() + " can be milked without somebody's help")
+			EndIf
+			IsMilkingBlocked = true
+			akActor.RemoveSpell( BeingMilkedPassive )
+			return
 		EndIf
-	ElseIf MilkCnt < 1
-		Debug.Notification(akActor.GetLeveledActorBase().getname() + " have no milk!")
-		akActor.RemoveSpell( BeingMilkedPassive )
-		return
 	endif
 	
 	if IsMilkMaid == false && PlayerREF.GetDistance(akActor) < 500	
@@ -1696,6 +1701,9 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			If MilkStory && akActor == PlayerREF && akActorGender != "Male"
 				StoryDisplay(1,1,FirstTimeStory)
 			EndIf
+			If cuirass != None 
+				akActor.equipitem(cuirass, false, true)
+			EndIf
 		elseif Mode == 3
 			If MilkStory && akActor == PlayerREF && akActorGender != "Male"
 				if StringUtil.Find(cuirass.getname(), "Hermaeus Mora" ) >= 0 || StringUtil.Find(cuirass.getname(), "HM Priestess" ) >= 0
@@ -1706,25 +1714,21 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					StoryDisplay(1,2,FirstTimeStory)
 				endif
 			EndIf
-		endif
-		
-		If cuirass != None && BreastRows == 1
-			If cuirass != None && SLSDBra == false
-				if !akActor.IsEquipped(cuirass)
-					akActor.EquipItem(cuirass, false, true)
-				endif
-			EndIf
-			if hasInventoryMilkCuirass == true
-				akActor.UnequipItem(MilkCuirass, false, true)
-				if cuirass != none
-					akActor.equipitem(cuirass, true, true)
-				endif
-			endif
-			if hasInventoryMilkCuirassFuta == true
-				akActor.UnequipItem(MilkCuirassFuta, false, true)
-				if cuirass != none
-					akActor.equipitem(cuirass, true, true)
-				endif
+		else
+			If BreastRows == 1
+				if akActor.IsEquipped(MilkCuirass) && MilkCuirass != cuirass
+					akActor.UnequipItem(MilkCuirass, false, true)
+					if cuirass != None 
+						akActor.equipitem(cuirass, false, true)
+					EndIf
+				elseif akActor.IsEquipped(MilkCuirassFuta) && MilkCuirassFuta != cuirass
+					akActor.UnequipItem(MilkCuirassFuta, false, true)
+					if cuirass != None 
+						akActor.equipitem(cuirass, false, true)
+					EndIf
+				elseif cuirass != None 
+					akActor.equipitem(cuirass, false, true)
+				EndIf
 			endif
 		endif
 		
