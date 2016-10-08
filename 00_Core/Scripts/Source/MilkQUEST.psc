@@ -81,8 +81,6 @@ int[] Property armslot Auto
 String[] Property MilkingEquipment Auto
 String[] Property BasicLivingArmor Auto
 String[] Property ParasiteLivingArmor Auto
-Alias[] Property AliasRef  Auto
-Package Property MilkPackage  Auto
 
 ;Varables in StorageUtil
 ;FormListClear(none,"MME.MilkMaid.List")					;not used
