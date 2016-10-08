@@ -4,7 +4,6 @@ Scriptname MilkQUEST extends Quest
 SexLabFramework property SexLab auto
 
 MilkECON Property MilkE Auto 
-;MilkStrings Property MilkS Auto 
 MilkQUEST_Conditions Property MilkQC Auto
 CompanionsHousekeepingScript Property CHScript Auto 
 PlayerVampireQuestScript Property PlayerVampireQuest Auto 
@@ -875,23 +874,24 @@ Function CurrentSize(Actor akActor)
 	Endif
 	
 	if akActor.GetLeveledActorBase().GetSex() == 1
+		MME_BodyMod BodyMod = Quest.GetQuest("MME_MilkQUEST") as MME_BodyMod
 		if CurrentSize > 0
 			;HDT Female / Vampire Lord
-				self.SetNodeScale(akActor, "NPC L Breast", CurrentSize)
-				self.SetNodeScale(akActor, "NPC R Breast", CurrentSize)
+				BodyMod.SetNodeScale(akActor, "NPC L Breast", CurrentSize)
+				BodyMod.SetNodeScale(akActor, "NPC R Breast", CurrentSize)
 				
 			;Curve fix
 			;HDT Female / Vampire Lord
-				self.SetNodeScale(akActor, "NPC L Breast01", CurveFix)
-				self.SetNodeScale(akActor, "NPC R Breast01", CurveFix)
+				BodyMod.SetNodeScale(akActor, "NPC L Breast01", CurveFix)
+				BodyMod.SetNodeScale(akActor, "NPC R Breast01", CurveFix)
 
 			;HDT Werewolf
-				self.SetNodeScale(akActor, "NPC L Breast P1", CurrentSize)
-				self.SetNodeScale(akActor, "NPC R Breast P1", CurrentSize)
-				self.SetNodeScale(akActor, "NPC L Breast P2", CurrentSize)
-				self.SetNodeScale(akActor, "NPC R Breast P2", CurrentSize)
-				self.SetNodeScale(akActor, "NPC L Breast P3", CurrentSize)
-				self.SetNodeScale(akActor, "NPC R Breast P3", CurrentSize)
+				BodyMod.SetNodeScale(akActor, "NPC L Breast P1", CurrentSize)
+				BodyMod.SetNodeScale(akActor, "NPC R Breast P1", CurrentSize)
+				BodyMod.SetNodeScale(akActor, "NPC L Breast P2", CurrentSize)
+				BodyMod.SetNodeScale(akActor, "NPC R Breast P2", CurrentSize)
+				BodyMod.SetNodeScale(akActor, "NPC L Breast P3", CurrentSize)
+				BodyMod.SetNodeScale(akActor, "NPC R Breast P3", CurrentSize)
 			
 			;Schlong		this is for male/futa but i have no idea about scaling mechanic
 			;NetImmerse.SetNodeScale(akActor, "NPC L GenitalsScrotum [LGenScrot]", CurrentSize, false)
@@ -907,7 +907,7 @@ Function CurrentSize(Actor akActor)
 			else
 				LactacidCnt = 0
 			endif
-			self.SetNodeScale(akActor, "NPC Belly", 1 + LactacidCnt / 2)
+			BodyMod.SetNodeScale(akActor, "NPC Belly", 1 + LactacidCnt / 2)
 		endif
 	endif
 EndFunction
@@ -1266,6 +1266,15 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			IsMilkMaid = true
 		endif
 	endif
+	
+	;prevent other mods form interrupting milking
+	SexLab.ForbidActor(akActor)
+	akActor.AddToFaction(SexLab.AnimatingFaction)
+;	Debug.Notification(akActor.GetLeveledActorBase().GetName() + " Set to " + SexLab.AnimatingFaction)
+	
+	If PlayerREF == akActor
+        SendModEvent("dhlp-Suspend")
+	Endif
 	
 	if IsMilkMaid == false
 		MilkCnt = Utility.RandomInt (1, 2)							;give milk for non maid/slave npc
@@ -1671,6 +1680,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	sendVibrationEvent("StopMilkingMachine", akActor, mpas, MilkingType)
 
 ;-----------------------Milking done
+
 	If PlayerREF == akActor && !SexLab.IsActorActive(akActor)
 		Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 		Game.SetPlayerAIDriven(false)
@@ -1801,6 +1811,14 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	if akActor.HasSpell( BeingMilkedPassive )
 		akActor.RemoveSpell( BeingMilkedPassive )
 	endif
+
+	;allow other mods to animate actor
+	SexLab.AllowActor(akActor)
+	akActor.RemoveFromFaction(SexLab.AnimatingFaction)
+	
+	If PlayerREF == akActor
+        SendModEvent("dhlp-Resume")
+	Endif
 EndFunction
 
 Function PostMilk(Actor akActor)
@@ -2605,21 +2623,22 @@ EndFunction
 Function MaidRemove(Actor akActor)
 		debug.notification("MilkModEconomy existing maid/slave " + akActor.GetLeveledActorBase().GetName() + "resetting")
 	If akActor != None
+		MME_BodyMod BodyMod = Quest.GetQuest("MME_MilkQUEST") as MME_BodyMod
 		debug.Trace("MilkModEconomy existing maid/slave " + akActor.GetLeveledActorBase().GetName() + "resetting")
 		;Reset Breast/Weight
 		;HDT Female / Vampire Lord
-			self.SetNodeScale(akActor, "NPC L Breast", 1)
-			self.SetNodeScale(akActor, "NPC R Breast", 1)
+			BodyMod.SetNodeScale(akActor, "NPC L Breast", 1)
+			BodyMod.SetNodeScale(akActor, "NPC R Breast", 1)
 		;Curve fix
-			self.SetNodeScale(akActor, "NPC L Breast01", 1)
-			self.SetNodeScale(akActor, "NPC R Breast01", 1)
+			BodyMod.SetNodeScale(akActor, "NPC L Breast01", 1)
+			BodyMod.SetNodeScale(akActor, "NPC R Breast01", 1)
 		;HDT Werewolf
-			self.SetNodeScale(akActor, "NPC L Breast P1", 1)
-			self.SetNodeScale(akActor, "NPC R Breast P1", 1)
-			self.SetNodeScale(akActor, "NPC L Breast P2", 1)
-			self.SetNodeScale(akActor, "NPC R Breast P2", 1)
-			self.SetNodeScale(akActor, "NPC L Breast P3", 1)
-			self.SetNodeScale(akActor, "NPC R Breast P3", 1)
+			BodyMod.SetNodeScale(akActor, "NPC L Breast P1", 1)
+			BodyMod.SetNodeScale(akActor, "NPC R Breast P1", 1)
+			BodyMod.SetNodeScale(akActor, "NPC L Breast P2", 1)
+			BodyMod.SetNodeScale(akActor, "NPC R Breast P2", 1)
+			BodyMod.SetNodeScale(akActor, "NPC L Breast P3", 1)
+			BodyMod.SetNodeScale(akActor, "NPC R Breast P3", 1)
 	
 		; <modified to match updated code in MilkMCM.psc:850-853>
 		;float MaidWeightBase = MME_Storage.getWeightBasevalue(MilkQ.MILKmaid[i])
@@ -2847,49 +2866,6 @@ Function UNINSTALL()
 	Debug.Notification("Milk Mod reset")
 EndFunction
 
-Function SetNodeScale(Actor akActor, string nodeName, float value)
-	string modName = "MilkModEconomy"
-	bool isFemale = false
-	if akActor.GetLeveledActorBase().GetSex() == 1
-		isFemale = true
-	Else
-		isFemale = false
-	endif
-	if NetImmerse.HasNode(akActor, nodeName, false)
-		If SKSE.GetPluginVersion("NiOverride") >= 3 && NiOverride.GetScriptVersion() >= 2 && BreastScale == 0		;nioverride, if value = 1, mod is removed from skse nio scaling
-			if akActor == Game.GetPlayer()																			;update 1st person view/skeleton (player only)
-				If value != 1.0
-					NiOverride.AddNodeTransformScale(akActor, true, isFemale, nodeName, modName, value)
-				Else
-					NiOverride.RemoveNodeTransformScale(akActor, true, isFemale, nodeName, modName)
-				Endif
-				NiOverride.UpdateNodeTransform(akActor, true, isFemale, nodeName)
-			endif
-			If value != 1.0																							;update 3rd person view/skeleton (player & NPCs)
-				NiOverride.AddNodeTransformScale(akActor, false, isFemale, nodeName, modName, value)
-			Else
-				NiOverride.RemoveNodeTransformScale(akActor, false, isFemale, nodeName, modName)
-			Endif
-			NiOverride.UpdateNodeTransform(akActor, false, isFemale, nodeName)
-		ElseIf akActor.IsInLocation(PlayerREF.getCurrentLocation())													;else netimmerse
-			if akActor == Game.GetPlayer()																			;update 1st person view/skeleton (player only)
-				NetImmerse.SetNodeScale(akActor, nodeName, value, true)
-			Endif
-			NetImmerse.SetNodeScale(akActor, nodeName, value, false)												;update 3rd person view/skeleton (player & NPCs)
-		Endif
-	Endif
-EndFunction
-
-float Function GetNodeScale(Actor akActor, string nodeName)															; not used, i think, but just in case
-	string modName = "MilkModEconomy"
-	bool isFemale = false
-	if akActor.GetLeveledActorBase().GetSex() == 1
-		isFemale = true
-	else
-		isFemale = false
-	endif
-	return NiOverride.GetNodeTransformScale(akActor, false, isFemale, nodeName, modName)
-EndFunction
 
 ;----------------------------------------------------------------------------
 ;Actor status checks
