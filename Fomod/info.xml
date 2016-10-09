@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>05-09-2016</Version>
+  <Version>09-10-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
@@ -16,6 +16,16 @@
 *beggar drunken favor dialogues
 
 Dev change log:
+
+	v 09-10-2016
+fix tesedit errors
+moved bodyscaling to separate script, so it can be easily changed by frameworks
+added milking triggers to prevent actor milking interruption by other mods(this is probably experimental, on idea of side effects)
+updated support for SOS Addon - Pubic Hair for Females 1.3b
+added support for EggFactory 1.19 pregnancy
+
+	v 14-09-2016
+fix armor reequip after mobile milking
 
 	v 05-09-2016
 fixed bound milkpump not milking
