@@ -425,7 +425,7 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 					Target.RemoveSpell( BeingMilkedPassive )
 				EndIf
 			ElseIf (Input.IsKeyPressed(42) || Input.IsKeyPressed(54)) || (HoldTime > 2.0)
-				If Target.HasSpell( BeingMilkedPassive ) && StorageUtil.GetIntValue(Target,"IsBoundStrict") == 0 && !SexLab.IsActorActive(Target)
+				If Target.HasSpell( BeingMilkedPassive )
 					If Target == PlayerRef
 						Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 					EndIf
@@ -1207,7 +1207,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		EndIf
 		
 		If (DDArmbinder == false && DDYoke == false)
-			If IsMilkingBlocked == false && !akActor.IsInCombat() && !SexLab.IsActorActive(akActor) && StorageUtil.GetIntValue(akActor,"IsBoundStrict") == 0
+			If IsMilkingBlocked == false && !akActor.IsInCombat()
 				If PlayerREF == akActor
 					Game.ForceThirdPerson()
 					Game.DisablePlayerControls(1, 1, 0, 0, 1, 1, 0) ;(True,True,False,False,True,True,True,True,0)
@@ -1681,7 +1681,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 
 ;-----------------------Milking done
 
-	If PlayerREF == akActor && !SexLab.IsActorActive(akActor)
+	If PlayerREF == akActor && mode != 4
 		Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 		Game.SetPlayerAIDriven(false)
 	Endif
@@ -1741,9 +1741,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		endif
 		
 		If Mode != 4
-			If StorageUtil.GetIntValue(akActor,"IsBoundStrict") == 0 && !SexLab.IsActorActive(akActor)
-				Debug.SendAnimationEvent(akActor,"IdleForceDefaultState")
-			EndIf
+			Debug.SendAnimationEvent(akActor,"IdleForceDefaultState")
 		endif
 		
 		if bottles > 0
