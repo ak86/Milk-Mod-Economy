@@ -2623,13 +2623,25 @@ Function MaidRemove(Actor akActor)
 	If akActor != None
 		MME_BodyMod BodyMod = Quest.GetQuest("MME_MilkQUEST") as MME_BodyMod
 		debug.Trace("MilkModEconomy existing maid/slave " + akActor.GetLeveledActorBase().GetName() + "resetting")
-		;Reset Breast/Weight
+		
+		;Reset Body mods
+		
+		;SexLab Inflation Framework  
+		int SLIF_unregisterActor = ModEvent.Create("SLIF_unregisterActor")
+		if (SLIF_unregisterActor)
+			ModEvent.PushForm(SLIF_unregisterActor, akActor)
+			ModEvent.PushString(SLIF_unregisterActor, "Milk Mod Economy")
+			ModEvent.Send(SLIF_unregisterActor)
+		endif
+		
 		;HDT Female / Vampire Lord
 			BodyMod.SetNodeScale(akActor, "NPC L Breast", 1)
 			BodyMod.SetNodeScale(akActor, "NPC R Breast", 1)
+		
 		;Curve fix
 			BodyMod.SetNodeScale(akActor, "NPC L Breast01", 1)
 			BodyMod.SetNodeScale(akActor, "NPC R Breast01", 1)
+		
 		;HDT Werewolf
 			BodyMod.SetNodeScale(akActor, "NPC L Breast P1", 1)
 			BodyMod.SetNodeScale(akActor, "NPC R Breast P1", 1)
@@ -2637,6 +2649,12 @@ Function MaidRemove(Actor akActor)
 			BodyMod.SetNodeScale(akActor, "NPC R Breast P2", 1)
 			BodyMod.SetNodeScale(akActor, "NPC L Breast P3", 1)
 			BodyMod.SetNodeScale(akActor, "NPC R Breast P3", 1)
+			
+			BodyMod.SetNodeScale(akActor, "NPC Belly", 1)
+		
+		;Male/Futa
+			BodyMod.SetNodeScale(akActor, "NPC L GenitalsScrotum [LGenScrot]", 1)
+			BodyMod.SetNodeScale(akActor, "NPC L GenitalsScrotum [RGenScrot]", 1)
 	
 		; <modified to match updated code in MilkMCM.psc:850-853>
 		;float MaidWeightBase = MME_Storage.getWeightBasevalue(MilkQ.MILKmaid[i])

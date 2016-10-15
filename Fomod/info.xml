@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>09-10-2016</Version>
+  <Version>11-10-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
@@ -17,6 +17,9 @@
 
 Dev change log:
 
+	v 11-10-2016
+fix for mobile milking not return control
+	
 	v 09-10-2016
 fix tesedit errors
 moved bodyscaling to separate script, so it can be easily changed by frameworks
