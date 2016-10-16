@@ -4,5 +4,6 @@ Scriptname MME_Status_Player_Alias extends ReferenceAlias
 
 Event OnPlayerLoadGame()
 	Quest.GetQuest("mme_StatusCheck").stop()
+	;Quest.GetQuest("mme_StatusCheck").reset()	;reset interrupts script, so we don't use it here
 	Quest.GetQuest("mme_StatusCheck").start()
 EndEvent

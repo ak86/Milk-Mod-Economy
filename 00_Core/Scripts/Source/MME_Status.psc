@@ -30,27 +30,40 @@ Function MilkPluginsInfo()
 	Int[] value = new int[10]
 	;bool ErrorsFound = False
 
-	;individual check to see if scripts working at all, ;stop quest , ;start quest/runs OnInit check
+	;individual check to see if scripts working at all
+	;stop quest
+	;reset quest (so that scripts run OnInit() during quest start)
+	;start quest (OnInit() sends StorageUtil values if script has launched)
 	Quest.GetQuest("MME_SLA").stop()
+	Quest.GetQuest("MME_SLA").reset()
 	Quest.GetQuest("MME_SLA").start()
 	Quest.GetQuest("MME_DDi").stop()
+	Quest.GetQuest("MME_DDi").reset()
 	Quest.GetQuest("MME_DDi").start()
 	Quest.GetQuest("MME_zbf").stop()
+	Quest.GetQuest("MME_zbf").reset()
 	Quest.GetQuest("MME_zbf").start()
 	Quest.GetQuest("MME_SLHP").stop()
+	Quest.GetQuest("MME_SLHP").reset()
 	Quest.GetQuest("MME_SLHP").start()
 	Quest.GetQuest("MME_SLP").stop()
+	Quest.GetQuest("MME_SLP").reset()
 	Quest.GetQuest("MME_SLP").start()
 	Quest.GetQuest("MME_PSQ").stop()
+	Quest.GetQuest("MME_PSQ").reset()
 	Quest.GetQuest("MME_PSQ").start()
 	Quest.GetQuest("MME_SGO").stop()
+	Quest.GetQuest("MME_SGO").reset()
 	Quest.GetQuest("MME_SGO").start()
 	; these scripts connect to MilkQ and will return error if MilkQ script is broken
 	Quest.GetQuest("MME_ineed").stop()
+	Quest.GetQuest("MME_ineed").reset()
 	Quest.GetQuest("MME_ineed").start()
 	Quest.GetQuest("MME_SOS").stop()
+	Quest.GetQuest("MME_SOS").reset()
 	Quest.GetQuest("MME_SOS").start()
 	Quest.GetQuest("MME_UIE").stop()
+	Quest.GetQuest("MME_UIE").reset()
 	Quest.GetQuest("MME_UIE").start()
 	utility.wait(1) ; wait for quests startup and do their OnInit()
 
