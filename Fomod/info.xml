@@ -1,21 +1,16 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>11-10-2016</Version>
+  <Version>17-10-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
   
- TODO or not todo list
-*move arrays to (storageutil?)(actorrefs?)(formlists?):
--Milkmaids
--Milkslaves
-*move strings to separate script
-*UIExtension support
-*add skooma/mead milk, watch what you drink
-*add fertility potion (male/futa cum production, not really useful right now, maybe someday...)
-*beggar drunken favor dialogues
-
 Dev change log:
+
+	v 17-10-2016
+fix for status script reset
+descriptions for status script
+added support for future SLIF version
 
 	v 11-10-2016
 fix for mobile milking not return control
