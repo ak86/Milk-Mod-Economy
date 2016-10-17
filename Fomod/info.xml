@@ -1,11 +1,14 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>17-10-2016</Version>
+  <Version>18-10-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
   
 Dev change log:
+
+	v 18-10-2016
+and another support update for future SLIF version
 
 	v 17-10-2016
 fix for status script reset

@@ -2625,14 +2625,7 @@ Function MaidRemove(Actor akActor)
 		debug.Trace("MilkModEconomy existing maid/slave " + akActor.GetLeveledActorBase().GetName() + "resetting")
 		
 		;Reset Body mods
-		
-		;SexLab Inflation Framework  
-		int SLIF_unregisterActor = ModEvent.Create("SLIF_unregisterActor")
-		if (SLIF_unregisterActor)
-			ModEvent.PushForm(SLIF_unregisterActor, akActor)
-			ModEvent.PushString(SLIF_unregisterActor, "Milk Mod Economy")
-			ModEvent.Send(SLIF_unregisterActor)
-		endif
+		;Reset NIO
 		
 		;HDT Female / Vampire Lord
 			BodyMod.SetNodeScale(akActor, "NPC L Breast", 1)
@@ -2656,6 +2649,14 @@ Function MaidRemove(Actor akActor)
 			BodyMod.SetNodeScale(akActor, "NPC L GenitalsScrotum [LGenScrot]", 1)
 			BodyMod.SetNodeScale(akActor, "NPC L GenitalsScrotum [RGenScrot]", 1)
 	
+		; reset SexLab Inflation Framework  
+		int SLIF_unregisterActor = ModEvent.Create("SLIF_unregisterActor")
+		if (SLIF_unregisterActor)
+			ModEvent.PushForm(SLIF_unregisterActor, akActor)
+			ModEvent.PushString(SLIF_unregisterActor, "Milk Mod Economy")
+			ModEvent.Send(SLIF_unregisterActor)
+		endif
+
 		; <modified to match updated code in MilkMCM.psc:850-853>
 		;float MaidWeightBase = MME_Storage.getWeightBasevalue(MilkQ.MILKmaid[i])
 		;Float NeckDelta = (akActor.GetLeveledActorBase().GetWeight() / 100) - (MaidWeightBase/100)
