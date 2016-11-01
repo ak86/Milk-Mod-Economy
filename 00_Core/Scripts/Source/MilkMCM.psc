@@ -365,6 +365,7 @@ function Page_Settings()
 			endif
 			AddSliderOptionST("MilkGenerationValue_Slider", "$MME_MENU_PAGE_Settings_H1_S7", MilkQ.MilkGenValue, "$MME_MENU_PAGE_Settings_H1_S7.1")
 			AddSliderOptionST("LactacidDecayRate_Slider", "$MME_MENU_PAGE_Settings_H1_S9", MilkQ.LactacidDecayRate, "{2}")
+			AddSliderOptionST("LactacidMod_Slider", "$MME_MENU_PAGE_Settings_H1_S12", StorageUtil.GetFloatValue(none,"MME.LactacidMod", missing = 10), "{2}")
 			;AddToggleOptionST("Settings_WeightUpScale_Toggle", "$MME_MENU_PAGE_Settings_H1_S8", MilkQ.WeightUpScale)
 
 		AddHeaderOption("$MME_MENU_PAGE_Settings_H2")
@@ -2631,6 +2632,24 @@ state LactacidDecayRate_Slider
 
 	event OnHighlightST()
 		SetInfoText("$MME_MENU_PAGE_Settings_H1_S9_Higlight")
+	endEvent
+endState
+
+state LactacidMod_Slider
+	event OnSliderOpenST()
+		SetSliderDialogStartValue(StorageUtil.GetFloatValue(none,"MME.LactacidMod", missing = 10))
+		SetSliderDialogDefaultValue(10)
+		SetSliderDialogRange(1.0, 10.0)
+		SetSliderDialogInterval(0.01)
+	endEvent
+
+	event OnSliderAcceptST(float value)
+		StorageUtil.SetFloatValue(none,"MME.LactacidMod", value)
+		SetSliderOptionValueST(value, "{2}")
+	endEvent
+
+	event OnHighlightST()
+		SetInfoText("$MME_MENU_PAGE_Settings_H1_S12_Higlight")
 	endEvent
 endState
 

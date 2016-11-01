@@ -520,17 +520,19 @@ Function MilkCycle(Actor akActor, int t)
 	Float PainTick
 	Float BoobTick
 	
+	Float LactacidMod = StorageUtil.GetFloatValue(none,"MME.LactacidMod", missing = 10)
 	Float LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
 	Float MaidMilkGen = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkGen")
 	Float BreastBase = MME_Storage.getBreastsBasevalue(akActor)
 	Float BreastBaseMod = MME_Storage.getBreastsBaseadjust(akActor)
-	Int   BreastRows = MME_Storage.getBreastRows(akActor)
 	Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 	Float MilkMax = MME_Storage.getMilkMaximum(akActor)
 	Float PainCnt = MME_Storage.getPainCurrent(akActor)
+	Int   BreastRows = MME_Storage.getBreastRows(akActor)
 	
 	Form maidArmor = akActor.GetWornForm(Armor.GetMaskForSlot(32))
 
+	;add/remove breast row trigger, cause lactation due to drinking breast inc/dec potion
 	if 	StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastBaseModPotion") != 0
 		if 	StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastBaseModPotion") > 0
 			BreastBaseMod += 0.01
@@ -546,13 +548,13 @@ Function MilkCycle(Actor akActor, int t)
 					MaidMilkGen = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkGen")
 				endif
 				if Utility.RandomInt(0, 100) <= MilkQC.BrestEnlargement_MultiBreast_Effect && BreastRows < 4
-					StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.AdjustBreastRow", 1)					;add breast row on sleep
+					StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.AdjustBreastRow", 1)							;add breast row on sleep
 				endif
 			endif
 		elseif 	StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastBaseModPotion") < 0
 			BreastBaseMod -= 0.01
 			if Utility.RandomInt(0, 100) <= 25 && BreastRows > 1
-				StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.AdjustBreastRow", -1) 						;remove breast row on sleep
+				StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.AdjustBreastRow", -1) 								;remove breast row on sleep
 			endif
 		endif
 		StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.BreastBaseModPotion", -0.01)
@@ -560,6 +562,7 @@ Function MilkCycle(Actor akActor, int t)
 		BreastBase += BreastBaseMod
 	endif
 	
+	;increase breast node if its lower than 1, probably never happens
 	if BreastUpScale && BreastBase + BreastBaseMod < 1
 		BoobTick = BreastBase + BreastBaseMod
 	else
@@ -573,45 +576,48 @@ Function MilkCycle(Actor akActor, int t)
 	if t > MilkMax && BreastScaleLimit
 		t = MilkMax as int
 	endif
-
+	
+	;cycle to generate milk, raise/lower generation
 	Int tmod = t
 	while tmod != 0
 		if LactacidCnt > 0 || ((MaidMilkGen > 0 || isPregnant(akActor)) && (MilkCnt + MilkTick <= MilkMax))
 			MaidMilkGen += MilkGenValue * BreastRows
-		else
+		else																										;reduce milk generation
 			MaidMilkGen -= MilkGenValue/2 * BreastRows
 			if MaidMilkGen < 0
 				MaidMilkGen = 0
 			endif
 		endif
 		
-		if (FixedMilkGen || (akActor != PlayerREF && FixedMilkGen4Followers ))										;cheats
+		if (FixedMilkGen || (akActor != PlayerREF && FixedMilkGen4Followers ))										;cheats fixed 0.3 milk prod
 			MilkTickCycle = (BoobTick + MaidMilkGen)/3 
 			MilkTick += MilkTickCycle * (1 + SLA.GetActorArousal(akActor)/100) * MilkProdMod/100
-		elseif MaidMilkGen > 0
-			MilkTickCycle = (BoobTick + MaidMilkGen)/3 
-			if !(LactacidCnt > 0)
-				MilkTickCycle /= 10
+		elseif MaidMilkGen > 0																						;dynamic milk prod
+			MilkTickCycle = (BoobTick + MaidMilkGen)/3																;basic formula
+			if !(LactacidCnt > 0)																					;reduce generated milk if we dont have lactacid
+				MilkTickCycle /= LactacidMod
 			endif
 			
 			MilkTick += MilkTickCycle * (1 + SLA.GetActorArousal(akActor)/100) * MilkProdMod/100
 		endif
 		
+		;actor weight scaling, disabled cuz it can cause neck seam
 		;if  WeightUpScale && akActor.GetLeveledActorBase().GetWeight() + 1 < 100 && LactacidCnt > 0
 		;	Float NeckDelta = (akActor.GetLeveledActorBase().GetWeight() / 100) - ((akActor.GetLeveledActorBase().GetWeight() + 1) / 100)
 		;	akActor.GetLeveledActorBase().SetWeight(akActor.GetLeveledActorBase().GetWeight() + 1)
 		;	akActor.UpdateWeight(NeckDelta)
 		;endif
 		
-		if LactacidDecayRate > 0
+		if LactacidDecayRate > 0																					;reduce lactacid
 			LactacidCnt -= LactacidDecayRate
 		elseif LactacidDecayRate == 0
-			LactacidCnt -= MaidMilkGen
+			LactacidCnt -= MaidMilkGen * LactacidMod / 10
 		endif
 		
 		tmod -= 1
 	endwhile
 
+	;update actor values
 	If MilkAsMaidTimesMilked
 		StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.TimesMilked", MilkTick)
 		MaidLevelCheck(akActor)
@@ -634,6 +640,7 @@ Function MilkCycle(Actor akActor, int t)
 	RemoveMilkFx2(akActor)
 	SLA.UpdateActorExposure(akActor, t)
 
+	;play leaking effects, if breast are bigger then max
 	if MilkCnt > MilkMax && PiercingCheck(akActor) != 2
 		If BreastScaleLimit
 			MilkCnt = MilkMax
@@ -656,6 +663,7 @@ Function MilkCycle(Actor akActor, int t)
 		MilkCycleMSG(akActor)
 	endif
 	
+	;add/remove breast row trigger, cause lactation due to drinking breast inc/dec potion
 	if StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.AdjustBreastRow") != 0 
 		if  MilkQC.Buffs
 			akActor.AddSpell( MilkExhaustion, false )
@@ -672,6 +680,7 @@ Function MilkCycle(Actor akActor, int t)
 		endif
 	endif
 		
+	;events based on equipped armor(milking,estus etc)
 	if maidArmor != None && MME_Storage.getBreastRows(akActor) == 1
 		if (MilkingEquipment.Find(maidArmor.getname()) != -1 || maidArmor == MilkCuirass || maidArmor == MilkCuirassFuta || StringUtil.Find(maidArmor.getname(), "Milk" ) >= 0 || StringUtil.Find(maidArmor.getname(), "Cow" ) >=0)\
 		&& StorageUtil.GetIntValue(akActor,"MME.MilkMaid.MilkingMode") == 2
@@ -2777,6 +2786,7 @@ Function VarSetup()
 	StorageUtil.SetIntValue(none,"MME.Progression.Level", 0)
 	StorageUtil.SetIntValue(none,"MME.Progression.TimesMilked", 0)
 	StorageUtil.SetIntValue(none,"MME.Progression.TimesMilkedAll", 0)
+	StorageUtil.SetFloatValue(none,"MME.LactacidMod", 10)
 	
 	;UnsetIntValue(none,"MME.Settings.BreastScale")
 	
