@@ -593,9 +593,11 @@ Function MilkCycle(Actor akActor, int t)
 			MilkTickCycle = (BoobTick + MaidMilkGen)/3 
 			MilkTick += MilkTickCycle * (1 + SLA.GetActorArousal(akActor)/100) * MilkProdMod/100
 		elseif MaidMilkGen > 0																						;dynamic milk prod
-			MilkTickCycle = (BoobTick + MaidMilkGen)/3																;basic formula
+			MilkTickCycle = (BoobTick + MaidMilkGen)/3																;basic formula, including lactacid
 			if !(LactacidCnt > 0)																					;reduce generated milk if we dont have lactacid
 				MilkTickCycle /= LactacidMod
+			else																									;change generated milk based on LactacidMod
+				MilkTickCycle *= LactacidMod / 10
 			endif
 			
 			MilkTick += MilkTickCycle * (1 + SLA.GetActorArousal(akActor)/100) * MilkProdMod/100

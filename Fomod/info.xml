@@ -1,11 +1,15 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>01-11-2016</Version>
+  <Version>03-11-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
   
 Dev change log:
+
+	v 03-11-2016
+fixed missing mcm debug maids modifier for lactacid bonus rate
+reduced minimal slider value for Milk generation slider 0.03 => 0.003
 
 	v 01-11-2016
 added lactacid bonus rate slider, modifies amount of milk production caused by lactacid
