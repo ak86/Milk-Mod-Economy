@@ -364,6 +364,7 @@ function Page_Settings()
 				AddTextOptionST("Buff_Toggle", "$MME_MENU_PAGE_Settings_H1_S6", "$MME_MENU_Disabled")
 			endif
 			AddSliderOptionST("MilkGenerationValue_Slider", "$MME_MENU_PAGE_Settings_H1_S7", MilkQ.MilkGenValue, "$MME_MENU_PAGE_Settings_H1_S7.1")
+			AddToggleOptionST("MaidLevelProgressionAffectsMilkGen_Toggle", "$MME_MENU_PAGE_Settings_H1_S13", StorageUtil.GetIntValue(none,"MME.MaidLevelProgressionAffectsMilkGen", 0))
 			AddSliderOptionST("LactacidDecayRate_Slider", "$MME_MENU_PAGE_Settings_H1_S9", MilkQ.LactacidDecayRate, "{2}")
 			AddSliderOptionST("LactacidMod_Slider", "$MME_MENU_PAGE_Settings_H1_S12", StorageUtil.GetFloatValue(none,"MME.LactacidMod", missing = 10), "{2}")
 			;AddToggleOptionST("Settings_WeightUpScale_Toggle", "$MME_MENU_PAGE_Settings_H1_S8", MilkQ.WeightUpScale)
@@ -549,13 +550,12 @@ function Page_MilkMaidDebug()
 			if MaidlistA[MaidIndex] != none
 				float MaidBoobIncr = StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobIncr")			;fetch individual maid data
 				float MaidBoobPerLvl = StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl")		;fetch individual maid data
-					if MaidBoobIncr < 0 				;set to general maid data
+					if MaidBoobIncr < 0 																				;set to general maid data
 						MaidBoobIncr = MilkQ.BoobIncr
 					endif
-					if MaidBoobPerLvl < 0				;set to general maid data
+					if MaidBoobPerLvl < 0																				;set to general maid data
 						MaidBoobPerLvl = MilkQ.BoobPerLvl
 					endif
-				float MaidMilkGen = StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkGen")
 				float MaidTimesMilked = StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.TimesMilked")
 				int   BreastRows = MME_Storage.getBreastRows(MaidlistA[MaidIndex])
 				float MilkMax = MME_Storage.getMilkMaximum(MaidlistA[MaidIndex])
@@ -563,6 +563,11 @@ function Page_MilkMaidDebug()
 				float MaidBreastsBaseadjust = MME_Storage.getBreastsBaseadjust(MaidlistA[MaidIndex])
 				float LactacidMod = StorageUtil.GetFloatValue(none,"MME.LactacidMod", missing = 10)
 				int   MaidLevel = MME_Storage.getMaidLevel(MaidlistA[MaidIndex])
+				float MaidMilkGen = StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkGen") * BreastRows
+				Int MaidLevelProgressionAffectsMilkGen = StorageUtil.GetIntValue(none,"MME.MaidLevelProgressionAffectsMilkGen", missing = 0)
+					if MaidLevelProgressionAffectsMilkGen != 0
+						MaidMilkGen *= MaidLevelProgressionAffectsMilkGen * MaidLevel
+					endif
 				float MilkTick = (MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]) + MaidBoobPerLvl*MaidLevel + MaidMilkGen)/3 * (1 + MilkQ.SLA.GetActorArousal(MaidlistA[MaidIndex])/100)
 
 				; arousal provides an additional bonus
@@ -2669,6 +2674,21 @@ state MilkGenerationValue_Slider
 
 	event OnHighlightST()
 		SetInfoText("$MME_MENU_PAGE_Settings_H1_S7_Higlight")
+	endEvent
+endState
+
+state MaidLevelProgressionAffectsMilkGen_Toggle
+	event OnSelectST()
+		if StorageUtil.GetIntValue(none,"MME.MaidLevelProgressionAffectsMilkGen") != 1
+			StorageUtil.SetIntValue(none,"MME.MaidLevelProgressionAffectsMilkGen", 1)
+		else
+			StorageUtil.SetIntValue(none,"MME.MaidLevelProgressionAffectsMilkGen", 0)
+		endif
+		SetToggleOptionValueST(StorageUtil.GetIntValue(none,"MME.MaidLevelProgressionAffectsMilkGen", 0))
+	endEvent
+
+	event OnHighlightST()
+		SetInfoText("$MME_MENU_PAGE_Settings_H1_S13_Higlight")
 	endEvent
 endState
 

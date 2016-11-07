@@ -529,6 +529,8 @@ Function MilkCycle(Actor akActor, int t)
 	Float MilkMax = MME_Storage.getMilkMaximum(akActor)
 	Float PainCnt = MME_Storage.getPainCurrent(akActor)
 	Int   BreastRows = MME_Storage.getBreastRows(akActor)
+	Int MaidLevelProgressionAffectsMilkGen = StorageUtil.GetIntValue(none,"MME.MaidLevelProgressionAffectsMilkGen", missing = 0)
+	Int MaidLevel
 	
 	Form maidArmor = akActor.GetWornForm(Armor.GetMaskForSlot(32))
 
@@ -580,10 +582,15 @@ Function MilkCycle(Actor akActor, int t)
 	;cycle to generate milk, raise/lower generation
 	Int tmod = t
 	while tmod != 0
+		MaidLevel = MME_Storage.getMaidLevel(akActor)
 		if LactacidCnt > 0 || ((MaidMilkGen > 0 || isPregnant(akActor)) && (MilkCnt + MilkTick <= MilkMax))
-			MaidMilkGen += MilkGenValue * BreastRows
+			if MaidLevelProgressionAffectsMilkGen == 0
+				MaidMilkGen += MilkGenValue * BreastRows
+			else
+				MaidMilkGen += MilkGenValue * BreastRows * (MaidLevelProgressionAffectsMilkGen * MaidLevel)
+			endif
 		else																										;reduce milk generation
-			MaidMilkGen -= MilkGenValue/2 * BreastRows
+			MaidMilkGen -= (MilkGenValue * BreastRows)/ (1 + MaidLevel)
 			if MaidMilkGen < 0
 				MaidMilkGen = 0
 			endif
@@ -665,6 +672,11 @@ Function MilkCycle(Actor akActor, int t)
 		MilkCycleMSG(akActor)
 	endif
 	
+	;reset actor maid progression
+	if MaidMilkGen == 0 && MaidLevel == 0 && MilkCnt < 1
+		StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.TimesMilked", 0)
+	endif
+
 	;add/remove breast row trigger, cause lactation due to drinking breast inc/dec potion
 	if StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.AdjustBreastRow") != 0 
 		if  MilkQC.Buffs
@@ -1878,6 +1890,7 @@ EndFunction
 Function LevelCheck()
 	Float Level = StorageUtil.GetFloatValue(none, "MME.Progression.Level")
 	Float TimesMilked = StorageUtil.GetFloatValue(none, "MME.Progression.TimesMilked")
+	
 	If Level < MilkLvlCap
 		If TimesMilked >= (Level + 1) * TimesMilkedMult
 			StorageUtil.AdjustFloatValue(none,"MME.Progression.Level", 1)
@@ -1893,10 +1906,11 @@ EndFunction
 Function MaidLevelCheck(Actor akActor)
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.TimesMilked")
 	Int   MaidLevel = MME_Storage.getMaidLevel(akActor)
-	if MaidLevel < MilkLvlCap || !MaidLvlCap
+	
+	if (MaidLevel < MilkLvlCap || !MaidLvlCap) && MME_Storage.getLactacidCurrent(akActor) > 0
 		if MaidTimesMilked >= (MaidLevel + 1) * TimesMilkedMult
 			MME_Storage.setMaidLevel(akActor, MaidLevel + 1)
-			StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.TimesMilked", 0)
+			StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.TimesMilked", MaidTimesMilked - MaidLevel * TimesMilkedMult)
 			if MilkMsgs && MaidLevel + 1 <= MilkLvlCap
 				debug.Notification(akActor.GetLeveledActorBase().getname() + " has gained a Milk maid level!")
 				MilkMsgHyper((MaidLevel + 1), akActor)
@@ -2789,6 +2803,7 @@ Function VarSetup()
 	StorageUtil.SetIntValue(none,"MME.Progression.TimesMilked", 0)
 	StorageUtil.SetIntValue(none,"MME.Progression.TimesMilkedAll", 0)
 	StorageUtil.SetFloatValue(none,"MME.LactacidMod", 10)
+	StorageUtil.SetIntValue(none,"MME.MaidLevelProgressionAffectsMilkGen", 0)
 	
 	;UnsetIntValue(none,"MME.Settings.BreastScale")
 	
