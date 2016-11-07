@@ -12,6 +12,7 @@ added mcm toggle for maid milkgen based on maid level(so now its base milkgen*ma
 changed fixed x0.5 milk generation reduction to level based, so at lvl 0 its quite easy to stop producing milk, but at lvl 10+... well good-luck trying, especially if you play with my skoomawhore patch
 added a way out of being milkmaid, if actor is lv 0 maid, have less than 1 milk and produces no milk, its leveling stats will be reset
 added progression block, actor must have more than 0 lactacid in order to increase maidlevel, so at lvl 0 actor can probably be considered still a human, but its easy to step over on a path of becoming cowgirl
+removed racial milk production from lv0 maids
 
 	v 03-11-2016
 fixed missing mcm debug maids modifier for lactacid bonus rate

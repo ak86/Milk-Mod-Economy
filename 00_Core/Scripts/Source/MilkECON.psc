@@ -233,6 +233,10 @@ Function InitiateTrade(int MilkCount, int boobgasmcount, Actor akActor, bool mob
 	int BbaseTrade = 0
 	int BmilkTax = 0
 	
+	if boobgasmcount > 0 && MME_Storage.getMaidLevel(akActor) == 0
+		boobgasmcount = 0
+	endif
+	
 	if (milkCount - boobgasmcount) > 0
 		NfinalPotion = GetMilkType(milkCount, 0, akActor) as Potion
 		NfinalQty = GetMilkQty(milkCount-boobgasmcount)
