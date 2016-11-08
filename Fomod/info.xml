@@ -1,11 +1,14 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>07-11-2016</Version>
+  <Version>08-11-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
   
 Dev change log:
+
+	v 08-11-2016
+fix for milkgen formula
 
 	v 07-11-2016
 added mcm toggle for maid milkgen based on maid level(so now its base milkgen*maidlvl), its off by default since its probably huge boost at latter levels.
