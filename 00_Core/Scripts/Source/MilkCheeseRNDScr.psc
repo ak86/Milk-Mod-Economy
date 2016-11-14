@@ -45,7 +45,7 @@ Message Property RND_HungerLevel05ConsumeMessageB = None Auto Hidden
 Event OnEffectStart( Actor akTarget, Actor akCaster )
 	Actor PlayerRef = Game.GetPlayer()
 
-	if MilkQ.Plugin_RealisticNeedsandDiseases
+	if MilkQ.Plugin_RealisticNeedsandDiseases && PlayerREF == akTarget
 		;fill RND variables
 		RND_HungerPoints = Game.GetFormFromFile(0x2884, "RealisticNeedsandDiseases.esp") as GlobalVariable
 		RND_HungerPointsPerHour = Game.GetFormFromFile(0x2de7, "RealisticNeedsandDiseases.esp") as GlobalVariable
