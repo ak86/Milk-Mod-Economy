@@ -1908,7 +1908,7 @@ Function MaidLevelCheck(Actor akActor)
 	if (MaidLevel < MilkLvlCap || !MaidLvlCap) && MME_Storage.getLactacidCurrent(akActor) > 0
 		if MaidTimesMilked >= (MaidLevel + 1) * TimesMilkedMult
 			MME_Storage.setMaidLevel(akActor, MaidLevel + 1)
-			StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.TimesMilked", MaidTimesMilked - MaidLevel * TimesMilkedMult)
+			StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.TimesMilked", - (MaidLevel + 1) * TimesMilkedMult)
 			if MilkMsgs && MaidLevel + 1 <= MilkLvlCap
 				debug.Notification(akActor.GetLeveledActorBase().getname() + " has gained a Milk maid level!")
 				MilkMsgHyper((MaidLevel + 1), akActor)
