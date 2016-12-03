@@ -516,6 +516,7 @@ function Page_Debug()
 			AddToggleOptionST("Debug_FreeLactacid_Toggle", "$MME_MENU_PAGE_Debug_H2_S8", MilkQ.FreeLactacid)
 
 		AddHeaderOption("$MME_MENU_PAGE_Debug_Maintenance_Header")
+			AddTextOptionST("Debug_ResetMaidsNiO_Toggle", "$MME_MENU_PAGE_Debug_H3_S5", "")
 			AddTextOptionST("Debug_ResetMaids_Toggle", "$MME_MENU_PAGE_Debug_H3_S1", "")
 			AddTextOptionST("Debug_ResetSlaves_Toggle", "$MME_MENU_PAGE_Debug_H3_S4", "")
 			AddTextOptionST("Debug_ResetVar_Toggle", "$MME_MENU_PAGE_Debug_H3_S2", "")
@@ -1850,6 +1851,13 @@ state Debug_ResetMaids_Toggle
 	event OnSelectST()
 		SetOptionFlagsST(OPTION_FLAG_DISABLED, true, "Debug_ResetMaids_Toggle")
 		MilkQ.MaidReset()
+	endEvent
+endState
+
+state Debug_ResetMaidsNiO_Toggle
+	event OnSelectST()
+		SetOptionFlagsST(OPTION_FLAG_DISABLED, true, "Debug_ResetMaidsNiO_Toggle")
+		MilkQ.MCMMaidNiOReset()
 	endEvent
 endState
 

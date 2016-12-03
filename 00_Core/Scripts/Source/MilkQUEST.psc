@@ -896,23 +896,31 @@ Function CurrentSize(Actor akActor)
 	
 	if akActor.GetLeveledActorBase().GetSex() == 1
 		MME_BodyMod BodyMod = Quest.GetQuest("MME_MilkQUEST") as MME_BodyMod
+		
+		bool isFemale = false
+		if akActor.GetLeveledActorBase().GetSex() == 1
+			isFemale = true
+		Else
+			isFemale = false
+		endif
+		
 		if CurrentSize > 0
 			;HDT Female / Vampire Lord
-				BodyMod.SetNodeScale(akActor, "NPC L Breast", CurrentSize)
-				BodyMod.SetNodeScale(akActor, "NPC R Breast", CurrentSize)
+				BodyMod.SetNodeScale(akActor, "NPC L Breast", CurrentSize, isFemale)
+				BodyMod.SetNodeScale(akActor, "NPC R Breast", CurrentSize, isFemale)
 				
 			;Curve fix
 			;HDT Female / Vampire Lord
-				BodyMod.SetNodeScale(akActor, "NPC L Breast01", CurveFix)
-				BodyMod.SetNodeScale(akActor, "NPC R Breast01", CurveFix)
+				BodyMod.SetNodeScale(akActor, "NPC L Breast01", CurveFix, isFemale)
+				BodyMod.SetNodeScale(akActor, "NPC R Breast01", CurveFix, isFemale)
 
 			;HDT Werewolf
-				BodyMod.SetNodeScale(akActor, "NPC L Breast P1", CurrentSize)
-				BodyMod.SetNodeScale(akActor, "NPC R Breast P1", CurrentSize)
-				BodyMod.SetNodeScale(akActor, "NPC L Breast P2", CurrentSize)
-				BodyMod.SetNodeScale(akActor, "NPC R Breast P2", CurrentSize)
-				BodyMod.SetNodeScale(akActor, "NPC L Breast P3", CurrentSize)
-				BodyMod.SetNodeScale(akActor, "NPC R Breast P3", CurrentSize)
+				BodyMod.SetNodeScale(akActor, "NPC L Breast P1", CurrentSize, isFemale)
+				BodyMod.SetNodeScale(akActor, "NPC R Breast P1", CurrentSize, isFemale)
+				BodyMod.SetNodeScale(akActor, "NPC L Breast P2", CurrentSize, isFemale)
+				BodyMod.SetNodeScale(akActor, "NPC R Breast P2", CurrentSize, isFemale)
+				BodyMod.SetNodeScale(akActor, "NPC L Breast P3", CurrentSize, isFemale)
+				BodyMod.SetNodeScale(akActor, "NPC R Breast P3", CurrentSize, isFemale)
 			
 			;Schlong		this is for male/futa but i have no idea about scaling mechanic
 			;NetImmerse.SetNodeScale(akActor, "NPC L GenitalsScrotum [LGenScrot]", CurrentSize, false)
@@ -922,14 +930,12 @@ Function CurrentSize(Actor akActor)
 			;NetImmerse.SetNodeScale(akActor, "NPC R GenitalsScrotum [RGenScrot]", CurrentSize, true)
 		endif
 		
-		if akActor.GetLeveledActorBase().GetSex() == 1
-			if BellyScale
-				LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
-			else
-				LactacidCnt = 0
-			endif
-			BodyMod.SetNodeScale(akActor, "NPC Belly", 1 + LactacidCnt / 2)
+		if BellyScale
+			LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
+		else
+			LactacidCnt = 0
 		endif
+		BodyMod.SetNodeScale(akActor, "NPC Belly", 1 + LactacidCnt / 2, isFemale)
 	endif
 EndFunction
 
@@ -2648,29 +2654,7 @@ Function MaidRemove(Actor akActor)
 		debug.Trace("MilkModEconomy existing maid/slave " + akActor.GetLeveledActorBase().GetName() + "resetting")
 		
 		;Reset Body mods
-		;Reset NIO
-		
-		;HDT Female / Vampire Lord
-			BodyMod.SetNodeScale(akActor, "NPC L Breast", 1)
-			BodyMod.SetNodeScale(akActor, "NPC R Breast", 1)
-		
-		;Curve fix
-			BodyMod.SetNodeScale(akActor, "NPC L Breast01", 1)
-			BodyMod.SetNodeScale(akActor, "NPC R Breast01", 1)
-		
-		;HDT Werewolf
-			BodyMod.SetNodeScale(akActor, "NPC L Breast P1", 1)
-			BodyMod.SetNodeScale(akActor, "NPC R Breast P1", 1)
-			BodyMod.SetNodeScale(akActor, "NPC L Breast P2", 1)
-			BodyMod.SetNodeScale(akActor, "NPC R Breast P2", 1)
-			BodyMod.SetNodeScale(akActor, "NPC L Breast P3", 1)
-			BodyMod.SetNodeScale(akActor, "NPC R Breast P3", 1)
-			
-			BodyMod.SetNodeScale(akActor, "NPC Belly", 1)
-		
-		;Male/Futa
-			BodyMod.SetNodeScale(akActor, "NPC L GenitalsScrotum [LGenScrot]", 1)
-			BodyMod.SetNodeScale(akActor, "NPC L GenitalsScrotum [RGenScrot]", 1)
+		MaidResetNodes(akActor)
 	
 		; reset SexLab Inflation Framework  
 		int SLIF_unregisterActor = ModEvent.Create("SLIF_unregisterActor")
@@ -2734,6 +2718,46 @@ Function MaidRemove(Actor akActor)
 	EndIf
 EndFunction
 
+Function MaidResetNodes(Actor akActor)
+	If akActor != None
+		MME_BodyMod BodyMod = Quest.GetQuest("MME_MilkQUEST") as MME_BodyMod
+		debug.Trace("MilkModEconomy existing maid/slave " + akActor.GetLeveledActorBase().GetName() + "resetting NiO scales")
+		
+	;Reset Body mods
+	;Reset NIO
+	
+		bool isFemale = false
+		if akActor.GetLeveledActorBase().GetSex() == 1
+			isFemale = true
+		Else
+			isFemale = false
+		endif
+
+	;HDT Female / Vampire Lord
+		BodyMod.RemoveNiONodeScale(akActor, "NPC L Breast", isFemale)
+		BodyMod.RemoveNiONodeScale(akActor, "NPC R Breast", isFemale)
+	
+	;Curve fix
+		BodyMod.RemoveNiONodeScale(akActor, "NPC L Breast01", isFemale)
+		BodyMod.RemoveNiONodeScale(akActor, "NPC R Breast01", isFemale)
+	
+	;HDT Werewolf
+		BodyMod.RemoveNiONodeScale(akActor, "NPC L Breast P1", isFemale)
+		BodyMod.RemoveNiONodeScale(akActor, "NPC R Breast P1", isFemale)
+		BodyMod.RemoveNiONodeScale(akActor, "NPC L Breast P2", isFemale)
+		BodyMod.RemoveNiONodeScale(akActor, "NPC R Breast P2", isFemale)
+		BodyMod.RemoveNiONodeScale(akActor, "NPC L Breast P3", isFemale)
+		BodyMod.RemoveNiONodeScale(akActor, "NPC R Breast P3", isFemale)
+		
+		BodyMod.RemoveNiONodeScale(akActor, "NPC Belly", isFemale)
+	
+	;Male/Futa
+		BodyMod.RemoveNiONodeScale(akActor, "NPC L GenitalsScrotum [LGenScrot]", isFemale)
+		BodyMod.RemoveNiONodeScale(akActor, "NPC L GenitalsScrotum [RGenScrot]", isFemale)
+
+	EndIf
+EndFunction
+
 Function MCMMaidReset(int t, int i)
 	if t == 0
 		MaidRemove(MilkMaid[i])
@@ -2742,6 +2766,21 @@ Function MCMMaidReset(int t, int i)
 		MaidRemove(MilkSlave[i])
 		MilkSlave[i] = None
 	endif
+EndFunction
+
+Function MCMMaidNiOReset()
+	debug.Trace("MilkModEconomy maid/slave Nio nodes reset cycle")
+	int i = 0
+	while ( i < MilkMaid.Length )
+		MaidResetNodes(MilkMaid[i])
+		i += 1
+	endWhile
+	
+	i = 0
+	while ( i < MilkSlave.Length )
+		MaidResetNodes(MilkSlave[i])
+		i += 1
+	endWhile
 EndFunction
 
 Function SingleMaidReset(Actor akActor)
