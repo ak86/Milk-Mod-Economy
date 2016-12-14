@@ -1,14 +1,17 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>03-12-2016</Version>
+  <Version>14-12-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
   
 Dev change log:
 
+	v 14-12-2016
+fix for milking getting stuck with multibreast and high gush value
+
 	v 03-12-2016
-added mcm option to remove mme NiO scaling data(ex: if you use slif or installed slif sometime after playing mme and being milkmaid, so both mods would add modifiers to NiO scaling and depending on skse nio settings cause conflicts)
+added mcm option to remove MME NiO scaling data
 removed nie scaling support
 
 	v 28-11-2016

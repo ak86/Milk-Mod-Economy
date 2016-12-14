@@ -1491,17 +1491,21 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				endif
 			else
 				MilkCnt = MME_Storage.getMilkCurrent(akActor)
-				int gush = (MilkCnt * GushPct/100) as int
+				int gush = (MilkCnt * GushPct/100) as int				;use int because we reduce milk by integer value
+				
+				if SLA.GetActorArousal(akActor) > 98					;if we boobgasm we massively reduce milk if we have many breast rows
+					gush *= BreastRows
+				endif
+				
+				if gush > MilkCnt
+					gush = Math.Floor(MilkCnt)							;find lowest integer Math.Floor(5.9) == 5
+				endif
 				
 				if gush < 1
 					gush = 1
 				endif
-				
-				if SLA.GetActorArousal(akActor) > 98
-					gush *= BreastRows
-				endif
-				
-				if MilkCnt >= gush
+
+				if MilkCnt >= 1
 					bottles += gush
 					MilkCnt -= gush
 					StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.TimesMilked", gush)
