@@ -1187,7 +1187,8 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			ElseIf StringUtil.Find(cuirass.getname(), "Milk" ) >= 0 \
 			|| StringUtil.Find(cuirass.getname(), "Cow" ) >= 0 \
 			|| MilkingEquipment.find(cuirass.getname()) >= 0\
-			|| SLSDBra == true
+			|| SLSDBra == true\
+			|| DDi.IsWearingDDMilker(akActor) == true
 				Mode = 2
 			ElseIf StringUtil.Find(cuirass.getname(), "Spriggan" ) >= 0 \
 				|| StringUtil.Find(cuirass.getname(), "Living Arm" ) >= 0 \
@@ -1221,6 +1222,9 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					akActor.UnequipItem(cuirass, false, true)
 				EndIf
 			EndIf
+		ElseIf SLSDBra == true\
+			|| DDi.IsWearingDDMilker(akActor) == true
+				Mode = 2
 		ElseIf (DDArmbinder == false && DDYoke == false)
 			If akActor.GetItemCount(MilkCuirassFuta) > 0 && akActorGender == "Futa" && UseFutaMilkCuirass == true
 				akActor.equipitem(MilkCuirassFuta, true, true)
