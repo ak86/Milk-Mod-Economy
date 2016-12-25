@@ -1,11 +1,14 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>17-12-2016</Version>
+  <Version>25-12-2016</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
   
 Dev change log:
+
+	v 25-12-2016
+fix "milkgen based on maid level" not producing milk at level 0
 
 	v 17-12-2016
 added ability for DD equipment containing word or tag "milk" to collect milk
