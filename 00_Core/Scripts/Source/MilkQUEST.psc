@@ -653,7 +653,7 @@ Function MilkCycle(Actor akActor, int t)
 		If BreastScaleLimit
 			MilkCnt = MilkMax
 		else
-			MilkCnt -= MilkCnt/MilkMax
+			MilkCnt -= MilkCnt/MilkMax 
 		endif
 		AddMilkFx(akActor, 1)
 		AddLeak(akActor)
@@ -1920,13 +1920,15 @@ Function MaidLevelCheck(Actor akActor)
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.TimesMilked")
 	Int   MaidLevel = MME_Storage.getMaidLevel(akActor)
 	
-	if (MaidLevel < MilkLvlCap || !MaidLvlCap) && MME_Storage.getLactacidCurrent(akActor) > 0
-		if MaidTimesMilked >= (MaidLevel + 1) * TimesMilkedMult
-			MME_Storage.setMaidLevel(akActor, MaidLevel + 1)
-			StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.TimesMilked", - (MaidLevel + 1) * TimesMilkedMult)
-			if MilkMsgs && MaidLevel + 1 <= MilkLvlCap
-				debug.Notification(akActor.GetLeveledActorBase().getname() + " has gained a Milk maid level!")
-				MilkMsgHyper((MaidLevel + 1), akActor)
+	if (MaidLevel < MilkLvlCap || !MaidLvlCap)
+		if MaidLevel != 0 || MME_Storage.getLactacidCurrent(akActor) > 0
+			if MaidTimesMilked >= (MaidLevel + 1) * TimesMilkedMult
+				MME_Storage.setMaidLevel(akActor, MaidLevel + 1)
+				StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.TimesMilked", - (MaidLevel + 1) * TimesMilkedMult)
+				if MilkMsgs && MaidLevel + 1 <= MilkLvlCap
+					debug.Notification(akActor.GetLeveledActorBase().getname() + " has gained a Milk maid level!")
+					MilkMsgHyper((MaidLevel + 1), akActor)
+				endif
 			endif
 		endif
 	endif

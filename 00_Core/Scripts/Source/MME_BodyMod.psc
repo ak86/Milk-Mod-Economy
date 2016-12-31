@@ -4,7 +4,7 @@ Function SetNodeScale(Actor akActor, string nodeName, float value, bool isFemale
 	string modName = "MilkModEconomy"
 	;Debug.Notification(akActor.GetLeveledActorBase().GetName() + " MME_BodyMod Scaling " + nodeName + " to " + value)
 	
-	If Game.GetModbyName("SexLab Inflation Framework.esp") != 255 && value != 1
+	If Game.GetModbyName("SexLab Inflation Framework.esp") != 255
 		string SLIF_modName = "Milk Mod Economy"
 		string sKey = ""
 		
