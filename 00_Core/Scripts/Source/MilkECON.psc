@@ -143,39 +143,47 @@ bool Function MilkEconMaintenance()
 EndFunction
 
 bool Function InitializeMilkProperties()
-	MilkEcoCaravan = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
-	MilkEcoDawnstar = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
-	MilkEcoFalkreath = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
-	MilkEcoMarkarth = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
-	MilkEcoOrc = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
-	MilkEcoRiften = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
-	MilkEcoSolitude = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
-	MilkEcoWhiterun = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
-	MilkEcoWindhelm = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
-	MilkEcoMorrowind = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
+	If divnull != 10
+		MilkEcoCaravan = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
+		MilkEcoDawnstar = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
+		MilkEcoFalkreath = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
+		MilkEcoMarkarth = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
+		MilkEcoOrc = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
+		MilkEcoRiften = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
+		MilkEcoSolitude = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
+		MilkEcoWhiterun = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
+		MilkEcoWindhelm = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
+		MilkEcoMorrowind = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
 
-	SaturationPenalties = new Int[10]
-	SaturationPenalties[0] = 0
-	SaturationPenalties[1] = 200/(MilkQ.TimesMilkedMult/divnull)
-	SaturationPenalties[2] = 200/(MilkQ.TimesMilkedMult/divnull)
-	SaturationPenalties[3] = 300/(MilkQ.TimesMilkedMult/divnull)
-	SaturationPenalties[4] = 300/(MilkQ.TimesMilkedMult/divnull)
-	SaturationPenalties[5] = 300/(MilkQ.TimesMilkedMult/divnull)
-	SaturationPenalties[6] = 300/(MilkQ.TimesMilkedMult/divnull)
-	SaturationPenalties[7] = 425/(MilkQ.TimesMilkedMult/divnull)
-	SaturationPenalties[8] = 425/(MilkQ.TimesMilkedMult/divnull)
-	SaturationPenalties[9] = 800/(MilkQ.TimesMilkedMult/divnull)
+		SaturationPenalties = new Int[10]
+		SaturationPenalties[0] = 0
+		SaturationPenalties[1] = 200/(MilkQ.TimesMilkedMult/divnull)
+		SaturationPenalties[2] = 200/(MilkQ.TimesMilkedMult/divnull)
+		SaturationPenalties[3] = 300/(MilkQ.TimesMilkedMult/divnull)
+		SaturationPenalties[4] = 300/(MilkQ.TimesMilkedMult/divnull)
+		SaturationPenalties[5] = 300/(MilkQ.TimesMilkedMult/divnull)
+		SaturationPenalties[6] = 300/(MilkQ.TimesMilkedMult/divnull)
+		SaturationPenalties[7] = 425/(MilkQ.TimesMilkedMult/divnull)
+		SaturationPenalties[8] = 425/(MilkQ.TimesMilkedMult/divnull)
+		SaturationPenalties[9] = 800/(MilkQ.TimesMilkedMult/divnull)
 
-	MilkDemands = new Int[10]
-	MilkDemandCDs = new Int[10]
+		MilkDemands = new Int[10]
+		MilkDemandCDs = new Int[10]
+	else
+		Debug.Trace("MilkModEconomy divnull is "+divnull+", mod is broken, have a nice day!")
+	endif
 
 	return true
 EndFunction
 
 Event OnUpdateGameTime()
-	if MilkQ.EconFlag == True
-		RegisterForSingleUpdateGameTimeAt(9.0)
-		MilkEcoCycle()
+	If divnull != 10
+		if MilkQ.EconFlag == True
+			RegisterForSingleUpdateGameTimeAt(9.0)
+			MilkEcoCycle()
+		endif
+	else
+		Debug.Trace("MilkModEconomy divnull is "+divnull+", mod is broken, have a nice day!")
 	endif
 endEvent
 

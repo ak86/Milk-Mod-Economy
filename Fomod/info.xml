@@ -1,11 +1,15 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>31-12-2016</Version>
+  <Version>14-01-2017</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
   
 Dev change log:
+
+	v 14-01-2017
+some edits to prevent endless script loops if mod is broken but somehow still manages to start 
+fix for EC/ES animations
 
 	v 31-12-2016
 slight changes to node scaling 

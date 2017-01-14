@@ -335,25 +335,36 @@ Bool Property Plugin_SlSW = false auto
 ;----------------------------------------------------------------------------
 ;Timers
 ;----------------------------------------------------------------------------
+Event OnInit()
+	Debug.Trace("MilkModEconomy 1st run, MilkQUEST script started")
+EndEvent
 
 Event OnUpdate()
-	if MilkPoll > 24
-		RegisterForSingleUpdate(MilkPoll)
-		ActorCheck(1)
+	if MilkPoll != 0
+		if MilkPoll > 24
+			RegisterForSingleUpdate(MilkPoll)
+			ActorCheck(1)
+		else
+			RegisterForSingleUpdateGameTime (MilkPoll)
+			GetCurrentHourOfDay()
+		endif
 	else
-		RegisterForSingleUpdateGameTime (MilkPoll)
-		GetCurrentHourOfDay()
+		Debug.Messagebox("MilkModEconomy MilkPoll interval is 0, mod is broken, have a nice day!")
 	endif
 EndEvent
 
 Event OnUpdateGameTime()
-	if MilkPoll <= 24
-		RegisterForSingleUpdateGameTime (MilkPoll)
-		Utility.Wait( 5.0 )
-		GetCurrentHourOfDay()
+	if MilkPoll != 0
+		if MilkPoll <= 24
+			RegisterForSingleUpdateGameTime (MilkPoll)
+			Utility.Wait( 5.0 )
+			GetCurrentHourOfDay()
+		else
+			RegisterForSingleUpdate(MilkPoll)
+			ActorCheck(1)
+		endif
 	else
-		RegisterForSingleUpdate(MilkPoll)
-		ActorCheck(1)
+		Debug.Messagebox("MilkModEconomy MilkPoll interval is 0, mod is broken, have a nice day!")
 	endif
 EndEvent
 
@@ -370,7 +381,6 @@ Function GetCurrentHourOfDay()
 		endif
 	else
 		LastTimeMilked = Time
-		GetCurrentHourOfDay()
 	endif
 EndFunction
 
@@ -456,40 +466,44 @@ EndEvent
 Function ActorCheck(int t)
 	debug.Trace("MilkModEconomy ActorCheck cycle")
 	int i = 0
-	If MilkMaid[i] != PlayerRef && PlayerRef.GetLeveledActorBase().GetSex() == 1 && isPregnant(PlayerRef)
-		debug.Trace("MilkModEconomy Player is not milkmaid, but pregnant and female, making player milkmaid")
-		AssignSlot(PlayerRef)
-	EndIf
-	
-	While i < MilkMaid.Length
-		if MilkMaid[i] != None
-			if MilkMaid[i].IsDead()
-				debug.Trace("MilkModEconomy Actor is dead, removing form MME:" + MilkMaid[i].GetLeveledActorBase().getname())
-				SingleMaidReset(MilkMaid[i])
-			elseif MilkMaid[i].GetLeveledActorBase().GetSex() == 1
-				debug.Trace("MilkModEconomy MilkCycle for milkmaid:" + MilkMaid[i].GetLeveledActorBase().getname())
-				MilkCycle(MilkMaid[i] , t)
+	If PlayerRef != None
+		If MilkMaid[i] != PlayerRef && PlayerRef.GetLeveledActorBase().GetSex() == 1 && isPregnant(PlayerRef)
+			debug.Trace("MilkModEconomy Player is not milkmaid, but pregnant and female, making player milkmaid")
+			AssignSlot(PlayerRef)
+		EndIf
+		
+		While i < MilkMaid.Length
+			if MilkMaid[i] != None
+				if MilkMaid[i].IsDead()
+					debug.Trace("MilkModEconomy Actor is dead, removing form MME:" + MilkMaid[i].GetLeveledActorBase().getname())
+					SingleMaidReset(MilkMaid[i])
+				elseif MilkMaid[i].GetLeveledActorBase().GetSex() == 1
+					debug.Trace("MilkModEconomy MilkCycle for milkmaid:" + MilkMaid[i].GetLeveledActorBase().getname())
+					MilkCycle(MilkMaid[i] , t)
+				endif
 			endif
-		endif
-		;(GetNthAlias(Alias[0])).ForceRefTo(PlayerRef)
-		i += 1
-	EndWhile
-	
-	i = 0
-	While i < MilkSlave.Length
-		if MilkSlave[i] != None
-			if MilkSlave[i].IsDead()
-				debug.Trace("MilkModEconomy Actor is dead, removing form MME:" + MilkSlave[i].GetLeveledActorBase().getname())
-				SingleMaidReset(MilkSlave[i])
-			elseif MilkSlave[i].GetLeveledActorBase().GetSex() == 1
-				debug.Trace("MilkModEconomy MilkCycle for MilkSlave:" + MilkSlave[i].GetLeveledActorBase().getname())
-				MilkCycle(MilkSlave[i] , t)
+			;(GetNthAlias(Alias[0])).ForceRefTo(PlayerRef)
+			i += 1
+		EndWhile
+		
+		i = 0
+		While i < MilkSlave.Length
+			if MilkSlave[i] != None
+				if MilkSlave[i].IsDead()
+					debug.Trace("MilkModEconomy Actor is dead, removing form MME:" + MilkSlave[i].GetLeveledActorBase().getname())
+					SingleMaidReset(MilkSlave[i])
+				elseif MilkSlave[i].GetLeveledActorBase().GetSex() == 1
+					debug.Trace("MilkModEconomy MilkCycle for MilkSlave:" + MilkSlave[i].GetLeveledActorBase().getname())
+					MilkCycle(MilkSlave[i] , t)
+				endif
 			endif
-		endif
-		i += 1
-	EndWhile
-	
-	SendModEvent( "MME_MilkCycleComplete" )
+			i += 1
+		EndWhile
+		
+		SendModEvent( "MME_MilkCycleComplete" )
+	else
+		Debug.Messagebox("MilkModEconomy PlayerRef is None, mod is broken, have a nice day!")
+	endif
 EndFunction
 
 Function UpdateActors()
@@ -946,7 +960,7 @@ EndFunction
 
 Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	;Mode == 0 - Pump Milking
-	;Mode == 1 - Other Milking
+	;Mode == 1 - Other Milking(hands)
 	;Mode == 2 - Equipment Milking
 	;Mode == 3 - Forced Armor Milking(Spriggan/HM/LA)
 	;Mode == 4 - Called by other mods, 
@@ -1299,10 +1313,12 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		endif
 	endif
 	
-	;prevent other mods form interrupting milking
-	SexLab.ForbidActor(akActor)
-	akActor.AddToFaction(SexLab.AnimatingFaction)
-;	Debug.Notification(akActor.GetLeveledActorBase().GetName() + " Set to " + SexLab.AnimatingFaction)
+	if Mode != 4
+		;prevent other mods form interrupting milking
+		SexLab.ForbidActor(akActor)
+		akActor.AddToFaction(SexLab.AnimatingFaction)
+		;Debug.Notification(akActor.GetLeveledActorBase().GetName() + " Set to " + SexLab.AnimatingFaction)
+	Endif
 	
 	If PlayerREF == akActor
         SendModEvent("dhlp-Suspend")
@@ -1846,9 +1862,11 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		akActor.RemoveSpell( BeingMilkedPassive )
 	endif
 
-	;allow other mods to animate actor
-	SexLab.AllowActor(akActor)
-	akActor.RemoveFromFaction(SexLab.AnimatingFaction)
+	if Mode != 4
+		;allow other mods to animate actor
+		SexLab.AllowActor(akActor)
+		akActor.RemoveFromFaction(SexLab.AnimatingFaction)
+	Endif
 	
 	If PlayerREF == akActor
         SendModEvent("dhlp-Resume")
