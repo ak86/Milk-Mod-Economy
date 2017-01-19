@@ -143,7 +143,7 @@ bool Function MilkEconMaintenance()
 EndFunction
 
 bool Function InitializeMilkProperties()
-	If divnull != 10
+	If divnull == 10
 		MilkEcoCaravan = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
 		MilkEcoDawnstar = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
 		MilkEcoFalkreath = Utility.RandomInt(0, 1000/(MilkQ.TimesMilkedMult/divnull))
@@ -170,20 +170,20 @@ bool Function InitializeMilkProperties()
 		MilkDemands = new Int[10]
 		MilkDemandCDs = new Int[10]
 	else
-		Debug.Trace("MilkModEconomy divnull is "+divnull+", mod is broken, have a nice day!")
+		Debug.Trace("MilkModEconomy InitializeMilkProperties divnull is "+divnull+", mod is broken, have a nice day!")
 	endif
 
 	return true
 EndFunction
 
 Event OnUpdateGameTime()
-	If divnull != 10
+	If divnull == 10
 		if MilkQ.EconFlag == True
 			RegisterForSingleUpdateGameTimeAt(9.0)
 			MilkEcoCycle()
 		endif
 	else
-		Debug.Trace("MilkModEconomy divnull is "+divnull+", mod is broken, have a nice day!")
+		Debug.Trace("MilkModEconomy OnUpdateGameTime divnull is "+divnull+", mod is broken, have a nice day!")
 	endif
 endEvent
 
