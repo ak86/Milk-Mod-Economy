@@ -32,7 +32,6 @@ Function SetNodeScale(Actor akActor, string nodeName, float value, bool isFemale
 			EndIf
 		EndIf
 	ElseIf NetImmerse.HasNode(akActor, nodeName, false)
-		MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 		If SKSE.GetPluginVersion("NiOverride") >= 3 && NiOverride.GetScriptVersion() >= 2								;nioverride, if value = 1, mod is removed from skse nio scaling
 			if akActor == Game.GetPlayer()																				;update 1st person view/skeleton (player only)
 				If value != 1.0

@@ -19,6 +19,7 @@ MME_SLP property SLP auto
 MME_PSQ property PSQ auto
 MME_SGO property SGO auto
 MME_UIE property UIE auto
+MME_RND property RND auto
 
 ;Cross-script variables
 
@@ -733,8 +734,8 @@ Function MilkCycle(Actor akActor, int t)
 			if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid
 				akActor.equipitem(Game.GetFormFromFile(0x57A7A, "Skyrim.esm"),false,true)	;skooma
 			endif
-			int rnd = Utility.RandomInt((0-MilkCnt) as int, (MilkMax-MilkCnt) as int)
-			if (rnd == MilkMax || rnd < 0) && akActor.GetLeveledActorBase().GetSex() == 1
+			int random = Utility.RandomInt((0-MilkCnt) as int, (MilkMax-MilkCnt) as int)
+			if (random == MilkMax || random < 0) && akActor.GetLeveledActorBase().GetSex() == 1
 				;Estrus Chaurus+  
 				if (StringUtil.Find(maidArmor.getname(), "Tentacle Armor" ) >= 0 || StringUtil.Find(maidArmor.getname(), "Tentacle Parasite" ) >= 0 || ParasiteLivingArmor.find(maidArmor.getname()) >= 0)\
 				&& Plugin_EstrusChaurus && ECTrigger

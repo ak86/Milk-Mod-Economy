@@ -6,16 +6,18 @@ Scriptname MME_Status extends Quest
 
 GlobalVariable Property MME_Status_Global Auto
 
+int update_interval = 60
+
 Event OnInit()
-	RegisterForSingleUpdate(60)
+	RegisterForSingleUpdate(update_interval)
 EndEvent
 
 Event OnUpdate()
 	if MME_Status_Global.GetValue() != 1
 		Debug.Messagebox("MilkModEconomy was not installed correctly, scripts are not running \n this can be false alarm when starting new game but if message keeps repeating, then something is wrong, script will retry check in 60 sec")
-		Debug.Trace("MilkModEconomy MilkPlayerLoadGame.Maintenance() script has not set MME_Status_Global to 1, retry check in 60 sec")
+		Debug.Trace("MilkModEconomy MilkPlayerLoadGame.Maintenance() script has not set MME_Status_Global to 1, retry check in " + update_interval + " sec")
 		MilkPluginsInfo()
-		RegisterForSingleUpdate(60)
+		RegisterForSingleUpdate(update_interval)
 	else
 		Debug.Trace("MilkModEconomy Changed status to 0, shutting down")
 		MME_Status_Global.SetValue(0)
@@ -28,7 +30,7 @@ Function MilkPluginsInfo()
 	int i = 0
 	String [] name = new string[10]
 	Int[] value = new int[10]
-	;bool ErrorsFound = False
+	bool ErrorsFound = False
 
 	;individual check to see if scripts working at all
 	;stop quest
@@ -97,16 +99,16 @@ Function MilkPluginsInfo()
 			Status = "on"
 		else
 			Status = "error"
-			;ErrorsFound = True
+			ErrorsFound = True
 		endif
 
 		msg = msg + ("Plugin: " + name[i] + " Status: " + Status + "\n")
 		i += 1
 	endwhile
 	
-	;if ErrorsFound == True
+	if ErrorsFound == True
 		Debug.MessageBox(msg)
-	;endif
+	endif
 	
 	;reset StorageUtil for next run
 	StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.ddi")

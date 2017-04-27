@@ -231,6 +231,65 @@ Event OnSexLabOrgasm(String _eventName, String _args, Float _argc, Form _sender)
 	EndWhile
 EndEvent
 
+Event OnSexLabOrgasmSeparate(Form ActorRef, Int Thread)
+	actor akActor = ActorRef as actor
+	string _args =  Thread as string
+	
+	sslBaseAnimation animation = MilkQ.SexLab.HookAnimation(_args)
+
+	if MilkQ.SexLabOrgasm
+			if MilkQ.MILKmaid.Find(akActor) != -1\
+			&& akActor.GetLeveledActorBase().GetSex() == 1
+				if MME_Storage.getMilkCurrent(akActor) >= 1
+					if ((animation.HasTag("Anal")\
+						|| animation.HasTag("Vaginal")\
+						|| animation.HasTag("Masturbation")\
+						|| animation.HasTag("Fisting"))\
+						&& !MilkQ.DDI.IsWearingBelt(akActor))\
+					|| (animation.HasTag("Breast")\
+						&& ((!MilkQ.DDi.IsMilkingBlocked_Bra(akActor) && !MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(akActor))\
+						|| (MilkQ.DDi.IsMilkingBlocked_Bra(akActor) && MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(akActor))))
+						
+						MME_Storage.changeMilkCurrent(akActor, -1, MilkQ.BreastScaleLimit)
+						MilkQ.PostMilk(akActor)
+						MilkQ.AddMilkFx(akActor, 2)
+						
+						If ((!MilkQ.DDi.IsMilkingBlocked_Bra(akActor) && !MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(akActor))\
+						|| (MilkQ.DDi.IsMilkingBlocked_Bra(akActor) && MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(akActor)))
+							MilkQ.AddLeak(akActor)
+						EndIf
+						If MilkQ.MilkMsgs == true
+							Debug.Notification("Orgasm forces milk from " + akActor.GetLeveledActorBase().GetName() + "'s breasts.")
+						EndIf
+					EndIf
+				endif
+			endif
+			if MilkQ.MILKmaid.Find(akActor) != -1 || akActor == MilkQ.PlayerREF
+				if animation.HasTag("Masturbation")\
+				&& !(MilkQ.DDi.IsWearingBelt(akActor)\
+					|| MilkQ.DDi.IsMilkingBlocked_Armbinder(akActor)\
+					|| MilkQ.DDi.IsMilkingBlocked_Yoke(akActor))
+					if MilkQ.akActorSex(akActor) == "Male" 
+						MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(1), 1)
+					elseif MilkQ.akActorSex(akActor) == "Female" 
+						MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(0), 1)
+					elseif MilkQ.akActorSex(akActor) == "Futa"
+	;					if MilkQ.SexLab.GetGender(akActor) == 1		;SL female?
+	;						MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(3), 1)
+	;					elseif MilkQ.SexLab.GetGender(akActor) == 0	;SL male?
+	;						MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(2), 1)
+	;					else
+							int futamilk = Utility.RandomInt(0, 1)
+							MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(3), futamilk)
+							MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(2), 1-futamilk)
+	;					endif
+					endif
+					MilkQ.PlayerREF.RemoveItem(MilkQ.MilkE.Gold, 2, true)
+				endif
+			endif
+		endif
+EndEvent
+
 String Function getAnimName(String _argString)
 	sslBaseAnimation animation = MilkQ.SexLab.HookAnimation(_argString)
 	If animation
@@ -275,12 +334,25 @@ Function Maintenance()
 		Debug.Trace("MilkModEconomy Zaz Animation Pack is " + zbfUtil.GetVersion())
 	endif
 	
+	String File
+
+	File = "/SLSO/MME_SOS.json"
+	if JsonUtil.GetErrors(File) != ""
+		Debug.Notification("MME_SOS.Json has errors")
+	endif
+	
+	File = "/SLSO/RND.json"
+	if JsonUtil.GetErrors(File) != ""
+		Debug.Notification("MME_RND.Json has errors")
+	endif
+	
 	Debug.Trace("MilkModEconomy Registering events")
 	self.RegisterForModEvent("DeviceVibrateEffectStart", "OnVibrateStart")
 	self.RegisterForModEvent("MME_AddMilkMaid", "onMME_AddMilkMaid")
 	self.RegisterForModEvent("MME_AddMilkSlave", "onMME_AddMilkSlave")
 	self.RegisterForModEvent("MME_Milking", "onMME_Milking")
 	self.RegisterForModEvent("OrgasmStart", "OnSexLabOrgasm")
+	self.RegisterForModEvent("SexLabOrgasmSeparate", "OnSexLabOrgasmSeparate")
 	self.RegisterForModEvent("StageStart", "OnSexLabStart")
 	self.RegisterForModEvent("AnimationStart", "OnSexLabStart")
 	self.RegisterForModEvent("AnimationEnd", "OnSexLabEnd")
@@ -297,6 +369,7 @@ Function Maintenance()
 	self.UpdateSize()
 	self.RegisterForSleep()
 
+	;MME_RebuildJson.MME_JsonRebuild()
 	if MilkQ.SexLab.AnimSlots.GetbyRegistrar("zjBreastFeedingVar") && MilkQ.SexLab.AnimSlots.GetbyRegistrar("zjBreastFeeding")
 		MilkQ.MilkQC.MME_BreasfeedingAnimationsCheck = True
 		Debug.Trace("MilkModEconomy 3J Breastfeeding animations found")
