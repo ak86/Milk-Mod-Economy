@@ -18,11 +18,7 @@ bool Function GetSOS(Actor akActor)
 			addon = sosScript.GetActiveAddon(akActor)
 			Faction addonFaction = SOS_Data.GetFaction(addon)
 			if addonFaction != none
-				if addonFaction.getname() == "SOS No Schlong for Females"\
-				|| addonFaction.getname() == "SOS Pubic Hair for Females"\
-				|| addonFaction.getname() == "SOS Pubic Hair Wild"\
-				|| addonFaction.getname() == "SOS Pubic Hair Landing Strip"\
-				|| addonFaction.getname() == "SOS Pubic Hair Untamed"
+				if JsonUtil.StringListFind("/MME/SOS_NotAPenis", "notapenis", addonFaction.getname()) != -1
 					return hasSchlong
 				else
 					return akActor.IsInFaction(SOS_SchlongifiedFaction)
@@ -69,11 +65,7 @@ Function IncreaseSOS(Actor akActor)
 			if SOS_Data.GetGender(rndSchlong) == 1 || SOS_Data.GetGender(rndSchlong) ==  2
 				Faction addonFaction = SOS_Data.GetFaction(rndSchlong)
 				if addonFaction != none
-					if addonFaction.getname() == "SOS No Schlong for Females"\
-					|| addonFaction.getname() == "SOS Pubic Hair for Females"\
-					|| addonFaction.getname() == "SOS Pubic Hair Wild"\
-					|| addonFaction.getname() == "SOS Pubic Hair Landing Strip"\
-					|| addonFaction.getname() == "SOS Pubic Hair Untamed"
+					if JsonUtil.StringListFind("/MME/SOS_NotAPenis", "notapenis", addonFaction.getname()) != -1
 						return 
 					else
 						SOS_API.get().SetSchlong(akActor, rndSchlong)
