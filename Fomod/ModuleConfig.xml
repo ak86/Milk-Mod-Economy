@@ -189,14 +189,14 @@
 						</plugin>				
 					</plugins>   
 				</group>
-				<group name="Patches" type="SelectAny">
+				<group name="Patches(can be merged)" type="SelectAny">
 					<plugins order="Explicit">			
 						<plugin name="HF_Patch">
 							<description>
 								<![CDATA[Plugin for Hearthfire, adds ability to craft "Jug of Milk" from milk potions at Cooking Pot]]>
 							</description>
 							<conditionFlags>
-								<flag name="HF_Patch\HF">Active</flag>
+								<flag name="HF_Patch">Active</flag>
 							</conditionFlags>
 							<files>
 								<folder source="03_Patches\HF" destination=""/>
@@ -210,7 +210,7 @@
 								<![CDATA[Patch for ZaZ Animation Pack, will make all dwarven machines from ZaZ pack work as milkpumps, this might conflict with other mods that run scripts on dwarven machines, use at your own risk]]>
 							</description>
 							<conditionFlags>
-								<flag name="ZaZ_Patch\ZaZ">Active</flag>
+								<flag name="ZaZ_Patch">Active</flag>
 							</conditionFlags>
 							<files>
 								<folder source="03_Patches\ZaZ" destination=""/>
@@ -224,10 +224,24 @@
 								<![CDATA[Patch enables sandbox for milkpumps, any npc can use pumps]]>
 							</description>
 							<conditionFlags>
-								<flag name="Sandbox_Patch\Sandbox">Active</flag>
+								<flag name="Sandbox_Patch">Active</flag>
 							</conditionFlags>
 							<files>
 								<folder source="03_Patches\Sandbox" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>				
+						</plugin>
+						<plugin name="MME_MilkpumpFix">
+							<description>
+								<![CDATA[ZAP milking machines collision fix by CherryHotaling]]>
+							</description>
+							<conditionFlags>
+								<flag name="MilkpumpCollisionFix">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="03_Patches\MilkpumpCollisionFix" destination=""/>
 							</files>
 							<typeDescriptor>
 								<type name="Optional"/>
@@ -444,7 +458,7 @@
 						</plugin>
 						<plugin name="On">
 							<description>
-								<![CDATA[Support for DD items.]]>
+								<![CDATA[Support for DD items: DD Gag and DD Gag Open during feeding. Castity Bra prevent milking. Yoke, Armbiner, Suit prevent using milkpump. Milkpump animation change if actor has belt/open belt. DD vibration effects.]]>
 							</description>
 							<conditionFlags>
 								<flag name="DDi"></flag>
