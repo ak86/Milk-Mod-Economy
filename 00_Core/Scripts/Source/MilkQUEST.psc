@@ -599,14 +599,14 @@ Function MilkCycle(Actor akActor, int t)
 	while tmod != 0
 		MaidLevel = MME_Storage.getMaidLevel(akActor)
 		if LactacidCnt > 0\
-		|| ((MaidMilkGen > 0 || isPregnant(akActor)) && (MilkCnt + MilkTick <= MilkMax))
+		|| ((MaidMilkGen > 0 || isPregnant(akActor)) && (MilkCnt + MilkTick < MilkMax))
 			if MaidLevelProgressionAffectsMilkGen == 0 || MaidLevel == 0
 				MaidMilkGen += MilkGenValue * BreastRows
 			else
 				MaidMilkGen += MilkGenValue * BreastRows * (MaidLevelProgressionAffectsMilkGen * MaidLevel)
 			endif
 		else																										;reduce milk generation
-			MaidMilkGen -= (MilkGenValue * BreastRows)/ (1 + MaidLevel)
+			MaidMilkGen -= (MilkGenValue * BreastRows)/ (1 + MaidLevelProgressionAffectsMilkGen * MaidLevel)
 			if MaidMilkGen < 0
 				MaidMilkGen = 0
 			endif
