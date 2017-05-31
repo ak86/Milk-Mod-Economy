@@ -1,11 +1,29 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>19-01-2017</Version>
+  <Version>31-05-2017</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
   
 Dev change log:
+
+	v 31-05-2017
+fix? for npcs to prevent them from trying to milk them-self during update while player is far away thus causing errors in log
+
+	v 26-05-2017
+fix for infinite milkgen increase with milklevelcap
+changed progression to affect milkgen reduction
+
+	v 18-05-2017
+pumps collision fix
+
+	v 27-04-2017
+SOS json name change
+SLSO support
+
+	v 20-02-2017
+changed sos script to use jsons
+you can manually add sos addons you dont want to be recognized as penis
 
 	v 19-01-2017
 fix for broken economy by 14-01-2017, requires mod variables reset
@@ -14,269 +32,5 @@ fix for broken economy by 14-01-2017, requires mod variables reset
 some edits to prevent endless script loops if mod is broken but somehow still manages to start 
 fix for EC/ES animations
 
-	v 31-12-2016
-slight changes to node scaling 
-changed maid leveling: lactacid only needed to level from 0 to 1
-
-	v 25-12-2016
-fix "milkgen based on maid level" not producing milk at level 0
-
-	v 17-12-2016
-added ability for DD equipment containing word or tag "milk" to collect milk
-
-	v 14-12-2016
-fix for milking getting stuck with multibreast and high gush value
-
-	v 03-12-2016
-added mcm option to remove MME NiO scaling data
-removed nie scaling support
-
-	v 28-11-2016
-fix for mcm debug milkmaid menu milkgen slider bug
-
-	v 14-11-2016
-fix rnd feeding
-fix maidlvlgain formula
-
-	v 08-11-2016
-fix for milkgen formula
-
-	v 07-11-2016
-added mcm toggle for maid milkgen based on maid level(so now its base milkgen*maidlvl), its off by default since its probably huge boost at latter levels.
-changed fixed x0.5 milk generation reduction to level based, so at lvl 0 its quite easy to stop producing milk, but at lvl 10+... well good-luck trying, especially if you play with my skoomawhore patch
-added a way out of being milkmaid, if actor is lv 0 maid, have less than 1 milk and produces no milk, its leveling stats will be reset
-added progression block, actor must have more than 0 lactacid in order to increase maidlevel, so at lvl 0 actor can probably be considered still a human, but its easy to step over on a path of becoming cowgirl
-removed racial milk production from lv0 maids
-
-	v 03-11-2016
-fixed missing mcm debug maids modifier for lactacid bonus rate
-reduced minimal slider value for Milk generation slider 0.03 => 0.003
-
-	v 01-11-2016
-added lactacid bonus rate slider, modifies amount of milk production caused by lactacid
-
-	v 18-10-2016
-and another support update for future SLIF version
-
-	v 17-10-2016
-fix for status script reset
-descriptions for status script
-added support for future SLIF version
-
-	v 11-10-2016
-fix for mobile milking not return control
-	
-	v 09-10-2016
-fix tesedit errors
-moved bodyscaling to separate script, so it can be easily changed by frameworks
-added milking triggers to prevent actor milking interruption by other mods(this is probably experimental, on idea of side effects)
-updated support for SOS Addon - Pubic Hair for Females 1.3b
-added support for EggFactory 1.19 pregnancy
-
-	v 14-09-2016
-fix armor reequip after mobile milking
-
-	v 05-09-2016
-fixed bound milkpump not milking
-reverted sounds of consumables
-added campfire plugin
-removed upkeep if you keep milk
-
-	v 02-09-2016
-fixed log errors
-fixed belly not resetting
-removed nie toggle
-
-	v 01-09-2016
-fix milking return control
-
-	v 28-08-2016
-added custom sound descriptor to play milk/potions sounds on actor who's consuming potion instead of skyrim's always on player(this does not include change for skooma that is used by skooma whore mod)
-added soundless lactacid feeding potion to milkpumps
-added 2nd soundless feeding potion to milkpumps to satisfy rnd hunger
-disabled make milkmaid messagebox promt if player has no free maid slots
-npcs( not maids or slaves) that use pumps(if they finish using it/stand up and do something else) get 1-2 milk, pregnant npcs get x2 milk
-added messageboxes to tell you if you have wrong load order(and probably missing milkpumps)
-some other fixes?
-
-	v 15-08-2016
-added belly node scaling based on lactacid/2
-fix for sos
-added _SLH_isSuccubus detection
-changed how succubus/ww/vampire detected
-replaced UNPB milkcuirass with UUNP
-changed DD vibration script, reduced lactation start chance to 5%, but now it also can make player milkmaid if not already
-added check to lactacid, so mme animation wont start if actor in SL scene
-changed mcm option to block pc pregnancy condition to block any way of becoming milkmaid
-removed msgboxes asking if player want to be milk maid, bcz noone cares if you want or not 
-set default fuckmachine mode to false, so maids stays in milking mode
-removed lactacid reduction from milking boobgasm
-changed economy messages to show only for current location, excluding khajiits caravans since its most of skyrim
-added sandbox patch(incl fix for npc sandbox milking so they probably shouldn't get stuck in animation)
-fix for player getting stuck in bound pumps with ddi items
-updated scripts status check, should now show what plugin script is broken
-fixed armor remove when resetting maid/slave
-removed sgo v1 integration
-	
-	v 17-06-2016
-added (not)bound milkpumps only esps, requires cell reset(or console disable/enable) to change between pumps scripts
-moved milkpumps selection to separate install step, maybe some ppl will actually read what they install
-slight change to economy trading script, this should improve its speed by ~0.0001 second
-slightly changed milkpump milking, feeding stage now feeds lactacid in 1 go and then moves to other stages
-
-	v 13-06-2016
-fix for milk count if character's milk is increased during milking 
-
-	v 07-06-2016
-added mcm->debug->cheat-> milking:free lactacid
-
-	v 05-06-2016
-fixed huge milkgen from milking
-added breastrows modifier to milking
-added option to use normal cuirass instead of futa
-added warning if breast nodes dont exist
-fixed milkmaid milkgen not being removed(reset) when milkmaid reset
-added/fixed multiple breasts(body armor) not being removed when milkmaid reset
-added BreastRows to mcm milk production formula(now displayed value (almost?) match what milkmaid will get(unless something happens, ex: breast inc/dec effect trigger))
-copied bound milkpumps from Basic to MilkMod_MilkPumpsFancy.esp by EinarrTheRed, since they were not included
-added breast reduction potion
-added maid dialogues for breast inc/dec potions
-added breast inc/dec potions has 5%/25% chance to add/remove breast, upon triggering effect will cause Exhaustion and with pain system will hurt(50% of health) until you sleep
-added mcm slider for adjusting breast row addition chance(you need to set it manually if you update)
-fix for storage milkmax not taking into account BreastRows
-simplified milk generation formulas, so now even i can understand what they do xD
-
-	v 25-05-2016 git
-fix for maid slots
-
-	v 22-05-2016 git
-added additional layer for lactacid trade dialogues
-changed char name detection for dialogues
-
-	v 16-05-2016 git
-added individual maid breast size modifiers(BoobIncr per milk, BoobIncr per level) to scripts calculation, you should either reset your maid or set desired values manually, otherwise milk gen and breast size will be broken(0)
-equipping parasitic armors will remove additional breast rows, probably
-something fixed but i dont remember what it is
-increased base lactacid maximum by 4
-added breast enlargement potion, enlarges breasts by 0.01 for 10 hours, costs 1000 gold, bought through dialogue from alchemists, has a 25% to start/increase natural lactation (actor has to be milkmaid/slave)
-moved Lactacid to MME_Util_Potions formlist
-fixed trade dialogues, should probably rearrange them later
-
-	v 11-05-2016 git
-fixed milk gen
-some script edits
-
-	v 10-05-2016 git
-fixed some previous git edits i didnt like( ie. mcm debug caps)
-fixed some bugs
-made some edits to use dialogues instead of old trade system
-added more dialogues
-some dialogues needs fixing, inns working, everything else im not sure, like arcadia which for some reason is not considered alchemist ?:S maybe i should rewrite faction detection to try use script detection instead of CK conditions
-
-
-	v 09-05-2016 git
-done msgboxes and dialogues
-added Inns to economy
-Khajiits, orcs and fencers dont pay milkpump upkep and local tax
-orcs milkpumps are generous enough to provide you free lactacid, they'll take half the milk though, but who cares its all about process
-
-	v 06-05-2016 git
-added trade dialogue economy script
-needs correct msgboxes and dialogue texts for traders
-needs testing
-
-added trade dialogues:
-Khajiits merchants:
--buy all milk
--trade Lactacid for milk
-orc merchants(wisewoman):
--buy normal and race milk
-inns:
--buy race milk
-alchemists: 					
--buy ww/vampire/succubus milk
--buy cum/semen x2, futa x10
--sell Lactacid for 100g
-Fences:
--buy all milk
-farmers:
--buy normal milk
--sell Lactacid for 100g
-
-	v 05-05-2016 git
-fix for psq integration
-fix for "SOS No Schlong for Females" and "SOS Pubic Hair for Females"
-
-	v 25-04-2016 git
-fixed missing missing RegisterForCrosshairRef()
-	
-	v 23-04-2016 git
-increased cum/semen price to 2gold
-normal MilkPump feeding now requires lactacid
-switched to default simple potions
-ww/vampire/succubus milk, cant be sold through normal trade any more
-some fixes
-
-	v 20-04-2016 git
-some fixes
-	
-	v 17-04-2016 git
-added Kynesgrove and Karthwasten to economy
-removed keywords form tits armors
-moved pumps to separate esp
-added alternate pumps by EinarrTheRed
-slightly tweaked bound milkpumps script
-some fixes
-
-	v 10-04-2016
-merged with multi-breast addon
-fixed make maid dialogue, which wasn't respecting available maidslots to player
-minor optimisations
-something else
-	
-	v 27-03-2016
-added futa version of milkcurass(UNPB based, no bodyslide unless some one makes one)
-partial Multi-row breast(up to 4x2) support for milk production and breast capacity, no support for buffs/debuffs/leaking, manually set breast rows in mcm, you can get armor here http://www.loverslab.com/topic/43325-six-breasted-hdt-enabled-body-bodyslide-compatible/ 
-added mcm toggles to force milkmaid vampire/ww/succubus status/milks
-updated mcm compability page to reflect integration scripts, added Estrus Spider option
-changed default notification key to "9"
-increased game load scripts check from 10 to 30 seconds, should be enough time for mods to load on a new game start with a lot of mods, set it on 30 sec loop, just in case, so if you see warning few times then something is really wrong
-fixed economy message flood
-added option for 2015 variant of sgo3 pregnancy detection
-yet another fix for sgo3
-
-
-	v 07-03-2016
-added check if scripts are working, i've set it to 10 sec after game load which should be plenty of time for mod to load
-yet another minor fix for sgo installation, shouldn't really affect anything
-re-added vamp/werewolf/succubus milks from economy, for now
-
-	v 16-02-2016
-fix for sgo option, if sgo not installed
-fix milking if maid has no milk
-
-	v 13-02-2016
-	Requires: Cleansave
-moved alt milk bottles to main mod, used as replacer for simple race milk
-moved milkpumps
-added sgo3 plugin, which should be more reliable at gem detection
-removed vamp/werewolf/succubus milks from economy
-characters now equip milkcuirass during milking if they have it in their inventory
-increased prices of semen/cum to 1 gold, get rich!
-fix for fnis behaviors
-fix for installer options
-fix for mcm PainSystem toggle
-fix for fnis errors
-fix for cuirass not equipping when using milkpump
-fix for SexLab_SOS-Stapon
-changed get random schlong from drinking futa semen
-removed milkpump milking range
-removed no milk cuirass option for mod installation
-removed CANS
-updated installer
-most likely fixed very rare mod conflict for some ppl mod not working
-changed economy timer to update everyday morning at 9:00 instead every 8h, IF UPDATING, YOU SHOULD DISABLE/ENABLE MOD FROM MCM
-if no SLA installed, random arousal will be chosen (0-100)
-changed vampire/werewolf/EstrusChaurus/EstrusSpider detection
  </Description>
 </fomod>
