@@ -659,8 +659,10 @@ Function MilkCycle(Actor akActor, int t)
 		PainCnt = 0
 	endif
 
-	RemoveMilkFx1(akActor)
-	RemoveMilkFx2(akActor)
+	if akActor.IsNearPlayer()
+		RemoveMilkFx1(akActor)
+		RemoveMilkFx2(akActor)
+	endif
 	SLA.UpdateActorExposure(akActor, t)
 
 	;play leaking effects, if breast are bigger then max
@@ -670,8 +672,10 @@ Function MilkCycle(Actor akActor, int t)
 		else
 			MilkCnt -= MilkCnt/MilkMax 
 		endif
-		AddMilkFx(akActor, 1)
-		AddLeak(akActor)
+		if akActor.IsNearPlayer()
+			AddMilkFx(akActor, 1)
+			AddLeak(akActor)
+		endif
 	endif
 
 	StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.MilkGen", MaidMilkGen)
@@ -693,7 +697,7 @@ Function MilkCycle(Actor akActor, int t)
 
 	;add/remove breast row trigger, cause lactation due to drinking breast inc/dec potion
 	if StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.AdjustBreastRow") != 0 
-		if  MilkQC.Buffs
+		if  MilkQC.Buffs && akActor.IsNearPlayer()
 			akActor.AddSpell( MilkExhaustion, false )
 			if PainSystem && PainKills
 				akActor.DamageActorValue("Health", 0.5 * akActor.GetBaseActorValue("Health"))
@@ -715,11 +719,11 @@ Function MilkCycle(Actor akActor, int t)
 			if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") > 0
 				MME_Storage.changeLactacidCurrent(akActor, 1)
 				StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid", -1)
-				if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid
+				if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid && akActor.IsNearPlayer()
 					akActor.equipitem(Game.GetFormFromFile(0x57A7A, "Skyrim.esm"),false,true)	;skooma
 				endif
 			endif
-			if MilkCnt >= 1
+			if MilkCnt >= 1 && akActor.IsNearPlayer()
 				MilkSelf.cast(akActor)
 			endif
 		elseif StringUtil.Find(maidArmor.getname(), "Spriggan" ) >= 0\
@@ -731,11 +735,11 @@ Function MilkCycle(Actor akActor, int t)
 		|| BasicLivingArmor.find(maidArmor.getname()) >= 0\
 		|| ParasiteLivingArmor.find(maidArmor.getname()) >= 0
 			MME_Storage.changeLactacidCurrent(akActor, t)
-			if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid
+			if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid && akActor.IsNearPlayer()
 				akActor.equipitem(Game.GetFormFromFile(0x57A7A, "Skyrim.esm"),false,true)	;skooma
 			endif
 			int random = Utility.RandomInt((0-MilkCnt) as int, (MilkMax-MilkCnt) as int)
-			if (random == MilkMax || random < 0) && akActor.GetLeveledActorBase().GetSex() == 1
+			if (random == MilkMax || random < 0) && akActor.GetLeveledActorBase().GetSex() == 1 && akActor.IsNearPlayer()
 				;Estrus Chaurus+  
 				if (StringUtil.Find(maidArmor.getname(), "Tentacle Armor" ) >= 0 || StringUtil.Find(maidArmor.getname(), "Tentacle Parasite" ) >= 0 || ParasiteLivingArmor.find(maidArmor.getname()) >= 0)\
 				&& Plugin_EstrusChaurus && ECTrigger
@@ -752,7 +756,7 @@ Function MilkCycle(Actor akActor, int t)
 						;EC is not installed
 					endIf
 					Milking(akActor, 0, 4, 0)
-				else
+				elseif akActor.IsNearPlayer()
 					MilkForSpriggan.cast(akActor)
 				endif
 			endif
@@ -762,7 +766,7 @@ Function MilkCycle(Actor akActor, int t)
 	If MILKSlave.Find(akActor) != -1
 		MME_Storage.changeLactacidCurrent(akActor, t)
 		MilkMax = MME_Storage.getMilkMaximum(akActor)
-		if MilkCnt > MilkMax
+		if MilkCnt > MilkMax && akActor.IsNearPlayer()
 			MilkSelf.cast(akActor)
 		endif
 	endIf
