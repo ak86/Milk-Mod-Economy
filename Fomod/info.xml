@@ -12,18 +12,17 @@ fix? for npcs to prevent them from trying to milk them-self during update while 
 
 	v 26-05-2017
 fix for infinite milkgen increase with milklevelcap
-changed progression to affect milkgen reduction
+changed maid progression option to affect milkgen reduction
 
 	v 18-05-2017
 pumps collision fix
 
 	v 27-04-2017
-SOS json name change
+RND overhaul, may need cleansave
 SLSO support
 
 	v 20-02-2017
-changed sos script to use jsons
-you can manually add sos addons you dont want to be recognized as penis
+changed sos script to use jsons, you can manually add sos addons you dont want to be recognized as penis
 
 	v 19-01-2017
 fix for broken economy by 14-01-2017, requires mod variables reset
