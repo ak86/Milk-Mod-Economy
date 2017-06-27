@@ -1,8 +1,6 @@
 Scriptname MilkQUEST_Conditions extends Quest Conditional
 {conditions for Milk Mod Economy }
-;this used for conditions in CK
-
-MilkQUEST Property MilkQ Auto 
+;this used for conditions in CK/esp
 
 ;----------------------------------------------------------------------------
 ;(De)Buffs
@@ -22,7 +20,7 @@ Bool Property Unmilked_DeBuffs_SpeedStamina = True Auto Conditional
 ;Milk effects constructor
 ;----------------------------------------------------------------------------
 
-Bool Property MME_SimpleMilkPotions = False Auto Conditional
+Bool Property MME_SimpleMilkPotions = True Auto Conditional
 
 Bool Property Milk_RaceEffect = True Auto Conditional
 Bool Property Milk_SkillsEffect = True Auto Conditional
