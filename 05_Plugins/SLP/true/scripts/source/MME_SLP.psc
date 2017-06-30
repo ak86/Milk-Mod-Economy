@@ -1,4 +1,4 @@
-Scriptname MME_SLP extends Quest
+Scriptname MME_SLP extends Quest Hidden
 
 Event OnInit()
 	StorageUtil.SetIntValue(none,"MME.PluginsCheck.slp",2)

@@ -1,4 +1,4 @@
-Scriptname MME_SLA extends Quest
+Scriptname MME_SLA extends Quest Hidden
 
 Event OnInit()
 	StorageUtil.SetIntValue(none,"MME.PluginsCheck.sla",1)

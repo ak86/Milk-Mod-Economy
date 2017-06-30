@@ -1,19 +1,19 @@
-Scriptname MilkLactacidScr extends activemagiceffect  
+Scriptname MilkLactacidScr extends activemagiceffect Hidden
 
-MilkQUEST Property MilkQ Auto
-
-;----------------------------------------------------------------------------
-;on drink
 Event OnEffectStart( Actor akTarget, Actor akCaster )
-	if MilkQ.Plugin_SlSW && akTarget == MilkQ.PlayerREF && !MilkQ.DisableSkoomaLactacid
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
+	Actor PlayerRef = Game.Getplayer()
+	
+	if MilkQ.Plugin_SlSW && akTarget == PlayerREF && !MilkQ.DisableSkoomaLactacid
 		akTarget.equipitem(Game.GetFormFromFile(0x57A7A, "Skyrim.esm"),false,true)
 	endif
-
+	
 	if akTarget.GetActorBase().GetSex() == 1
+		String MaidName = akTarget.GetLeveledActorBase().getname()
 		if MilkQ.MILKmaid.find(akTarget) != -1
 			if akTarget.HasSpell(MilkQ.MilkExhaustion)\
 			|| akTarget.HasSpell(MilkQ.MilkMentalExhaustion)
-				
+			
 				if akTarget.HasSpell(MilkQ.MilkExhaustion)
 					akTarget.RemoveSpell(MilkQ.MilkExhaustion)
 				endif
@@ -22,30 +22,32 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 					akTarget.RemoveSpell( MilkQ.MilkMentalExhaustion )
 				endif
 				
-				Debug.Notification( akTarget.GetLeveledActorBase().getname() + " feels revitalised, exhaustion is gone!" )
+				Debug.Notification(MilkQ.formatString(JsonUtil.GetStringValue("/MME/Strings", "exhaustiongone"), MaidName))
 			endif
 			
 			MME_Storage.changeLactacidCurrent(akTarget, 1)
 		else 
 			int ButtonPressed
-			int count
+			int count = 0
 			int C = 0
 		
-			While C+1 < MilkQ.MilkMaid.Length
-				C += 1
-				If MilkQ.MilkMaid[C] != None
-					count += 1
-				EndIf
-			EndWhile
+			if akTarget != PlayerREF
+				While C+1 < MilkQ.MilkMaid.Length
+					C += 1
+					If MilkQ.MilkMaid[C] != None
+						count += 1
+					EndIf
+				EndWhile
+			EndIf
 			
 			if akTarget == MilkQ.PlayerREF || count < MilkQ.Milklvl0fix()
-				if akTarget != MilkQ.PlayerREF
+				if akTarget != PlayerREF
 					ButtonPressed = (MilkQ.MakeMilkMaid).Show()
 				EndIf
 				
-				if akTarget == MilkQ.PlayerREF || ButtonPressed == 0
+				if akTarget == PlayerREF || ButtonPressed == 0
 					;insert quest here
-					MilkQ.AssignSlot(akTarget)
+					MilkQ.AssignSlotMaid(akTarget)
 					Utility.Wait( 1.0 )
 					
 					if MilkQ.MILKmaid.find(akTarget) != -1 
@@ -53,15 +55,19 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 					EndIf
 				EndIf
 			EndIf
-
-			if akTarget == MilkQ.PlayerREF
+			
+			if akTarget == PlayerREF
 				If MilkQ.MilkStory
-					Debug.Messagebox("After you have drank bottle, you are starting to feel strange, your breast warm up, nipples start to tingle and becomes hard rubbing with your clothes. Heat spreads through you body, your mind goes blank, you can hardly stand on your feet. Suddenly you feeling shock-waves going through you body as you collapse.")
+					Debug.Messagebox(JsonUtil.GetStringValue("/MME/Strings", "lactacidstory"))
 				EndIf
-
+				
 				Utility.Wait(1.0)
-				Game.DisablePlayerControls(1, 1, 0, 0, 1, 1, 0) ;(True,True,False,False,True,True,True,True,0)
-				Game.ForceThirdPerson()
+				
+				if !MilkQ.SexLab.IsActorActive(akTarget)
+					Game.DisablePlayerControls(1, 1, 0, 0, 1, 1, 0) ;(True,True,False,False,True,True,True,True,0)
+					Game.ForceThirdPerson()
+				endif
+				
 				Game.ShakeCamera(none, Utility.RandomFloat(0.5 , 1), 10)
 			endif
 			
@@ -71,25 +77,25 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 			
 			MilkQ.SexLab.PickVoice(akTarget).Moan(akTarget, Utility.RandomInt (70, 100), false)
 			
-			if akTarget == MilkQ.PlayerREF
+			if akTarget == PlayerREF
 				SendModEvent("PlayerOrgasmStart")
 			endIf
 			
 			Utility.Wait( 10.0 )
 			
-			if akTarget == MilkQ.PlayerREF
+			if akTarget == PlayerREF
 				SendModEvent("PlayerOrgasmEnd")
 			endIf
 			
 			If MilkQ.MilkStory
-				Debug.Messagebox(akTarget.GetLeveledActorBase().GetName() + " just had a breast induced orgasm!")
+				Debug.Messagebox(MilkQ.formatString(JsonUtil.GetStringValue("/MME/Strings", "lactacidorgasm"), MaidName))
 			EndIf
 			
 			if !(akTarget.GetSitState() <= 3 && akTarget.GetSitState() > 0)
 				Debug.SendAnimationEvent(akTarget,"IdleForceDefaultState")
 			endif
 			
-			if akTarget == MilkQ.PlayerREF
+			if akTarget == PlayerREF && !MilkQ.SexLab.IsActorActive(akTarget)
 				Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 			endif
 		endif

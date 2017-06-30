@@ -1,4 +1,4 @@
-Scriptname MME_SLSD extends Quest
+Scriptname MME_SLSD extends Quest Hidden
 
 bool Function IsIntegraged ()
 	Return True

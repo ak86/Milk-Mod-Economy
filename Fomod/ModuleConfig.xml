@@ -184,7 +184,17 @@
 								<folder source="02_Extra\Campfire" destination=""/>
 							</files>
 							<typeDescriptor>
-								<type name="Optional"/>
+								<dependencyType>
+									<defaultType name="Optional"/>
+									<patterns>
+										<pattern>
+											<dependencies>
+												<fileDependency file="Campfire.esm" state="Active"/>
+											</dependencies>
+											<type name="Recommended"/>
+										</pattern>
+									</patterns>
+								</dependencyType>
 							</typeDescriptor>
 						</plugin>				
 					</plugins>   
@@ -202,8 +212,18 @@
 								<folder source="03_Patches\HF" destination=""/>
 							</files>
 							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
+								<dependencyType>
+									<defaultType name="Optional"/>
+									<patterns>
+										<pattern>
+											<dependencies>
+												<fileDependency file="HearthFires.esm" state="Active"/>
+											</dependencies>
+											<type name="Recommended"/>
+										</pattern>
+									</patterns>
+								</dependencyType>
+							</typeDescriptor>
 						</plugin>
 						<plugin name="ZaZ_Patch">
 							<description>
@@ -216,8 +236,18 @@
 								<folder source="03_Patches\ZaZ" destination=""/>
 							</files>
 							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
+								<dependencyType>
+									<defaultType name="Optional"/>
+									<patterns>
+										<pattern>
+											<dependencies>
+												<fileDependency file="ZaZAnimationPack.esm" state="Active"/>
+											</dependencies>
+											<type name="Recommended"/>
+										</pattern>
+									</patterns>
+								</dependencyType>
+							</typeDescriptor>
 						</plugin>
 						<plugin name="MME_Sandbox">
 							<description>
@@ -244,8 +274,18 @@
 								<folder source="03_Patches\MilkpumpCollisionFix" destination=""/>
 							</files>
 							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
+								<dependencyType>
+									<defaultType name="Optional"/>
+									<patterns>
+										<pattern>
+											<dependencies>
+												<fileDependency file="ZaZAnimationPack.esm" state="Active"/>
+											</dependencies>
+											<type name="Recommended"/>
+										</pattern>
+									</patterns>
+								</dependencyType>
+							</typeDescriptor>
 						</plugin>
 					</plugins>   
 				</group>
@@ -380,316 +420,384 @@
 						</plugin>
 					</plugins>
 				</group>
-				<group name="SL Aroused (Redux) support" type="SelectExactlyOne">
+				<group name="Support plugins" type="SelectAny">
 					<plugins order="Explicit">			
-						<plugin name="Off">
+						<plugin name="SL Aroused (Redux)">
 							<description>
 							</description>
 							<conditionFlags>
-								<flag name="SLA"></flag>
+								<flag name="SLA">On</flag>
 							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\SLA\False" destination=""/>
-							</files>
 							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
+								<dependencyType>
+									<defaultType name="Optional"/>
+									<patterns>
+										<pattern>
+											<dependencies>
+												<fileDependency file="SexLabAroused.esm" state="Active"/>
+											</dependencies>
+											<type name="Recommended"/>
+										</pattern>
+									</patterns>
+								</dependencyType>
+							</typeDescriptor>
 						</plugin>
-						<plugin name="On">
-							<description>
-							</description>
-							<conditionFlags>
-								<flag name="SLA"></flag>
-							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\SLA\True" destination=""/>
-							</files>
-							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
-						</plugin>
-					</plugins>   
-				</group>
-				<group name="Schlongs of Skyrim (Full) support" type="SelectExactlyOne">
-					<plugins order="Explicit">			
-							<plugin name="Off">
-							<description>
-							</description>
-							<conditionFlags>
-								<flag name="SOS"></flag>
-							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\SOS\False" destination=""/>
-							</files>
-							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
-						</plugin>
-					<plugin name="On">
+						<plugin name="Schlongs of Skyrim (Full)">
 							<description>
 								<![CDATA[Futanari support, increase/decrease sos size with futa semen/cum potions.]]>
 							</description>
 							<conditionFlags>
-								<flag name="SOS"></flag>
+								<flag name="SOS">On</flag>
 							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\SOS\True" destination=""/>
-							</files>
 							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
+								<dependencyType>
+									<defaultType name="Optional"/>
+									<patterns>
+										<pattern>
+											<dependencies>
+												<fileDependency file="Schlongs of Skyrim - Core.esm" state="Active"/>
+											</dependencies>
+											<type name="Recommended"/>
+										</pattern>
+									</patterns>
+								</dependencyType>
+							</typeDescriptor>
 						</plugin>
-					</plugins>   
-				</group>
-				<group name="DD - Integration support" type="SelectExactlyOne">
-					<plugins order="Explicit">			
-						<plugin name="Off">
-							<description>
-							</description>
-							<conditionFlags>
-								<flag name="DDi"></flag>
-							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\DDi\False" destination=""/>
-							</files>
-							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
-						</plugin>
-						<plugin name="On">
+						<plugin name="DD - Integration">
 							<description>
 								<![CDATA[Support for DD items: DD Gag and DD Gag Open during feeding. Castity Bra prevent milking. Yoke, Armbiner, Suit prevent using milkpump. Milkpump animation change if actor has belt/open belt. DD vibration effects.]]>
 							</description>
 							<conditionFlags>
-								<flag name="DDi"></flag>
+								<flag name="DDi">On</flag>
 							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\DDi\True" destination=""/>
-							</files>
 							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
+								<dependencyType>
+									<defaultType name="Optional"/>
+									<patterns>
+										<pattern>
+											<dependencies>
+												<fileDependency file="Devious Devices - Integration.esm" state="Active"/>
+											</dependencies>
+											<type name="Recommended"/>
+										</pattern>
+									</patterns>
+								</dependencyType>
+							</typeDescriptor>
 						</plugin>
-					</plugins>   
-				</group>
-				<group name="ZaZ AP devices support" type="SelectExactlyOne">
-					<plugins order="Explicit">			
-							<plugin name="Off">
-							<description>
-							</description>
-							<conditionFlags>
-								<flag name="ZAZ"></flag>
-							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\zbf\False" destination=""/>
-							</files>
-							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
-						</plugin>
-					<plugin name="On">
+						<plugin name="ZaZ AP devices">
 							<description>
 								<![CDATA[Support for ZaZ Gag and ZaZ Gag Open for feeding with milkpump.]]>
 							</description>
 							<conditionFlags>
-								<flag name="ZAZ"></flag>
+								<flag name="ZAZ">On</flag>
 							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\zbf\True" destination=""/>
-							</files>
 							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
+								<dependencyType>
+									<defaultType name="Optional"/>
+									<patterns>
+										<pattern>
+											<dependencies>
+												<fileDependency file="ZaZAnimationPack.esm" state="Active"/>
+											</dependencies>
+											<type name="Recommended"/>
+										</pattern>
+									</patterns>
+								</dependencyType>
+							</typeDescriptor>
 						</plugin>
-					</plugins>   
-				</group>
-				<group name="iNeed support" type="SelectExactlyOne">
-					<plugins order="Explicit">			
-						<plugin name="Off">
-							<description>
-							</description>
-							<conditionFlags>
-								<flag name="iNeed"></flag>
-							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\iNeed\False" destination=""/>
-							</files>
-							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
-						</plugin>
-						<plugin name="On">
+						<plugin name="iNeed">
 							<description>
 								<![CDATA[Adds MME food and drinks to iNeed.]]>
 							</description>
 							<conditionFlags>
-								<flag name="iNeed"></flag>
+								<flag name="iNeed">On</flag>
 							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\iNeed\True" destination=""/>
-							</files>
 							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
+								<dependencyType>
+									<defaultType name="Optional"/>
+									<patterns>
+										<pattern>
+											<dependencies>
+												<fileDependency file="iNeed.esp" state="Active"/>
+											</dependencies>
+											<type name="Recommended"/>
+										</pattern>
+									</patterns>
+								</dependencyType>
+							</typeDescriptor>
 						</plugin>
-					</plugins>   
-				</group>
-				<group name="PSQ PlayerSuccubusQuest support" type="SelectExactlyOne">
-					<plugins order="Explicit">			
-						<plugin name="Off">
-							<description>
-							</description>
-							<conditionFlags>
-								<flag name="PSQ"></flag>
-							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\PSQ\False" destination=""/>
-							</files>
-							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
-						</plugin>
-						<plugin name="On">
+						<plugin name="PSQ PlayerSuccubusQuest">
 							<description>
 								<![CDATA[Gem pregnancy detection. Succubus detection. Energy management.]]>
 							</description>
 							<conditionFlags>
-								<flag name="PSQ"></flag>
+								<flag name="PSQ">On</flag>
 							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\PSQ\True" destination=""/>
-							</files>
 							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
+								<dependencyType>
+									<defaultType name="Optional"/>
+									<patterns>
+										<pattern>
+											<dependencies>
+												<fileDependency file="PSQ PlayerSuccubusQuest.esm" state="Active"/>
+											</dependencies>
+											<type name="Recommended"/>
+										</pattern>
+									</patterns>
+								</dependencyType>
+							</typeDescriptor>
 						</plugin>
-					</plugins>   
-				</group>
-				<group name="Soulgem Oven III" type="SelectExactlyOne">
-					<plugins order="Explicit">			
-						<plugin name="Off">
-							<description>
-							</description>
-							<conditionFlags>
-								<flag name="SGO3"></flag>
-							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\SGO\False" destination=""/>
-							</files>
-							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
-						</plugin>
-						<plugin name="On">
+						<plugin name="Soulgem Oven III">
 							<description>
 								<![CDATA[Gem pregnancy detection]]>
 							</description>
 							<conditionFlags>
-								<flag name="SGO3"></flag>
+								<flag name="SGO3">On</flag>
 							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\SGO\True" destination=""/>
-							</files>
 							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
+								<dependencyType>
+									<defaultType name="Optional"/>
+									<patterns>
+										<pattern>
+											<dependencies>
+												<fileDependency file="dcc-soulgem-oven-000.esm" state="Active"/>
+											</dependencies>
+											<type name="Recommended"/>
+										</pattern>
+									</patterns>
+								</dependencyType>
+							</typeDescriptor>
 						</plugin>
-					</plugins>   
-				</group>
-				<group name="SL Hentai Pregnancy support" type="SelectExactlyOne">
-					<plugins order="Explicit">			
-						<plugin name="Off">
-							<description>
-							</description>
-							<conditionFlags>
-								<flag name="SLHP"></flag>
-							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\SLHP\False" destination=""/>
-							</files>
-							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
-						</plugin>
-						<plugin name="On">
+						<plugin name="SL Hentai Pregnancy">
 							<description>
 								<![CDATA[Pregnancy detection.]]>
 							</description>
 							<conditionFlags>
-								<flag name="SLHP"></flag>
+								<flag name="SLHP">On</flag>
 							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\SLHP\True" destination=""/>
-							</files>
 							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
+								<dependencyType>
+									<defaultType name="Optional"/>
+									<patterns>
+										<pattern>
+											<dependencies>
+												<fileDependency file="HentaiPregnancy.esm" state="Active"/>
+											</dependencies>
+											<type name="Recommended"/>
+										</pattern>
+									</patterns>
+								</dependencyType>
+							</typeDescriptor>
 						</plugin>
-					</plugins>   
-				</group>
-				<group name="SL Procreation support" type="SelectExactlyOne">
-					<plugins order="Explicit">			
-						<plugin name="Off">
-							<description>
-							</description>
-							<conditionFlags>
-								<flag name="SLP"></flag>
-							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\SLP\False" destination=""/>
-							</files>
-							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
-						</plugin>
-						<plugin name="On">
+						<plugin name="SL Procreation">
 							<description>
 								<![CDATA[Pregnancy detection.]]>
 							</description>
 							<conditionFlags>
-								<flag name="SLP"></flag>
+								<flag name="SLP">On</flag>
 							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\SLP\True" destination=""/>
-							</files>
 							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
+								<dependencyType>
+									<defaultType name="Optional"/>
+									<patterns>
+										<pattern>
+											<dependencies>
+												<fileDependency file="SexLabProcreation.esp" state="Active"/>
+											</dependencies>
+											<type name="Recommended"/>
+										</pattern>
+									</patterns>
+								</dependencyType>
+							</typeDescriptor>
 						</plugin>
-					</plugins>   
-				</group>
-				<group name="UIExtensions support" type="SelectExactlyOne">
-					<plugins order="Explicit">			
-						<plugin name="Off">
-							<description>
-							</description>
-							<conditionFlags>
-								<flag name="UIE"></flag>
-							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\UIE\False" destination=""/>
-							</files>
-							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
-						</plugin>
-						<plugin name="On">
+						<plugin name="UIExtensions">
 							<description>
 								<![CDATA[Support for uie menu(not working, placeholder).]]>
 							</description>
 							<conditionFlags>
-								<flag name="UIE"></flag>
+								<flag name="UIE">On</flag>
 							</conditionFlags>
-							<files>
-								<folder source="05_Plugins\UIE\True" destination=""/>
-							</files>
 							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>				
+								<dependencyType>
+									<defaultType name="Optional"/>
+									<patterns>
+										<pattern>
+											<dependencies>
+												<fileDependency file="UIExtensions.esp" state="Active"/>
+											</dependencies>
+											<type name="Recommended"/>
+										</pattern>
+									</patterns>
+								</dependencyType>
+							</typeDescriptor>
 						</plugin>
 					</plugins>   
 				</group>
 			</optionalFileGroups>
 		</installStep>
 	</installSteps>
+	<conditionalFileInstalls>
+		<patterns>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="SLA" value="On"/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\SLA\True" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="SLA" value=""/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\SLA\False" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="SOS" value="On"/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\SOS\True" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="SOS" value=""/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\SOS\False" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="DDi" value="On"/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\DDi\True" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="DDi" value=""/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\DDi\False" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="ZAZ" value="On"/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\zbf\True" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="ZAZ" value=""/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\zbf\False" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="iNeed" value="On"/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\iNeed\True" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="iNeed" value=""/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\iNeed\False" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="PSQ" value="On"/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\PSQ\True" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="PSQ" value=""/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\PSQ\False" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="SGO3" value="On"/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\SGO\True" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="SGO3" value=""/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\SGO\False" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="SLHP" value="On"/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\SLHP\True" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="SLHP" value=""/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\SLHP\False" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="SLP" value="On"/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\SLP\True" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="SLP" value=""/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\SLP\False" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="UIE" value="On"/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\UIE\True" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="UIE" value=""/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\UIE\False" destination=""/>
+				</files>
+			</pattern>
+		</patterns>
+	</conditionalFileInstalls>
 </config>		

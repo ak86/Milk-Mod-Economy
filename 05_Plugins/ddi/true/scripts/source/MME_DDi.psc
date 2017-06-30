@@ -1,4 +1,4 @@
-Scriptname MME_DDi extends Quest
+Scriptname MME_DDi extends Quest Hidden
 
 Event OnInit()
 	StorageUtil.SetIntValue(none,"MME.PluginsCheck.ddi",2)

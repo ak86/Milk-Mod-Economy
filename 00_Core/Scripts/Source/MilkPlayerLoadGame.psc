@@ -1,6 +1,7 @@
 Scriptname MilkPlayerLoadGame extends ReferenceAlias  
 
 MilkQUEST Property MilkQ Auto
+import MyPluginScript
 
 ;----------------------------------------------------------------------------
 ;Events
@@ -49,7 +50,7 @@ EndEvent
 Event onMME_AddMilkMaid(Form Sender)
 	actor akActor = Sender as Actor
 	if MilkQ.MILKmaid.find(akActor, 0) == -1 && MilkQ.MILKslave.find(akActor, 0) == -1
-		MilkQ.AssignSlot(akActor)
+		MilkQ.AssignSlotMaid(akActor)
 	elseif MilkQ.MILKmaid.find(akActor) != -1
 		Debug.Notification( "Target is already milkmaid" )
 	else 
@@ -119,7 +120,7 @@ Event OnVibrateStart(string eventName, string argString, float argNum, form send
 			if Utility.RandomInt(0, 100) < 5
 				Debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s breasts has started lactating.")
 				if MilkQ.MILKmaid.find(akActor) == -1				; || MilkQ.MILKSlave.find(akActor) != -1
-					MilkQ.AssignSlot(akActor)
+					MilkQ.AssignSlotMaid(akActor)
 					Utility.Wait( 1.0 )
 				endif
 				StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", MilkQ.MilkGenValue/3/10 * gush)
@@ -320,6 +321,8 @@ Function UpdateSize()
 EndFunction
 
 Function Maintenance()
+Debug.Notification("My SKSE float function returned " + MyTest())
+Debug.Notification("My SKSE string function returned " + GetStringValue())
 	Debug.Trace("MilkModEconomy OnPlayerLoadGame")
 	if PapyrusUtil.GetVersion() < 28
 		Debug.MessageBox( "Your PapyrusUtil is too old" )

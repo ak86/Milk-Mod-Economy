@@ -1,4 +1,4 @@
-Scriptname MME_Status extends Quest
+Scriptname MME_Status extends Quest Hidden
 {MME check script}
 ;Doesn't connect to main mod in anyway, only purpose is to check if MME scripts are initiated
 ;To do this we check MME_Status_Global, which should be set be MME to 1 by maintenance() in MilkPlayerLoadGame script

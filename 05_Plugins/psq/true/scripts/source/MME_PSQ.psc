@@ -1,4 +1,4 @@
-Scriptname MME_PSQ extends Quest
+Scriptname MME_PSQ extends Quest Hidden
 
 Event OnInit()
 	StorageUtil.SetIntValue(none,"MME.PluginsCheck.psq",2)
@@ -17,4 +17,9 @@ Function AddEnergy ()
 	else 
 		PSQ.SuccubusEnergy.SetValue(MaxEnergy)
 	endif
+EndFunction
+
+Function BecomeSuccubus ()
+	playersuccubusquestscript PSQ = Quest.GetQuest("PlayerSuccubusQuest") as playersuccubusquestscript
+	PSQ.BecomeSuccubus()
 EndFunction

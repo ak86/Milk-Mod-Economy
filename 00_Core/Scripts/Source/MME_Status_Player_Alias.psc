@@ -1,4 +1,4 @@
-Scriptname MME_Status_Player_Alias extends ReferenceAlias
+Scriptname MME_Status_Player_Alias extends ReferenceAlias Hidden
 {MME check script Player_Alias}
 ;Should (re)launch MME_Status script on every player load game
 

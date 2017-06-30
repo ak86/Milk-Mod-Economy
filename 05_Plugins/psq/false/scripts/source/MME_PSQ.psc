@@ -1,4 +1,4 @@
-Scriptname MME_PSQ extends Quest
+Scriptname MME_PSQ extends Quest Hidden
 
 Event OnInit()
 	StorageUtil.SetIntValue(none,"MME.PluginsCheck.psq",1)
@@ -9,4 +9,7 @@ bool Function IsIntegraged ()
 EndFunction
 
 Function AddEnergy ()
+EndFunction
+
+Function BecomeSuccubus ()
 EndFunction

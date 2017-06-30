@@ -1,4 +1,4 @@
-Scriptname MME_RND_SemenScr extends activemagiceffect  
+Scriptname MME_RND_SemenScr extends activemagiceffect Hidden
 
 Event OnEffectStart( Actor akTarget, Actor akCaster )
 	if Game.GetPlayer() == akTarget

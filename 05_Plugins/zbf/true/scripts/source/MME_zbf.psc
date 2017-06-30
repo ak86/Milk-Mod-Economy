@@ -1,4 +1,4 @@
-Scriptname MME_zbf extends Quest
+Scriptname MME_zbf extends Quest Hidden
 
 Event OnInit()
 	StorageUtil.SetIntValue(none,"MME.PluginsCheck.zbf",2)

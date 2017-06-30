@@ -1,4 +1,4 @@
-Scriptname MME_SOS extends Quest
+Scriptname MME_SOS extends Quest Hidden
 
 Event OnInit()
 	StorageUtil.SetIntValue(none,"MME.PluginsCheck.sos",1)

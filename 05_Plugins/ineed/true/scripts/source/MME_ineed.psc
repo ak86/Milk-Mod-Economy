@@ -1,4 +1,4 @@
-Scriptname MME_ineed extends Quest
+Scriptname MME_ineed extends Quest Hidden
 
 Event OnInit()
 	StorageUtil.SetIntValue(none,"MME.PluginsCheck.ineed",2)

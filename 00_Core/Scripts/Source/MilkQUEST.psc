@@ -809,6 +809,43 @@ Function AssignSlot(Actor akActor)
 	akActor.AddToFaction(MilkMaidFaction)
 EndFunction
 
+Function AssignSlotMaid(Actor akActor)
+	If akActor == PlayerREF
+		if PlayerCantBeMilkmaid == true
+			return
+		endif
+		MILKmaid[0] = akActor
+	Else
+		int i = 0
+		int count = 0
+		int t = MILKmaid.Find(none,1)
+
+		If t == -1
+			Debug.notification("No more Milk Maid slots")
+			return
+		Else
+			While i < MilkMaid.Length
+				i += 1
+				If MilkMaid[i] != None
+					count += 1
+				EndIf
+			EndWhile
+			
+			;Debug.notification(MilkMaid.Length + " " + count + " " + Milklvl0fix )
+
+			If count >= Milklvl0fix()
+				Debug.notification("No more Milk Maid slots")
+				return
+			Else
+				MILKmaid[t] = akActor
+			Endif
+		EndIf
+	EndIf
+	MME_Storage.initializeActor(akActor)
+	Debug.Notification(akActor.GetLeveledActorBase().GetName() + " becomes a Milk Maid")
+	akActor.AddToFaction(MilkMaidFaction)
+EndFunction
+
 Function AssignSlotSlave(Actor akActor, Int Level, Float Milk)
 	If akActor == PlayerREF
 		Debug.notification("Actor is Player and cannot be milkslave")
@@ -2166,6 +2203,35 @@ EndFunction
 ;----------------------------------------------------------------------------
 ;Utility
 ;----------------------------------------------------------------------------
+String Function formatString(String src, String part1 = "", String part2 = "", String part3 = "", String part4 = "", String part5 = "")
+	;Debug.Messagebox("json source: " + src)
+	int pos1 = StringUtil.find(src, "%text1")
+	if pos1 != -1
+		src = StringUtil.substring("", 0, pos1) + part1 + StringUtil.substring(src, pos1+6)
+	endIf
+
+	int pos2 = StringUtil.find(src, "%text2")
+	if pos2 != -1
+		src = StringUtil.substring(src, 0, pos2) + part2 + StringUtil.substring(src, pos2+6)
+	endIf
+	
+	int pos3 = StringUtil.find(src, "%text3")
+	if pos3 != -1
+		src = StringUtil.substring(src, 0, pos3) + part3 + StringUtil.substring(src, pos3+6)
+	endIf
+	
+	int pos4 = StringUtil.find(src, "%text4")
+	if pos4 != -1
+		src = StringUtil.substring(src, 0, pos4) + part4 + StringUtil.substring(src, pos4+6)
+	endIf
+	
+	int pos5 = StringUtil.find(src, "%text5")
+	if pos5 != -1
+		src = StringUtil.substring(src, 0, pos5) + part5 + StringUtil.substring(src, pos5+6)
+	endIf
+	
+	return src
+EndFunction
 
 Function MultiBreastChange(Actor akActor)
 	Float BreastRows = MME_Storage.getBreastRows(akActor)

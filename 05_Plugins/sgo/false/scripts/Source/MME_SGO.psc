@@ -1,4 +1,4 @@
-Scriptname MME_SGO extends Quest
+Scriptname MME_SGO extends Quest Hidden
 
 Event OnInit()
 	StorageUtil.SetIntValue(none,"MME.PluginsCheck.sgo",1)

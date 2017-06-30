@@ -1,0 +1,180 @@
+{
+	"intList" : 
+	{
+		"armorslot" : [ 32, 45, 49, 56, 58 ]
+	},
+	"string" : 
+	{
+		"assignslotactorispc" : "%text1 is Player Character and cannot be Milkslave",
+		"assignslotmaid" : "%text1 becomes a Milkmaid",
+		"assignslotmts" : "%text1 is not a Milkmaid, something wrong in calling Function AssignSlotSlaveToMaid",
+		"assignslotnomaidsslots" : "No more Milkmaid slots",
+		"assignslotnoslaveslots" : "No more Milkslave slots",
+		"assignslotstm" : "%text1 is not a Milkslave, something wrong in calling Function AssignSlotSlaveToMaid",
+		"breastattach" : "text1 attaches to your breasts, absorbing your additional breast rows",
+		"breastdettach" : "You are free from text1",
+		"cupsattach" : "The milking cups attach to your breasts, ready to milk you",
+		"cupsdettach" : "The milking cups detach from your breasts",
+		"drained" : "You are drained until you take a nap.",
+		"exhaustiongone" : "%text1 feels revitalised, exhaustion is gone!",
+		"femaleonly" : "Only works on females",
+		"ismaid" : "%text1 is already milkmaid",
+		"isnotmaid" : "%text1 is not milkmaid",
+		"isnotmaidslave" : "%text1 is not a milk maid/slave",
+		"isnotslave" : "%text1 is not milkslave",
+		"isslave" : "%text1 is already milkslave",
+		"lactacidstory" : "After you have drank bottle, you are starting to feel strange, your breast warm up, nipples start to tingle and becomes hard rubbing with your clothes. Heat spreads through you body, your mind goes blank, you can hardly stand on your feet. Suddenly you feeling shock-waves going through you body as you collapse.",
+		"lactacidorgasm" : "%text1 just had a breast induced orgasm!",
+		"lactationstart" : "%text1's breasts has started lactating",
+		"milkingboobgasm" : "%text1 is having a boobgasm!",
+		"milkingbounddone" : "Milk Pump has milked %text1 dry and releases its bounds.",
+		"milkinggaywarning" : "[MME]Sorry, there are no gay animations, dividing universe by zero, have a nice day.",
+		"milkingorgasm" : "%text1 is having a orgasm!",
+		"mme_status" : "MilkModEconomy has failed script check, scripts are not running/broken(most likely mod was not installed correctly), script will retry check in 60 sec",
+		"onkeyeventisslave" : "%text1 is a slave and not allowed to be milked",
+		"onkeyeventnotsn" : "%text1 is not a milk maid/slave",
+		"onkeyeventspriggan" : "%text1 is a host for living armor and can not be milked",
+		"onkeyeventstatus" : "Milkmaid: %text1 ; Milk: %text2; Nipples: %text3; Lactacid: %text4",
+		"orgasmmilkleak" : "Orgasm forces milk from %text1's breasts",
+		"rested" : "You have rested enough.",
+		"vibrationmilkleak" : "Nipple piercing vibrations forces milk from %text1's breasts"
+	},
+	"stringList" : 
+	{
+		"armorname" : [ "Chastity Bra" ],
+		"dawnstar" : [ "Dawnstar", "Dawnstar Sanctuary", "Windpeak Inn", "", "Hjerim" ],
+		"falkreath" : [ "Falkreath", "Dead Man's Drink", "Lakeview Manor" ],
+		"hermaeusmoraend" : 
+		[
+			"Here could be your story",
+			"The tentacles relax as the penetration on your tits suddenly stops. You can not say if you feel dizzy, relieved or euphoric. But you are happy you have given Hermaeus this sacrifice. And you're eagerly awaiting his next demand.",
+			"'Well done my pet.' are his last words before he releases your spirit from its prison and gives you control over your body again. You feel ice cold sweat on your skin. Your legs are shaking. 'Thank you master.' whisper from your lips"
+		],
+		"hermaeusmorastart" : 
+		[
+			"Here could be your story",
+			"The tentacles are reaching for your breasts. The suckers melt with your body. You nearly faint in Hermaeus' presence, feeling his caress, becoming one with his parasite. You feel milk gushing out, ravenous imbibed by the tentacles.",
+			"A dark voice pounds in your head: '%text1, my favourite mind milker. Let me see what knowledge you acquired for me.' The tentacles caress your breast, dig deep into them, you feel them inside your trembling body, reaching your head, your mind..."
+		],
+		"livingarmorend" : 
+		[
+			"Here could be your story",
+			"The tentacles relax as the suction on your tits suddenly stops. You can not say if you feel dizzy, relieved or euphoric. But you are happy you have given the armor what it needs. And you're eagerly awaiting its next feeding.",
+			"You squirm within the tentacles' tight embrace, as they wring the last few drops from your breasts. The armor seems to want more, but it relaxes its hold... for now.",
+			"The tentacles squeeze harder and faster as the suckers pull every drop of milk they can get and then as suddenly as it began, the armor relaxes its grip. You've been relieved of your milky burden for now. And you know you'll need to satisfy its hunger again.... but when?"
+		],
+		"livingarmorstart" : 
+		[
+			"Here could be your story",
+			"The tentacles are reaching for your breasts. The suckers latch on to your body. You nearly faint in anticipation, feeling their caress, and you know what is coming. You feel your milk gushing out, ravenously imbibed by the tentacles.",
+			"The armor's tentacles coil around your milky nipples, then the suckers take hold almost painfully hard. You gasp in a mixture of pain and relief, as your milk lets down. The tentacles pulse and pull as they milk you.",
+			"Your armor suddenly tightens around you. Tentacles wrap around your swollen breasts as suckers find the nipples and latch on. Your knees nearly buckle as the writhing mass squeezes and massages your breasts. Your milk begins to flow as the suckers do their work."
+		],
+		"maidlvup" : 
+		[
+			"%text1 has gained a Milk maid level!",
+			"As a result of a series of repeated vigorous milkings, %text1's breasts have grown accustomed to the great demand for their precious nectar and have grown bigger in size increasing their capacity! \n [Milk Maid Level: 1]",
+			"Due to repeated vigorous milkings, %text1's beautiful boobs are adjusting to the great demand for their precious nectar and have grown bigger in size increasing their capacity even further! \n [Milk Maid Level: 2]",
+			"The repeated vigorous milkings are conditioning %text1's glorious globes to meet the great demand for their precious nectar. They have grown bigger in size increasing their already impressive capacity even further! \n [Milk Maid Level: 3]",
+			"Repeated vigorous milkings have trained %text1's marvellous milk melons to meet the great demand for their precious nectar. They have grown bigger in size increasing their already amazing capacity even further! \n [Milk Maid Level: 4]",
+			"%text1's looking forward to these vigorous milkings. Her breasts have grown accustomed to the great demand for their luscious lactation and have grown bigger in size increasing their inhuman capacity even further! \n [Milk Maid Level: 5]",
+			"%text1's already ample breasts are adjusting to the demand for their precious nectar due to the repeated vigorous milkings. They have grown in size and capacity again! %text2 enjoys being milked! \n [Milk Maid Level: 6]",
+			"Due to the regular, vigorous milkings, %text1's breasts have grown even larger and their capacity has increased. Their now bountiful breasts will work to meet the demand for their tasty milk. \n [Milk Maid Level: 7]",
+			"%text1 enjoys the repeated and vigorous milking. her breasts continue to grow to meet the demand for their rich nectar. Her now Gigantic Jugs can supply more milk and she enjoys it when people notice her breast size! \n [Milk Maid Level: 8]",
+			"These regular, vigorous milking sessions turn your milkmaid's on! They now have Tremendous Tits with increased size and capacity. Their delicious milk is in demand and they feel sexy when they hear comments about their boobs. \n [Milk Maid Level: 9]",
+			"%text1 is now a Master of the Milkmaids with MASSIVE Mammaries! She can supply more milk than an entire herd of cows. And those tits of theirs are the talk of Tamriel. \n [Master Milk Maid]",
+			"%text1 has gained a Milkmaid level!",
+			"As a result of a series of repeated vigorous milkings, %text1's breasts have grown accustomed to the great demand for their precious nectar and have grown bigger in size increasing their capacity! \n [Milkmaid Level: 1]",
+			"Due to repeated vigorous milkings, %text1's beautiful boobs are adjusting to the great demand for their precious nectar and have grown bigger in size increasing their capacity even further! \n [Milkmaid Level: 2]",
+			"The repeated vigorous milkings are conditioning %text1's glorious globes to meet the great demand for their precious nectar. They have grown bigger in size increasing their already impressive capacity even further! \n [Milkmaid Level: 3]",
+			"Repeated vigorous milkings have trained %text1's marvellous milk melons to meet the great demand for their precious nectar. They have grown bigger in size increasing their already amazing capacity even further! \n [Milkmaid Level: 4]",
+			"%text1's looking forward to these vigorous milkings. Her breasts have grown accustomed to the great demand for their luscious lactation and have grown bigger in size increasing their inhuman capacity even further! \n [Milkmaid Level: 5]",
+			"%text1's already ample breasts are adjusting to the demand for their precious nectar due to the repeated vigorous milkings. They have grown in size and capacity again! %text2 enjoys being milked! \n [Milkmaid Level: 6]",
+			"Due to the regular, vigorous milkings, %text1's breasts have grown even larger and their capacity has increased. Their now bountiful breasts will work to meet the demand for their tasty milk. \n [Milkmaid Level: 7]",
+			"%text1 enjoys the repeated and vigorous milking. her breasts continue to grow to meet the demand for their rich nectar. Her now Gigantic Jugs can supply more milk and she enjoys it when people notice her breast size! \n [Milkmaid Level: 8]",
+			"These regular, vigorous milking sessions turn your milkmaid's on! They now have Tremendous Tits with increased size and capacity. Their delicious milk is in demand and they feel sexy when they hear comments about their boobs. \n [Milkmaid Level: 9]",
+			"%text1 is now a Master of the Milkmaids with MASSIVE Mammaries! She can supply more milk than an entire herd of cows. And those tits of theirs are the talk of Tamriel. \n [Master Milkmaid]"
+		],
+		"markarth" : [ "Markarth", "Silver-Blood Inn", "Dawnstar Sanctuary", "Karthwasten", "Old Hroldan", "Old Hroldan Inn" ],
+		"marketnames" : 
+		[
+			"with the Khajiit Caravaneers",
+			"in Dawnstar",
+			"in Falkreath",
+			"in Markarth",
+			"with the Orcish Strongholds",
+			"in Riften",
+			"in Solitude",
+			"in Whiterun",
+			"in the province of Solstheim"
+		],
+		"milkpumpend" : 
+		[
+			"After minutes of torment, tubes retract into the unknown, as you feel strange magic fades, you try to escape horrible device as fast as you can, though it's not easy for your abused body, filled with unknown liquid.",
+			"The cups pulse with a strong consistency, milking you HARD and draining you of your reservoir of milk. Your nipples ache with the strange pleasure of it, leaving you moaning and wriggling against your restraints, desperate for release, but you just can't get the stimulation you need. Time stretches on as you're teased like that, pumped of your milk until the machinery shuts off and you wobbly raise to your feet, your milky residue still running down your breasts.",
+			"The machinery lurches, struggling to keep up as you flood the tubes with your creamy bounty. A motherly sense of pride wells within you as you hear the apparatus wind down and indicate it's fullness with a ding; the people of Skyrim will be getting their fill tonight. Even more, you can't wait to continue to satisfy their thirst when it's time to be milked again.",
+			"You feel woozy and light-headed from the intense milking, and have difficulty focusing on anything but the residue of fluids coating your milky tits. Feeling sore and exhausted, you make yourself decent and stagger away from the machinery with a satisfied smile on your face.",
+			"You practically cream yourself from the cup's actions as the milking continues, so hot and horny that you try and wriggle in your harness to press against them. After what seems like hours of non-stop sucking and spurting, your milking is over, and the cups release themselves from your drained breasts. You rise and steady yourself on wobbly knees, eager to experience being milked again.",
+			"Eventually, the milker's action becomes too much for your reddened nipples, and with a slight grimace you deactivate the milker. As you alleviate your tender bosom, you find that the odd tingling sensation is still lingering in your bosom, along with the vision of your breasts swelling with milk."
+		],
+		"milkpumpstart" : 
+		[
+			"Out of curiosity you jump into strange device, nothing bad can happen, right? Suddenly, you start to feel tingles over your skin, scared you try to get out of the device but you can move a finger. Desperate, you see tube appear, moving towards your mouth and forcing itself in, few moments later you feel same happens with your intimate parts. Paralyzed you see some fluids flowing through tubes.",
+			"As you approach the strange device, your milky nipples grow hard and ready of their own volition, eagerly anticipating the opportunity to get milked. You easily fit yourself into the apparatus, hearing the machinery activate automatically as if sensing your breast's full capacity. The cups twitch and move heavily as they raise to your bountiful chest, ready to milk you.",
+			"As you take a seat on the strange device, your aching nipples grow hard and ready of their own volition, eagerly anticipating the opportunity to release their milky load. You easily fit yourself into the apparatus, hearing the machinery activate automatically. The cups twitch and move as they raise to your full chest, ready to relieve you of your delicious milky burden.",
+			"You begin holding the breast-milking cups against your forward jutting nipples and with a sudden lurch the suction pulls against you, pressing the cups tightly against your chest, stretching your nubs to nearly twice their normal length. You feel a building pressure as the machine sucks you relentlessly, drawing your milk to the surface. Your body lets down its milk, flooding the tubes with creamy goodness.",
+			"You eagerly grab onto the suction cups, pulling them up to your tight and full chest. They latch on, slapping tight against you as the vacuum pressure seals them tightly against your body. You can feel your milk-slicked nipples pulling tight, nearly doubling in size from the intense pressure. The sensitive flesh of your motherly tits fill with a burgeoning pressure that centers around the tubes connected to your nips. Your lactating nubs twitch and pulse for but a moment, then unleash a torrent of milk, totally filling the tubes.",
+			"You approach the strange device and take a seat. The suckers immediately seal themselves against your breasts and activate, assaulting your nipples with a strong, rhythmic sucking sensation. It's uncomfortable - almost painful, in fact, but the sensation of being milked, brings about a strange, tingling feeling of arousal that washes over your whole being. As you look down to your breasts, you find yourself fantasizing your breasts as heaving boulders of supple flesh, filled with creamy, nutritive milk and maternal purpose. The daydream is oddly erotic, and your thighs begin rubbing against each other of their own accord."
+		],
+		"milkstage" : 
+		[
+			"%text1's breasts feel a bit warm as they tingle.",
+			"%text1's breasts feel quite warm.",
+			"%text1's breasts feel very warm and a bit uncomfortable.",
+			"%text1's breasts are starting to perk up.",
+			"%text1's breasts have become a bit more firm and perky.",
+			"%text1's breasts have become quite firm, the nipples feel very tender.",
+			"%text1's breasts have become very firm, the nipples feel very sensitive.",
+			"%text1's breasts feel slightly heavy.",
+			"%text1's breasts have become heavier, the trend is quite alarming.",
+			"%text1's breasts have become noticeably heavier.",
+			"%text1's breasts feel heavy and full, perhaps it is time to seek release.",
+			"%text1's breasts are demanding release! They're beginning to feel painful.",
+			"%text1's breasts have reached their natural limit, and scream for release.",
+			"%text1's breasts have begun to expand to accommodate the additional milk.",
+			"%text1's breasts have expanded beyond their natural limit.",
+			"%text1's breasts have now become even larger.",
+			"%text1's breasts continue to expand, with no end in sight.",
+			"%text1's breasts are starting to block the view of the lower body.",
+			"%text1's breasts have obscured the lower body, but continue to expand.",
+			"%text1's breasts are swollen with milk.",
+			"%text1's breasts are starting to impair movement.",
+			"%text1's breasts have expanded to their absolute limit.",
+			"%text1's nipples swell and tingle.",
+			"%text1's swollen nipples become moistened.",
+			"%text1's milk is leaking from swollen nipples."
+		],
+		"nipplepiercingblock" : [ "Plug", "SHIELD" ],
+		"orcstrongholds" : [ "Mor Khazgur", "Dushnikh Yal", "Narzulbur", "Largashbur" ],
+		"riften" : [ "Riften", "Shor's Stone", "Bee and Barb", "Ivarstead", "Ivarstead Vilemyr Inn", "Fort Dawnguard", "Dayspring Canyon" ],
+		"solitude" : [ "Solitude", "The Winking Skeever", "Dragon Bridge", "Four Shields Tavern", "Morthal", "Moorside Inn" ],
+		"solstheim" : [ "Solstheim", "Raven Rock", "Skaal Village", "Tel Mithryn" ],
+		"sprigganend" : 
+		[
+			"Here could be your story",
+			"Your whole body throbs in time with the pulse of milk from your nipples, and a strange euphoria courses through you. But your breasts are nearly drained, and the milking comes to an end. The spriggan seems to be satisfied, for now.",
+			"You squirm within the spriggan's tight embrace, as it wrings the last few drops from your drained breasts. The spriggan seems to want more, but there is none to be had.",
+			"The spriggan's tendrils pull harder and faster briefly, and then they begin to relax as every drop of milk is absorbed. You know that it will need to feed again, but when?"
+		],
+		"sprigganstart" : 
+		[
+			"Here could be your story",
+			"The spriggan's root-like tendrils stretch across your swollen breasts, forming tight knots where milk is starting to seep from your nipples. The rough bark of its fingers digs into your flesh, as it starts to massage your breasts, coaxing your milk to the surface.",
+			"The spriggan's tendrils knot around your milky nipples, then take hold almost painfully hard. You gasp in a mixture of pain and relief, as your milk lets down.",
+			"The spriggan stirs and suddenly you feel its tendrils rhythmically squeezing your breasts and pulling at your nipples. Pain and pleasure mix as you are forced to meet its demand for your milk."
+		],
+		"standingmilkinganimations" : [ "ZaZAPCHorFA", "ZaZAPCHorFB", "ZaZAPCHorFC" ],
+		"whiterun" : [ "Whiterun", "The Bannered Mare", "Riverwood", "Sleeping Giant Inn", "Rorikstead", "Frostfruit Inn" ],
+		"windhelm" : [ "Whiterun", "The Bannered Mare", "Riverwood", "Rorikstead" ]
+	}
+}

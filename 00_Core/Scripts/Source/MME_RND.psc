@@ -1,4 +1,4 @@
-Scriptname MME_RND extends Quest
+Scriptname MME_RND extends Quest Hidden
 
 bool Function IsIntegraged ()
 	Return True
