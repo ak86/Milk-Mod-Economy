@@ -1,11 +1,28 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>31-05-2017</Version>
+  <Version>10-07-2017</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
   
 Dev change log:
+
+	v 10-07-2017
+increased maid slave count to 120, mcm progression slider to 200, probably bugged
+
+	v 30-06-2017
+succubus milk, turns player into succubus:
+added event for angrim aprentice event, dont remember if AA actually support this
+added event for deadly drain
+added forced turn into PSQ succubus
+
+hidden most scripts in CK
+changed most scipts names
+removed properties from most scripts
+set a base for porting mod variables\ messages into jsons
+
+	v 27-06-2017
+dialogue scripts overhaul
 
 	v 31-05-2017
 fix? for npcs to prevent them from trying to milk them-self during update while player is far away thus causing errors in log
