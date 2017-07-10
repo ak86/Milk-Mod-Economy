@@ -2902,7 +2902,7 @@ Function MaidReset()
 		i += 1
 	endWhile
 	
-	MilkMaid = new Actor[20]
+	MilkMaid = new Actor[120]
 	StorageUtil.FormListClear(none,"MME.MilkMaid.List")
 EndFunction
 
@@ -2915,7 +2915,7 @@ Function SlaveReset()
 		i += 1
 	endWhile
 
-	MilkSlave = new Actor[20]
+	MilkSlave = new Actor[120]
 EndFunction
 
 Function Armor_Purge()

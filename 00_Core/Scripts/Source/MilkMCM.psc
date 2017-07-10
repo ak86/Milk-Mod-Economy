@@ -3053,7 +3053,7 @@ state Debug_Mastery_Slider
 	event OnSliderOpenST()
 		SetSliderDialogStartValue(StorageUtil.GetFloatValue(none,"MME.Progression.Level"))
 		SetSliderDialogDefaultValue(0)
-		SetSliderDialogRange(0, 40)
+		SetSliderDialogRange(0, 200)
 		SetSliderDialogInterval(1)
 	endEvent
 
