@@ -1,26 +1,22 @@
 Scriptname MME_Status extends Quest Hidden
 {MME check script}
 ;Doesn't connect to main mod in anyway, only purpose is to check if MME scripts are initiated
-;To do this we check MME_Status_Global, which should be set be MME to 1 by maintenance() in MilkPlayerLoadGame script
+;To do this we check MME_ScriptsStarted, which should be set be MME to 1 by maintenance() in MilkPlayerLoadGame script
 ;by it self this script is run once when mod is installed, should be registered by alias script to run on playerloadgame
 
-GlobalVariable Property MME_Status_Global Auto
-
-int update_interval = 60
-
 Event OnInit()
-	RegisterForSingleUpdate(update_interval)
+	RegisterForSingleUpdate(60)
 EndEvent
 
 Event OnUpdate()
-	if MME_Status_Global.GetValue() != 1
-		Debug.Messagebox("MilkModEconomy was not installed correctly, scripts are not running \n this can be false alarm when starting new game but if message keeps repeating, then something is wrong, script will retry check in 60 sec")
-		Debug.Trace("MilkModEconomy MilkPlayerLoadGame.Maintenance() script has not set MME_Status_Global to 1, retry check in " + update_interval + " sec")
+	if StorageUtil.GetIntValue(Game.GetPlayer(), "MME_ScriptsStarted") != 1
+		Debug.Messagebox(JsonUtil.GetStringValue("/MME/Strings", "MME_Status"))
 		MilkPluginsInfo()
-		RegisterForSingleUpdate(update_interval)
+		RegisterForSingleUpdate(60)
+		Debug.Trace("MilkModEconomy Scripts are not running, retrying in 60 sec")
 	else
-		Debug.Trace("MilkModEconomy Changed status to 0, shutting down")
-		MME_Status_Global.SetValue(0)
+		StorageUtil.UnsetIntValue(Game.GetPlayer(), "MME_ScriptsStarted")
+		Debug.Trace("MilkModEconomy Scripts are running, Unsetting StorageUtil MME_ScriptsStarted, shutting down")
 	endif
 EndEvent
 

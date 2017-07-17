@@ -1,7 +1,6 @@
 Scriptname MilkPlayerLoadGame extends ReferenceAlias  
 
-MilkQUEST Property MilkQ Auto
-import MyPluginScript
+;import MyPluginScript
 
 ;----------------------------------------------------------------------------
 ;Events
@@ -9,6 +8,8 @@ import MyPluginScript
 
 Event OnInit()
 	Debug.Trace("MilkModEconomy 1st run, initializing")
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
+
 	MilkQ.VarSetup()
 	MilkQ.MaidReset()
 	MilkQ.SlaveReset()
@@ -31,63 +32,91 @@ EndEvent
 ;----------------------------------------------------------------------------
 
 Event onMME_AddMilkSlave(Form Sender, Int Level, Float Milk)
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	actor akActor = Sender as Actor
-	if MilkQ.MILKmaid.find(akActor, 0) == -1 && MilkQ.MILKslave.find(akActor, 0) == -1
-		if !Level
-			Level = 0
+	
+	if akActor != none
+		if MilkQ.MILKmaid.find(akActor, 0) == -1 && MilkQ.MILKslave.find(akActor, 0) == -1
+			if !Level
+				Level = 0
+			endif
+			if !Milk
+				Milk = 0
+			endif
+			MilkQ.AssignSlotSlave(akActor, Level, Milk)
+		elseif MilkQ.MILKmaid.find(akActor) != -1
+			String MaidName = akActor.GetLeveledActorBase().getname()
+			Debug.Notification(MilkQ.formatString(JsonUtil.GetStringValue("/MME/Strings", "ismaid"), MaidName))
+		else 
+			String MaidName = akActor.GetLeveledActorBase().getname()
+			Debug.Notification(MilkQ.formatString(JsonUtil.GetStringValue("/MME/Strings", "isslave"), MaidName))
 		endif
-		if !Milk
-			Milk = 0
-		endif
-		MilkQ.AssignSlotSlave(akActor, Level, Milk)
-	elseif MilkQ.MILKmaid.find(akActor) != -1
-		Debug.Notification( "Target is already milkmaid" )
-	else 
-		Debug.Notification( "Target is already milkslave" )
+	else
+		Debug.Notification(JsonUtil.GetStringValue("/MME/Strings", "eventactornone"))
 	endif
 EndEvent
 
 Event onMME_AddMilkMaid(Form Sender)
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	actor akActor = Sender as Actor
-	if MilkQ.MILKmaid.find(akActor, 0) == -1 && MilkQ.MILKslave.find(akActor, 0) == -1
-		MilkQ.AssignSlotMaid(akActor)
-	elseif MilkQ.MILKmaid.find(akActor) != -1
-		Debug.Notification( "Target is already milkmaid" )
-	else 
-		Debug.Notification( "Target is already milkslave" )
+	
+	if akActor != none
+		if MilkQ.MILKmaid.find(akActor, 0) == -1 && MilkQ.MILKslave.find(akActor, 0) == -1
+			MilkQ.AssignSlotMaid(akActor)
+		elseif MilkQ.MILKmaid.find(akActor) != -1
+			String MaidName = akActor.GetLeveledActorBase().getname()
+			Debug.Notification(MilkQ.formatString(JsonUtil.GetStringValue("/MME/Strings", "ismaid"), MaidName))
+		else 
+			String MaidName = akActor.GetLeveledActorBase().getname()
+			Debug.Notification(MilkQ.formatString(JsonUtil.GetStringValue("/MME/Strings", "isslave"), MaidName))
+		endif
+	else
+		Debug.Notification(JsonUtil.GetStringValue("/MME/Strings", "eventactornone"))
 	endif
 EndEvent
 
 Event onMME_Milking(Form Sender, Int Mode, Int PumpType)
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	actor akActor = Sender as Actor
-	if akActor.GetActorBase().GetSex() == 1
+	
+	if akActor != none
 		if MilkQ.MILKmaid.find(akActor) != -1
 			MilkQ.Milking(akActor, 0, Mode, PumpType)
 		else 
-			Debug.Notification( "Target is not a milkmaid" )
+			String MaidName = akActor.GetLeveledActorBase().getname()
+			Debug.Notification(MilkQ.formatString(JsonUtil.GetStringValue("/MME/Strings", "isnotmaid"), MaidName))
 		endif
 	else
-		Debug.Notification("Only works on females")
+		Debug.Notification(JsonUtil.GetStringValue("/MME/Strings", "eventactornone"))
 	endif
 EndEvent
 
 Event OnSlaveToggle(Form Sender)
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	actor akActor = Sender as Actor
-	if MilkQ.MILKmaid.find(akActor) == -1 && MilkQ.MILKmaid.find(akActor) == -1
-		Debug.Notification( "Target is not milkmaid/slave" )
-	elseif StorageUtil.GetIntValue(akActor,"MME.MilkMaid.IsSlave") == 0
-		StorageUtil.SetIntValue(akActor,"MME.MilkMaid.IsSlave", 1)
-		akActor.AddToFaction(MilkQ.MilkSlaveFaction)
-	elseif StorageUtil.GetIntValue(akActor,"MME.MilkMaid.IsSlave") == 1
-		StorageUtil.SetIntValue(akActor,"MME.MilkMaid.IsSlave", 0)
-		akActor.RemoveFromFaction(MilkQ.MilkSlaveFaction)
+	
+	if akActor != none
+		if MilkQ.MILKmaid.find(akActor) == -1 && MilkQ.MILKmaid.find(akActor) == -1
+			String MaidName = akActor.GetLeveledActorBase().getname()
+			Debug.Notification(MilkQ.formatString(JsonUtil.GetStringValue("/MME/Strings", "isnotmaidslave"), MaidName))
+		elseif StorageUtil.GetIntValue(akActor,"MME.MilkMaid.IsSlave") == 0
+			StorageUtil.SetIntValue(akActor,"MME.MilkMaid.IsSlave", 1)
+			akActor.AddToFaction(MilkQ.MilkSlaveFaction)
+		elseif StorageUtil.GetIntValue(akActor,"MME.MilkMaid.IsSlave") == 1
+			StorageUtil.SetIntValue(akActor,"MME.MilkMaid.IsSlave", 0)
+			akActor.RemoveFromFaction(MilkQ.MilkSlaveFaction)
+		endif
+	else
+		Debug.Notification(JsonUtil.GetStringValue("/MME/Strings", "eventactornone"))
 	endif
 EndEvent
 
 Event OnSleepStop(bool abInterrupted)
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	Int i = 0
+	
 	while i < MilkQ.MILKmaid.length
-		if MilkQ.MILKmaid[i] != none && MilkQ.MILKmaid[i].GetActorBase().GetSex() == 1
+		if MilkQ.MILKmaid[i] != none
 			int BreastRowsAdjust = StorageUtil.GetFloatValue(MilkQ.MILKmaid[i],"MME.MilkMaid.AdjustBreastRow") as int
 			if BreastRowsAdjust != 0
 				int BreastRows = MME_Storage.getBreastRows(MilkQ.MILKmaid[i])
@@ -105,20 +134,22 @@ endEvent
 ;DDI hooks
 ;----------------------------------------------------------------------------
 
-Event OnVibrateStart(string eventName, string argString, float argNum, form sender)
-	Actor akActor = MilkQ.PlayerRef
-
-	If argString == akActor.GetActorBase().GetName() && MilkQ.DDI.IsMilkingBlocked_PiercingsNipple(akActor) && (MilkQ.akActorSex(akActor) == "Female" || MilkQ.akActorSex(akActor) == "Futa")
+Event OnVibrateStart(string eventName, string argString, float argNum, form sender)			;player only, cuz DD uses strings instead of formid
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
+	Actor akActor = Game.Getplayer()
+	
+	If argString == akActor.GetLeveledActorBase().GetName() && MilkQ.DDI.IsMilkingBlocked_PiercingsNipple(akActor) && (MilkQ.akActorSex(akActor) == "Female" || MilkQ.akActorSex(akActor) == "Futa")
 		float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 		int gush = (MilkCnt*MilkQ.GushPct/100) as int
-
+		String MaidName = akActor.GetLeveledActorBase().getname()
+		
 		if gush < 1
 			gush = 1
 		endif
-
+		
 		if StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkGen") == 0 
 			if Utility.RandomInt(0, 100) < 5
-				Debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s breasts has started lactating.")
+				Debug.Notification(MilkQ.formatString(JsonUtil.GetStringValue("/MME/Strings", "lactationstart"), MaidName))
 				if MilkQ.MILKmaid.find(akActor) == -1				; || MilkQ.MILKSlave.find(akActor) != -1
 					MilkQ.AssignSlotMaid(akActor)
 					Utility.Wait( 1.0 )
@@ -128,10 +159,10 @@ Event OnVibrateStart(string eventName, string argString, float argNum, form send
 		else																				;if MilkQ.MILKmaid.find(akActor) != -1 || MilkQ.MILKSlave.find(akActor) != -1
 			StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", MilkQ.MilkGenValue/3/10 * gush)
 		endif
-
+		
 		If MilkCnt >= 1*gush
 			MME_Storage.changeMilkCurrent(akActor, -1*gush, MilkQ.BreastScaleLimit)
-			Debug.Notification("Nipple piercing vibrations forces milk from your breasts.")
+			Debug.Notification(MilkQ.formatString(JsonUtil.GetStringValue("/MME/Strings", "vibrationmilkleak"), MaidName))
 			MilkQ.PostMilk(akActor)
 			MilkQ.AddMilkFx(akActor, 2)
 			MilkQ.AddLeak(akActor)
@@ -144,7 +175,8 @@ EndEvent
 ;----------------------------------------------------------------------------
 
 Event OnSexLabStart(String _eventName, String _args, Float _argc, Form _sender)
-	Actor[] actors = MilkQ.SexLab.HookActors(_args)								;0 - actor being sucked, 1 - actor sucking
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
+	Actor[] actors = MilkQ.SexLab.HookActors(_args)											;0 - actor being sucked, 1 - actor sucking
 	String  animName = getAnimName(_args)
 
 	if (animName == "3J Straight Breastfeeding"\
@@ -152,6 +184,7 @@ Event OnSexLabStart(String _eventName, String _args, Float _argc, Form _sender)
 	|| animName == "3Jiou Breastfeeding Lesbian"\
 	|| animName == "3Jiou Breastfeeding Straight")\
 	&& MilkQ.SexLab3jBreastfeeding
+
 		if MilkQ.MILKmaid.Find(actors[0]) != -1\
 		&& !actors[0].HasSpell( MilkQ.BeingMilkedPassive )\
 		&& actors[0].GetLeveledActorBase().GetSex() == 1
@@ -162,6 +195,7 @@ Event OnSexLabStart(String _eventName, String _args, Float _argc, Form _sender)
 EndEvent
 
 Event OnSexLabEnd(String _eventName, String _args, Float _argc, Form _sender)
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	Actor[] actors = MilkQ.SexLab.HookActors(_args)
 	int idx
 
@@ -169,65 +203,17 @@ Event OnSexLabEnd(String _eventName, String _args, Float _argc, Form _sender)
 		if actors[idx].HasSpell( MilkQ.BeingMilkedPassive )
 			actors[idx].RemoveSpell( MilkQ.BeingMilkedPassive )
 		endif
-	idx += 1
+		idx += 1
 	EndWhile
 EndEvent
 
 Event OnSexLabOrgasm(String _eventName, String _args, Float _argc, Form _sender)
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	Actor[] actors = MilkQ.SexLab.HookActors(_args)
 	int idx
-	sslBaseAnimation animation = MilkQ.SexLab.HookAnimation(_args)
 
-	While idx < actors.Length && MilkQ.SexLabOrgasm
-		if MilkQ.MILKmaid.Find(actors[idx]) != -1\
-		&& actors[idx].GetLeveledActorBase().GetSex() == 1
-			if MME_Storage.getMilkCurrent(actors[idx]) >= 1
-				if ((animation.HasTag("Anal")\
-					|| animation.HasTag("Vaginal")\
-					|| animation.HasTag("Masturbation")\
-					|| animation.HasTag("Fisting"))\
-					&& !MilkQ.DDI.IsWearingBelt(actors[idx]))\
-				|| (animation.HasTag("Breast")\
-					&& ((!MilkQ.DDi.IsMilkingBlocked_Bra(actors[idx]) && !MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(actors[idx]))\
-					|| (MilkQ.DDi.IsMilkingBlocked_Bra(actors[idx]) && MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(actors[idx]))))
-					
-					MME_Storage.changeMilkCurrent(actors[idx], -1, MilkQ.BreastScaleLimit)
-					MilkQ.PostMilk(actors[idx])
-					MilkQ.AddMilkFx(actors[idx], 2)
-					
-					If ((!MilkQ.DDi.IsMilkingBlocked_Bra(actors[idx]) && !MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(actors[idx]))\
-					|| (MilkQ.DDi.IsMilkingBlocked_Bra(actors[idx]) && MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(actors[idx])))
-						MilkQ.AddLeak(actors[idx])
-					EndIf
-					If MilkQ.MilkMsgs == true
-						Debug.Notification("Orgasm forces milk from " + actors[idx].GetLeveledActorBase().GetName() + "'s breasts.")
-					EndIf
-				EndIf
-			endif
-		endif
-		if MilkQ.MILKmaid.Find(actors[idx]) != -1 || actors[idx] == MilkQ.PlayerREF
-			if animation.HasTag("Masturbation")\
-			&& !(MilkQ.DDi.IsWearingBelt(actors[idx])\
-				|| MilkQ.DDi.IsMilkingBlocked_Armbinder(actors[idx])\
-				|| MilkQ.DDi.IsMilkingBlocked_Yoke(actors[idx]))
-				if MilkQ.akActorSex(actors[idx]) == "Male" 
-					MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(1), 1)
-				elseif MilkQ.akActorSex(actors[idx]) == "Female" 
-					MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(0), 1)
-				elseif MilkQ.akActorSex(actors[idx]) == "Futa"
-;					if MilkQ.SexLab.GetGender(actors[idx]) == 1		;SL female?
-;						MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(3), 1)
-;					elseif MilkQ.SexLab.GetGender(actors[idx]) == 0	;SL male?
-;						MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(2), 1)
-;					else
-						int futamilk = Utility.RandomInt(0, 1)
-						MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(3), futamilk)
-						MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(2), 1-futamilk)
-;					endif
-				endif
-				MilkQ.PlayerREF.RemoveItem(MilkQ.MilkE.Gold, 2, true)
-			endif
-		endif
+	While idx < actors.Length
+		Orgasm(actors[idx], _args)
 		idx += 1
 	EndWhile
 EndEvent
@@ -236,67 +222,71 @@ Event OnSexLabOrgasmSeparate(Form ActorRef, Int Thread)
 	actor akActor = ActorRef as actor
 	string _args =  Thread as string
 	
-	sslBaseAnimation animation = MilkQ.SexLab.HookAnimation(_args)
-
-	if MilkQ.SexLabOrgasm
-			if MilkQ.MILKmaid.Find(akActor) != -1\
-			&& akActor.GetLeveledActorBase().GetSex() == 1
-				if MME_Storage.getMilkCurrent(akActor) >= 1
-					if ((animation.HasTag("Anal")\
-						|| animation.HasTag("Vaginal")\
-						|| animation.HasTag("Masturbation")\
-						|| animation.HasTag("Fisting"))\
-						&& !MilkQ.DDI.IsWearingBelt(akActor))\
-					|| (animation.HasTag("Breast")\
-						&& ((!MilkQ.DDi.IsMilkingBlocked_Bra(akActor) && !MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(akActor))\
-						|| (MilkQ.DDi.IsMilkingBlocked_Bra(akActor) && MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(akActor))))
-						
-						MME_Storage.changeMilkCurrent(akActor, -1, MilkQ.BreastScaleLimit)
-						MilkQ.PostMilk(akActor)
-						MilkQ.AddMilkFx(akActor, 2)
-						
-						If ((!MilkQ.DDi.IsMilkingBlocked_Bra(akActor) && !MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(akActor))\
-						|| (MilkQ.DDi.IsMilkingBlocked_Bra(akActor) && MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(akActor)))
-							MilkQ.AddLeak(akActor)
-						EndIf
-						If MilkQ.MilkMsgs == true
-							Debug.Notification("Orgasm forces milk from " + akActor.GetLeveledActorBase().GetName() + "'s breasts.")
-						EndIf
-					EndIf
-				endif
-			endif
-			if MilkQ.MILKmaid.Find(akActor) != -1 || akActor == MilkQ.PlayerREF
-				if animation.HasTag("Masturbation")\
-				&& !(MilkQ.DDi.IsWearingBelt(akActor)\
-					|| MilkQ.DDi.IsMilkingBlocked_Armbinder(akActor)\
-					|| MilkQ.DDi.IsMilkingBlocked_Yoke(akActor))
-					if MilkQ.akActorSex(akActor) == "Male" 
-						MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(1), 1)
-					elseif MilkQ.akActorSex(akActor) == "Female" 
-						MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(0), 1)
-					elseif MilkQ.akActorSex(akActor) == "Futa"
-	;					if MilkQ.SexLab.GetGender(akActor) == 1		;SL female?
-	;						MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(3), 1)
-	;					elseif MilkQ.SexLab.GetGender(akActor) == 0	;SL male?
-	;						MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(2), 1)
-	;					else
-							int futamilk = Utility.RandomInt(0, 1)
-							MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(3), futamilk)
-							MilkQ.PlayerREF.AddItem(MilkQ.MME_Cums.GetAt(2), 1-futamilk)
-	;					endif
-					endif
-					MilkQ.PlayerREF.RemoveItem(MilkQ.MilkE.Gold, 2, true)
-				endif
-			endif
-		endif
+	Orgasm(akActor, _args)
 EndEvent
 
 String Function getAnimName(String _argString)
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	sslBaseAnimation animation = MilkQ.SexLab.HookAnimation(_argString)
+
 	If animation
 		Return animation.Name
 	EndIf
 	return ""
+EndFunction
+
+Function Orgasm(Actor akActor, String _args)
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
+	sslBaseAnimation animation = MilkQ.SexLab.HookAnimation(_args)
+
+	if MilkQ.MILKmaid.Find(akActor) != -1
+		if MME_Storage.getMilkCurrent(akActor) >= 1
+			if ((animation.HasTag("Anal")\
+				|| animation.HasTag("Vaginal")\
+				|| animation.HasTag("Masturbation")\
+				|| animation.HasTag("Fisting"))\
+				&& !MilkQ.DDI.IsWearingBelt(akActor))\
+			|| (animation.HasTag("Breast")\
+				&& ((!MilkQ.DDi.IsMilkingBlocked_Bra(akActor) && !MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(akActor))\
+				|| (MilkQ.DDi.IsMilkingBlocked_Bra(akActor) && MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(akActor))))
+				
+				MME_Storage.changeMilkCurrent(akActor, -1, MilkQ.BreastScaleLimit)
+				MilkQ.PostMilk(akActor)
+				MilkQ.AddMilkFx(akActor, 2)
+				
+				If ((!MilkQ.DDi.IsMilkingBlocked_Bra(akActor) && !MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(akActor))\
+				|| (MilkQ.DDi.IsMilkingBlocked_Bra(akActor) && MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(akActor)))
+					MilkQ.AddLeak(akActor)
+				EndIf
+				If MilkQ.MilkMsgs == true
+					String MaidName = akActor.GetLeveledActorBase().GetName()
+					Debug.Notification(MilkQ.formatString(JsonUtil.GetStringValue("/MME/Strings", "orgasmmilkleak"), MaidName))
+				EndIf
+			EndIf
+		endif
+	endif
+	
+	Actor PlayerRef = Game.Getplayer()
+	if MilkQ.MILKmaid.Find(akActor) != -1 || akActor == PlayerREF
+		if animation.HasTag("Masturbation")\
+		&& !(MilkQ.DDi.IsWearingBelt(akActor)\
+		|| MilkQ.DDi.IsMilkingBlocked_Armbinder(akActor)\
+		|| MilkQ.DDi.IsMilkingBlocked_Yoke(akActor))
+
+			if MilkQ.akActorSex(akActor) == "Male" 
+				akActor.AddItem(MilkQ.MME_Cums.GetAt(1), 1)
+			elseif MilkQ.akActorSex(akActor) == "Female" 
+				akActor.AddItem(MilkQ.MME_Cums.GetAt(0), 1)
+			elseif MilkQ.akActorSex(akActor) == "Futa"
+				int futamilk = Utility.RandomInt(0, 1)
+				akActor.AddItem(MilkQ.MME_Cums.GetAt(3), futamilk)
+				akActor.AddItem(MilkQ.MME_Cums.GetAt(2), 1-futamilk)
+			endif
+			if akActor == PlayerREF
+				PlayerREF.RemoveItem(JsonUtil.GetFormValue("/MME/Forms", "gold") as MiscObject, 2, true)
+			endif
+		endif
+	endif
 EndFunction
 
 ;----------------------------------------------------------------------------
@@ -308,11 +298,13 @@ Event OnLocationChange(Location akOldLoc, Location akNewLoc)
 EndEvent
 
 Function UpdateSize()
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
+
 	if MilkQ.MILKmaid as Bool && MilkQ.MilkFlag && MilkQ.BreastScale == 2
 		Debug.Trace("MilkModEconomy, BreastScale = NiE, LocationChange/GameLoad updating breast size")
 		Int i = 0
 		while i < MilkQ.MILKmaid.length
-			if MilkQ.MILKmaid[i] != none && MilkQ.MILKmaid[i].GetLeveledActorBase().GetSex() == 1 && MilkQ.MILKmaid[i].IsInLocation(MilkQ.PlayerREF.getCurrentLocation())
+			if MilkQ.MILKmaid[i] != none && MilkQ.MILKmaid[i].IsInLocation(MilkQ.PlayerREF.getCurrentLocation())
 				MilkQ.CurrentSize(MilkQ.MILKmaid[i])
 			endIf
 			i += 1
@@ -321,20 +313,21 @@ Function UpdateSize()
 EndFunction
 
 Function Maintenance()
-Debug.Notification("My SKSE float function returned " + MyTest())
-Debug.Notification("My SKSE string function returned " + GetStringValue())
+;Debug.Notification("My SKSE float function returned " + MyTest())
+;Debug.Notification("My SKSE string function returned " + GetStringValue())
 	Debug.Trace("MilkModEconomy OnPlayerLoadGame")
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
+
 	if PapyrusUtil.GetVersion() < 28
-		Debug.MessageBox( "Your PapyrusUtil is too old" )
-		Debug.Trace("MilkModEconomy PapyrusUtil is " + PapyrusUtil.GetVersion())
+		Debug.MessageBox( "PapyrusUtil is too old" + PapyrusUtil.GetVersion())
 	endif
+	
 	if SexLabUtil.GetVersion() < 15903
-		Debug.MessageBox( "Your SexLab is too old"  )
-		Debug.Trace("MilkModEconomy SexLab is " + SexLabUtil.GetVersion())
+		Debug.MessageBox( "SexLab is too old" + SexLabUtil.GetVersion())
 	endif
+	
 	if zbfUtil.GetVersion() < 600
-		Debug.MessageBox( "Your Zaz Animation Pack is too old" )
-		Debug.Trace("MilkModEconomy Zaz Animation Pack is " + zbfUtil.GetVersion())
+		Debug.MessageBox( "Zaz Animation Pack is too old:" + zbfUtil.GetVersion() )
 	endif
 	
 	String File
@@ -349,7 +342,40 @@ Debug.Notification("My SKSE string function returned " + GetStringValue())
 		Debug.Notification("MME_RND.Json has errors")
 	endif
 	
-	Debug.Trace("MilkModEconomy Registering events")
+	RegisterEvents()
+
+	MilkQ.MME_Milks.revert()
+	MilkQ.MME_Foods.revert()
+
+	MilkQ.DLCcheck()
+	MilkQ.Strings_setup()	;rem
+	MilkQ.DebuffArraySet()	;rem
+	MilkQ.BuffArraySet()	;rem
+	
+	;debug
+	;MME_RebuildJson.MME_JsonRebuild()
+	;Game.GetPlayer().additem(MilkQ.MME_Util_Potions.GetAt(0), 10)
+	self.UpdateSize()
+	self.RegisterForSleep()
+
+	if MilkQ.SexLab.AnimSlots.GetbyRegistrar("zjBreastFeedingVar") && MilkQ.SexLab.AnimSlots.GetbyRegistrar("zjBreastFeeding")
+		MilkQ.MilkQC.MME_BreasfeedingAnimationsCheck = True
+		Debug.Trace("MilkModEconomy 3J Breastfeeding animations found")
+	else
+		MilkQ.MilkQC.MME_BreasfeedingAnimationsCheck = False
+		Debug.Trace("MilkModEconomy 3J Breastfeeding animations NOT found")
+	endif
+
+	
+	;selfdiagnostic
+	;general check to see if this script working at all and mod have launched, will not launch if milkq and plguins return errors
+	;if not, more detailed info on broken scripts will be shown by MME_Status.MilkPluginsInfo()
+	StorageUtil.SetIntValue(MilkQ.PlayerRef, "MME_ScriptsStarted", 1)
+	Debug.Trace("MilkModEconomy status set to " + StorageUtil.GetIntValue(MilkQ.PlayerRef, "MME_ScriptsStarted") + ", should be 1")
+	Debug.Trace("MilkModEconomy maintenance done")
+EndFunction
+
+Function RegisterEvents()
 	self.RegisterForModEvent("DeviceVibrateEffectStart", "OnVibrateStart")
 	self.RegisterForModEvent("MME_AddMilkMaid", "onMME_AddMilkMaid")
 	self.RegisterForModEvent("MME_AddMilkSlave", "onMME_AddMilkSlave")
@@ -360,31 +386,6 @@ Debug.Notification("My SKSE string function returned " + GetStringValue())
 	self.RegisterForModEvent("AnimationStart", "OnSexLabStart")
 	self.RegisterForModEvent("AnimationEnd", "OnSexLabEnd")
 	self.RegisterForModEvent("SlaveToggle", "OnSlaveToggle")
-	
-	Debug.Trace("MilkModEconomy maintenance")
-	MilkQ.MME_Milks.revert()
-	MilkQ.MME_Foods.revert()
-
-	MilkQ.DLCcheck()
-	MilkQ.Strings_setup()
-	MilkQ.DebuffArraySet()
-	MilkQ.BuffArraySet()
-	self.UpdateSize()
-	self.RegisterForSleep()
-
-	;MME_RebuildJson.MME_JsonRebuild()
-	if MilkQ.SexLab.AnimSlots.GetbyRegistrar("zjBreastFeedingVar") && MilkQ.SexLab.AnimSlots.GetbyRegistrar("zjBreastFeeding")
-		MilkQ.MilkQC.MME_BreasfeedingAnimationsCheck = True
-		Debug.Trace("MilkModEconomy 3J Breastfeeding animations found")
-	else
-		MilkQ.MilkQC.MME_BreasfeedingAnimationsCheck = False
-		Debug.Trace("MilkModEconomy 3J Breastfeeding animations NOT found")
-	endif
-	
-	;selfdiagnostic
-	;general check to see if this script working at all and mod have launched, will not launch if milkq and plguins return errors
-	;if not, more detailed info on broken scripts will be shown by MME_Status.MilkPluginsInfo()
-	MilkQ.MME_Status_Global.SetValue(1)	
-	Debug.Trace("MilkModEconomy status set to " + MilkQ.MME_Status_Global.GetValue() + ", should be 1")
-	Debug.Trace("MilkModEconomy maintenance done")
+	Debug.Trace("MilkModEconomy Registered events")
 EndFunction
+

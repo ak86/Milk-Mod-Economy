@@ -1,14 +1,21 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>10-07-2017</Version>
+  <Version>17-07-2017</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
   
 Dev change log:
 
-	v 10-07-2017
-increased maid slave count to 120, mcm progression slider to 200, probably bugged
+	v 17-07-2017
+increased maid slave count to 100, requires mod reset
+added ability to milk males, they should be female when you make them milk maid
+reduced pain from hand milking, milking will stop, before getting exhaustion debuff
+milkmaid with well-milked buff can no longer be milked(less than 40% max milk)
+added armor stripping when player has 4/8/12 milk
+updated playeralias script, merged sl orgasm and slso functions
+fixed incorrect milktick per hour in mcm
+
 
 	v 30-06-2017
 succubus milk, turns player into succubus:

@@ -112,7 +112,7 @@ Function Init_Milking(Actor akActor1, Actor akActor2)
 	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	
 	;GetSex(): 0 - male, 1 - female
-	if akActor1.GetActorBase().GetSex() == 0 && akActor2.GetActorBase().GetSex() == 0
+	if akActor1.GetLeveledActorBase().GetSex() == 0 && akActor2.GetLeveledActorBase().GetSex() == 0
 		Debug.Notification(JsonUtil.GetStringValue("/MME/Strings", "milkinggaywarning"))
 		return
 	endif
@@ -125,7 +125,7 @@ Function Init_Milking(Actor akActor1, Actor akActor2)
 	sexActors[0] = akActor1
 	sexActors[1] = akActor2
 
-	if sexActors[1].GetActorBase().GetSex() == 0 || ((MilkQ.akActorSex(sexActors[1]) == "Futa") && Utility.RandomInt(1, 2) == 1)
+	if sexActors[1].GetLeveledActorBase().GetSex() == 0 || ((MilkQ.akActorSex(sexActors[1]) == "Futa") && Utility.RandomInt(1, 2) == 1)
 		anims[0] = MilkQ.SexLab.AnimSlots.GetbyRegistrar("zjBreastFeedingVar")		;Straight
 	else
 		anims[0] = MilkQ.SexLab.AnimSlots.GetbyRegistrar("zjBreastFeeding")			;Lesbian
@@ -182,13 +182,13 @@ EndFunction
 Function Fragment_09(ObjectReference akSpeakerRef)
 	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	Game.Getplayer().additem(MilkQ.MME_Util_Potions.GetAt(1), 1)
-	Game.Getplayer().removeitem(MilkQ.MilkE.Gold, 1000)
+	Game.Getplayer().removeitem(JsonUtil.GetFormValue("/MME/Forms", "gold") as MiscObject, 1000, true)
 EndFunction
 
 Function Fragment_10(ObjectReference akSpeakerRef)
 	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	Game.Getplayer().additem(MilkQ.MME_Util_Potions.GetAt(2), 1)
-	Game.Getplayer().removeitem(MilkQ.MilkE.Gold, 1000)
+	Game.Getplayer().removeitem(JsonUtil.GetFormValue("/MME/Forms", "gold") as MiscObject, 1000, true)
 EndFunction
 
 Function Fragment_11(ObjectReference akSpeakerRef)
@@ -215,19 +215,19 @@ Function Fragment_11(ObjectReference akSpeakerRef)
 		Game.Getplayer().removeitem(MilkQ.MME_Cums.GetAt(i), Game.Getplayer().GetItemCount(MilkQ.MME_Cums.GetAt(i)))
 	endif
 
-	Game.Getplayer().additem(MilkQ.MilkE.Gold, gold)
+	Game.Getplayer().additem(JsonUtil.GetFormValue("/MME/Forms", "gold") as MiscObject, gold, true)
 EndFunction
 
 Function Fragment_12(ObjectReference akSpeakerRef)
 	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	Game.Getplayer().additem(MilkQ.MME_Util_Potions.GetAt(0), 1)
-	Game.Getplayer().removeitem(MilkQ.MilkE.Gold, 100)
+	Game.Getplayer().removeitem(JsonUtil.GetFormValue("/MME/Forms", "gold") as MiscObject, 100, true)
 EndFunction
 
 Function Fragment_13(ObjectReference akSpeakerRef)
 	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	Game.Getplayer().additem(MilkQ.MME_Util_Potions.GetAt(0), 1)
-	Game.Getplayer().removeitem(MilkQ.MilkE.Gold, 100)
+	Game.Getplayer().removeitem(JsonUtil.GetFormValue("/MME/Forms", "gold") as MiscObject, 100, true)
 EndFunction
 
 Function Fragment_14(ObjectReference akSpeakerRef)

@@ -612,7 +612,7 @@ function Page_MilkMaidDebug()
 				else
 					AddSliderOptionST("Debug_MM_MilkCount_Slider", "Milk stored [unlimited]:", MilkCnt, "{2}")
 				endif
-				AddSliderOptionST("Debug_MM_MilkGeneration_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S13", MaidMilkGen * MilkQ.MilkProdMod/100/10 * BreastRows, "{3}")
+				AddSliderOptionST("Debug_MM_MilkGeneration_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S13", MilkTick * MilkQ.MilkProdMod/100/10 * BreastRows, "{3}")
 				AddTextOptionST("Debug_MM_Maid_Lactacid_Milk_Production_PH", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S15", MilkQ.ReduceFloat(MilkTick * MilkQ.MilkProdMod/100 * BreastRows * LactacidMod/10), OPTION_FLAG_DISABLED)
 ;				AddSliderOptionST("Debug_MM_MilkGeneration_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S13", MilkProdPerHour, "{2}")
 ;				AddTextOptionST("Debug_MM_MilkGeneration_Effective",         "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S14", MilkQ.ReduceFloat(MilkProdPerHourEff                               ), OPTION_FLAG_DISABLED)
@@ -3053,7 +3053,7 @@ state Debug_Mastery_Slider
 	event OnSliderOpenST()
 		SetSliderDialogStartValue(StorageUtil.GetFloatValue(none,"MME.Progression.Level"))
 		SetSliderDialogDefaultValue(0)
-		SetSliderDialogRange(0, 200)
+		SetSliderDialogRange(0, 40)
 		SetSliderDialogInterval(1)
 	endEvent
 
