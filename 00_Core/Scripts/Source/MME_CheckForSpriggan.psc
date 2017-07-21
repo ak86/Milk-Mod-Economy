@@ -54,7 +54,7 @@ Event OnObjectEquipped( Form akBaseObject, ObjectReference akReference)
 	elseif akActor.GetWornForm(Armor.GetMaskForSlot(32)) == akBaseObject
 		Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 		Float MilkMax = MME_Storage.getMilkMaximum(akActor)
-		if !(akBaseObject == MilkQ.TITS4	|| akBaseObject == MilkQ.TITS6 || akBaseObject == MilkQ.TITS8)
+		if !(akBaseObject == MilkQ.TITS4 || akBaseObject == MilkQ.TITS6 || akBaseObject == MilkQ.TITS8 || MilkQ.DDi.IsMilkingBlocked_Suit(akActor))
 			;heavy armor	
 			if MilkCnt > 12 && akBaseObject.HasKeyword(Game.GetFormFromFile(0x6BBD2, "Skyrim.esm") as keyword) 
 				Debug.Notification("Your breasts are too big to fit into your armor")

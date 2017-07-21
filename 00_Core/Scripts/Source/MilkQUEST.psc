@@ -761,7 +761,7 @@ Function MilkCycle(Actor akActor, int t)
 				endif
 			endif
 		elseif akActor == PlayerREF
-			if !(maidArmor == TITS4	|| maidArmor == TITS6 || maidArmor == TITS8)
+			if !(maidArmor == TITS4	|| maidArmor == TITS6 || maidArmor == TITS8 || DDi.IsMilkingBlocked_Suit(akActor))
 				;heavy armor	
 				if MilkCnt > 12 && maidArmor.HasKeyword(Game.GetFormFromFile(0x6BBD2, "Skyrim.esm") as keyword) 
 					Debug.Notification("Your breasts are too big to fit into your armor")
