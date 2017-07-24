@@ -504,6 +504,7 @@ function Page_Debug()
 			AddToggleOptionST("Debug_MilkLeak_Particles_Toggle", "$MME_MENU_PAGE_Debug_H1_S5", MilkQ.MilkLeakToggle)
 			AddToggleOptionST("Debug_MilkLeak_Particles_Through_Clothes_Toggle", "$MME_MENU_PAGE_Debug_H1_S6", MilkQ.MilkLeakWearArm)
 			AddToggleOptionST("Debug_MilkLeak_Textures_Toggle", "$MME_MENU_PAGE_Debug_H1_S7", MilkQ.MilkLeakTextures)
+			AddToggleOptionST("Debug_Male_Milkmaids_Toggle", "$MME_MENU_PAGE_Debug_H1_S8", MilkQ.MaleMaids)
 			
 		AddHeaderOption("$MME_MENU_PAGE_Debug_H2")
 			AddSliderOptionST("Debug_MilkProductionMod_Slider", "$MME_MENU_PAGE_Debug_H2_S1", MilkQ.MilkProdMod, "{0}%")
@@ -1781,6 +1782,17 @@ state Debug_MilkLeak_Textures_Toggle
 			MilkQ.MilkLeakTextures = false
 		endif
 		SetToggleOptionValueST(MilkQ.MilkLeakTextures)
+	endEvent
+endState
+
+state Debug_Male_Milkmaids_Toggle
+	event OnSelectST()
+		if !MilkQ.MaleMaids
+			MilkQ.MaleMaids = true
+		else
+			MilkQ.MaleMaids = false
+		endif
+		SetToggleOptionValueST(MilkQ.MaleMaids)
 	endEvent
 endState
 		

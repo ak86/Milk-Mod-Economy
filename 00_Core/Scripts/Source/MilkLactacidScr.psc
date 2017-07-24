@@ -8,7 +8,7 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 		akTarget.equipitem(Game.GetFormFromFile(0x57A7A, "Skyrim.esm"),false,true)
 	endif
 	
-	if akTarget.GetActorBase().GetSex() == 1
+	if akTarget.GetLeveledActorBase().GetSex() == 1 || MilkQ.MaleMaids == true
 		String MaidName = akTarget.GetLeveledActorBase().getname()
 		if MilkQ.MILKmaid.find(akTarget) != -1
 			if akTarget.HasSpell(MilkQ.MilkExhaustion)\
