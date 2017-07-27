@@ -48,11 +48,11 @@ MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	MilkQ.MilkQC.MME_SubjectSlave = false
 
 ;checks pc milk
-	if Game.Getplayer().GetLeveledActorBase().GetSex() == 1
+	if Game.Getplayer().GetLeveledActorBase().GetSex() == 1 || (Game.Getplayer().GetLeveledActorBase().GetSex() == 0 && MilkQ.MaleMaids)
 		MilkQ.MilkQC.MME_TargetMilk = MME_Storage.getMilkCurrent(Game.Getplayer())
 	endif
 
-	if akSpeaker.GetLeveledActorBase().GetSex() == 1
+	if akSpeaker.GetLeveledActorBase().GetSex() == 1 || (akSpeaker.GetLeveledActorBase().GetSex() == 0 && MilkQ.MaleMaids)
 ;checks if npc has string "Milkslave" or "Milkmaid" in its name and make it milkslave if it is
 		if MilkQ.IsNamedMaid(akSpeaker) != 0 && MilkQ.MILKSlave.Find(none) != -1 && MilkQ.MILKSlave.Find(akSpeaker) == -1 && MilkQ.MilkMaid.Find(akSpeaker) == -1 && MilkQ.DialogueForceMilkSlave
 			MilkQ.AssignSlotSlave(akSpeaker, 0, Utility.RandomInt(4))
@@ -111,12 +111,6 @@ EndFunction
 Function Init_Milking(Actor akActor1, Actor akActor2)
 	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	
-	;GetSex(): 0 - male, 1 - female
-	if akActor1.GetLeveledActorBase().GetSex() == 0 && akActor2.GetLeveledActorBase().GetSex() == 0
-		Debug.Notification(JsonUtil.GetStringValue("/MME/Strings", "milkinggaywarning"))
-		return
-	endif
-
 	actor[] sexActors = new actor[2]
 	sslBaseAnimation[] anims
 	anims = new sslBaseAnimation[1]

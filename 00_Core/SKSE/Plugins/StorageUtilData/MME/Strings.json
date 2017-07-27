@@ -1,4 +1,4 @@
-{
+﻿{
 	"intList" : 
 	{
 		"armorslot" : [ 32, 45, 49, 56, 58 ]
@@ -28,7 +28,6 @@
 		"lactationstart" : "%text1's breasts has started lactating",
 		"milkingboobgasm" : "%text1 is having a boobgasm!",
 		"milkingbounddone" : "Milk Pump has milked %text1 dry and releases its bounds.",
-		"milkinggaywarning" : "[MME]Sorry, there are no gay animations, dividing universe by zero, have a nice day.",
 		"milkingorgasm" : "%text1 is having a orgasm!",
 		"mme_status" : "MilkModEconomy has failed script check, scripts are not running/broken(most likely mod was not installed correctly), script will retry check in 60 sec",
 		"onkeyeventisslave" : "%text1 is a slave and not allowed to be milked",
