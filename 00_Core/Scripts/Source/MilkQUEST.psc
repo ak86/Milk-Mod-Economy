@@ -1258,7 +1258,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				endif
 			endif
 			
-			If MilkStory && akActor == PlayerREF && akActorGender != "Male"
+			If MilkStory && akActor == PlayerREF && (akActorGender != "Male" || (akActorGender == "Male" && MaleMaids))
 				StoryDisplay(0,1,FirstTimeStory)
 			EndIf
 		EndIf
@@ -1287,7 +1287,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				Mode = 3
 				int soundInstance02 = TakeHoldSound.Play(akActor)
 				Utility.Wait( 5.0 )													;wait for possession sound to play
-				If MilkStory && akActor == PlayerREF && akActorGender != "Male"
+				If MilkStory && akActor == PlayerREF && (akActorGender != "Male" || (akActorGender == "Male" && MaleMaids))
 					if StringUtil.Find(cuirass.getname(), "Hermaeus Mora" ) >= 0 || StringUtil.Find(cuirass.getname(), "HM Priestess" ) >= 0
 						StoryDisplay(0,3,FirstTimeStory)
 					elseif StringUtil.Find(cuirass.getname(), "Living Arm" ) >= 0
@@ -1434,7 +1434,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		if Mode == 0															;check if using milkpump
 			if Feeding == true													;check if feeding enabled
 				if !IsFeedingBlocked											;feeding not blocked by gags
-					if akActor.GetLeveledActorBase().GetSex() == 1				;check if actor female
+					if (akActorGender != "Male" || (akActorGender == "Male" && MaleMaids))
 						
 							;check if not full of lactacid or (FeedOnce and ForcedFeeding) override enabled
 							;(check if not bound milking and player or actor or actor storageutil has lactacid)		; this doesn't count if both actor and player have lactacid bottles but who cares, no one will ever find xD
@@ -1510,7 +1510,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 
 		if !akActor.HasSpell(FeedingStage)\
 		&& IsMilkingBlocked == false\
-		&& akActor.GetLeveledActorBase().GetSex() == 1\
+		&& (akActorGender != "Male" || (akActorGender == "Male" && MaleMaids))\
 		&& (MilkCnt >= 1 || ((FuckMachine == false || DDBelt == true) && Mode == 0))\
 		&& ((PainCnt <= PainMax*0.9) || PainKills)\
 		&& StopMilking == false
@@ -1843,14 +1843,14 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					akActor.RemoveItem(MilkCuirassFuta, 1, true)
 				endif
 			endif
-			If MilkStory && akActor == PlayerREF && akActorGender != "Male"
+			If MilkStory && akActor == PlayerREF && (akActorGender != "Male" || (akActorGender == "Male" && MaleMaids))
 				StoryDisplay(1,1,FirstTimeStory)
 			EndIf
 			If cuirass != None 
 				akActor.equipitem(cuirass, false, true)
 			EndIf
 		elseif Mode == 3
-			If MilkStory && akActor == PlayerREF && akActorGender != "Male"
+			If MilkStory && akActor == PlayerREF && (akActorGender != "Male" || (akActorGender == "Male" && MaleMaids))
 				if StringUtil.Find(cuirass.getname(), "Hermaeus Mora" ) >= 0 || StringUtil.Find(cuirass.getname(), "HM Priestess" ) >= 0
 					StoryDisplay(1,3,FirstTimeStory)
 				elseif StringUtil.Find(cuirass.getname(), "Living Arm" ) >= 0

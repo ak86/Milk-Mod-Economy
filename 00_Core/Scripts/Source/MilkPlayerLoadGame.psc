@@ -138,7 +138,7 @@ Event OnVibrateStart(string eventName, string argString, float argNum, form send
 	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	Actor akActor = Game.Getplayer()
 	
-	If argString == akActor.GetLeveledActorBase().GetName() && MilkQ.DDI.IsMilkingBlocked_PiercingsNipple(akActor) && (MilkQ.akActorSex(akActor) == "Female" || MilkQ.akActorSex(akActor) == "Futa")
+	If argString == akActor.GetLeveledActorBase().GetName() && MilkQ.DDI.IsMilkingBlocked_PiercingsNipple(akActor) && (MilkQ.akActorSex(akActor) == "Female" || MilkQ.akActorSex(akActor) == "Futa" || (MilkQ.akActorSex(akActor) == "Male" && MilkQ.MaleMaids))
 		float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 		int gush = (MilkCnt*MilkQ.GushPct/100) as int
 		String MaidName = akActor.GetLeveledActorBase().getname()
@@ -187,7 +187,7 @@ Event OnSexLabStart(String _eventName, String _args, Float _argc, Form _sender)
 
 		if MilkQ.MILKmaid.Find(actors[0]) != -1\
 		&& !actors[0].HasSpell( MilkQ.BeingMilkedPassive )\
-		&& actors[0].GetLeveledActorBase().GetSex() == 1
+		&& (actors[0].GetLeveledActorBase().GetSex() == 1 || (actors[0].GetLeveledActorBase().GetSex() == 0 && MilkQ.MaleMaids))
 			MilkQ.Milking(actors[0], 0, 4, 0)
 			actors[1].equipitem(MilkQ.MME_Milk_Basic.GetAt(0), true, true)
 		endif

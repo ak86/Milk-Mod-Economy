@@ -23,7 +23,7 @@ Event OnObjectEquipped( Form akBaseObject, ObjectReference akReference)
 			MilkQ.AssignSlotMaid(akActor)
 		EndIf
 
-		if akActor.GetLeveledActorBase().GetSex() == 1 && MilkQ.MILKmaid.find(akActor) != -1
+		if (akActor.GetLeveledActorBase().GetSex() == 1 || (akActor.GetLeveledActorBase().GetSex() == 0 && MilkQ.MaleMaids)) && MilkQ.MILKmaid.find(akActor) != -1
 			If (StringUtil.Find(akArmorName, "Spriggan Armor" ) >= 0\
 			|| StringUtil.Find(akArmorName, "Spriggan Host" ) >= 0\
 			|| StringUtil.Find(akArmorName, "Living Arm" ) >= 0\
@@ -96,7 +96,7 @@ Event OnObjectUnequipped( Form akBaseObject, ObjectReference akReference )
 				Debug.Notification( "You are free from " + akArmorName )
 			endif
 			akActor.RemoveSpell( MilkQ.MilkForSprigganPassive )
-		ElseIf akActor.GetLeveledActorBase().GetSex() == 1 && StringUtil.Find(akArmorName, "Dwemer milking device" ) >= 0\
+		ElseIf (akActor.GetLeveledActorBase().GetSex() == 1 || (akActor.GetLeveledActorBase().GetSex() == 0 && MilkQ.MaleMaids)) && StringUtil.Find(akArmorName, "Dwemer milking device" ) >= 0\
 			|| StringUtil.Find(akArmorName, "Cow Harness" ) >= 0\
 			|| StringUtil.Find(akArmorName, "Milking Cuirass" ) >= 0\
 			|| StringUtil.Find(akArmorName, "Milker" ) >= 0\

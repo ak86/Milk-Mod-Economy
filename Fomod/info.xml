@@ -1,11 +1,14 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>27-07-2017</Version>
+  <Version>28-07-2017</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
   
 Dev change log:
+
+	v 28-07-2017
+fixed male checks in scripts for male milking
 
 	v 27-07-2017
 fixed? ineed giving "error" when not installed in mod checks(shouldn't affect anything, if your skyrim broken it wont fix it)
