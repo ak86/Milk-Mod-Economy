@@ -131,46 +131,6 @@ Event OnSleepStop(bool abInterrupted)
 endEvent
 
 ;----------------------------------------------------------------------------
-;DDI hooks
-;----------------------------------------------------------------------------
-
-Event OnVibrateStart(string eventName, string argString, float argNum, form sender)			;player only, cuz DD uses strings instead of formid
-	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
-	Actor akActor = Game.Getplayer()
-	
-	If argString == akActor.GetLeveledActorBase().GetName() && MilkQ.DDI.IsMilkingBlocked_PiercingsNipple(akActor) && (MilkQ.akActorSex(akActor) == "Female" || MilkQ.akActorSex(akActor) == "Futa" || (MilkQ.akActorSex(akActor) == "Male" && MilkQ.MaleMaids))
-		float MilkCnt = MME_Storage.getMilkCurrent(akActor)
-		int gush = (MilkCnt*MilkQ.GushPct/100) as int
-		String MaidName = akActor.GetLeveledActorBase().getname()
-		
-		if gush < 1
-			gush = 1
-		endif
-		
-		if StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkGen") == 0 
-			if Utility.RandomInt(0, 100) < 5
-				Debug.Notification(MilkQ.formatString(JsonUtil.GetStringValue("/MME/Strings", "lactationstart"), MaidName))
-				if MilkQ.MILKmaid.find(akActor) == -1				; || MilkQ.MILKSlave.find(akActor) != -1
-					MilkQ.AssignSlotMaid(akActor)
-					Utility.Wait( 1.0 )
-				endif
-				StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", MilkQ.MilkGenValue/3/10 * gush)
-			endif
-		else																				;if MilkQ.MILKmaid.find(akActor) != -1 || MilkQ.MILKSlave.find(akActor) != -1
-			StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", MilkQ.MilkGenValue/3/10 * gush)
-		endif
-		
-		If MilkCnt >= 1*gush
-			MME_Storage.changeMilkCurrent(akActor, -1*gush, MilkQ.BreastScaleLimit)
-			Debug.Notification(MilkQ.formatString(JsonUtil.GetStringValue("/MME/Strings", "vibrationmilkleak"), MaidName))
-			MilkQ.PostMilk(akActor)
-			MilkQ.AddMilkFx(akActor, 2)
-			MilkQ.AddLeak(akActor)
-		EndIf
-	EndIf
-EndEvent
-
-;----------------------------------------------------------------------------
 ;SexLab hooks
 ;----------------------------------------------------------------------------
 
@@ -376,7 +336,9 @@ Function Maintenance()
 EndFunction
 
 Function RegisterEvents()
-	self.RegisterForModEvent("DeviceVibrateEffectStart", "OnVibrateStart")
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
+	MilkQ.DDi.RegisterForModEvent("DeviceVibrateEffectStart", "OnVibrateStart")
+	
 	self.RegisterForModEvent("MME_AddMilkMaid", "onMME_AddMilkMaid")
 	self.RegisterForModEvent("MME_AddMilkSlave", "onMME_AddMilkSlave")
 	self.RegisterForModEvent("MME_Milking", "onMME_Milking")

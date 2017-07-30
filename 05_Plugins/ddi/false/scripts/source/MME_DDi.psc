@@ -55,3 +55,10 @@ EndFunction
 bool Function IsWearingDDMilker(Actor akActor)
 	Return false
 EndFunction
+
+;----------------------------------------------------------------------------
+;DDI hooks
+;----------------------------------------------------------------------------
+
+Event OnVibrateStart(string eventName, string argString, float argNum, form sender)
+EndEvent

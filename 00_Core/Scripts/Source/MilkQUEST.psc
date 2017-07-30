@@ -3015,7 +3015,7 @@ Function VarSetup()
 	MilkQC.BrestEnlargement_MultiBreast_Effect = 5
 	MME_NPCComments.SetValue(0)
 	MilkQC.MME_DialogueMilking = True
-	MilkQC.MME_SimpleMilkPotions = False
+	MilkQC.MME_SimpleMilkPotions = True
 	ForcedFeeding = False
 	FixedMilkGen = False
 	FixedMilkGen4Followers = False
