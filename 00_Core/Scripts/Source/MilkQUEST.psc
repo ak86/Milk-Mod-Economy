@@ -724,7 +724,7 @@ Function MilkCycle(Actor akActor, int t)
 					akActor.equipitem(Game.GetFormFromFile(0x57A7A, "Skyrim.esm"),false,true)	;skooma
 				endif
 			endif
-			if MilkCnt >= 1 && akActor.IsNearPlayer()
+			if MilkCnt >= MilkMax * 0.75 && akActor.IsNearPlayer()
 				MilkSelf.cast(akActor)
 			endif
 		elseif StringUtil.Find(maidArmor.getname(), "Spriggan" ) >= 0\
@@ -735,9 +735,11 @@ Function MilkCycle(Actor akActor, int t)
 		|| StringUtil.Find(maidArmor.getname(), "Tentacle Parasite" ) >= 0\
 		|| BasicLivingArmor.find(maidArmor.getname()) >= 0\
 		|| ParasiteLivingArmor.find(maidArmor.getname()) >= 0
-			MME_Storage.changeLactacidCurrent(akActor, t)
 			if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid && akActor.IsNearPlayer()
 				akActor.equipitem(Game.GetFormFromFile(0x57A7A, "Skyrim.esm"),false,true)	;skooma
+			endif
+			if LactacidCnt == 0 && MilkCnt <= 1
+				MME_Storage.changeLactacidCurrent(akActor, t)
 			endif
 			int random = Utility.RandomInt((0-MilkCnt) as int, (MilkMax-MilkCnt) as int)
 			if (random == MilkMax || random < 0) && (akActor.GetLeveledActorBase().GetSex() == 1 || MaleMaids == true) && akActor.IsNearPlayer()
@@ -783,9 +785,11 @@ Function MilkCycle(Actor akActor, int t)
 	endif
 	
 	If MILKSlave.Find(akActor) != -1
-		MME_Storage.changeLactacidCurrent(akActor, t)
+		if LactacidCnt == 0 && MilkCnt <= 1
+			MME_Storage.changeLactacidCurrent(akActor, t)
+		endif
 		MilkMax = MME_Storage.getMilkMaximum(akActor)
-		if MilkCnt > MilkMax && akActor.IsNearPlayer()
+		if MilkCnt >= MilkMax * 0.75 && akActor.IsNearPlayer()
 			MilkSelf.cast(akActor)
 		endif
 	endIf

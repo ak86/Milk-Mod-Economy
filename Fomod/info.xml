@@ -1,11 +1,16 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>30-07-2017</Version>
+  <Version>02-08-2017</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
   
 Dev change log:
+
+	v 02-08-2017
+changed:
+automatic cuirass milking to happen when breasts 75% full instead of 1 milk
+living armors will no longer feed lactacid if actor have milk
 
 	v 30-07-2017
 moved DDI vibrate event hook to DDI plug-in script
