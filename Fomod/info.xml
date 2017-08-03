@@ -1,11 +1,16 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>02-08-2017</Version>
+  <Version>03-08-2017</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
   
 Dev change log:
+
+	v 03-08-2017
+removed sexlaborgasm toggle
+removed breasfeeding toggle
+hidden debug content under debug toggle
 
 	v 02-08-2017
 changed:

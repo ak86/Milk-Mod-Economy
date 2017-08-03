@@ -142,8 +142,7 @@ Event OnSexLabStart(String _eventName, String _args, Float _argc, Form _sender)
 	if (animName == "3J Straight Breastfeeding"\
 	|| animName == "3J Lesbian Breastfeeding"\
 	|| animName == "3Jiou Breastfeeding Lesbian"\
-	|| animName == "3Jiou Breastfeeding Straight")\
-	&& MilkQ.SexLab3jBreastfeeding
+	|| animName == "3Jiou Breastfeeding Straight")
 
 		if MilkQ.MILKmaid.Find(actors[0]) != -1\
 		&& !actors[0].HasSpell( MilkQ.BeingMilkedPassive )\
@@ -325,7 +324,6 @@ Function Maintenance()
 		MilkQ.MilkQC.MME_BreasfeedingAnimationsCheck = False
 		Debug.Trace("MilkModEconomy 3J Breastfeeding animations NOT found")
 	endif
-
 	
 	;selfdiagnostic
 	;general check to see if this script working at all and mod have launched, will not launch if milkq and plguins return errors

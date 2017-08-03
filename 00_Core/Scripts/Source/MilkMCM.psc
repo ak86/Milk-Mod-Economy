@@ -441,10 +441,12 @@ function Page_Milking_Config()
 			AddToggleOptionST("MilkingDrainsMP_Toggle", "$MME_MENU_PAGE_Milking_MilkingDrainsMP", MilkQ.MilkingDrainsMP)
 			AddEmptyOption()
 
-		AddHeaderOption("$MME_MENU_PAGE_Milking_EstrusChaurus_Header")
-			AddToggleOptionST("ECTrigger_Toggle", "$MME_MENU_PAGE_Milking_EC_Event", MilkQ.ECTrigger)
-			AddToggleOptionST("ECCrowdControl_Toggle", "$MME_MENU_PAGE_Milking_EC_CC", MilkQ.ECCrowdControl)
-			AddSliderOptionST("ECRange_Slider", "$MME_MENU_PAGE_Milking_EC_Range", MilkQ.ECRange, "{0}")
+		if MilkQ.Plugin_EstrusChaurus
+			AddHeaderOption("$MME_MENU_PAGE_Milking_EstrusChaurus_Header")
+				AddToggleOptionST("ECTrigger_Toggle", "$MME_MENU_PAGE_Milking_EC_Event", MilkQ.ECTrigger)
+				AddToggleOptionST("ECCrowdControl_Toggle", "$MME_MENU_PAGE_Milking_EC_CC", MilkQ.ECCrowdControl)
+				AddSliderOptionST("ECRange_Slider", "$MME_MENU_PAGE_Milking_EC_Range", MilkQ.ECRange, "{0}")
+		endif
 endfunction	
 
 function Page_Market()
@@ -493,60 +495,70 @@ endfunction
 
 function Page_Debug()
 	SetCursorFillMode(TOP_TO_BOTTOM)
-		AddHeaderOption("$MME_MENU_PAGE_Debug_H1")
-			AddSliderOptionST("Debug_Mastery_Slider", "$MME_MENU_Maid_Mastery_Level", StorageUtil.GetFloatValue(none, "MME.Progression.Level"))
-			AddSliderOptionST("Debug_TimesMilked_Slider", "$MME_MENU_Times_Milked_(this_level)", StorageUtil.GetFloatValue(none, "MME.Progression.TimesMilked"))
-			AddSliderOptionST("Debug_TimesMilked_Overall_Slider", "$MME_MENU_Times_Milked_(overall)", StorageUtil.GetFloatValue(none, "MME.Progression.TimesMilkedAll"))
-			;AddToggleOptionST("Debug_Zaz_Milkpump_Toggle", "$MME_MENU_PAGE_Settings_H1_S11", MilkQ.ZazPumps)
-			AddToggleOptionST("Debug_PC_Pregnancy_Toggle", "$MME_MENU_PAGE_Settings_H1_S10", MilkQ.PlayerCantBeMilkmaid)
-			AddToggleOptionST("Debug_SexLab_Orgasm_Toggle", "$MME_MENU_PAGE_Settings_H1_S3", MilkQ.SexLabOrgasm)
-			AddToggleOptionST("Debug_SexLab_3jBreastfeeding_Animation_Toggle", "$MME_MENU_PAGE_Settings_H1_S4", MilkQ.SexLab3jBreastfeeding)
-			AddToggleOptionST("Debug_MilkLeak_Particles_Toggle", "$MME_MENU_PAGE_Debug_H1_S5", MilkQ.MilkLeakToggle)
-			AddToggleOptionST("Debug_MilkLeak_Particles_Through_Clothes_Toggle", "$MME_MENU_PAGE_Debug_H1_S6", MilkQ.MilkLeakWearArm)
-			AddToggleOptionST("Debug_MilkLeak_Textures_Toggle", "$MME_MENU_PAGE_Debug_H1_S7", MilkQ.MilkLeakTextures)
-			AddToggleOptionST("Debug_Male_Milkmaids_Toggle", "$MME_MENU_PAGE_Debug_H1_S8", MilkQ.MaleMaids)
-			
-		AddHeaderOption("$MME_MENU_PAGE_Debug_H2")
-			AddSliderOptionST("Debug_MilkProductionMod_Slider", "$MME_MENU_PAGE_Debug_H2_S1", MilkQ.MilkProdMod, "{0}%")
-			AddSliderOptionST("Debug_MilkPriceMod_Slider", "$MME_MENU_PAGE_Debug_H2_S2", MilkQ.MilkPriceMod, "{0}")
-			AddSliderOptionST("Debug_ExhaustionSleepMod_Slider", "$MME_MENU_PAGE_Debug_H2_S6", MilkQ.ExhaustionSleepMod, "{0}")
-			AddToggleOptionST("Debug_FixedMilkGen_Toggle", "$MME_MENU_PAGE_Debug_H2_S3", MilkQ.FixedMilkGen)
-			AddToggleOptionST("Debug_FixedMilkGen4Followers_Toggle", "$MME_MENU_PAGE_Debug_H2_S4", MilkQ.FixedMilkGen4Followers)
-			AddToggleOptionST("Debug_CuirassSellsMilk_Toggle", "$MME_MENU_PAGE_Debug_H2_S5", MilkQ.CuirassSellsMilk)
-			AddToggleOptionST("Debug_MilkAsMaidTimesMilked_Toggle", "$MME_MENU_PAGE_Debug_H2_S7", MilkQ.MilkAsMaidTimesMilked)
-			AddToggleOptionST("Debug_FreeLactacid_Toggle", "$MME_MENU_PAGE_Debug_H2_S8", MilkQ.FreeLactacid)
+		if MilkQ.MilkQC.Debug_enabled
+			AddHeaderOption("$MME_MENU_PAGE_Debug_H1")
+				AddSliderOptionST("Debug_Mastery_Slider", "$MME_MENU_Maid_Mastery_Level", StorageUtil.GetFloatValue(none, "MME.Progression.Level"))
+				AddSliderOptionST("Debug_TimesMilked_Slider", "$MME_MENU_Times_Milked_(this_level)", StorageUtil.GetFloatValue(none, "MME.Progression.TimesMilked"))
+				AddSliderOptionST("Debug_TimesMilked_Overall_Slider", "$MME_MENU_Times_Milked_(overall)", StorageUtil.GetFloatValue(none, "MME.Progression.TimesMilkedAll"))
+				;AddToggleOptionST("Debug_Zaz_Milkpump_Toggle", "$MME_MENU_PAGE_Settings_H1_S11", MilkQ.ZazPumps)
+				AddToggleOptionST("Debug_PC_Pregnancy_Toggle", "$MME_MENU_PAGE_Settings_H1_S10", MilkQ.PlayerCantBeMilkmaid)
+				AddToggleOptionST("Debug_MilkLeak_Particles_Toggle", "$MME_MENU_PAGE_Debug_H1_S5", MilkQ.MilkLeakToggle)
+				AddToggleOptionST("Debug_MilkLeak_Particles_Through_Clothes_Toggle", "$MME_MENU_PAGE_Debug_H1_S6", MilkQ.MilkLeakWearArm)
+				AddToggleOptionST("Debug_MilkLeak_Textures_Toggle", "$MME_MENU_PAGE_Debug_H1_S7", MilkQ.MilkLeakTextures)
+				AddToggleOptionST("Debug_Male_Milkmaids_Toggle", "$MME_MENU_PAGE_Debug_H1_S8", MilkQ.MaleMaids)
+				
+			AddHeaderOption("$MME_MENU_PAGE_Debug_H2")
+				AddSliderOptionST("Debug_MilkProductionMod_Slider", "$MME_MENU_PAGE_Debug_H2_S1", MilkQ.MilkProdMod, "{0}%")
+				AddSliderOptionST("Debug_MilkPriceMod_Slider", "$MME_MENU_PAGE_Debug_H2_S2", MilkQ.MilkPriceMod, "{0}")
+				AddSliderOptionST("Debug_ExhaustionSleepMod_Slider", "$MME_MENU_PAGE_Debug_H2_S6", MilkQ.ExhaustionSleepMod, "{0}")
+				AddToggleOptionST("Debug_FixedMilkGen_Toggle", "$MME_MENU_PAGE_Debug_H2_S3", MilkQ.FixedMilkGen)
+				AddToggleOptionST("Debug_FixedMilkGen4Followers_Toggle", "$MME_MENU_PAGE_Debug_H2_S4", MilkQ.FixedMilkGen4Followers)
+				AddToggleOptionST("Debug_CuirassSellsMilk_Toggle", "$MME_MENU_PAGE_Debug_H2_S5", MilkQ.CuirassSellsMilk)
+				AddToggleOptionST("Debug_MilkAsMaidTimesMilked_Toggle", "$MME_MENU_PAGE_Debug_H2_S7", MilkQ.MilkAsMaidTimesMilked)
+				AddToggleOptionST("Debug_FreeLactacid_Toggle", "$MME_MENU_PAGE_Debug_H2_S8", MilkQ.FreeLactacid)
+		endif
 
-		AddHeaderOption("$MME_MENU_PAGE_Debug_Maintenance_Header")
-			AddTextOptionST("Debug_ResetMaidsNiO_Toggle", "$MME_MENU_PAGE_Debug_H3_S5", "")
-			AddTextOptionST("Debug_ResetMaids_Toggle", "$MME_MENU_PAGE_Debug_H3_S1", "")
-			AddTextOptionST("Debug_ResetSlaves_Toggle", "$MME_MENU_PAGE_Debug_H3_S4", "")
-			AddTextOptionST("Debug_ResetVar_Toggle", "$MME_MENU_PAGE_Debug_H3_S2", "")
-			AddTextOptionST("Debug_Uninstall_Toggle", "$MME_MENU_PAGE_Debug_H3_S3", "")
+			AddHeaderOption("$MME_MENU_PAGE_Debug_Maintenance_Header")
+				AddToggleOptionST("Debug_enabled", "Debug enabled", MilkQ.MilkQC.Debug_enabled)
+				AddTextOptionST("Debug_ResetMaidsNiO_Toggle", "$MME_MENU_PAGE_Debug_H3_S5", "")
+				AddTextOptionST("Debug_ResetMaids_Toggle", "$MME_MENU_PAGE_Debug_H3_S1", "")
+				AddTextOptionST("Debug_ResetSlaves_Toggle", "$MME_MENU_PAGE_Debug_H3_S4", "")
+				AddTextOptionST("Debug_ResetVar_Toggle", "$MME_MENU_PAGE_Debug_H3_S2", "")
+				AddTextOptionST("Debug_Uninstall_Toggle", "$MME_MENU_PAGE_Debug_H3_S3", "")
 
 	SetCursorPosition(1)
 		AddHeaderOption("$MME_MENU_PAGE_Debug_Spells_Management_Header")
+		if MilkQ.MilkQC.Debug_enabled
 			AddToggleOptionST("Debug_MilkSuccubusTransform_Toggle", "$MME_MENU_PAGE_Debug_H4_S1", MilkQ.MilkSuccubusTransform)
 			AddToggleOptionST("Debug_MilkVampireTransform_Toggle", "$MME_MENU_PAGE_Debug_H4_S2", MilkQ.MilkVampireTransform)
 			AddToggleOptionST("Debug_MilkWerewolfTransform_Toggle", "$MME_MENU_PAGE_Debug_H4_S3", MilkQ.MilkWerewolfTransform)
-			AddToggleOptionST("Debug_MilkModToggle_Spell_Toggle", MilkQ.MilkModToggle.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MilkModToggle))
-			AddToggleOptionST("Debug_MilkModInfo_Spell_Toggle", MilkQ.MilkModInfo.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MilkModInfo))
 			AddToggleOptionST("Debug_MilkSelf_Spell_Toggle", MilkQ.MilkSelf.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MilkSelf))
 			AddToggleOptionST("Debug_MilkTarget_Spell_Toggle", MilkQ.MilkTarget.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MilkTarget))
+			AddToggleOptionST("Debug_MilkModToggle_Spell_Toggle", MilkQ.MilkModToggle.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MilkModToggle))
+			AddToggleOptionST("Debug_MilkModInfo_Spell_Toggle", MilkQ.MilkModInfo.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MilkModInfo))
+
 			AddToggleOptionST("Debug_MME_MakeMilkmaid_Spell_Toggle", MilkQ.MME_MakeMilkmaid_Spell.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_MakeMilkmaid_Spell))
 			AddToggleOptionST("Debug_MME_MakeMilkslave_Spell_Toggle", MilkQ.MME_MakeMilkslave_Spell.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_MakeMilkslave_Spell))
+
 			AddToggleOptionST("Debug_ArmorMnanagement_ME_Spell_Toggle", MilkQ.MME_AM_ME.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_AM_ME))
 			AddToggleOptionST("Debug_ArmorMnanagement_BLA_Spell_Toggle", MilkQ.MME_AM_BLA.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_AM_BLA))
 			AddToggleOptionST("Debug_ArmorMnanagement_PLA_Spell_Toggle", MilkQ.MME_AM_PLA.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_AM_PLA))
 			AddToggleOptionST("Debug_ArmorMnanagement_Purge_Spell_Toggle", MilkQ.MME_AM_Purge.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_AM_Purge))
+
 			AddToggleOptionST("Debug_Debug_Spell_Toggle", MilkQ.MME_DebugSpell.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_DebugSpell))
 			AddToggleOptionST("Debug_ResetMaids_Spell_Toggle", MilkQ.MME_ResetMaids.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_ResetMaids))
 			AddToggleOptionST("Debug_ResetMod_Spell_Toggle", MilkQ.MME_ResetMod.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_ResetMod))
 			AddToggleOptionST("Debug_Uninstall_Spell_Toggle", MilkQ.MME_Uninstall.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_Uninstall))
+		else
+			AddToggleOptionST("Debug_MilkSelf_Spell_Toggle", MilkQ.MilkSelf.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MilkSelf))
+			AddToggleOptionST("Debug_MilkTarget_Spell_Toggle", MilkQ.MilkTarget.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MilkTarget))
+		endif
 endfunction	
 
 function Page_MilkMaidDebug()
 	SetCursorFillMode(TOP_TO_BOTTOM)
 		AddHeaderOption("$MME_MENU_PAGE_Debug_Milk_Maid")
+		if MilkQ.MilkQC.Debug_enabled
 			AddMenuOptionST("MaidlistMode_Menu", "List Selection", MaidlistMode[MaidlistModeIndex])
 			AddMenuOptionST("Debug_Milk_Maid_Menu", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S2", Maidlist[MaidIndex])
 			if MaidlistA[MaidIndex] != none
@@ -638,9 +650,11 @@ function Page_MilkMaidDebug()
 				AddEmptyOption()
 				Debug_MM_RemoveMaid_OID = AddToggleOption("$MME_MENU_PAGE_Debug_Milk_Maid_H1_S20", MaidRemove)
 			endif
+		endif
 	
 	SetCursorPosition(1)
 		AddHeaderOption("$MME_MENU_PAGE_Debug_Milk_Maid_Effects_Header")
+		if MilkQ.MilkQC.Debug_enabled
 			if MaidlistA[MaidIndex] != none
 				Debug_MM_SP_Spell_T = AddToggleOption(MilkQ.MilkForSprigganPassive.getname(), MaidlistA[MaidIndex].HasSpell(MilkQ.MilkForSprigganPassive))
 				Debug_MM_MP_Spell_T = AddToggleOption(MilkQ.BeingMilkedPassive.getname() + " (Hidden in UI)", MaidlistA[MaidIndex].HasSpell(MilkQ.BeingMilkedPassive))
@@ -701,6 +715,7 @@ function Page_MilkMaidDebug()
 				Debug_MM_WM24_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[23].getname() + " L24", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[23]))
 				Debug_MM_WM25_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[24].getname() + " L25", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[24]))
 			endif
+		endif
 endfunction	
 
 function Page_PluginChecks()
@@ -1517,36 +1532,6 @@ state Debug_PC_Pregnancy_Toggle
 	endEvent
 endState
 
-state Debug_SexLab_3jBreastfeeding_Animation_Toggle
-	event OnSelectST()
-		if !MilkQ.SexLab3jBreastfeeding
-			MilkQ.SexLab3jBreastfeeding = true
-		else
-			MilkQ.SexLab3jBreastfeeding = false
-		endif
-		SetToggleOptionValueST(MilkQ.SexLab3jBreastfeeding)
-	endEvent
-	
-	event OnHighlightST()
-		SetInfoText("$MME_MENU_PAGE_Settings_H1_S4_Higlight")
-	endEvent
-endState
-
-state Debug_SexLab_Orgasm_Toggle
-	event OnSelectST()
-		if !MilkQ.SexLabOrgasm
-			MilkQ.SexLabOrgasm = true
-		else
-			MilkQ.SexLabOrgasm = false
-		endif
-		SetToggleOptionValueST(MilkQ.SexLabOrgasm)
-	endEvent
-	
-	event OnHighlightST()
-		SetInfoText("$MME_MENU_PAGE_Settings_H1_S3_Higlight")
-	endEvent
-endState
-
 state MaidLvlCap_Toggle
 	event OnSelectST()
 		if !MilkQ.MaidLvlCap
@@ -1856,6 +1841,17 @@ state Debug_FreeLactacid_Toggle
 			MilkQ.FreeLactacid = false
 		endif
 		SetToggleOptionValueST(MilkQ.FreeLactacid)
+	endEvent
+endState
+
+state Debug_enabled
+	event OnSelectST()
+		if !MilkQ.MilkQC.Debug_enabled
+			MilkQ.MilkQC.Debug_enabled = 1
+		else
+			MilkQ.MilkQC.Debug_enabled = 0
+		endif
+		SetToggleOptionValueST(MilkQ.MilkQC.Debug_enabled)
 	endEvent
 endState
 

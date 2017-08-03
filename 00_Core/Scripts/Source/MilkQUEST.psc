@@ -128,8 +128,6 @@ Bool Property MilkingDrainsMP = True Auto
 Bool Property Feeding = True Auto
 Bool Property FuckMachine = False Auto
 Bool Property MilkWithZaZMoMSuctionCups = False Auto
-Bool Property SexLabOrgasm = True Auto
-Bool Property SexLab3jBreastfeeding = True Auto
 Bool Property PainSystem = True Auto
 Bool Property TradeDialogue = True Auto
 Bool Property PlayerCantBeMilkmaid = False Auto
@@ -144,7 +142,7 @@ Bool Property MaleMaids = False Auto
 Int Property BreastScale = 0 Auto
 Int Property TimesMilkedMult Auto
 Int Property MilkLvlCap Auto
-Int Property MilkPoll Auto
+Int Property MilkPoll Auto					;value is unset, mod will give error if script fails to set it, obviously user papyrus/mod is broken
 Int Property Milking_Duration Auto
 Int Property Feeding_Duration Auto
 Int Property Feeding_Sound Auto
@@ -280,24 +278,25 @@ Bool Property Plugin_SlSW = false auto
 ;	Function MultibreastChange()											;Multibreast management
 ;	Function DLCcheck()														;Checks and updates plugins
 ;	int Function Milklvl0fix()												;Milklevel 0 fix since Math.Celling doesn't work, provides 1 maid slot at level 0
-;	string Function ReduceFloat(String ReduceFloat)							;reduce floating 0.00000 to 0.00
+;	string Function ReduceFloat(String ReduceFloat)							;reduce float 0.00000 to 0.00
 ;	Function MMEfoodlistaddon()												;Fills inn formlists with milk and khajiit caravans with lactacid
+;	Function SlSWfoodlistaddon()											;Fills skooma whore drugs formlists with lactacid
 ;	Function Milkmaidinfo()													;Milk maid info message box
 ;	Function Modtoggle()													;Milk mod toggle On/Off
 ;	Function AddMilkFx(Actor akActor, int i)								;Add milk leaking textures
-;	Function AddLeak(Actor akActor)											;Add milk leaking effect
+;	Function AddLeak(Actor akActor)											;Add milk leaking effect(mesh)
 ;	Function RemoveMilkFx1(Actor akActor)									;Remove leaking textures - full breasts
 ;	Function RemoveMilkFx2(Actor akActor)									;Remove leaking textures - after milking
 ;	Function DebuffArraySet()												;Set/Reset DeBuff Array and fill it with spells
 ;	Function BuffArraySet()													;Set/Reset Buff Array and fill it with spells
-;	Function MaidRemove(Actor akActor)										;Removes milkmaid[i]
+;	Function MaidRemove(Actor akActor)										;Removes milkmaid[i]/milkslave[i]
 ;	Function MaidReset()													;Maids reset
 ;	Function SlaveReset()													;Slaves reset
 ;	Function VarSetup()														;Mod variables reset
 ;	Function UNINSTALL()													;Mod reset, remove (de)buffs and effects
 ;
 ;---Actor status checks---
-;	string Function akActorSex(Actor akActor)								;Checks for actor sex, female+schlong=futa
+;	string Function akActorSex(Actor akActor)								;Checks for actor sex, male, female, female+schlong=futa
 ;	bool Function isVampire(Actor akActor)									;Checks if actor Vampire
 ;	bool Function isWerewolf(Actor akActor)									;Checks if actor Werewolf
 ;	bool Function isSuccubus(Actor akActor)									;Checks if actor Succubus Race or PSQ Succubus
@@ -718,7 +717,9 @@ Function MilkCycle(Actor akActor, int t)
 		if (MilkingEquipment.Find(maidArmor.getname()) != -1 || maidArmor == MilkCuirass || maidArmor == MilkCuirassFuta || StringUtil.Find(maidArmor.getname(), "Milk" ) >= 0 || StringUtil.Find(maidArmor.getname(), "Cow" ) >=0)\
 		&& StorageUtil.GetIntValue(akActor,"MME.MilkMaid.MilkingMode") == 2
 			if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") > 0
-				MME_Storage.changeLactacidCurrent(akActor, 1)
+				if LactacidCnt == 0 && MilkCnt <= 1
+					MME_Storage.changeLactacidCurrent(akActor, 1)
+				endif
 				StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid", -1)
 				if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid && akActor.IsNearPlayer()
 					akActor.equipitem(Game.GetFormFromFile(0x57A7A, "Skyrim.esm"),false,true)	;skooma
@@ -2503,26 +2504,40 @@ Function DLCcheck()
 		Plugin_SLA = false
 	endif
 	
-	;(another)user stupidity check
+	;(another)user stupidity check(loadorder)
 	Int MM = Game.GetModbyName("MilkModNew.esp")
 	Int MMHF = Game.GetModbyName("MilkModNEW HF.esp")
 	Int MMZAZ = Game.GetModbyName("MilkModNEW ZaZ.esp")
+	Int MMS = Game.GetModbyName("MilkModNEW Sanbox.esp")
+	
+	If (MMHF != 255 && MM > MMHF)\
+	|| (MMZAZ != 255 && MM > MMZAZ)\
+	|| (MMS != 255 && MM > MMS)
+		Debug.MessageBox("MME incorrect load order: patches should go after main mod")
+	endif
+	
 	Int MMMP = Game.GetModbyName("MilkMod_MilkPumpsBasic.esp")
 	Int MMMPB = Game.GetModbyName("MilkMod_MilkPumpsBasicB.esp")
 	Int MMMPNB = Game.GetModbyName("MilkMod_MilkPumpsBasicNB.esp")
 	Int MMMPF = Game.GetModbyName("MilkMod_MilkPumpsFancy.esp")
 	Int MMMPFB = Game.GetModbyName("MilkMod_MilkPumpsFancyB.esp")
 	Int MMMPFNB = Game.GetModbyName("MilkMod_MilkPumpsFancyNB.esp")
-	Int MMS = Game.GetModbyName("MilkModNEW Sanbox.esp")
-	If (MM > MMHF && MMHF != 255) || (MM > MMZAZ && MMZAZ != 255)
-		Debug.MessageBox("MME incorrect load order: patches should go after main mod")
-	endif
-	If (MM > MMMP && MMMP != 255) || (MM > MMMPB && MMMPB != 255) || (MM > MMMPNB && MMMPNB != 255)\
-	|| (MM > MMMPF && MMMPF != 255) || (MM > MMMPFB && MMMPFB != 255) || (MM > MMMPFNB && MMMPFNB != 255)
+	
+	If (MMMP != 255 && MM > MMMP)\
+	|| (MMMPB != 255 && MM > MMMPB)\
+	|| (MMMPNB != 255 && MM > MMMPNB)\
+	|| (MMMPF != 255 && MM > MMMPF)\
+	|| (MMMPFB != 255 && MM > MMMPFB)\
+	|| (MMMPFNB != 255 && MM > MMMPFNB)
 		Debug.MessageBox("MME incorrect load order: milkpumps should go after main mod")
 	endif
-	If (MMS < MMMP && MMMP != 255) || (MMS < MMMPB && MMMPB != 255) || (MMS < MMMPNB && MMMPNB != 255)\
-	|| (MMS < MMMPF && MMMPF != 255) || (MMS < MMMPFB && MMMPFB != 255) || (MMS < MMMPFNB && MMMPFNB != 255)
+	
+	If (MMMP != 255 && MMS < MMMP)\
+	|| (MMMPB != 255 && MMS < MMMPB)\
+	|| (MMMPNB != 255 && MMS < MMMPNB)\
+	|| (MMMPF != 255 && MMS < MMMPF)\
+	|| (MMMPFB != 255 && MMS < MMMPFB)\
+	|| (MMMPFNB != 255 && MMS < MMMPFNB)
 		Debug.MessageBox("MME incorrect load order: sandbox patch should go after milkpumps")
 	endif
 	debug.Trace("MilkModEconomy DCL check done")
@@ -3017,6 +3032,7 @@ Function VarSetup()
 	MilkQC.Buffs = True
 	MilkQC.ExhaustionMode = 0
 	MilkQC.BrestEnlargement_MultiBreast_Effect = 5
+	MilkQC.Debug_enabled = 0
 	MME_NPCComments.SetValue(0)
 	MilkQC.MME_DialogueMilking = True
 	MilkQC.MME_SimpleMilkPotions = True
@@ -3046,8 +3062,6 @@ Function VarSetup()
 	MilkWithZaZMoMSuctionCups = False
 	MilkingDrainsSP = True
 	MilkingDrainsMP = True
-	SexLabOrgasm = True
-	SexLab3jBreastfeeding = True
 	PainSystem = True
 	PainKills = True
 	WeightUpScale = False					;scale to 100

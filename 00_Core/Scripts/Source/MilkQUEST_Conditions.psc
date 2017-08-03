@@ -46,6 +46,12 @@ Int Property MME_CanBeConvertedFromMaidToSlave Auto Conditional
 Int Property MME_FreeMaidSlots Auto Conditional
 
 ;----------------------------------------------------------------------------
+;Debug
+;----------------------------------------------------------------------------
+
+Int Property Debug_enabled Auto Conditional
+
+;----------------------------------------------------------------------------
 ;Dialogues Alias conditions
 ;----------------------------------------------------------------------------
 
