@@ -1,11 +1,18 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>03-08-2017</Version>
+  <Version>23-08-2017</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
   
 Dev change log:
+
+	v 23-08-2017
+debuffs system overhaul
+removed 50 spells with fixed values, added 2 spells with dynamic values,
+so for every milk character has, stats will be reduced by 1, so if your cow girl wonders outside of barn unprepared, she better be prepared for consequences and bad end?
+on the buff side you get (MilkMax-MilkCnount)*BreastsSize_Node bonus carry weight, probably a huge boost, that is if you'll be able to keep breasts well milked
+added breasts debuff, this one reduces stats depending on breast size*weight, which should be something like (1..9)*(1..2)
 
 	v 03-08-2017
 removed sexlaborgasm toggle

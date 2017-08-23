@@ -17,56 +17,9 @@ int	Debug_MM_MC_Spell_T
 int	Debug_MM_LFx1_Spell_T
 int	Debug_MM_LFx2_Spell_T
 int	Debug_MM_LL_Spell_T
+int	Debug_MM_BB_Spell_T
 int	Debug_MM_UM1_Spell_T
-int	Debug_MM_UM2_Spell_T
-int	Debug_MM_UM3_Spell_T
-int	Debug_MM_UM4_Spell_T
-int	Debug_MM_UM5_Spell_T
-int	Debug_MM_UM6_Spell_T
-int	Debug_MM_UM7_Spell_T
-int	Debug_MM_UM8_Spell_T
-int	Debug_MM_UM9_Spell_T
-int	Debug_MM_UM10_Spell_T
-int	Debug_MM_UM11_Spell_T
-int	Debug_MM_UM12_Spell_T
-int	Debug_MM_UM13_Spell_T
-int	Debug_MM_UM14_Spell_T
-int	Debug_MM_UM15_Spell_T
-int	Debug_MM_UM16_Spell_T
-int	Debug_MM_UM17_Spell_T
-int	Debug_MM_UM18_Spell_T
-int	Debug_MM_UM19_Spell_T
-int	Debug_MM_UM20_Spell_T
-int	Debug_MM_UM21_Spell_T
-int	Debug_MM_UM22_Spell_T
-int	Debug_MM_UM23_Spell_T
-int	Debug_MM_UM24_Spell_T
-int	Debug_MM_UM25_Spell_T
 int	Debug_MM_WM1_Spell_T
-int	Debug_MM_WM2_Spell_T
-int	Debug_MM_WM3_Spell_T
-int	Debug_MM_WM4_Spell_T
-int	Debug_MM_WM5_Spell_T
-int	Debug_MM_WM6_Spell_T
-int	Debug_MM_WM7_Spell_T
-int	Debug_MM_WM8_Spell_T
-int	Debug_MM_WM9_Spell_T
-int	Debug_MM_WM10_Spell_T
-int	Debug_MM_WM11_Spell_T
-int	Debug_MM_WM12_Spell_T
-int	Debug_MM_WM13_Spell_T
-int	Debug_MM_WM14_Spell_T
-int	Debug_MM_WM15_Spell_T
-int	Debug_MM_WM16_Spell_T
-int	Debug_MM_WM17_Spell_T
-int	Debug_MM_WM18_Spell_T
-int	Debug_MM_WM19_Spell_T
-int	Debug_MM_WM20_Spell_T
-int	Debug_MM_WM21_Spell_T
-int	Debug_MM_WM22_Spell_T
-int	Debug_MM_WM23_Spell_T
-int	Debug_MM_WM24_Spell_T
-int	Debug_MM_WM25_Spell_T
 
 ;Spells configuration
 int Exhausion_Debuff_T
@@ -390,13 +343,15 @@ function Page_Settings()
 			AddToggleOptionST("Milk_Stories_Toggle", "$MME_MENU_PAGE_Settings_H3_S2", MilkQ.MilkStory)
 			AddSliderOptionST("NPCComments_Chance_Slider", "$MME_MENU_PAGE_Settings_H3_S3", MilkQ.MME_NPCComments.GetValue(), "{2}%")
 			AddToggleOptionST("DialogueMilking_Toggle", "$MME_MENU_PAGE_Settings_H3_S4", MilkQ.MilkQC.MME_DialogueMilking)
-			AddToggleOptionST("DialogueForceMilkSlave_Toggle", "$MME_MENU_PAGE_Settings_H3_S8", MilkQ.DialogueForceMilkSlave)
-			AddKeyMapOptionST("Hotkey", "$MME_MENU_PAGE_Settings_H3_S5", MilkQ.NotificationKey)
-			if MilkQ.HotkeyMode == 1
-;				AddTextOptionST("Hotkey_Toggle", "$MME_MENU_PAGE_Settings_H3_S9", "UI extension")
-			else
-;				AddTextOptionST("Hotkey_Toggle", "$MME_MENU_PAGE_Settings_H3_S9", "Classic")
+			if MilkQ.MilkQC.Debug_enabled
+				AddToggleOptionST("DialogueForceMilkSlave_Toggle", "$MME_MENU_PAGE_Settings_H3_S8", MilkQ.DialogueForceMilkSlave)
 			endif
+			AddKeyMapOptionST("Hotkey", "$MME_MENU_PAGE_Settings_H3_S5", MilkQ.NotificationKey)
+;			if MilkQ.HotkeyMode == 1
+;				AddTextOptionST("Hotkey_Toggle", "$MME_MENU_PAGE_Settings_H3_S9", "UI extension")
+;			else
+;				AddTextOptionST("Hotkey_Toggle", "$MME_MENU_PAGE_Settings_H3_S9", "Classic")
+;			endif
 		
 	SetCursorPosition(1)
 		AddHeaderOption("$MME_MENU_PAGE_Settings_H4")
@@ -658,62 +613,15 @@ function Page_MilkMaidDebug()
 			if MaidlistA[MaidIndex] != none
 				Debug_MM_SP_Spell_T = AddToggleOption(MilkQ.MilkForSprigganPassive.getname(), MaidlistA[MaidIndex].HasSpell(MilkQ.MilkForSprigganPassive))
 				Debug_MM_MP_Spell_T = AddToggleOption(MilkQ.BeingMilkedPassive.getname() + " (Hidden in UI)", MaidlistA[MaidIndex].HasSpell(MilkQ.BeingMilkedPassive))
-				Debug_MM_EX_Spell_T = AddToggleOption(MilkQ.MilkExhaustion.getname(), MaidlistA[MaidIndex].HasSpell(MilkQ.MilkExhaustion))
-				Debug_MM_MEX_Spell_T = AddToggleOption(MilkQ.MilkMentalExhaustion.getname(), MaidlistA[MaidIndex].HasSpell(MilkQ.MilkMentalExhaustion))
+				Debug_MM_EX_Spell_T = AddToggleOption((MilkQ.MME_Spells_Buffs.GetAt(3) as Spell).getname(), MaidlistA[MaidIndex].HasSpell(MilkQ.MME_Spells_Buffs.GetAt(3) as Spell))
+				Debug_MM_MEX_Spell_T = AddToggleOption((MilkQ.MME_Spells_Buffs.GetAt(4) as Spell).getname(), MaidlistA[MaidIndex].HasSpell(MilkQ.MME_Spells_Buffs.GetAt(4) as Spell))
 				Debug_MM_MC_Spell_T = AddToggleOption(MilkQ.MilkCritical.getname(), MaidlistA[MaidIndex].HasSpell(MilkQ.MilkCritical))
 				Debug_MM_LFx1_Spell_T = AddToggleOption(MilkQ.MilkFx1.getname() + " (Hidden in UI)", MaidlistA[MaidIndex].HasSpell(MilkQ.MilkFx1))
 				Debug_MM_LFx2_Spell_T = AddToggleOption(MilkQ.MilkFx2.getname() + " (Hidden in UI)", MaidlistA[MaidIndex].HasSpell(MilkQ.MilkFx2))
 				Debug_MM_LL_Spell_T = AddToggleOption(MilkQ.MilkLeak.getname() + " (Hidden in UI)", MaidlistA[MaidIndex].HasSpell(MilkQ.MilkLeak))
-				Debug_MM_UM1_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[0].getname() + " L1", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[0]))
-				Debug_MM_UM2_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[1].getname() + " L2", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[1]))
-				Debug_MM_UM3_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[2].getname() + " L3", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[2]))
-				Debug_MM_UM4_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[3].getname() + " L4", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[3]))
-				Debug_MM_UM5_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[4].getname() + " L5", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[4]))
-				Debug_MM_UM6_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[5].getname() + " L6", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[5]))
-				Debug_MM_UM7_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[6].getname() + " L7", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[6]))
-				Debug_MM_UM8_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[7].getname() + " L8", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[7]))
-				Debug_MM_UM9_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[8].getname() + " L9", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[8]))
-				Debug_MM_UM10_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[9].getname() + " L10", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[9]))
-				Debug_MM_UM11_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[10].getname() + " L11", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[10]))
-				Debug_MM_UM12_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[11].getname() + " L12", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[11]))
-				Debug_MM_UM13_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[12].getname() + " L13", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[12]))
-				Debug_MM_UM14_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[13].getname() + " L14", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[13]))
-				Debug_MM_UM15_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[14].getname() + " L15", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[14]))
-				Debug_MM_UM16_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[15].getname() + " L16", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[15]))
-				Debug_MM_UM17_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[16].getname() + " L17", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[16]))
-				Debug_MM_UM18_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[17].getname() + " L18", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[17]))
-				Debug_MM_UM19_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[18].getname() + " L19", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[18]))
-				Debug_MM_UM20_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[19].getname() + " L20", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[19]))
-				Debug_MM_UM21_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[20].getname() + " L21", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[20]))
-				Debug_MM_UM22_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[21].getname() + " L22", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[21]))
-				Debug_MM_UM23_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[22].getname() + " L23", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[22]))
-				Debug_MM_UM24_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[23].getname() + " L24", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[23]))
-				Debug_MM_UM25_Spell_T = AddToggleOption(MilkQ.UnmilkedArray[24].getname() + " L25", MaidlistA[MaidIndex].HasSpell(MilkQ.UnmilkedArray[24]))
-				Debug_MM_WM1_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[0].getname() + " L1", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[0]))
-				Debug_MM_WM2_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[1].getname() + " L2", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[1]))
-				Debug_MM_WM3_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[2].getname() + " L3", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[2]))
-				Debug_MM_WM4_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[3].getname() + " L4", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[3]))
-				Debug_MM_WM5_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[4].getname() + " L5", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[4]))
-				Debug_MM_WM6_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[5].getname() + " L6", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[5]))
-				Debug_MM_WM7_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[6].getname() + " L7", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[6]))
-				Debug_MM_WM8_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[7].getname() + " L8", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[7]))
-				Debug_MM_WM9_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[8].getname() + " L9", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[8]))
-				Debug_MM_WM10_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[9].getname() + " L10", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[9]))
-				Debug_MM_WM11_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[10].getname() + " L11", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[10]))
-				Debug_MM_WM12_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[11].getname() + " L12", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[11]))
-				Debug_MM_WM13_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[12].getname() + " L13", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[12]))
-				Debug_MM_WM14_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[13].getname() + " L14", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[13]))
-				Debug_MM_WM15_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[14].getname() + " L15", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[14]))
-				Debug_MM_WM16_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[15].getname() + " L16", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[15]))
-				Debug_MM_WM17_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[16].getname() + " L17", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[16]))
-				Debug_MM_WM18_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[17].getname() + " L18", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[17]))
-				Debug_MM_WM19_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[18].getname() + " L19", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[18]))
-				Debug_MM_WM20_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[19].getname() + " L20", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[19]))
-				Debug_MM_WM21_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[20].getname() + " L21", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[20]))
-				Debug_MM_WM22_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[21].getname() + " L22", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[21]))
-				Debug_MM_WM23_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[22].getname() + " L23", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[22]))
-				Debug_MM_WM24_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[23].getname() + " L24", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[23]))
-				Debug_MM_WM25_Spell_T = AddToggleOption(MilkQ.WellMilkedArray[24].getname() + " L25", MaidlistA[MaidIndex].HasSpell(MilkQ.WellMilkedArray[24]))
+				Debug_MM_BB_Spell_T = AddToggleOption((MilkQ.MME_Spells_Buffs.GetAt(0) as Spell).getname(), MaidlistA[MaidIndex].HasSpell(MilkQ.MME_Spells_Buffs.GetAt(0) as Spell))
+				Debug_MM_UM1_Spell_T = AddToggleOption((MilkQ.MME_Spells_Buffs.GetAt(1) as Spell).getname(), MaidlistA[MaidIndex].HasSpell(MilkQ.MME_Spells_Buffs.GetAt(1) as Spell))
+				Debug_MM_WM1_Spell_T = AddToggleOption((MilkQ.MME_Spells_Buffs.GetAt(2) as Spell).getname(), MaidlistA[MaidIndex].HasSpell(MilkQ.MME_Spells_Buffs.GetAt(2) as Spell))
 			endif
 		endif
 endfunction	
@@ -941,19 +849,19 @@ event OnOptionSelect(int option)
 		endif
 			SetToggleOptionValue(Debug_MM_MP_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.BeingMilkedPassive ))
 	elseif option == Debug_MM_EX_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.MilkExhaustion )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.MilkExhaustion )
+		if !MaidlistA[MaidIndex].HasSpell( MilkQ.MME_Spells_Buffs.GetAt(3) as Spell )
+			MaidlistA[MaidIndex].AddSpell( MilkQ.MME_Spells_Buffs.GetAt(3) as Spell )
 		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.MilkExhaustion )
+			MaidlistA[MaidIndex].RemoveSpell( MilkQ.MME_Spells_Buffs.GetAt(3) as Spell )
 		endif
-			SetToggleOptionValue(Debug_MM_EX_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.MilkExhaustion ))
+			SetToggleOptionValue(Debug_MM_EX_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.MME_Spells_Buffs.GetAt(3) as Spell ))
 	elseif option == Debug_MM_MEX_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.MilkMentalExhaustion )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.MilkMentalExhaustion )
+		if !MaidlistA[MaidIndex].HasSpell( MilkQ.MME_Spells_Buffs.GetAt(4) as Spell )
+			MaidlistA[MaidIndex].AddSpell( MilkQ.MME_Spells_Buffs.GetAt(4) as Spell )
 		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.MilkMentalExhaustion )
+			MaidlistA[MaidIndex].RemoveSpell( MilkQ.MME_Spells_Buffs.GetAt(4) as Spell )
 		endif
-			SetToggleOptionValue(Debug_MM_MEX_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.MilkMentalExhaustion ))
+			SetToggleOptionValue(Debug_MM_MEX_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.MME_Spells_Buffs.GetAt(4) as Spell ))
 	elseif option == Debug_MM_MC_Spell_T
 		if !MaidlistA[MaidIndex].HasSpell( MilkQ.MilkCritical )
 			MaidlistA[MaidIndex].AddSpell( MilkQ.MilkCritical )
@@ -982,356 +890,27 @@ event OnOptionSelect(int option)
 			MaidlistA[MaidIndex].RemoveSpell( MilkQ.MilkLeak )
 		endif
 			SetToggleOptionValue(Debug_MM_LL_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.MilkLeak ))
+	elseif option == Debug_MM_BB_Spell_T
+		if !MaidlistA[MaidIndex].HasSpell(MilkQ.MME_Spells_Buffs.GetAt(0) as Spell)
+			MaidlistA[MaidIndex].AddSpell(MilkQ.MME_Spells_Buffs.GetAt(0) as Spell)
+		else
+			MaidlistA[MaidIndex].RemoveSpell(MilkQ.MME_Spells_Buffs.GetAt(0) as Spell)
+		endif
+			SetToggleOptionValue(Debug_MM_BB_Spell_T, MaidlistA[MaidIndex].HasSpell(MilkQ.MME_Spells_Buffs.GetAt(0) as Spell))
 	elseif option == Debug_MM_UM1_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[0] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[0] )
+		if !MaidlistA[MaidIndex].HasSpell(MilkQ.MME_Spells_Buffs.GetAt(1) as Spell)
+			MaidlistA[MaidIndex].AddSpell(MilkQ.MME_Spells_Buffs.GetAt(1) as Spell)
 		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[0] )
+			MaidlistA[MaidIndex].RemoveSpell(MilkQ.MME_Spells_Buffs.GetAt(1) as Spell)
 		endif
-			SetToggleOptionValue(Debug_MM_UM1_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[0] ))
-	elseif option == Debug_MM_UM2_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[1] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[1] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[1] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM2_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[1] ))
-	elseif option == Debug_MM_UM3_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[2] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[2] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[2] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM3_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[2] ))
-	elseif option == Debug_MM_UM4_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[3] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[3] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[3] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM4_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[3] ))
-	elseif option == Debug_MM_UM5_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[4] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[4] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[4] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM5_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[4] ))
-	elseif option == Debug_MM_UM6_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[5] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[5] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[5] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM6_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[5] ))
-	elseif option == Debug_MM_UM7_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[6] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[6] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[6] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM7_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[6] ))
-	elseif option == Debug_MM_UM8_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[7] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[7] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[7] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM8_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[7] ))
-	elseif option == Debug_MM_UM9_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[8] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[8] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[8] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM9_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[8] ))
-	elseif option == Debug_MM_UM10_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[9] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[9] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[9] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM10_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[9] ))
-	elseif option == Debug_MM_UM11_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[10] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[10] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[10] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM11_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[10] ))
-	elseif option == Debug_MM_UM12_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[11] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[11] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[11] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM12_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[11] ))
-	elseif option == Debug_MM_UM13_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[12] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[12] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[12] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM13_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[12] ))
-	elseif option == Debug_MM_UM14_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[13] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[13] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[13] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM14_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[13] ))
-	elseif option == Debug_MM_UM15_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[14] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[14] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[14] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM15_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[14] ))
-	elseif option == Debug_MM_UM16_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[15] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[15] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[15] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM16_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[15] ))
-	elseif option == Debug_MM_UM17_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[16] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[16] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[16] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM17_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[16] ))
-	elseif option == Debug_MM_UM18_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[17] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[17] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[17] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM18_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[17] ))
-	elseif option == Debug_MM_UM19_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[18] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[18] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[18] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM19_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[18] ))
-	elseif option == Debug_MM_UM20_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[19] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[19] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[19] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM20_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[19] ))
-	elseif option == Debug_MM_UM21_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[20] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[20] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[20] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM21_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[20] ))
-	elseif option == Debug_MM_UM22_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[21] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[21] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[21] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM22_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[21] ))
-	elseif option == Debug_MM_UM23_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[22] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[22] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[22] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM23_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[22] ))
-	elseif option == Debug_MM_UM24_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[23] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[23] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[23] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM24_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[23] ))
-	elseif option == Debug_MM_UM25_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[24] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.UnmilkedArray[24] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.UnmilkedArray[24] )
-		endif
-			SetToggleOptionValue(Debug_MM_UM25_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.UnmilkedArray[24] ))
+			SetToggleOptionValue(Debug_MM_UM1_Spell_T, MaidlistA[MaidIndex].HasSpell(MilkQ.MME_Spells_Buffs.GetAt(1) as Spell))
 	elseif option == Debug_MM_WM1_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[0] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[0] )
+		if !MaidlistA[MaidIndex].HasSpell(MilkQ.MME_Spells_Buffs.GetAt(2) as Spell)
+			MaidlistA[MaidIndex].AddSpell(MilkQ.MME_Spells_Buffs.GetAt(2) as Spell)
 		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[0] )
+			MaidlistA[MaidIndex].RemoveSpell(MilkQ.MME_Spells_Buffs.GetAt(2) as Spell)
 		endif
-			SetToggleOptionValue(Debug_MM_WM1_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[0] ))
-	elseif option == Debug_MM_WM2_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[1] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[1] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[1] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM2_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[1] ))
-	elseif option == Debug_MM_WM3_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[2] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[2] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[2] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM3_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[2] ))
-	elseif option == Debug_MM_WM4_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[3] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[3] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[3] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM4_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[3] ))
-	elseif option == Debug_MM_WM5_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[4] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[4] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[4] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM5_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[4] ))
-	elseif option == Debug_MM_WM6_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[5] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[5] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[5] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM6_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[5] ))
-	elseif option == Debug_MM_WM7_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[6] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[6] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[6] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM7_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[6] ))
-	elseif option == Debug_MM_WM8_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[7] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[7] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[7] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM8_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[7] ))
-	elseif option == Debug_MM_WM9_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[8] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[8] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[8] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM9_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[8] ))
-	elseif option == Debug_MM_WM10_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[9] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[9] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[9] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM10_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[9] ))
-	elseif option == Debug_MM_WM11_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[10] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[10] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[10] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM11_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[10] ))
-	elseif option == Debug_MM_WM12_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[11] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[11] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[11] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM12_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[11] ))
-	elseif option == Debug_MM_WM13_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[12] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[12] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[12] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM13_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[12] ))
-	elseif option == Debug_MM_WM14_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[13] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[13] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[13] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM14_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[13] ))
-	elseif option == Debug_MM_WM15_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[14] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[14] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[14] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM15_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[14] ))
-	elseif option == Debug_MM_WM16_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[15] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[15] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[15] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM16_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[15] ))
-	elseif option == Debug_MM_WM17_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[16] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[16] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[16] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM17_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[16] ))
-	elseif option == Debug_MM_WM18_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[17] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[17] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[17] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM18_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[17] ))
-	elseif option == Debug_MM_WM19_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[18] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[18] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[18] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM19_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[18] ))
-	elseif option == Debug_MM_WM20_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[19] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[19] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[19] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM20_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[19] ))
-	elseif option == Debug_MM_WM21_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[20] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[20] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[20] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM21_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[20] ))
-	elseif option == Debug_MM_WM22_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[21] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[21] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[21] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM22_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[21] ))
-	elseif option == Debug_MM_WM23_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[22] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[22] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[22] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM23_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[22] ))
-	elseif option == Debug_MM_WM24_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[23] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[23] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[23] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM24_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[23] ))
-	elseif option == Debug_MM_WM25_Spell_T
-		if !MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[24] )
-			MaidlistA[MaidIndex].AddSpell( MilkQ.WellMilkedArray[24] )
-		else
-			MaidlistA[MaidIndex].RemoveSpell( MilkQ.WellMilkedArray[24] )
-		endif
-			SetToggleOptionValue(Debug_MM_WM25_Spell_T, MaidlistA[MaidIndex].HasSpell( MilkQ.WellMilkedArray[24] ))
+			SetToggleOptionValue(Debug_MM_WM1_Spell_T, MaidlistA[MaidIndex].HasSpell(MilkQ.MME_Spells_Buffs.GetAt(2) as Spell))
 	elseif option == Milk_RaceEffect_T
 		if !MilkQ.MilkQC.Milk_RaceEffect
 			MilkQ.MilkQC.Milk_RaceEffect = true

@@ -11,15 +11,15 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 	if akTarget.GetLeveledActorBase().GetSex() == 1 || MilkQ.MaleMaids == true
 		String MaidName = akTarget.GetLeveledActorBase().getname()
 		if MilkQ.MILKmaid.find(akTarget) != -1
-			if akTarget.HasSpell(MilkQ.MilkExhaustion)\
-			|| akTarget.HasSpell(MilkQ.MilkMentalExhaustion)
+			if akTarget.HasSpell(MilkQ.MME_Spells_Buffs.GetAt(3) as Spell)\
+			|| akTarget.HasSpell(MilkQ.MME_Spells_Buffs.GetAt(4) as Spell)
 			
-				if akTarget.HasSpell(MilkQ.MilkExhaustion)
-					akTarget.RemoveSpell(MilkQ.MilkExhaustion)
+				if akTarget.HasSpell(MilkQ.MME_Spells_Buffs.GetAt(3) as Spell)
+					akTarget.RemoveSpell(MilkQ.MME_Spells_Buffs.GetAt(3) as Spell)
 				endif
 				
-				if akTarget.HasSpell(MilkQ.MilkMentalExhaustion)
-					akTarget.RemoveSpell( MilkQ.MilkMentalExhaustion )
+				if akTarget.HasSpell(MilkQ.MME_Spells_Buffs.GetAt(4) as Spell)
+					akTarget.RemoveSpell( MilkQ.MME_Spells_Buffs.GetAt(4) as Spell )
 				endif
 				
 				Debug.Notification(MilkQ.formatString(JsonUtil.GetStringValue("/MME/Strings", "exhaustiongone"), MaidName))

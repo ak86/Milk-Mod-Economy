@@ -30,8 +30,6 @@ GlobalVariable Property MME_NPCComments Auto
 GlobalVariable Property MME_Status_Global Auto
 
 SPELL Property MilkCritical Auto
-SPELL Property MilkExhaustion Auto
-SPELL Property MilkMentalExhaustion Auto
 SPELL Property MilkModInfo Auto
 SPELL Property MilkModToggle Auto
 SPELL Property MilkForSpriggan Auto
@@ -71,8 +69,6 @@ Sound Property TakeHoldSound Auto
 ;Arrays
 Actor[] Property MilkMaid Auto
 Actor[] Property MilkSlave Auto
-Spell[] Property UnmilkedArray Auto
-Spell[] Property WellMilkedArray Auto
 String[] Property MilkMsgHyper Auto
 String[] Property MilkMsgStage Auto
 String[] Property Story Auto
@@ -185,8 +181,7 @@ FormList Property MME_Milk_Vampire Auto
 FormList Property MME_Milk_Werewolf Auto
 FormList Property MME_Util_Potions Auto		; Utility potions
 
-FormList Property MME_Spells_Unmilked Auto
-FormList Property MME_Spells_Wellmilked Auto
+FormList Property MME_Spells_Buffs Auto
 
 LeveledItem Property LItemFoodInnCommon Auto
 LeveledItem Property LItemSkooma75 Auto
@@ -287,8 +282,6 @@ Bool Property Plugin_SlSW = false auto
 ;	Function AddLeak(Actor akActor)											;Add milk leaking effect(mesh)
 ;	Function RemoveMilkFx1(Actor akActor)									;Remove leaking textures - full breasts
 ;	Function RemoveMilkFx2(Actor akActor)									;Remove leaking textures - after milking
-;	Function DebuffArraySet()												;Set/Reset DeBuff Array and fill it with spells
-;	Function BuffArraySet()													;Set/Reset Buff Array and fill it with spells
 ;	Function MaidRemove(Actor akActor)										;Removes milkmaid[i]/milkslave[i]
 ;	Function MaidReset()													;Maids reset
 ;	Function SlaveReset()													;Slaves reset
@@ -698,7 +691,7 @@ Function MilkCycle(Actor akActor, int t)
 	;add/remove breast row trigger, cause lactation due to drinking breast inc/dec potion
 	if StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.AdjustBreastRow") != 0 
 		if  MilkQC.Buffs && akActor.IsNearPlayer()
-			akActor.AddSpell( MilkExhaustion, false )
+			akActor.AddSpell( MME_Spells_Buffs.GetAt(3) as Spell, false )
 			if PainSystem && PainKills
 				akActor.DamageActorValue("Health", 0.5 * akActor.GetBaseActorValue("Health"))
 			endif
@@ -714,19 +707,24 @@ Function MilkCycle(Actor akActor, int t)
 		
 	;events based on equipped armor(milking,estus etc)
 	if maidArmor != None && MME_Storage.getBreastRows(akActor) == 1
-		if (MilkingEquipment.Find(maidArmor.getname()) != -1 || maidArmor == MilkCuirass || maidArmor == MilkCuirassFuta || StringUtil.Find(maidArmor.getname(), "Milk" ) >= 0 || StringUtil.Find(maidArmor.getname(), "Cow" ) >=0)\
-		&& StorageUtil.GetIntValue(akActor,"MME.MilkMaid.MilkingMode") == 2
-			if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") > 0
-				if LactacidCnt == 0 && MilkCnt <= 1
-					MME_Storage.changeLactacidCurrent(akActor, 1)
+		if MilkingEquipment.Find(maidArmor.getname()) != -1\
+		|| maidArmor == MilkCuirass\
+		|| maidArmor == MilkCuirassFuta\
+		|| StringUtil.Find(maidArmor.getname(), "Milk" ) >= 0\
+		|| StringUtil.Find(maidArmor.getname(), "Cow" ) >=0
+			if StorageUtil.GetIntValue(akActor,"MME.MilkMaid.MilkingMode") == 2
+				if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") > 0
+					if LactacidCnt == 0 && MilkCnt <= 1
+						MME_Storage.changeLactacidCurrent(akActor, 1)
+					endif
+					StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid", -1)
+					if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid && akActor.IsNearPlayer()
+						akActor.equipitem(Game.GetFormFromFile(0x57A7A, "Skyrim.esm"),false,true)	;skooma
+					endif
 				endif
-				StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid", -1)
-				if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid && akActor.IsNearPlayer()
-					akActor.equipitem(Game.GetFormFromFile(0x57A7A, "Skyrim.esm"),false,true)	;skooma
+				if MilkCnt >= MilkMax * 0.75 && akActor.IsNearPlayer()
+					MilkSelf.cast(akActor)
 				endif
-			endif
-			if MilkCnt >= MilkMax * 0.75 && akActor.IsNearPlayer()
-				MilkSelf.cast(akActor)
 			endif
 		elseif StringUtil.Find(maidArmor.getname(), "Spriggan" ) >= 0\
 		|| StringUtil.Find(maidArmor.getname(), "Living Arm" ) >= 0\
@@ -1137,16 +1135,12 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		endif
 	endif
 	
-	int b = 0
-	while b < 25 && StopMilking != true
-		if akActor.HasSpell(WellMilkedArray[b])
-			StopMilking = true
-			if MilkMsgs && PlayerREF == akActor
-				debug.Notification("Your breasts are well-milked and need more milk before they can be milked again.")
-			Endif
+	if akActor.HasSpell(MME_Spells_Buffs.GetAt(2) as Spell) && StopMilking != true
+		StopMilking = true
+		if MilkMsgs && PlayerREF == akActor
+			debug.Notification("Your breasts are well-milked and need more milk before they can be milked again.")
 		Endif
-		b += 1
-	endwhile
+	Endif
 
 ;-----------------------Milking mode selection
 	
@@ -1644,11 +1638,11 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 
 				PainCnt = MME_Storage.getPainCurrent(akActor)
 				
-				if MilkQC.Buffs && !akActor.HasSpell(MilkExhaustion) 
+				if MilkQC.Buffs && !akActor.HasSpell(MME_Spells_Buffs.GetAt(3) as Spell) 
 					if mode == 1 && (PainCnt >= PainMax*0.8)
 						StopMilking = true
 					elseif (PainCnt >= PainMax*0.9)
-						akActor.AddSpell( MilkExhaustion, false )
+						akActor.AddSpell( MME_Spells_Buffs.GetAt(3) as Spell, false )
 					endif
 				endif
 
@@ -1944,8 +1938,8 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	endif
 	
 	if Mode == 3 && MilkQC.Buffs && IsMilkMaid == true
-		akActor.AddSpell( MilkExhaustion, false )
-		akActor.AddSpell( MilkMentalExhaustion, false )
+		akActor.AddSpell( MME_Spells_Buffs.GetAt(3) as Spell, false )
+		akActor.AddSpell( MME_Spells_Buffs.GetAt(4) as Spell, false )
 	endif
 
 	if akActor.HasSpell( BeingMilkedPassive )
@@ -1966,46 +1960,65 @@ EndFunction
 Function PostMilk(Actor akActor)
 	Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 	Float MilkMax = MME_Storage.getMilkMaximum(akActor)
-	Int   MaidLevel = MME_Storage.getMaidLevel(akActor)
+	int numEffects
+    int effectCount
+	;Spell Unmilked_Spell = Game.GetFormFromFile(0xD7B, "milkmodnew.esp") as Spell
+	;Spell Wellmilked_Spell = Game.GetFormFromFile(0x39F87, "milkmodnew.esp") as Spell
+	;Spell Breasts_Spell = Game.GetFormFromFile(0x7D36A, "milkmodnew.esp") as Spell
+	Float BreastsSize_Node = NetImmerse.GetNodeScale(akActor, "NPC L Breast", false)
 
-	if MilkQC.Buffs != true 
-		if akActor.HasSpell(MilkExhaustion)
-			akActor.RemoveSpell(MilkExhaustion)
-		endif
-		if akActor.HasSpell(MilkMentalExhaustion)
-			akActor.RemoveSpell(MilkMentalExhaustion)
-		endif
+	if akActor.HasSpell(MME_Spells_Buffs.GetAt(1) as Spell)
+		akActor.RemoveSpell(MME_Spells_Buffs.GetAt(1) as Spell)
 	endif
-	
-	int b = 0
-	while b < 25
-		if akActor.HasSpell(UnmilkedArray[b])
-			akActor.RemoveSpell(UnmilkedArray[b])
+	if akActor.HasSpell(MME_Spells_Buffs.GetAt(2) as Spell)
+		akActor.RemoveSpell(MME_Spells_Buffs.GetAt(2) as Spell)
+	endif
+	if akActor.HasSpell(MME_Spells_Buffs.GetAt(0) as Spell)
+		akActor.RemoveSpell(MME_Spells_Buffs.GetAt(0) as Spell)
+	endif
+		
+	if MilkQC.Buffs != true
+		if akActor.HasSpell(MME_Spells_Buffs.GetAt(3) as Spell)
+			akActor.RemoveSpell(MME_Spells_Buffs.GetAt(3) as Spell)
 		endif
-		if MilkCnt / MilkMax > 0.4 && akActor.HasSpell(WellMilkedArray[b])
-			akActor.RemoveSpell(WellMilkedArray[b])
-		Endif
-		b += 1
-	endwhile
+		if akActor.HasSpell(MME_Spells_Buffs.GetAt(4) as Spell)
+			akActor.RemoveSpell(MME_Spells_Buffs.GetAt(4) as Spell)
+		endif
+	else
+		numEffects = (MME_Spells_Buffs.GetAt(1) as Spell).GetNumEffects()
+		effectCount = 0
+		while (effectCount < numEffects)
+			(MME_Spells_Buffs.GetAt(1) as Spell).SetNthEffectMagnitude(effectCount, MilkCnt)
+			effectCount= effectCount + 1
+		endwhile
+		
+		numEffects = (MME_Spells_Buffs.GetAt(2) as Spell).GetNumEffects()
+		effectCount = 0
+		while (effectCount < numEffects)
+			(MME_Spells_Buffs.GetAt(2) as Spell).SetNthEffectMagnitude(effectCount, (MilkMax-MilkCnt)*BreastsSize_Node)
+			effectCount = effectCount + 1
+		endwhile
+	
+		;breassize debuff 7D36A
+		numEffects = (MME_Spells_Buffs.GetAt(0) as Spell).GetNumEffects()
+		effectCount = 0
+		while (effectCount < numEffects)
+			(MME_Spells_Buffs.GetAt(0) as Spell).SetNthEffectMagnitude(effectCount, BreastsSize_Node * (1+ akActor.GetLeveledActorBase().GetWeight()/100))
+			effectCount = effectCount + 1
+		endwhile
+		akActor.AddSpell(MME_Spells_Buffs.GetAt(0) as Spell, false)
 
-	if MilkQC.Buffs
 		if MilkCnt / MilkMax <= 0.4
-			if MaidLevel > 24
-				MaidLevel = 24
-			endif
-			akActor.AddSpell(WellMilkedArray[MaidLevel], false)
+			akActor.AddSpell(MME_Spells_Buffs.GetAt(2) as Spell, false)
 		elseif MilkCnt / MilkMax >= 0.6
-			int min = Math.Ceiling(MilkMax*0.6)												;ie lv10 cei(14.4) = 14 lv1 cei(3.6) = 4
-			int diff = (MilkCnt - min) as int 												;if its = 0 it means its first tick above 0.6
-			if diff > 24
-				diff = 24
-			endif
-			akActor.AddSpell(UnmilkedArray[diff], false)
+			akActor.AddSpell(MME_Spells_Buffs.GetAt(1) as Spell, false)
 			if akActor == PlayerRef && MilkMsgs
 				debug.Notification("Your breasts are getting heavy from all the milk sloshing inside.")
 			endif	
-		endif	
-	endif	
+		endif
+		
+	endif
+	
 EndFunction
 
 Function LevelCheck()
@@ -2749,66 +2762,6 @@ Function RemoveMilkFx2(Actor akActor)
 	EndIf
 EndFunction
 
-Function DebuffArraySet()
-	debug.Trace("MilkModEconomy debuffs array resetting")
-	UnmilkedArray = new Spell[25]
-	UnmilkedArray[0] = MME_Spells_Unmilked.GetAt(0) as Spell
-	UnmilkedArray[1] = MME_Spells_Unmilked.GetAt(1) as Spell
-	UnmilkedArray[2] = MME_Spells_Unmilked.GetAt(2) as Spell
-	UnmilkedArray[3] = MME_Spells_Unmilked.GetAt(3) as Spell
-	UnmilkedArray[4] = MME_Spells_Unmilked.GetAt(4) as Spell
-	UnmilkedArray[5] = MME_Spells_Unmilked.GetAt(5) as Spell
-	UnmilkedArray[6] = MME_Spells_Unmilked.GetAt(6) as Spell
-	UnmilkedArray[7] = MME_Spells_Unmilked.GetAt(7) as Spell
-	UnmilkedArray[8] = MME_Spells_Unmilked.GetAt(8) as Spell
-	UnmilkedArray[9] = MME_Spells_Unmilked.GetAt(9) as Spell
-	UnmilkedArray[10] = MME_Spells_Unmilked.GetAt(10) as Spell
-	UnmilkedArray[11] = MME_Spells_Unmilked.GetAt(11) as Spell
-	UnmilkedArray[12] = MME_Spells_Unmilked.GetAt(12) as Spell
-	UnmilkedArray[13] = MME_Spells_Unmilked.GetAt(13) as Spell
-	UnmilkedArray[14] = MME_Spells_Unmilked.GetAt(14) as Spell
-	UnmilkedArray[15] = MME_Spells_Unmilked.GetAt(15) as Spell
-	UnmilkedArray[16] = MME_Spells_Unmilked.GetAt(16) as Spell
-	UnmilkedArray[17] = MME_Spells_Unmilked.GetAt(17) as Spell
-	UnmilkedArray[18] = MME_Spells_Unmilked.GetAt(18) as Spell
-	UnmilkedArray[19] = MME_Spells_Unmilked.GetAt(19) as Spell
-	UnmilkedArray[20] = MME_Spells_Unmilked.GetAt(20) as Spell
-	UnmilkedArray[21] = MME_Spells_Unmilked.GetAt(21) as Spell
-	UnmilkedArray[22] = MME_Spells_Unmilked.GetAt(22) as Spell
-	UnmilkedArray[23] = MME_Spells_Unmilked.GetAt(23) as Spell
-	UnmilkedArray[24] = MME_Spells_Unmilked.GetAt(24) as Spell
-EndFunction
-
-Function BuffArraySet()
-	debug.Trace("MilkModEconomy buffs array resetting")
-	WellMilkedArray = new Spell[25]
-	WellMilkedArray[0] = MME_Spells_Wellmilked.GetAt(0) as Spell
-	WellMilkedArray[1] = MME_Spells_Wellmilked.GetAt(1) as Spell
-	WellMilkedArray[2] = MME_Spells_Wellmilked.GetAt(2) as Spell
-	WellMilkedArray[3] = MME_Spells_Wellmilked.GetAt(3) as Spell
-	WellMilkedArray[4] = MME_Spells_Wellmilked.GetAt(4) as Spell
-	WellMilkedArray[5] = MME_Spells_Wellmilked.GetAt(5) as Spell
-	WellMilkedArray[6] = MME_Spells_Wellmilked.GetAt(6) as Spell
-	WellMilkedArray[7] = MME_Spells_Wellmilked.GetAt(7) as Spell
-	WellMilkedArray[8] = MME_Spells_Wellmilked.GetAt(8) as Spell
-	WellMilkedArray[9] = MME_Spells_Wellmilked.GetAt(9) as Spell
-	WellMilkedArray[10] = MME_Spells_Wellmilked.GetAt(10) as Spell
-	WellMilkedArray[11] = MME_Spells_Wellmilked.GetAt(11) as Spell
-	WellMilkedArray[12] = MME_Spells_Wellmilked.GetAt(12) as Spell
-	WellMilkedArray[13] = MME_Spells_Wellmilked.GetAt(13) as Spell
-	WellMilkedArray[14] = MME_Spells_Wellmilked.GetAt(14) as Spell
-	WellMilkedArray[15] = MME_Spells_Wellmilked.GetAt(15) as Spell
-	WellMilkedArray[16] = MME_Spells_Wellmilked.GetAt(16) as Spell
-	WellMilkedArray[17] = MME_Spells_Wellmilked.GetAt(17) as Spell
-	WellMilkedArray[18] = MME_Spells_Wellmilked.GetAt(18) as Spell
-	WellMilkedArray[19] = MME_Spells_Wellmilked.GetAt(19) as Spell
-	WellMilkedArray[20] = MME_Spells_Wellmilked.GetAt(20) as Spell
-	WellMilkedArray[21] = MME_Spells_Wellmilked.GetAt(21) as Spell
-	WellMilkedArray[22] = MME_Spells_Wellmilked.GetAt(22) as Spell
-	WellMilkedArray[23] = MME_Spells_Wellmilked.GetAt(23) as Spell
-	WellMilkedArray[24] = MME_Spells_Wellmilked.GetAt(24) as Spell
-EndFunction
-
 Function MaidRemove(Actor akActor)
 		debug.notification("MilkModEconomy existing maid/slave " + akActor.GetLeveledActorBase().GetName() + "resetting")
 	If akActor != None
@@ -2833,23 +2786,24 @@ Function MaidRemove(Actor akActor)
 		;akActor.UpdateWeight(NeckDelta)
 			
 		;remove de/buffs, effects
-		int b = 0
-		While b < 25
-			If akActor.HasSpell(UnmilkedArray[b])
-				akActor.RemoveSpell(UnmilkedArray[b])
-			EndIf
-			If akActor.HasSpell(WellMilkedArray[b])
-				akActor.RemoveSpell(WellMilkedArray[b])
-			EndIf
-			b += 1
-		EndWhile
-		
-		If akActor.HasSpell(MilkExhaustion)
-			akActor.RemoveSpell(MilkExhaustion)
+		If akActor.HasSpell(MME_Spells_Buffs.GetAt(1) as Spell)
+			akActor.RemoveSpell(MME_Spells_Buffs.GetAt(1) as Spell)
 		EndIf
 		
-		If akActor.HasSpell(MilkMentalExhaustion)
-			akActor.RemoveSpell(MilkMentalExhaustion)
+		If akActor.HasSpell(MME_Spells_Buffs.GetAt(2) as Spell)
+			akActor.RemoveSpell(MME_Spells_Buffs.GetAt(2) as Spell)
+		EndIf
+		
+		If akActor.HasSpell(MME_Spells_Buffs.GetAt(0) as Spell)
+			akActor.RemoveSpell(MME_Spells_Buffs.GetAt(0) as Spell)
+		EndIf
+		
+		If akActor.HasSpell(MME_Spells_Buffs.GetAt(3) as Spell)
+			akActor.RemoveSpell(MME_Spells_Buffs.GetAt(3) as Spell)
+		EndIf
+		
+		If akActor.HasSpell(MME_Spells_Buffs.GetAt(4) as Spell)
+			akActor.RemoveSpell(MME_Spells_Buffs.GetAt(4) as Spell)
 		EndIf
 
 		If akActor.HasSpell(MilkCritical)
