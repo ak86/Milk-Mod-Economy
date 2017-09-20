@@ -5,45 +5,45 @@ bool Function IsIntegraged ()
 EndFunction
 
 Function Hunger(Int mod = 0)
-	GlobalVariable RND_State = JsonUtil.GetFormValue("/MME/RND", "rnd_state") as GlobalVariable
+	GlobalVariable RND_State = Game.GetFormFromFile(0x12c4c, "RealisticNeedsandDiseases.esp") as GlobalVariable
 
 	if RND_State.GetValue() == 1
 		Actor PlayerRef = Game.GetPlayer()
 		
-		GlobalVariable RND_HungerPoints = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerpoints") as GlobalVariable
-		GlobalVariable RND_HungerPointsPerHour = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerpointsperhour") as GlobalVariable
-		GlobalVariable RND_HungerLastUpdateTimeStamp = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlastupdatetimestamp") as GlobalVariable
-		GlobalVariable RND_FoodPoints = JsonUtil.GetFormValue("/MME/RND", "rnd_foodpoints") as GlobalVariable
-		GlobalVariable RND_1stPersonMsg = JsonUtil.GetFormValue("/MME/RND", "rnd_1stpersonmsg") as GlobalVariable
-		GlobalVariable RND_ForceSatiation = JsonUtil.GetFormValue("/MME/RND", "rnd_forcesatiation") as GlobalVariable
+		GlobalVariable RND_HungerPoints = Game.GetFormFromFile(0x2884, "RealisticNeedsandDiseases.esp") as GlobalVariable
+		GlobalVariable RND_HungerPointsPerHour = Game.GetFormFromFile(0x2de7, "RealisticNeedsandDiseases.esp") as GlobalVariable
+		GlobalVariable RND_HungerLastUpdateTimeStamp = Game.GetFormFromFile(0x2de8, "RealisticNeedsandDiseases.esp") as GlobalVariable
+		GlobalVariable RND_FoodPoints = Game.GetFormFromFile(0x6f1e, "RealisticNeedsandDiseases.esp") as GlobalVariable
+		GlobalVariable RND_1stPersonMsg = Game.GetFormFromFile(0x900ca, "RealisticNeedsandDiseases.esp") as GlobalVariable
+		GlobalVariable RND_ForceSatiation = Game.GetFormFromFile(0x536D7, "RealisticNeedsandDiseases.esp") as GlobalVariable
+		
+		GlobalVariable RND_HungerLevel00 = Game.GetFormFromFile(0x2de9, "RealisticNeedsandDiseases.esp") as GlobalVariable
+		GlobalVariable RND_HungerLevel01 = Game.GetFormFromFile(0x2dea, "RealisticNeedsandDiseases.esp") as GlobalVariable
+		GlobalVariable RND_HungerLevel02 = Game.GetFormFromFile(0x2deb, "RealisticNeedsandDiseases.esp") as GlobalVariable
+		GlobalVariable RND_HungerLevel03 = Game.GetFormFromFile(0x2dec, "RealisticNeedsandDiseases.esp") as GlobalVariable
+		GlobalVariable RND_HungerLevel04 = Game.GetFormFromFile(0x2ded, "RealisticNeedsandDiseases.esp") as GlobalVariable
+		GlobalVariable RND_HungerLevel05 = Game.GetFormFromFile(0x2dee, "RealisticNeedsandDiseases.esp") as GlobalVariable
 
-		GlobalVariable RND_HungerLevel00 = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlevel00") as GlobalVariable
-		GlobalVariable RND_HungerLevel01 = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlevel01") as GlobalVariable
-		GlobalVariable RND_HungerLevel02 = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlevel02") as GlobalVariable
-		GlobalVariable RND_HungerLevel03 = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlevel03") as GlobalVariable
-		GlobalVariable RND_HungerLevel04 = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlevel04") as GlobalVariable
-		GlobalVariable RND_HungerLevel05 = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlevel05") as GlobalVariable
+		Spell RND_HungerSpell00 = Game.GetFormFromFile(0x1d97, "RealisticNeedsandDiseases.esp") as Spell
+		Spell RND_HungerSpell01 = Game.GetFormFromFile(0x1d99, "RealisticNeedsandDiseases.esp") as Spell
+		Spell RND_HungerSpell02 = Game.GetFormFromFile(0x1d9b, "RealisticNeedsandDiseases.esp") as Spell
+		Spell RND_HungerSpell03 = Game.GetFormFromFile(0x1d9d, "RealisticNeedsandDiseases.esp") as Spell
+		Spell RND_HungerSpell04 = Game.GetFormFromFile(0x231b, "RealisticNeedsandDiseases.esp") as Spell
+		Spell RND_HungerSpell05 = Game.GetFormFromFile(0x231c, "RealisticNeedsandDiseases.esp") as Spell
 
-		Spell RND_HungerSpell00 = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerspell00") as Spell
-		Spell RND_HungerSpell01 = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerspell01") as Spell
-		Spell RND_HungerSpell02 = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerspell02") as Spell
-		Spell RND_HungerSpell03 = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerspell03") as Spell
-		Spell RND_HungerSpell04 = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerspell04") as Spell
-		Spell RND_HungerSpell05 = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerspell05") as Spell
+		Message RND_HungerLevel00ConsumeMessage = Game.GetFormFromFile(0x53f5, "RealisticNeedsandDiseases.esp") as Message
+		Message RND_HungerLevel01ConsumeMessage = Game.GetFormFromFile(0x53f6, "RealisticNeedsandDiseases.esp") as Message
+		Message RND_HungerLevel02ConsumeMessage = Game.GetFormFromFile(0x53f7, "RealisticNeedsandDiseases.esp") as Message
+		Message RND_HungerLevel03ConsumeMessage = Game.GetFormFromFile(0x53f8, "RealisticNeedsandDiseases.esp") as Message
+		Message RND_HungerLevel04ConsumeMessage = Game.GetFormFromFile(0x53f9, "RealisticNeedsandDiseases.esp") as Message
+		Message RND_HungerLevel05ConsumeMessage = Game.GetFormFromFile(0x53fa, "RealisticNeedsandDiseases.esp") as Message
 
-		Message RND_HungerLevel00ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlevel00consumemessage") as Message
-		Message RND_HungerLevel01ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlevel01consumemessage") as Message
-		Message RND_HungerLevel02ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlevel02consumemessage") as Message
-		Message RND_HungerLevel03ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlevel03consumemessage") as Message
-		Message RND_HungerLevel04ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlevel04consumemessage") as Message
-		Message RND_HungerLevel05ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlevel05consumemessage") as Message
-
-		Message RND_HungerLevel00ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlevel00consumemessageb") as Message
-		Message RND_HungerLevel01ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlevel01consumemessageb") as Message
-		Message RND_HungerLevel02ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlevel02consumemessageb") as Message
-		Message RND_HungerLevel03ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlevel03consumemessageb") as Message
-		Message RND_HungerLevel04ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlevel04consumemessageb") as Message
-		Message RND_HungerLevel05ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "rnd_hungerlevel05consumemessageb") as Message
+		Message RND_HungerLevel00ConsumeMessageB = Game.GetFormFromFile(0x900c4, "RealisticNeedsandDiseases.esp") as Message
+		Message RND_HungerLevel01ConsumeMessageB = Game.GetFormFromFile(0x900c5, "RealisticNeedsandDiseases.esp") as Message
+		Message RND_HungerLevel02ConsumeMessageB = Game.GetFormFromFile(0x900c6, "RealisticNeedsandDiseases.esp") as Message
+		Message RND_HungerLevel03ConsumeMessageB = Game.GetFormFromFile(0x900c7, "RealisticNeedsandDiseases.esp") as Message
+		Message RND_HungerLevel04ConsumeMessageB = Game.GetFormFromFile(0x900c8, "RealisticNeedsandDiseases.esp") as Message
+		Message RND_HungerLevel05ConsumeMessageB = Game.GetFormFromFile(0x900c9, "RealisticNeedsandDiseases.esp") as Message
 		
 		int AdjPoints = Utility.RandomInt(-5,5)
 		float HungerPoints = RND_HungerPoints.GetValue()
@@ -127,47 +127,48 @@ Function Hunger(Int mod = 0)
 EndFunction
 
 Function Thirst(Int mod = 0)
-	GlobalVariable RND_State = JsonUtil.GetFormValue("/MME/RND", "rnd_state") as GlobalVariable
+	GlobalVariable RND_State = Game.GetFormFromFile(0x12c4c, "RealisticNeedsandDiseases.esp") as GlobalVariable
 
 		if RND_State.GetValue() == 1
 			Actor PlayerRef = Game.GetPlayer()
 
-			Idle idleDrink = JsonUtil.GetFormValue("/MME/RND", "idledrink") as Idle
-			Idle ChairDrinkingStart = JsonUtil.GetFormValue("/MME/RND", "chairdrinkingstart") as Idle
-			Idle idleStop_Loose = JsonUtil.GetFormValue("/MME/RND", "idlestop_loose") as Idle
+			Idle idleDrink = Game.GetFormFromFile(0xfd68b, "Skyrim.esm") as Idle
+			Idle ChairDrinkingStart = Game.GetFormFromFile(0x65d07, "Skyrim.esm") as Idle
+			Idle idleStop_Loose = Game.GetFormFromFile(0x10d9ee, "Skyrim.esm") as Idle
 
-			Potion RND_EmptyBottle03 = JsonUtil.GetFormValue("/MME/RND", "RND_EmptyBottle03") as Potion
-			
-			GlobalVariable RND_ThirstPoints = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstpoints") as GlobalVariable
-			GlobalVariable RND_ThirstPointsPerHour = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstpointsperhour") as GlobalVariable
-			GlobalVariable RND_ThirstLastUpdateTimeStamp = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstlastupdatetimestamp") as GlobalVariable
-			GlobalVariable RND_WaterPoints = JsonUtil.GetFormValue("/MME/RND", "rnd_waterpoints") as GlobalVariable
-			GlobalVariable RND_1stPersonMsg = JsonUtil.GetFormValue("/MME/RND", "rnd_1stpersonmsg") as GlobalVariable
-			GlobalVariable RND_AnimDrink = JsonUtil.GetFormValue("/MME/RND", "rnd_animdrink") as GlobalVariable
+			GlobalVariable RND_ThirstPoints = Game.GetFormFromFile(0x2e07, "RealisticNeedsandDiseases.esp") as GlobalVariable
+			GlobalVariable RND_ThirstPointsPerHour = Game.GetFormFromFile(0x2e08, "RealisticNeedsandDiseases.esp") as GlobalVariable
+			GlobalVariable RND_ThirstLastUpdateTimeStamp = Game.GetFormFromFile(0x2e09, "RealisticNeedsandDiseases.esp") as GlobalVariable
+			GlobalVariable RND_WaterPoints = Game.GetFormFromFile(0x6f16, "RealisticNeedsandDiseases.esp") as GlobalVariable
+			GlobalVariable RND_AnimDrink = Game.GetFormFromFile(0x24489, "RealisticNeedsandDiseases.esp") as GlobalVariable
+			GlobalVariable RND_1stPersonMsg = Game.GetFormFromFile(0x900ca, "RealisticNeedsandDiseases.esp") as GlobalVariable
 
-			GlobalVariable RND_ThirstLevel00 = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstlevel00") as GlobalVariable
-			GlobalVariable RND_ThirstLevel01 = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstlevel01") as GlobalVariable
-			GlobalVariable RND_ThirstLevel02 = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstlevel02") as GlobalVariable
-			GlobalVariable RND_ThirstLevel03 = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstlevel03") as GlobalVariable
-			GlobalVariable RND_ThirstLevel04 = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstlevel04") as GlobalVariable
+			GlobalVariable RND_ThirstLevel00 = Game.GetFormFromFile(0x2e0a, "RealisticNeedsandDiseases.esp") as GlobalVariable
+			GlobalVariable RND_ThirstLevel01 = Game.GetFormFromFile(0x2e0b, "RealisticNeedsandDiseases.esp") as GlobalVariable
+			GlobalVariable RND_ThirstLevel02 = Game.GetFormFromFile(0x2e0c, "RealisticNeedsandDiseases.esp") as GlobalVariable
+			GlobalVariable RND_ThirstLevel03 = Game.GetFormFromFile(0x2e0d, "RealisticNeedsandDiseases.esp") as GlobalVariable
+			GlobalVariable RND_ThirstLevel04 = Game.GetFormFromFile(0x2e0e, "RealisticNeedsandDiseases.esp") as GlobalVariable
 
-			Spell RND_ThirstSpell00 = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstspell00") as Spell
-			Spell RND_ThirstSpell01 = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstspell01") as Spell
-			Spell RND_ThirstSpell02 = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstspell02") as Spell
-			Spell RND_ThirstSpell03 = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstspell03") as Spell
-			Spell RND_ThirstSpell04 = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstspell04") as Spell
+			Spell RND_ThirstSpell00 = Game.GetFormFromFile(0x1da1, "RealisticNeedsandDiseases.esp") as Spell
+			Spell RND_ThirstSpell01 = Game.GetFormFromFile(0x1da3, "RealisticNeedsandDiseases.esp") as Spell
+			Spell RND_ThirstSpell02 = Game.GetFormFromFile(0x1da5, "RealisticNeedsandDiseases.esp") as Spell
+			Spell RND_ThirstSpell03 = Game.GetFormFromFile(0x2dfa, "RealisticNeedsandDiseases.esp") as Spell
+			Spell RND_ThirstSpell04 = Game.GetFormFromFile(0x2dfc, "RealisticNeedsandDiseases.esp") as Spell
 
-			Message RND_ThirstLevel00ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstlevel00consumemessage") as Message
-			Message RND_ThirstLevel01ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstlevel01consumemessage") as Message
-			Message RND_ThirstLevel02ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstlevel02consumemessage") as Message
-			Message RND_ThirstLevel03ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstlevel03consumemessage") as Message
-			Message RND_ThirstLevel04ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstlevel04consumemessage") as Message
 
-			Message RND_ThirstLevel00ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstlevel00consumemessageb") as Message
-			Message RND_ThirstLevel01ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstlevel01consumemessageb") as Message
-			Message RND_ThirstLevel02ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstlevel02consumemessageb") as Message
-			Message RND_ThirstLevel03ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstlevel03consumemessageb") as Message
-			Message RND_ThirstLevel04ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "rnd_thirstlevel04consumemessageb") as Message
+			Message RND_ThirstLevel00ConsumeMessage = Game.GetFormFromFile(0x5ecc, "RealisticNeedsandDiseases.esp") as Message
+			Message RND_ThirstLevel01ConsumeMessage = Game.GetFormFromFile(0x5ecd, "RealisticNeedsandDiseases.esp") as Message
+			Message RND_ThirstLevel02ConsumeMessage = Game.GetFormFromFile(0x5ece, "RealisticNeedsandDiseases.esp") as Message
+			Message RND_ThirstLevel03ConsumeMessage = Game.GetFormFromFile(0x5ecf, "RealisticNeedsandDiseases.esp") as Message
+			Message RND_ThirstLevel04ConsumeMessage = Game.GetFormFromFile(0x5ed0, "RealisticNeedsandDiseases.esp") as Message
+
+			Message RND_ThirstLevel00ConsumeMessageB = Game.GetFormFromFile(0x90b97, "RealisticNeedsandDiseases.esp") as Message
+			Message RND_ThirstLevel01ConsumeMessageB = Game.GetFormFromFile(0x90b98, "RealisticNeedsandDiseases.esp") as Message
+			Message RND_ThirstLevel02ConsumeMessageB = Game.GetFormFromFile(0x90b99, "RealisticNeedsandDiseases.esp") as Message
+			Message RND_ThirstLevel03ConsumeMessageB = Game.GetFormFromFile(0x90b96, "RealisticNeedsandDiseases.esp") as Message
+			Message RND_ThirstLevel04ConsumeMessageB = Game.GetFormFromFile(0x90b95, "RealisticNeedsandDiseases.esp") as Message
+
+			Potion RND_EmptyBottle03 = Game.GetFormFromFile(0x43b4, "RealisticNeedsandDiseases.esp") as Potion
 
 			int AdjPoints = Utility.RandomInt(-5,5)
 			RND_ThirstPoints.SetValue(RND_ThirstPoints.GetValue() - RND_WaterPoints.GetValue() - AdjPoints)
@@ -250,19 +251,28 @@ Function Thirst(Int mod = 0)
 EndFunction
 
 Function RemoveHungerSpells()
-	Actor PlayerRef = Game.GetPlayer()
-	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "rnd_hungerspell00") as Spell)
-	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "rnd_hungerspell01") as Spell)
-	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "rnd_hungerspell02") as Spell)
-	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "rnd_hungerspell03") as Spell)
-	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "rnd_hungerspell04") as Spell)
+	GlobalVariable RND_State = Game.GetFormFromFile(0x12c4c, "RealisticNeedsandDiseases.esp") as GlobalVariable
+
+	if RND_State != none && RND_State.GetValue() == 1
+		Actor PlayerRef = Game.GetPlayer()
+		PlayerRef.RemoveSpell(Game.GetFormFromFile(0x1d97, "RealisticNeedsandDiseases.esp") as Spell)
+		PlayerRef.RemoveSpell(Game.GetFormFromFile(0x1d99, "RealisticNeedsandDiseases.esp") as Spell)
+		PlayerRef.RemoveSpell(Game.GetFormFromFile(0x1d9b, "RealisticNeedsandDiseases.esp") as Spell)
+		PlayerRef.RemoveSpell(Game.GetFormFromFile(0x1d9d, "RealisticNeedsandDiseases.esp") as Spell)
+		PlayerRef.RemoveSpell(Game.GetFormFromFile(0x231b, "RealisticNeedsandDiseases.esp") as Spell)
+		PlayerRef.RemoveSpell(Game.GetFormFromFile(0x231c, "RealisticNeedsandDiseases.esp") as Spell)
+	endif
 EndFunction
 
 Function RemoveThirstSpells()
-	Actor PlayerRef = Game.GetPlayer()
-	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "rnd_thirstspell00") as Spell)
-	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "rnd_thirstspell00") as Spell)
-	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "rnd_thirstspell00") as Spell)
-	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "rnd_thirstspell00") as Spell)
-	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "rnd_thirstspell00") as Spell)
+	GlobalVariable RND_State = Game.GetFormFromFile(0x12c4c, "RealisticNeedsandDiseases.esp") as GlobalVariable
+
+	if RND_State != none && RND_State.GetValue() == 1
+		Actor PlayerRef = Game.GetPlayer()
+		PlayerRef.RemoveSpell(Game.GetFormFromFile(0x1da1, "RealisticNeedsandDiseases.esp") as Spell)
+		PlayerRef.RemoveSpell(Game.GetFormFromFile(0x1da3, "RealisticNeedsandDiseases.esp") as Spell)
+		PlayerRef.RemoveSpell(Game.GetFormFromFile(0x1da5, "RealisticNeedsandDiseases.esp") as Spell)
+		PlayerRef.RemoveSpell(Game.GetFormFromFile(0x2dfa, "RealisticNeedsandDiseases.esp") as Spell)
+		PlayerRef.RemoveSpell(Game.GetFormFromFile(0x2dfc, "RealisticNeedsandDiseases.esp") as Spell)
+	endif
 EndFunction

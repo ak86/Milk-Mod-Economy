@@ -51,7 +51,7 @@ Event OnObjectEquipped( Form akBaseObject, ObjectReference akReference)
 			EndIf
 		EndIf
 		
-	elseif akActor.GetWornForm(Armor.GetMaskForSlot(32)) == akBaseObject
+	elseif akActor.GetWornForm(Armor.GetMaskForSlot(32)) == akBaseObject && !MilkQ.ArmorStrippingDisabled
 		Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 		Float MilkMax = MME_Storage.getMilkMaximum(akActor)
 		if !(akBaseObject == MilkQ.TITS4 || akBaseObject == MilkQ.TITS6 || akBaseObject == MilkQ.TITS8 || MilkQ.DDi.IsMilkingBlocked_Suit(akActor))

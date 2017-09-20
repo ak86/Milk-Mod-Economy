@@ -134,6 +134,7 @@ Bool Property UseFutaMilkCuirass = False Auto
 Bool Property FreeLactacid = False Auto
 Bool Property BellyScale = True Auto
 Bool Property MaleMaids = False Auto
+Bool Property ArmorStrippingDisabled = False Auto
 
 Int Property BreastScale = 0 Auto
 Int Property TimesMilkedMult Auto
@@ -762,7 +763,7 @@ Function MilkCycle(Actor akActor, int t)
 					MilkForSpriggan.cast(akActor)
 				endif
 			endif
-		elseif akActor == PlayerREF
+		elseif akActor == PlayerREF && !ArmorStrippingDisabled
 			if !(maidArmor == TITS4	|| maidArmor == TITS6 || maidArmor == TITS8 || DDi.IsMilkingBlocked_Suit(akActor))
 				;heavy armor	
 				if MilkCnt > 12 && maidArmor.HasKeyword(Game.GetFormFromFile(0x6BBD2, "Skyrim.esm") as keyword) 
@@ -3023,6 +3024,7 @@ Function VarSetup()
 	ZazPumps = False
 	UseFutaMilkCuirass = False
 	FreeLactacid = False
+	ArmorStrippingDisabled = False
 	
 	ECTrigger = True
 	ECCrowdControl = True

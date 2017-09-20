@@ -461,6 +461,7 @@ function Page_Debug()
 				AddToggleOptionST("Debug_MilkLeak_Particles_Through_Clothes_Toggle", "$MME_MENU_PAGE_Debug_H1_S6", MilkQ.MilkLeakWearArm)
 				AddToggleOptionST("Debug_MilkLeak_Textures_Toggle", "$MME_MENU_PAGE_Debug_H1_S7", MilkQ.MilkLeakTextures)
 				AddToggleOptionST("Debug_Male_Milkmaids_Toggle", "$MME_MENU_PAGE_Debug_H1_S8", MilkQ.MaleMaids)
+				AddToggleOptionST("Debug_ArmorStripping_Toggle", "$MME_MENU_PAGE_Debug_H1_S9", MilkQ.ArmorStrippingDisabled)
 				
 			AddHeaderOption("$MME_MENU_PAGE_Debug_H2")
 				AddSliderOptionST("Debug_MilkProductionMod_Slider", "$MME_MENU_PAGE_Debug_H2_S1", MilkQ.MilkProdMod, "{0}%")
@@ -1357,6 +1358,17 @@ state Debug_Male_Milkmaids_Toggle
 			MilkQ.MaleMaids = false
 		endif
 		SetToggleOptionValueST(MilkQ.MaleMaids)
+	endEvent
+endState
+
+state Debug_ArmorStripping_Toggle
+	event OnSelectST()
+		if !MilkQ.ArmorStrippingDisabled
+			MilkQ.ArmorStrippingDisabled = true
+		else
+			MilkQ.ArmorStrippingDisabled = false
+		endif
+		SetToggleOptionValueST(MilkQ.ArmorStrippingDisabled)
 	endEvent
 endState
 		
