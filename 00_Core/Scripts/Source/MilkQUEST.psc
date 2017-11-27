@@ -1031,6 +1031,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	;Mode == 4 - Called by other mods, 
 	;MilkingType == 0 normal/none milkpump
 	;MilkingType == 1 bound/ disable player control
+	;MilkingType == 2 bound/ disable player control, do not enable after milking done
 	
 	if akActor.HasSpell( BeingMilkedPassive )
 		;if MilkingType != 1						;prevents msg spam from aidrivenplayer bound milkpump, since its activates script endlessly,
@@ -1123,7 +1124,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			if DDBra == true && SLSDBra == false
 				Debug.Notification("Chastity Bra prevents milking")
 				if mode > 0 && SLSDBra == false
-					if PlayerREF == akActor && MilkingType == 1
+					if PlayerREF == akActor && MilkingType != 0
 						Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 						Game.SetPlayerAIDriven(false)
 					endif
@@ -1160,7 +1161,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					Debug.Messagebox("Bondage suit prevents using of the device")
 				endif
 				akActor.Setunconscious(false)
-				if PlayerREF == akActor && MilkingType == 1
+				if PlayerREF == akActor && MilkingType != 0
 					Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 					Game.SetPlayerAIDriven(false)
 				endif
@@ -1182,7 +1183,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			endif
 		endif
 		
-		if MilkingType == 1 && PlayerREF == akActor
+		if MilkingType != 0 && PlayerREF == akActor
 			;Game.DisablePlayerControls(1, 1, 0, 0, 1, 1, 0) ;(True,True,False,False,True,True,True,True,0)
 			Game.SetPlayerAIDriven(true)
 			Game.DisablePlayerControls()
@@ -1202,7 +1203,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 						armf = true
 						if mode > 0 
 							akActor.RemoveSpell( BeingMilkedPassive )
-							if PlayerREF == akActor && MilkingType == 1
+							if PlayerREF == akActor && MilkingType != 0
 								Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 								Game.SetPlayerAIDriven(false)
 							endif
@@ -1415,7 +1416,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		;and pain less than max or pain override enabled and not bound milking
 
 	while ((akActor.GetSitState() <= 3 && akActor.GetSitState() > 0 && Mode == 0)\
-			|| (MilkCnt >= 1 && Mode > 0))\
+			|| (MilkCnt >= 1 && Mode > 0 && !StopMilking))\
 			&& ((PainCnt <= PainMax*0.9) || PainKills)\
 			&& akActor.HasSpell(BeingMilkedPassive)
 
@@ -1442,7 +1443,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 
 						if (LactacidCnt < LactacidMax || (FeedOnce == true && ForcedFeeding))\
 						&& ((MilkingType == 0 && (PlayerREF.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || akActor.GetItemCount(MME_Util_Potions.GetAt(0)) > 0 || StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") >= 1))\
-						|| MilkingType == 1 || akActor.IsInFaction(MilkSlaveFaction) || FreeLactacid == true || !IsMilkMaid)
+						|| MilkingType != 0 || akActor.IsInFaction(MilkSlaveFaction) || FreeLactacid == true || !IsMilkMaid)
 							
 							;debug.Notification("feeding cycle")
 							akActor.AddSpell(FeedingStage, false)
@@ -1454,7 +1455,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 							;bound/unbound animation +: no anal/vaginal vairations
 							if MilkingType == 0
 								Debug.SendAnimationEvent(akActor,("ZaZMOMFreeFurn_05"+anivar))
-							elseif MilkingType == 1
+							elseif MilkingType != 0
 								Debug.SendAnimationEvent(akActor,("ZaZMOMBoundFurn_05"+anivar))
 							endif
 							
@@ -1462,7 +1463,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 							
 							;if not maid/slave, skip and wait to simulate feeding
 							if IsMilkMaid == true
-								if MilkingType == 1 || FreeLactacid == true											;free lactacid for bound milking or cheat option
+								if MilkingType != 0 || FreeLactacid == true											;free lactacid for bound milking or cheat option
 									akActor.EquipItem(MME_Util_Potions.GetAt(3), true, true)						;equip soundless lactacid feeding potion Thirst
 									akActor.EquipItem(MME_Util_Potions.GetAt(4), true, true)						;equip soundless lactacid feeding potion Hunger
 								elseif akActor.IsInFaction(MilkMaidFaction)											;actor is milkmaid
@@ -1528,7 +1529,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					elseif mpas == 2
 						Debug.SendAnimationEvent(akActor,("ZaZMOMFreeFurn_12"+anivar))
 					endif
-				elseif MilkingType == 1
+				elseif MilkingType != 0
 					if mpas == 1
 						Debug.SendAnimationEvent(akActor,("ZaZMOMBoundFurn_11"+anivar))
 					elseif mpas == 2
@@ -1660,7 +1661,8 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			;not belted
 			;actor is sitting or trying to sit
 
-		elseif (!akActor.HasSpell(FeedingStage) || !akActor.HasSpell(MilkingStage))\
+		elseif !akActor.HasSpell(FeedingStage)\
+		&& !akActor.HasSpell(MilkingStage)\
 		&& FuckMachine == true\
 		&& Mode == 0\
 		&& DDBelt == false\
@@ -1680,7 +1682,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					elseif mpas == 2
 						Debug.SendAnimationEvent(akActor,("ZaZMOMFreeFurn_08"+anivar))
 					endif
-				elseif MilkingType == 1
+				elseif MilkingType != 0
 					if mpas == 1
 						Debug.SendAnimationEvent(akActor,("ZaZMOMBoundFurn_07"+anivar))
 					elseif mpas == 2
@@ -1772,19 +1774,6 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			endif
 		endif
 
-		if akActor.HasSpell(FeedingStage)
-			akActor.RemoveSpell( FeedingStage )
-		endif
-		if akActor.HasSpell(MilkingStage)
-			akActor.RemoveSpell( MilkingStage )
-		endif
-		if akActor.HasSpell(FuckMachineStage)
-			akActor.RemoveSpell( FuckMachineStage )
-		endif
-		duration = 0
-		Sound.StopInstance(soundInstance01)	
-		SexLab.ClearMFG(akActor)
-		
 		if IsMilkMaid == true
 			MilkCnt = MME_Storage.getMilkCurrent(akActor)
 			LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
@@ -1797,6 +1786,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		if PlayerREF == akActor\
 		&& mode == 0\
 		&& MilkingType == 1\
+		&& !akActor.HasSpell(FeedingStage)\
 		&& bControlsDisabled == true\
 		&& (MilkCnt < 1 || (PainCnt >= PainMax*0.9 && !PainKills))
 			if PlayerREF == akActor && bControlsDisabled == true 
@@ -1811,6 +1801,19 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				debug.Notification("Milk Pump has milked you dry and releases its bounds.")
 			endif
 		endif
+
+		if akActor.HasSpell(FeedingStage)
+			akActor.RemoveSpell( FeedingStage )
+		endif
+		if akActor.HasSpell(MilkingStage)
+			akActor.RemoveSpell( MilkingStage )
+		endif
+		if akActor.HasSpell(FuckMachineStage)
+			akActor.RemoveSpell( FuckMachineStage )
+		endif
+		duration = 0
+		Sound.StopInstance(soundInstance01)	
+		SexLab.ClearMFG(akActor)
 	endwhile
 
 	;debug.Notification("milking done." +akActorGender+ " "+isPregnant(akActor))
@@ -1861,6 +1864,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			EndIf
 		else
 			If BreastRows == 1
+				Utility.Wait(1)
 				if akActor.IsEquipped(MilkCuirass) && MilkCuirass != cuirass
 					akActor.UnequipItem(MilkCuirass, false, true)
 					if cuirass != None 
@@ -1878,6 +1882,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		endif
 		
 		If Mode != 4
+			Utility.Wait(1)
 			Debug.SendAnimationEvent(akActor,"IdleForceDefaultState")
 		endif
 		
@@ -1893,7 +1898,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				endif
 
 				if Mode == 0 || Mode == 2
-					if Mode == 0 && MilkingType == 1 && MilkE.GetMarketIndexFromLocation(akActor.GetCurrentLocation()) == 4
+					if Mode == 0 && MilkingType != 0 && MilkE.GetMarketIndexFromLocation(akActor.GetCurrentLocation()) == 4
 						bottles = bottles / 2 
 						boobgasmcount = boobgasmcount / 2 
 					endif
@@ -3228,6 +3233,10 @@ Function sendVibrationEvent(string str, actor who, int mpas, int MilkingType)
 	Int e = ModEvent.Create("MilkQuest."+str)
 	If(!e)
 		Return
+	EndIf
+	
+	If MilkingType == 2
+		MilkingType = 1
 	EndIf
 
 	ModEvent.PushForm(e,Who)

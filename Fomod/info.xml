@@ -1,11 +1,69 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>19-09-2017</Version>
+  <Version>27-11-2017</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
   
+Dialogue trade:
+Khajiits merchants:
+-buy all milk
+-trade Lactacid for milk
+Orc merchants(wise woman):
+-buy normal and race milk
+Inns:
+-buy race milk
+alchemists: 					
+-buy ww/vampire/succubus milk
+-buy cum/semen
+-sell Lactacid for 100g
+-sell Breast enlargement potion for 1000g
+Fences:
+-buy all milk
+Farmers:
+-buy normal milk
+-sell Lactacid for 100g
+
+Milk Pump locations:
+DawnStar
+Falkreath
+Markarth
+ - outside of dibella's temple
+Orc strongholds (Features bound milkpumps, they wont let you(player) get out until you are milked dry)
+Riften
+ - outside of mara's temple
+ - Shor's stone
+Solitude
+ - Dragon's bridge
+ - Morthal
+Whiterun
+ - behind the blacksmith
+ - Riverwood
+ - Rorikstead
+Windhelm
+ - near the blacksmith
+ - Winterhold
+Caravan
+ - Ivarstead
+
+Placing your own Milk Pumps:
+You can place Milk Pump anywhere you want, try might even affect with economy or not, using console type:
+1) help milk
+2) get id of FURN Milk Pump
+3) player.placeatme id from above
+4) use [url=http://www.nexusmods.com/skyrim/mods/60910/]Jaxonz Positioner[/url] to adjust position
+
+
+  
+  
 Dev change log:
+
+	v 27-11-2017
+fixed bug with wellmilked spell milking getting stuck
+
+	v 15-11-2017
+fix for feeding loop interrupion(now it plays in 1 go)
+added permanent milkpump bound mode for mods(player will be stuck in bound pump until released by other mod)
 
 	v 19-09-2017
 ported sksesless rnd script from SSE
