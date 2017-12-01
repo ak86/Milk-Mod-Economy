@@ -1991,17 +1991,19 @@ Function PostMilk(Actor akActor)
 			akActor.RemoveSpell(MME_Spells_Buffs.GetAt(4) as Spell)
 		endif
 	else
+		;Unmilked debuff
 		numEffects = (MME_Spells_Buffs.GetAt(1) as Spell).GetNumEffects()
 		effectCount = 0
 		while (effectCount < numEffects)
-			(MME_Spells_Buffs.GetAt(1) as Spell).SetNthEffectMagnitude(effectCount, MilkCnt)
+			(MME_Spells_Buffs.GetAt(1) as Spell).SetNthEffectMagnitude(effectCount, MilkCnt as int)
 			effectCount= effectCount + 1
 		endwhile
 		
+		;Wellmilked buff
 		numEffects = (MME_Spells_Buffs.GetAt(2) as Spell).GetNumEffects()
 		effectCount = 0
 		while (effectCount < numEffects)
-			(MME_Spells_Buffs.GetAt(2) as Spell).SetNthEffectMagnitude(effectCount, (MilkMax-MilkCnt)*BreastsSize_Node)
+			(MME_Spells_Buffs.GetAt(2) as Spell).SetNthEffectMagnitude(effectCount, ((MilkMax-MilkCnt)*BreastsSize_Node) as int)
 			effectCount = effectCount + 1
 		endwhile
 	

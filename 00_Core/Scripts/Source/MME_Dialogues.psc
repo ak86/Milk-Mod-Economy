@@ -66,10 +66,10 @@ MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 		endif
 
 
-		if MilkQ.MilkQC.Debug_enabled == 1
 ;checks if npc can be transferred from slave to maid
-			if MilkQ.MILKSlave.Find(akSpeaker) != -1
-				MilkQ.MilkQC.MME_SubjectSlave = true
+		if MilkQ.MILKSlave.Find(akSpeaker) != -1
+			MilkQ.MilkQC.MME_SubjectSlave = true
+			if MilkQ.MilkQC.Debug_enabled == 1
 				int i = 1
 				int count = 0
 				While i < MilkQ.MilkMaid.Length && MilkQ.Milklvl0fix() > count
@@ -82,10 +82,12 @@ MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 					MilkQ.MilkQC.MME_CanbeconvertedfromSlaveToMaid = 1
 				Endif
 			endif
+		endif
 
 ;checks if npc can be transferred from maid to slave
-			if MilkQ.MilkMaid.Find(akSpeaker) != -1
-				MilkQ.MilkQC.MME_SubjectMaid = true
+		if MilkQ.MilkMaid.Find(akSpeaker) != -1
+			MilkQ.MilkQC.MME_SubjectMaid = true
+			if MilkQ.MilkQC.Debug_enabled == 1
 				If MilkQ.MILKSlave.Find(none,1) != -1
 					MilkQ.MilkQC.MME_CanBeConvertedFromMaidToSlave = 1
 				Endif

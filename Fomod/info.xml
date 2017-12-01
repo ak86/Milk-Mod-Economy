@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>30-11-2017</Version>
+  <Version>01-12-2017</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
@@ -57,6 +57,9 @@ You can place Milk Pump anywhere you want, try might even affect with economy or
   
   
 Dev change log:
+
+	v 01-12-2017
+fixed breast enlargement/reduction dialogues
 
 	v 30-11-2017
 fixed incorrect encoding of json file(empty msg boxes)
