@@ -291,12 +291,12 @@ Function Maintenance()
 	
 	String File
 
-	File = "/SLSO/MME_SOS.json"
+	File = "/MME/MME_SOS.json"
 	if JsonUtil.GetErrors(File) != ""
 		Debug.Notification("MME_SOS.Json has errors")
 	endif
 	
-	File = "/SLSO/RND.json"
+	File = "/MME/RND.json"
 	if JsonUtil.GetErrors(File) != ""
 		Debug.Notification("MME_RND.Json has errors")
 	endif
@@ -308,8 +308,8 @@ Function Maintenance()
 
 	MilkQ.DLCcheck()
 	MilkQ.Strings_setup()	;rem
-	MilkQ.DebuffArraySet()	;rem
-	MilkQ.BuffArraySet()	;rem
+	;MilkQ.DebuffArraySet()	;rem
+	;MilkQ.BuffArraySet()	;rem
 	
 	;debug
 	;MME_RebuildJson.MME_JsonRebuild()

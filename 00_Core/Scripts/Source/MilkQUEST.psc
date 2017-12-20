@@ -558,7 +558,7 @@ Function MilkCycle(Actor akActor, int t)
 					debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s lactation has increased.")
 					MaidMilkGen = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkGen")
 				endif
-				if Utility.RandomInt(0, 100) <= MilkQC.BrestEnlargement_MultiBreast_Effect && BreastRows < 4
+				if Utility.RandomInt(1, 100) <= MilkQC.BrestEnlargement_MultiBreast_Effect && BreastRows < 4
 					StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.AdjustBreastRow", 1)							;add breast row on sleep
 				endif
 			endif
@@ -1225,7 +1225,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		If IsMilkingBlocked == false && SLSDBra == false
 			if BreastRows != 1
 				;do nothing
-			elseif cuirass != None
+			elseif cuirass != None && !(cuirass == TITS4 || cuirass == TITS6 || cuirass == TITS8)
 				if !(cuirass == MilkCuirass || cuirass == MilkCuirassFuta)\
 				&& !((StringUtil.Find(cuirass.getname(), "Milk" ) >= 0) || (MilkingEquipment.find(cuirass.getname()) >= 0))
 					akActor.UnequipItem(cuirass, false, true)
@@ -1270,7 +1270,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		akActor.RemoveSpell( BeingMilkedPassive )
 		return
 	else
-		if cuirass != None
+		if cuirass != None && !(cuirass == TITS4 || cuirass == TITS6 || cuirass == TITS8)
 			if BreastRows != 1
 				Mode = 1
 			ElseIf StringUtil.Find(cuirass.getname(), "Milk" ) >= 0 \
@@ -1314,15 +1314,17 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		ElseIf SLSDBra == true\
 			|| DDi.IsWearingDDMilker(akActor) == true
 				Mode = 2
-		ElseIf (DDArmbinder == false && DDYoke == false)
-			If akActor.GetItemCount(MilkCuirassFuta) > 0 && akActorGender == "Futa" && UseFutaMilkCuirass == true
-				akActor.equipitem(MilkCuirassFuta, true, true)
-				hasInventoryMilkCuirassFuta = true
-				Mode = 2
-			ElseIf akActor.GetItemCount(MilkCuirass) > 0 && (akActorGender != "Futa" || UseFutaMilkCuirass != true)
-				akActor.equipitem(MilkCuirass, true, true)
-				hasInventoryMilkCuirass = true
-				Mode = 2
+		ElseIf !(cuirass == TITS4 || cuirass == TITS6 || cuirass == TITS8)
+			If (DDArmbinder == false && DDYoke == false)
+				If akActor.GetItemCount(MilkCuirassFuta) > 0 && akActorGender == "Futa" && UseFutaMilkCuirass == true
+					akActor.equipitem(MilkCuirassFuta, true, true)
+					hasInventoryMilkCuirassFuta = true
+					Mode = 2
+				ElseIf akActor.GetItemCount(MilkCuirass) > 0 && (akActorGender != "Futa" || UseFutaMilkCuirass != true)
+					akActor.equipitem(MilkCuirass, true, true)
+					hasInventoryMilkCuirass = true
+					Mode = 2
+				EndIf
 			EndIf
 		EndIf
 		
@@ -1588,10 +1590,6 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			else
 				MilkCnt = MME_Storage.getMilkCurrent(akActor)
 				int gush = (MilkCnt * GushPct/100) as int				;use int because we reduce milk by integer value
-				
-				if SLA.GetActorArousal(akActor) > 98					;if we boobgasm we massively reduce milk if we have many breast rows
-					gush *= BreastRows
-				endif
 				
 				if gush > MilkCnt
 					gush = Math.Floor(MilkCnt)							;find lowest integer Math.Floor(5.9) == 5
