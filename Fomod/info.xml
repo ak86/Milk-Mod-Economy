@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>20-12-2017</Version>
+  <Version>15-02-2018</Version>
   <Author>Ed86</Author>
   <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
   <Description>
@@ -57,6 +57,20 @@ You can place Milk Pump anywhere you want, try might even affect with economy or
   
   
 Dev change log:
+
+	v 15-02-2018
+added toggle to disable Exhaustion Debuff
+reduced Exhaustion Debuff strength 90%->50%
+reached mcm limit, time to add another mcm yay!
+
+	v 14-02-2018
+added toggle to disable cum bottles production
+added toggle to disable animations play during mobile milking
+added SSE scaling patch for those who have ported mod to SSE, so body scaling works on old Netimmerse
+
+	v 15-01-2018
+added description of fuckmachine toggle
+added toggle to disable 40% milk fullness requirement for mobile milking
 
 	v 20-12-2017
 fix for AdjustBreastRowChance adding rows even if set to 0

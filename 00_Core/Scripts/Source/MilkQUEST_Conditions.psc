@@ -6,6 +6,7 @@ Scriptname MilkQUEST_Conditions extends Quest Conditional
 ;(De)Buffs
 ;----------------------------------------------------------------------------
 
+Bool Property ExhaustionDebuff = True Auto Conditional
 Int Property ExhaustionMode Auto Conditional
 ; anyting = exhausion debuff until sleep or 1 day
 ; 300 = exhausion debuff has duration

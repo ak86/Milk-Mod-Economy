@@ -135,6 +135,9 @@ Bool Property FreeLactacid = False Auto
 Bool Property BellyScale = True Auto
 Bool Property MaleMaids = False Auto
 Bool Property ArmorStrippingDisabled = False Auto
+Bool Property MobileMilkingAnims = true Auto
+Bool Property MilkingReq40PctMilk = true Auto
+Bool Property CumProduction = true Auto
 
 Int Property BreastScale = 0 Auto
 Int Property TimesMilkedMult Auto
@@ -1137,10 +1140,16 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		endif
 	endif
 	
-	if akActor.HasSpell(MME_Spells_Buffs.GetAt(2) as Spell) && StopMilking != true
-		StopMilking = true
-		if MilkMsgs && PlayerREF == akActor
-			debug.Notification("Your breasts are well-milked and need more milk before they can be milked again.")
+	if Mode != 0
+		if Mode != 4
+			if MilkingReq40PctMilk
+				if akActor.HasSpell(MME_Spells_Buffs.GetAt(2) as Spell) && StopMilking != true
+					StopMilking = true
+					if MilkMsgs && PlayerREF == akActor
+						debug.Notification("Your breasts are well-milked and need more milk before they can be milked again.")
+					Endif
+				Endif
+			Endif
 		Endif
 	Endif
 
@@ -1263,7 +1272,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				StoryDisplay(0,1,FirstTimeStory)
 			EndIf
 		EndIf
-	elseif mode == 4
+	elseif mode == 4 || StopMilking
 		;do nothing
 	elseif MilkCnt < 1
 		Debug.Notification(akActor.GetLeveledActorBase().getname() + " have no milk!")
@@ -1329,21 +1338,25 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		EndIf
 		
 		If (DDArmbinder == false && DDYoke == false)
-			If IsMilkingBlocked == false && !akActor.IsInCombat()
-				If PlayerREF == akActor
-					Game.ForceThirdPerson()
-					Game.DisablePlayerControls(1, 1, 0, 0, 1, 1, 0) ;(True,True,False,False,True,True,True,True,0)
-					Utility.Wait( 1.0 )												;wait for actor to stop moving (and player to release movement keys)
-				EndIf
-				If StorageUtil.GetIntValue(akActor,"IsBoundStrict") == 0 && !akActor.IsInCombat()
-					mpas = Utility.RandomInt (1, 3)
-					if mpas == 1
-						Debug.SendAnimationEvent(akActor,"ZaZAPCHorFA")
-					elseif mpas == 2
-						Debug.SendAnimationEvent(akActor,"ZaZAPCHorFB")
-					elseif mpas == 3
-						Debug.SendAnimationEvent(akActor,"ZaZAPCHorFC")
-					endif
+			If IsMilkingBlocked == false && !akActor.IsInCombat() 
+				If mode != 4
+					If MobileMilkingAnims || mode == 1
+						If PlayerREF == akActor
+							Game.ForceThirdPerson()
+							Game.DisablePlayerControls(1, 1, 0, 0, 1, 1, 0) ;(True,True,False,False,True,True,True,True,0)
+							Utility.Wait( 1.0 )												;wait for actor to stop moving (and player to release movement keys)
+						EndIf
+						If StorageUtil.GetIntValue(akActor,"IsBoundStrict") == 0 && !akActor.IsInCombat()
+							mpas = Utility.RandomInt (1, 3)
+							if mpas == 1
+								Debug.SendAnimationEvent(akActor,"ZaZAPCHorFA")
+							elseif mpas == 2
+								Debug.SendAnimationEvent(akActor,"ZaZAPCHorFB")
+							elseif mpas == 3
+								Debug.SendAnimationEvent(akActor,"ZaZAPCHorFC")
+							endif
+						EndIf
+					EndIf
 				EndIf
 			EndIf
 		ElseIf Mode == 1
@@ -1918,7 +1931,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 			endif
 		endif
 			
-		if cumcount > 0
+		if cumcount > 0 && CumProduction
 			if IsMilkMaid == true
 				if Mode == 0 || Mode == 2
 					if StorageUtil.GetIntValue(akActor, "MME.MilkMaid.IsSlave") == 1 || MILKSlave.find(akActor) != -1
@@ -3022,6 +3035,9 @@ Function VarSetup()
 	MilkWithZaZMoMSuctionCups = False
 	MilkingDrainsSP = True
 	MilkingDrainsMP = True
+	MilkingReq40PctMilk = True
+	MobileMilkingAnims = True
+	CumProduction = True
 	PainSystem = True
 	PainKills = True
 	WeightUpScale = False					;scale to 100

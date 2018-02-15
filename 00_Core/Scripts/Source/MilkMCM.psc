@@ -7,6 +7,7 @@ int Settings_WeightUpScale_T
 int Debug_MM_RemoveMaid_OID
 
 ;note to self, max states per script is 128, use oids for spells
+;note to self, max states reached, game will probably ctd if add more
 
 ; DEBUG MILKMAID
 int	Debug_MM_SP_Spell_T
@@ -22,6 +23,7 @@ int	Debug_MM_UM1_Spell_T
 int	Debug_MM_WM1_Spell_T
 
 ;Spells configuration
+int ExhaustionDebuff_T
 int Exhausion_Debuff_T
 int Unmilked_DeBuffs_Skills_T
 int Unmilked_DeBuffs_SPMP_T
@@ -109,20 +111,6 @@ event OnPageReset(string page)
 	if page == ""
 		self.LoadCustomContent("MilkMod/MilkLogo.dds")
 		self.RefreshStrings()
-		
-		int i = 0
-		Maidlist = new string[20]
-		MaidlistA = new Actor[20]
-		while i < MilkQ.MilkMaid.Length
-			if MilkQ.MilkMaid[i] != None
-				Maidlist[i] = MilkQ.MilkMaid[i].GetLeveledActorBase().GetName()
-				MaidlistA[i] = MilkQ.MilkMaid[i]
-				MaidIndex = i
-			else
-				Maidlist[i] = "--"
-			endif
-		i = i + 1
-		endwhile
 	else
 		self.UnloadCustomContent()
 	endif
@@ -138,6 +126,34 @@ event OnPageReset(string page)
 	elseif page == "$MME_MENU_PAGE_Debug"
 		self.Page_Debug()
 	elseif page == "$MME_MENU_PAGE_Debug_Milk_Maid"
+		int i = 0
+		if MaidlistModeIndex == 0
+			Maidlist = new string[20]
+			MaidlistA = new Actor[20]
+			while i < MilkQ.MilkMaid.Length
+				if MilkQ.MilkMaid[i] != None
+					Maidlist[i] = MilkQ.MilkMaid[i].GetLeveledActorBase().GetName()
+					MaidlistA[i] = MilkQ.MilkMaid[i]
+					MaidIndex = i
+				else
+					Maidlist[i] = "--"
+				endif
+				i = i + 1
+			endwhile
+		else
+			Maidlist = new string[100]
+			MaidlistA = new Actor[100]
+			while i < MilkQ.MilkSlave.Length
+				if MilkQ.MilkSlave[i] != None
+					Maidlist[i] = MilkQ.MilkSlave[i].GetLeveledActorBase().GetName()
+					MaidlistA[i] = MilkQ.MilkSlave[i]
+					MaidIndex = i
+				else
+					Maidlist[i] = "--"
+				endif
+				i = i + 1
+			endwhile
+		endif
 		self.Page_MilkMaidDebug()
 	elseif page == "$MME_MENU_PAGE_Compatibility_Check"
 		self.Page_PluginChecks()
@@ -366,6 +382,7 @@ endfunction
 function Page_Milking_Config()
 	SetCursorFillMode(TOP_TO_BOTTOM)
 			AddToggleOptionST("SimpleMilk_Toggle", "$MME_MENU_PAGE_Milking_H3_S13", MilkQ.MilkQC.MME_SimpleMilkPotions)
+			AddToggleOptionST("MilkingReq40PctMilk_Toggle", "$MME_MENU_PAGE_Milking_H3_S18", MilkQ.MilkingReq40PctMilk)
 			AddSliderOptionST("Milking_Duration_Slider", "$MME_MENU_PAGE_Milking_H3_S7.1", MilkQ.Milking_Duration, "$MME_MENU_PAGE_Milking_H3_S7.2")
 			AddSliderOptionST("Milking_GushPct_Slider", "$MME_MENU_PAGE_Milking_H3_S16", MilkQ.GushPct, "{2}" + "%")
 			if MilkQ.MilkNaked
@@ -375,7 +392,7 @@ function Page_Milking_Config()
 			else
 				AddTextOptionST("Milking_MilkWithZaZMoMSuctionCups_Toggle", "$MME_MENU_PAGE_Milking_H3_S5", "$MME_MENU_PAGE_Milking_H3_S5.3")
 			endif
-			AddToggleOptionST("FutaMilkCuirass_Toggle", "$MME_MENU_PAGE_Milking_H3_S17", MilkQ.UseFutaMilkCuirass)
+			;AddToggleOptionST("FutaMilkCuirass_Toggle", "$MME_MENU_PAGE_Milking_H3_S17", MilkQ.UseFutaMilkCuirass)
 			AddToggleOptionST("Feeding_Toggle", "$MME_MENU_PAGE_Milking_H3_S8", MilkQ.Feeding)
 			AddToggleOptionST("ForcedFeeding_Toggle", "$MME_MENU_PAGE_Milking_H3_S14", MilkQ.ForcedFeeding)
 			AddSliderOptionST("Feeding_Duration_Slider", "$MME_MENU_PAGE_Milking_H3_S9.1", MilkQ.Feeding_Duration, "$MME_MENU_PAGE_Milking_H3_S9.2")
@@ -388,6 +405,8 @@ function Page_Milking_Config()
 			endif
 			AddToggleOptionST("FuckMachine_Toggle", "$MME_MENU_PAGE_Milking_H3_S10", MilkQ.FuckMachine)
 			AddSliderOptionST("FuckMachine_Duration_Slider", "$MME_MENU_PAGE_Milking_H3_S11.1", MilkQ.FuckMachine_Duration, "$MME_MENU_PAGE_Milking_H3_S11.2")
+			AddToggleOptionST("CumProduction_Toggle", "$MME_MENU_PAGE_Milking_H3_S19", MilkQ.CumProduction)
+			AddToggleOptionST("MobileMilkingAnims_Toggle", "$MME_MENU_PAGE_Milking_H3_S20", MilkQ.MobileMilkingAnims)
 
 	SetCursorPosition(1)
 			AddToggleOptionST("PainSystem_Toggle", "$MME_MENU_PAGE_Milking_Pain_System", MilkQ.PainSystem)
@@ -726,6 +745,7 @@ function Page_Spell_Constructor()
 			else
 				Exhausion_Debuff_T = AddTextOption("$Exhausion_Debuff timer", "1 day")
 			endif
+			ExhaustionDebuff_T = AddToggleOption("$ExhaustionDebuff", MilkQ.MilkQC.ExhaustionDebuff)
 			Unmilked_DeBuffs_Skills_T = AddToggleOption("$Unmilked_DeBuffs_Skills", MilkQ.MilkQC.Unmilked_DeBuffs_Skills)
 			Unmilked_DeBuffs_SPMP_T = AddToggleOption("$Unmilked_DeBuffs_SPMP", MilkQ.MilkQC.Unmilked_DeBuffs_SPMP)
 			Unmilked_DeBuffs_SpeedStamina_T = AddToggleOption("$Unmilked_DeBuffs_SpeedStamina", MilkQ.MilkQC.Unmilked_DeBuffs_SpeedStamina)
@@ -948,6 +968,13 @@ event OnOptionSelect(int option)
 			MilkQ.MilkQC.ExhaustionMode = 300
 			SetTextOptionValue(Exhausion_Debuff_T, "5 min")
 		endif
+	elseif option == ExhaustionDebuff_T
+		if !MilkQ.MilkQC.ExhaustionDebuff
+			MilkQ.MilkQC.ExhaustionDebuff = true
+		else
+			MilkQ.MilkQC.ExhaustionDebuff = false
+		endif
+			SetToggleOptionValue(ExhaustionDebuff_T, MilkQ.MilkQC.ExhaustionDebuff)
 	elseif option == Unmilked_DeBuffs_Skills_T
 		if !MilkQ.MilkQC.Unmilked_DeBuffs_Skills
 			MilkQ.MilkQC.Unmilked_DeBuffs_Skills = true
@@ -2110,33 +2137,7 @@ state MaidlistMode_Menu
 	endEvent
 
 	event OnMenuAcceptST(int index)
-		int i = 0
 		MaidlistModeIndex = index
-		Maidlist = new string[20]
-		MaidlistA = new Actor[20]
-		if MaidlistModeIndex == 0
-			while i < MilkQ.MilkMaid.Length
-				if MilkQ.MilkMaid[i] != None
-					Maidlist[i] = MilkQ.MilkMaid[i].GetLeveledActorBase().GetName()
-					MaidlistA[i] = MilkQ.MilkMaid[i]
-					MaidIndex = i
-				else
-					Maidlist[i] = "--"
-				endif
-				i = i + 1
-			endwhile
-		else
-			while i < MilkQ.MilkSlave.Length
-				if MilkQ.MilkSlave[i] != None
-					Maidlist[i] = MilkQ.MilkSlave[i].GetLeveledActorBase().GetName()
-					MaidlistA[i] = MilkQ.MilkSlave[i]
-					MaidIndex = i
-				else
-					Maidlist[i] = "--"
-				endif
-				i = i + 1
-			endwhile
-		endif
 		ForcePageReset()
 	endEvent
 	event OnHighlightST()
@@ -2406,6 +2407,47 @@ state SimpleMilk_Toggle
 	endEvent
 endState
 
+state MilkingReq40PctMilk_Toggle
+	event OnSelectST()
+		if !MilkQ.MilkingReq40PctMilk
+			MilkQ.MilkingReq40PctMilk = true
+		else
+			MilkQ.MilkingReq40PctMilk = false
+		endif
+		SetToggleOptionValueST(MilkQ.MilkingReq40PctMilk)
+	endEvent
+	
+	event OnHighlightST()
+		SetInfoText("$MME_MENU_PAGE_Milking_H3_S18_Higlight")
+	endEvent
+endState
+
+state MobileMilkingAnims_Toggle
+	event OnSelectST()
+		if !MilkQ.MobileMilkingAnims
+			MilkQ.MobileMilkingAnims = true
+		else
+			MilkQ.MobileMilkingAnims = false
+		endif
+		SetToggleOptionValueST(MilkQ.MobileMilkingAnims)
+	endEvent
+	
+	event OnHighlightST()
+		SetInfoText("$MME_MENU_PAGE_Milking_H3_S20_Higlight")
+	endEvent
+endState
+
+state CumProduction_Toggle
+	event OnSelectST()
+		if !MilkQ.CumProduction
+			MilkQ.CumProduction = true
+		else
+			MilkQ.CumProduction = false
+		endif
+		SetToggleOptionValueST(MilkQ.CumProduction)
+	endEvent
+endState
+
 state Milking_MilkWithZaZMoMSuctionCups_Toggle
 	event OnSelectST()
 		string toggleVal
@@ -2513,6 +2555,9 @@ state FuckMachine_Toggle
 			MilkQ.FuckMachine = false
 		endif
 		SetToggleOptionValueST(MilkQ.FuckMachine)
+	endEvent
+	event OnHighlightST()
+		SetInfoText("$MME_MENU_PAGE_Milking_H3_S10_Higlight")
 	endEvent
 endState
 
