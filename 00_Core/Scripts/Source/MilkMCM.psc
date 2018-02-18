@@ -111,21 +111,6 @@ event OnPageReset(string page)
 	if page == ""
 		self.LoadCustomContent("MilkMod/MilkLogo.dds")
 		self.RefreshStrings()
-	else
-		self.UnloadCustomContent()
-	endif
-
-	if page == "$MME_MENU_PAGE_Overview"
-		self.Page_Overview()
-	elseif page == "$MME_MENU_PAGE_Settings"
-		self.Page_Settings()
-	elseif page == "$MME_MENU_PAGE_Milking_Configuration"
-		self.Page_Milking_Config()
-	elseif page == "$MME_MENU_PAGE_Milk_Market_Information"
-		self.Page_Market()
-	elseif page == "$MME_MENU_PAGE_Debug"
-		self.Page_Debug()
-	elseif page == "$MME_MENU_PAGE_Debug_Milk_Maid"
 		int i = 0
 		if MaidlistModeIndex == 0
 			Maidlist = new string[20]
@@ -154,6 +139,21 @@ event OnPageReset(string page)
 				i = i + 1
 			endwhile
 		endif
+	else
+		self.UnloadCustomContent()
+	endif
+
+	if page == "$MME_MENU_PAGE_Overview"
+		self.Page_Overview()
+	elseif page == "$MME_MENU_PAGE_Settings"
+		self.Page_Settings()
+	elseif page == "$MME_MENU_PAGE_Milking_Configuration"
+		self.Page_Milking_Config()
+	elseif page == "$MME_MENU_PAGE_Milk_Market_Information"
+		self.Page_Market()
+	elseif page == "$MME_MENU_PAGE_Debug"
+		self.Page_Debug()
+	elseif page == "$MME_MENU_PAGE_Debug_Milk_Maid"
 		self.Page_MilkMaidDebug()
 	elseif page == "$MME_MENU_PAGE_Compatibility_Check"
 		self.Page_PluginChecks()
@@ -2138,6 +2138,34 @@ state MaidlistMode_Menu
 
 	event OnMenuAcceptST(int index)
 		MaidlistModeIndex = index
+		int i = 0
+		if MaidlistModeIndex == 0
+			Maidlist = new string[20]
+			MaidlistA = new Actor[20]
+			while i < MilkQ.MilkMaid.Length
+				if MilkQ.MilkMaid[i] != None
+					Maidlist[i] = MilkQ.MilkMaid[i].GetLeveledActorBase().GetName()
+					MaidlistA[i] = MilkQ.MilkMaid[i]
+					MaidIndex = i
+				else
+					Maidlist[i] = "--"
+				endif
+				i = i + 1
+			endwhile
+		else
+			Maidlist = new string[100]
+			MaidlistA = new Actor[100]
+			while i < MilkQ.MilkSlave.Length
+				if MilkQ.MilkSlave[i] != None
+					Maidlist[i] = MilkQ.MilkSlave[i].GetLeveledActorBase().GetName()
+					MaidlistA[i] = MilkQ.MilkSlave[i]
+					MaidIndex = i
+				else
+					Maidlist[i] = "--"
+				endif
+				i = i + 1
+			endwhile
+		endif
 		ForcePageReset()
 	endEvent
 	event OnHighlightST()
