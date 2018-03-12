@@ -1,12 +1,15 @@
 Scriptname MME_Dialogues Extends TopicInfo Hidden
 
+;script wont work in CK, cuz CK is sheet, generate random empty script and use tes5edit to set correct script name and fragments
+
 ;---Contents---
 ;
-;Function Fragment_00(Actor akSpeakerRef)				;[MME] Hey there! dialogue script(fill up dialogues conditions)
-;dialogue scripts
+;Function Init_Milking(Actor akActor1, Actor akActor2)	;Initiate Breastfeeding through sexlab
+;
+;dialogue script fragments
+;Function Fragment_00(Actor akSpeakerRef)				;[MME] Hey there! opening dialogue (fill up/refresh dialogue conditions for further usage)
 ;Function Fragment_01(Actor akSpeakerRef)				;Breastfeeding(Player sucking milk)
 ;Function Fragment_02(Actor akSpeakerRef)				;Breastfeeding(Player's milk being sucked)
-;Function Init_Milking(Actor akActor1, Actor akActor2)	;Initiate Breastfeeding through sexlab
 ;Function Fragment_03(Actor akSpeakerRef)				;NPC Give milkmaid lactacid
 ;Function Fragment_04(Actor akSpeakerRef)				;NPC Make milkmaid
 ;Function Fragment_05(Actor akSpeakerRef)				;NPC Make futanari
@@ -25,13 +28,45 @@ Scriptname MME_Dialogues Extends TopicInfo Hidden
 ;Function Fragment_18(Actor akSpeakerRef)				;TradeMilk_Inn
 ;Function Fragment_19(Actor akSpeakerRef)				;TradeMilk_Khajiit
 ;Function Fragment_20(Actor akSpeakerRef)				;TradeMilk_Orc
+;Function Fragment_21(Actor akSpeakerRef)				;TradeLactacid_Alchemy x10
+;Function Fragment_22(Actor akSpeakerRef)				;TradeLactacid_Farmer x10
 ;
-;duplicate fragments used in different scripts
+;duplicate fragments used in different dialogues
+;can be changed later to have different outcome
+;
 ;Fragment_03,Fragment_04
 ;Fragment_12,Fragment_13
 ;Fragment_17,Fragment_19
+;Fragment_21,Fragment_22
 ;
 ;------
+
+Function Init_Milking(Actor akActor1, Actor akActor2)
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
+	
+	actor[] sexActors = new actor[2]
+	sslBaseAnimation[] anims
+	anims = new sslBaseAnimation[1]
+
+	;sexActors[]: 0 - actor being sucked, 1 - actor sucking
+	sexActors[0] = akActor1
+	sexActors[1] = akActor2
+
+	if sexActors[1].GetLeveledActorBase().GetSex() == 0 || ((MilkQ.akActorSex(sexActors[1]) == "Futa") && Utility.RandomInt(1, 2) == 1)
+		anims[0] = MilkQ.SexLab.AnimSlots.GetbyRegistrar("zjBreastFeedingVar")		;Straight
+	else
+		anims[0] = MilkQ.SexLab.AnimSlots.GetbyRegistrar("zjBreastFeeding")			;Lesbian
+	endif
+
+	MilkQ.SexLab.StartSex(sexActors, anims)
+EndFunction
+
+;----------------------------------------------------------------------------------------------------
+;
+;Script Fragments
+;
+;----------------------------------------------------------------------------------------------------
+
 Function Fragment_00(ObjectReference akSpeakerRef)
 MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 ;GetSex(): 0 - male, 1 - female
@@ -111,26 +146,6 @@ EndFunction
 Function Fragment_02(ObjectReference akSpeakerRef)
 	Actor akSpeaker = akSpeakerRef as Actor
 	Init_Milking(Game.Getplayer(), akSpeakerRef as actor)
-EndFunction
-
-Function Init_Milking(Actor akActor1, Actor akActor2)
-	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
-	
-	actor[] sexActors = new actor[2]
-	sslBaseAnimation[] anims
-	anims = new sslBaseAnimation[1]
-
-	;sexActors[]: 0 - actor being sucked, 1 - actor sucking
-	sexActors[0] = akActor1
-	sexActors[1] = akActor2
-
-	if sexActors[1].GetLeveledActorBase().GetSex() == 0 || ((MilkQ.akActorSex(sexActors[1]) == "Futa") && Utility.RandomInt(1, 2) == 1)
-		anims[0] = MilkQ.SexLab.AnimSlots.GetbyRegistrar("zjBreastFeedingVar")		;Straight
-	else
-		anims[0] = MilkQ.SexLab.AnimSlots.GetbyRegistrar("zjBreastFeeding")			;Lesbian
-	endif
-
-	MilkQ.SexLab.StartSex(sexActors, anims)
 EndFunction
 
 Function Fragment_03(ObjectReference akSpeakerRef)
@@ -271,3 +286,16 @@ Function Fragment_20(ObjectReference akSpeakerRef)
 	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	MilkQ.MilkE.InitiateDialogueTrade(Game.Getplayer(), 3)
 EndFunction
+
+Function Fragment_21(ObjectReference akSpeakerRef)
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
+	Game.Getplayer().additem(MilkQ.MME_Util_Potions.GetAt(0), 10)
+	Game.Getplayer().removeitem(JsonUtil.GetFormValue("/MME/Forms", "gold") as MiscObject, 1000, true)
+EndFunction
+
+Function Fragment_22(ObjectReference akSpeakerRef)
+	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
+	Game.Getplayer().additem(MilkQ.MME_Util_Potions.GetAt(0), 10)
+	Game.Getplayer().removeitem(JsonUtil.GetFormValue("/MME/Forms", "gold") as MiscObject, 1000, true)
+EndFunction
+

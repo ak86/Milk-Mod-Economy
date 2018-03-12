@@ -217,11 +217,27 @@ Function Orgasm(Actor akActor, String _args)
 				|| (MilkQ.DDi.IsMilkingBlocked_Bra(akActor) && MilkQ.SLSD.IsMilkingBlocked_Bra_SLSD(akActor)))
 					MilkQ.AddLeak(akActor)
 				EndIf
+				
 				If MilkQ.MilkMsgs == true
 					String MaidName = akActor.GetLeveledActorBase().GetName()
 					Debug.Notification(MilkQ.formatString(JsonUtil.GetStringValue("/MME/Strings", "orgasmmilkleak"), MaidName))
 				EndIf
-			EndIf
+				
+				if animation.HasTag("Breast")
+					float MilkCnt = MME_Storage.getMilkCurrent(akActor)
+					int gush = (MilkCnt*MilkQ.GushPct/100) as int
+					String MaidName = akActor.GetLeveledActorBase().getname()
+					
+					if gush < 1
+						gush = 1
+					endif
+					
+					if StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkGen") == 0 
+						Debug.Notification(MilkQ.formatString(JsonUtil.GetStringValue("/MME/Strings", "lactationstart"), MaidName))
+					endif
+					StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", MilkQ.MilkGenValue/3/10 * gush)
+				endif
+			endif
 		endif
 	endif
 	
@@ -299,6 +315,11 @@ Function Maintenance()
 	File = "/MME/RND.json"
 	if JsonUtil.GetErrors(File) != ""
 		Debug.Notification("MME_RND.Json has errors")
+	endif
+	
+	File = "/MME/Strings.json"
+	if JsonUtil.GetErrors(File) != ""
+		Debug.Notification("MME_Strings.Json has errors")
 	endif
 	
 	RegisterEvents()

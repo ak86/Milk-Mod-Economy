@@ -147,10 +147,10 @@ Int Property Milking_Duration Auto
 Int Property Feeding_Duration Auto
 Int Property Feeding_Sound Auto
 Int Property FuckMachine_Duration Auto
-Int Property MilkPriceMod Auto
 Int Property ExhaustionSleepMod Auto
 Int Property ECRange Auto
 Int Property GushPct = 10 Auto
+Int Property MilkPriceMod Auto
 
 Float Property BoobMAX Auto
 Float Property MilkProdMod Auto
@@ -596,12 +596,15 @@ Function MilkCycle(Actor akActor, int t)
 	while tmod != 0
 		MaidLevel = MME_Storage.getMaidLevel(akActor)
 		if LactacidCnt > 0\
-		|| ((MaidMilkGen > 0 || isPregnant(akActor)) && (MilkCnt + MilkTick < MilkMax))
+		|| (isPregnant(akActor) && (MilkCnt + MilkTick < MilkMax))
+		;|| ((MaidMilkGen > 0 || isPregnant(akActor)) && (MilkCnt + MilkTick < MilkMax))
 			if MaidLevelProgressionAffectsMilkGen == 0 || MaidLevel == 0
 				MaidMilkGen += MilkGenValue * BreastRows
 			else
 				MaidMilkGen += MilkGenValue * BreastRows * (MaidLevelProgressionAffectsMilkGen * MaidLevel)
 			endif
+		elseif isPregnant(akActor)
+			;do nothing
 		else																										;reduce milk generation
 			MaidMilkGen -= (MilkGenValue * BreastRows)/ (1 + MaidLevelProgressionAffectsMilkGen * MaidLevel)
 			if MaidMilkGen < 0
@@ -766,10 +769,10 @@ Function MilkCycle(Actor akActor, int t)
 					MilkForSpriggan.cast(akActor)
 				endif
 			endif
-		elseif akActor == PlayerREF && !ArmorStrippingDisabled
+		elseif akActor == PlayerREF && !ArmorStrippingDisabled && !Sexlab.IsStrippable(maidArmor)
 			if !(maidArmor == TITS4	|| maidArmor == TITS6 || maidArmor == TITS8 || DDi.IsMilkingBlocked_Suit(akActor))
 				;heavy armor	
-				if MilkCnt > 12 && maidArmor.HasKeyword(Game.GetFormFromFile(0x6BBD2, "Skyrim.esm") as keyword) 
+				if MilkCnt > 12 && maidArmor.HasKeyword(Game.GetFormFromFile(0x6BBD2, "Skyrim.esm") as keyword)
 					Debug.Notification("Your breasts are too big to fit into your armor")
 					akActor.UnEquipItem(maidArmor)
 				endif
@@ -1232,18 +1235,33 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		endwhile
 		
 		If IsMilkingBlocked == false && SLSDBra == false
-			if BreastRows != 1
-				;do nothing
-			elseif cuirass != None && !(cuirass == TITS4 || cuirass == TITS6 || cuirass == TITS8)
-				if !(cuirass == MilkCuirass || cuirass == MilkCuirassFuta)\
-				&& !((StringUtil.Find(cuirass.getname(), "Milk" ) >= 0) || (MilkingEquipment.find(cuirass.getname()) >= 0))
-					akActor.UnequipItem(cuirass, false, true)
-				endif
-				if MilkNaked == false
+			if (cuirass != None && Sexlab.IsStrippable(cuirass)) || cuirass == None
+				if BreastRows != 1
+					;do nothing
+				elseif cuirass != None && !(cuirass == TITS4 || cuirass == TITS6 || cuirass == TITS8)
+					if !(cuirass == MilkCuirass || cuirass == MilkCuirassFuta)\
+					&& !((StringUtil.Find(cuirass.getname(), "Milk" ) >= 0) || (MilkingEquipment.find(cuirass.getname()) >= 0))
+						akActor.UnequipItem(cuirass, false, true)
+					endif
+					if MilkNaked == false
+						if MilkWithZaZMoMSuctionCups == true
+							akActor.additem(ZaZMoMSuctionCups, 1, true)
+							akActor.equipitem(ZaZMoMSuctionCups, true, true)
+						elseif !akActor.IsEquipped(cuirass)
+							if akActorGender == "Futa" && UseFutaMilkCuirass == true
+								akActor.additem(MilkCuirassFuta, 1, true)
+								akActor.equipitem(MilkCuirassFuta, true, true)
+							else
+								akActor.additem(MilkCuirass, 1, true)
+								akActor.equipitem(MilkCuirass, true, true)
+							endif
+						endif
+					endif
+				elseif MilkNaked == false
 					if MilkWithZaZMoMSuctionCups == true
 						akActor.additem(ZaZMoMSuctionCups, 1, true)
 						akActor.equipitem(ZaZMoMSuctionCups, true, true)
-					elseif !akActor.IsEquipped(cuirass)
+					else
 						if akActorGender == "Futa" && UseFutaMilkCuirass == true
 							akActor.additem(MilkCuirassFuta, 1, true)
 							akActor.equipitem(MilkCuirassFuta, true, true)
@@ -1253,23 +1271,10 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 						endif
 					endif
 				endif
-			elseif MilkNaked == false
-				if MilkWithZaZMoMSuctionCups == true
-					akActor.additem(ZaZMoMSuctionCups, 1, true)
-					akActor.equipitem(ZaZMoMSuctionCups, true, true)
-				else
-					if akActorGender == "Futa" && UseFutaMilkCuirass == true
-						akActor.additem(MilkCuirassFuta, 1, true)
-						akActor.equipitem(MilkCuirassFuta, true, true)
-					else
-						akActor.additem(MilkCuirass, 1, true)
-						akActor.equipitem(MilkCuirass, true, true)
-					endif
-				endif
-			endif
-			
-			If MilkStory && akActor == PlayerREF && (akActorGender != "Male" || (akActorGender == "Male" && MaleMaids))
-				StoryDisplay(0,1,FirstTimeStory)
+				
+				If MilkStory && akActor == PlayerREF && (akActorGender != "Male" || (akActorGender == "Male" && MaleMaids))
+					StoryDisplay(0,1,FirstTimeStory)
+				EndIf
 			EndIf
 		EndIf
 	elseif mode == 4 || StopMilking
@@ -1279,7 +1284,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		akActor.RemoveSpell( BeingMilkedPassive )
 		return
 	else
-		if cuirass != None && !(cuirass == TITS4 || cuirass == TITS6 || cuirass == TITS8)
+		if cuirass != None && !(cuirass == TITS4 || cuirass == TITS6 || cuirass == TITS8) && Sexlab.IsStrippable(cuirass)
 			if BreastRows != 1
 				Mode = 1
 			ElseIf StringUtil.Find(cuirass.getname(), "Milk" ) >= 0 \
@@ -1323,7 +1328,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		ElseIf SLSDBra == true\
 			|| DDi.IsWearingDDMilker(akActor) == true
 				Mode = 2
-		ElseIf !(cuirass == TITS4 || cuirass == TITS6 || cuirass == TITS8)
+		ElseIf !(cuirass == TITS4 || cuirass == TITS6 || cuirass == TITS8) && Sexlab.IsStrippable(cuirass)
 			If (DDArmbinder == false && DDYoke == false)
 				If akActor.GetItemCount(MilkCuirassFuta) > 0 && akActorGender == "Futa" && UseFutaMilkCuirass == true
 					akActor.equipitem(MilkCuirassFuta, true, true)
@@ -1843,7 +1848,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		Utility.Wait( 1.0 )
 	endwhile
 	
-	if IsMilkingBlocked == false
+	if IsMilkingBlocked == false && Sexlab.IsStrippable(cuirass)
 		if Mode == 0
 			if BreastRows == 1
 				if akActor.IsEquipped(ZaZMoMSuctionCups)
@@ -2287,7 +2292,7 @@ String Function formatString(String src, String part1 = "", String part2 = "", S
 	;Debug.Messagebox("json source: " + src)
 	int pos1 = StringUtil.find(src, "%text1")
 	if pos1 != -1
-		src = StringUtil.substring("", 0, pos1) + part1 + StringUtil.substring(src, pos1+6)
+		src = StringUtil.substring(src, 0, pos1) + part1 + StringUtil.substring(src, pos1+6)
 	endIf
 
 	int pos2 = StringUtil.find(src, "%text2")

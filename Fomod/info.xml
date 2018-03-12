@@ -1,11 +1,13 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>18-02-2018</Version>
+  <Version>12-03-2018</Version>
   <Author>Ed86</Author>
-  <Website>http://www.loverslab.com/files/file/1382-milk-mod-economy/</Website>
+  <Website>https://www.patreon.com/Ed86</Website>
   <Description>
   
 Dialogue trade:
+*milk sold through dialogues is done through economy script, thus affecting economy and can yield more income 
+
 Khajiits merchants:
 -buy all milk
 -trade Lactacid for milk
@@ -16,13 +18,14 @@ Inns:
 alchemists: 					
 -buy ww/vampire/succubus milk
 -buy cum/semen
--sell Lactacid for 100g
+-sell Lactacid for 100g/bottle
 -sell Breast enlargement potion for 1000g
 Fences:
 -buy all milk
 Farmers:
 -buy normal milk
--sell Lactacid for 100g
+-sell Lactacid for 100g/bottle
+
 
 Milk Pump locations:
 DawnStar
@@ -47,16 +50,26 @@ Caravan
  - Ivarstead
 
 Placing your own Milk Pumps:
-You can place Milk Pump anywhere you want, try might even affect with economy or not, using console type:
-1) help milk
-2) get id of FURN Milk Pump
-3) player.placeatme id from above
-4) use [url=http://www.nexusmods.com/skyrim/mods/60910/]Jaxonz Positioner[/url] to adjust position
+You can place Milk Pump anywhere you want, they might even affect economy.
+a)	Using console:
+	1) help milk
+	2) get id of FURN Milk Pump
+	3) player.placeatme id from above
+	4) use [url=http://www.nexusmods.com/skyrim/mods/60910/]Jaxonz Positioner[/url] to adjust position
 
-
+b)	Using Campire mod to craft and place milkpumps
   
   
 Dev change log:
+
+	v 12-03-2018
+added x10 lactacid trade dialogues for alchemists and farmers
+
+	v 09-03-2018
+fixed broken dynamic storyteller script("name's breasts" errors etc )
+changed milk generation conditions. To increase milk production you need to either drink lactacid or be pregnant and not have full breasts, milking and animations with "Breast" tag will also increase milk production
+you may use "MaidLevel Progression Affects MilkGen" toggle to increase production rate and slow down its drop rate when not pregnant or not on lactacid
+added condition to prevent armor(slot 32) stripping if it has sexlabnostrip keyword, that should probably fix issues with some DD items
 
 	v 18-02-2018
 fixed mcm maid debug page

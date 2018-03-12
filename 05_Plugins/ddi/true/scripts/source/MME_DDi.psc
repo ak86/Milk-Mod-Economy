@@ -12,15 +12,15 @@ bool Function IsWearingDDMilker(Actor akActor)
 	form f
 	zadLibs Libs = Quest.GetQuest("zadQuest") as zadLibs
 	Armor scriptinstance
-	int i = akActor.getnumitems()
+	int i = akActor.getnumitems()									;count all items in inventory
 	While i > 0
 		i -= 1
-		f = akActor.getnthform(i) as armor							;armor in inventory
+		f = akActor.getnthform(i) as armor							;filter armor in inventory
 		If f != none
-			If f.HasKeyword(Libs.zad_InventoryDevice)
-				scriptinstance = Libs.GetRenderedDevice(f as armor)		;scriptinstance, has dd keywords
+			If f.HasKeyword(Libs.zad_InventoryDevice)				;check if armor is DD
+				scriptinstance = Libs.GetRenderedDevice(f as armor)		;get armor scriptinstance, has dd keywords
 				if akActor.isequipped(f) && (StringUtil.Find(f.getname(), "Milk" ) >= 0 || Libs.HasTag(f as armor, "milk"))
-					If  scriptinstance.HasKeyword(Libs.zad_DeviousBra)	;"Milk" Bra
+					If  scriptinstance.HasKeyword(Libs.zad_DeviousBra)			;"Milk" Bra
 						Return true
 					ElseIf  scriptinstance.HasKeyword(Libs.zad_DeviousHarness)	;"Milk" Harness
 						Return true
