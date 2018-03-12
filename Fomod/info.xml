@@ -64,6 +64,7 @@ Dev change log:
 
 	v 12-03-2018
 added x10 lactacid trade dialogues for alchemists and farmers
+added option to disable scripts check if mod fails to start(ohh i'll probably gonna regret this)
 
 	v 09-03-2018
 fixed broken dynamic storyteller script("name's breasts" errors etc )

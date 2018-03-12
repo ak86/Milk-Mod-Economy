@@ -10,13 +10,18 @@ EndEvent
 
 Event OnUpdate()
 	if StorageUtil.GetIntValue(Game.GetPlayer(), "MME_ScriptsStarted") != 1
-		Debug.Messagebox(JsonUtil.GetStringValue("/MME/Strings", "MME_Status"))
+		;Debug.Messagebox(JsonUtil.GetStringValue("/MME/Strings", "MME_Status"))
 		MilkPluginsInfo()
-		RegisterForSingleUpdate(60)
-		Debug.Trace("MilkModEconomy Scripts are not running, retrying in 60 sec")
+		int ButtonPressed = (Game.GetFormFromFile(0x6B54A, "MilkModNew.esp") as message).Show()
+		if ButtonPressed == 0
+			RegisterForSingleUpdate(60)
+			Debug.Trace("MilkModEconomy MME_Status: Scripts are not running, retrying in 60 sec")
+		else
+			Debug.Trace("MilkModEconomy MME_Status: Scripts are not running, screw your scripts, it'll work without them!")
+		endif
 	else
 		StorageUtil.UnsetIntValue(Game.GetPlayer(), "MME_ScriptsStarted")
-		Debug.Trace("MilkModEconomy Scripts are running, Unsetting StorageUtil MME_ScriptsStarted, shutting down")
+		Debug.Trace("MilkModEconomy MME_Status: Scripts are running, Unsetting StorageUtil MME_ScriptsStarted, shutting down")
 	endif
 EndEvent
 
