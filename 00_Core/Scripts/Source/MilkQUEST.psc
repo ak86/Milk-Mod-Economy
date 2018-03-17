@@ -244,7 +244,9 @@ Bool Property Plugin_SlSW = false auto
 ;	Function AssignSlotSlaveToMaid(Actor akActor)							;convert Actor to a MILKmaid from a MILKSlave
 ;	Function AssignSlotMaidToSlave(Actor akActor)							;convert Actor to a MILKSlave from a MILKmaid
 ;	Function CurrentSize(Actor akActor)										;Change breast size
-;	Function Milking(Actor akActor, 0, int Mode, int MilkingType)			;Core milking script
+;	Function MilkingToContainer(Actor akActor, 0, int Mode, int MilkingType, objectreference MilkBarrel = none)	;New milking script start with milk output to container
+;	Function Milking(Actor akActor, 0, int Mode, int MilkingType)			;Legacy milking script start
+;	Function MilkingCycle(Actor akActor, 0, int Mode, int MilkingType, objectreference MilkBarrel = none)		;Core milking script
 ;	Function PostMilk(Actor akActor)										;run after milking, add/remove (de)buffs
 ;	Function LevelCheck()													;Mastery Progression LevelCheck
 ;	Function MaidLevelCheck(Actor akActor)									;Maid LevelCheck
@@ -1029,7 +1031,15 @@ EndFunction
 ;functions called by milking scripts
 ;----------------------------------------------------------------------------
 
-Function Milking(Actor akActor, int i, int Mode, int MilkingType, objectreference MilkBarrel = none)
+Function MilkingToContainer(Actor akActor, int i, int Mode, int MilkingType, objectreference MilkBarrel = none)
+	MilkingCycle(akActor, i, Mode, MilkingType, MilkBarrel)
+EndFunction
+
+Function Milking(Actor akActor, int i, int Mode, int MilkingType)
+	MilkingCycle(akActor, i, Mode, MilkingType, none)
+EndFunction
+
+Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectreference MilkBarrel = none)
 	;Mode == 0 - Pump Milking
 	;Mode == 1 - Other Milking(hands)
 	;Mode == 2 - Equipment Milking
@@ -1231,7 +1241,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType, objectreferenc
 			armorcheckloop += 1
 		endwhile
 		
-		while (akActor.GetSitState() < 3 && akActor.GetSitState() > 0)					;wait for actor to "sit"
+		while (akActor.GetSitState() < 3 && akActor.GetSitState() > 0)					;wait for actor to "sit" in furniture
 			Utility.Wait( 1.0 )
 		endwhile
 		
@@ -1344,7 +1354,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType, objectreferenc
 		EndIf
 		
 		If (DDArmbinder == false && DDYoke == false)
-			If IsMilkingBlocked == false && !akActor.IsInCombat() 
+			If IsMilkingBlocked == false && !akActor.IsInCombat() && !akActor.IsOnMount()
 				If mode != 4
 					If MobileMilkingAnims || mode == 1
 						If PlayerREF == akActor
@@ -1352,7 +1362,11 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType, objectreferenc
 							Game.DisablePlayerControls(1, 1, 0, 0, 1, 1, 0) ;(True,True,False,False,True,True,True,True,0)
 							Utility.Wait( 1.0 )												;wait for actor to stop moving (and player to release movement keys)
 						EndIf
-						If StorageUtil.GetIntValue(akActor,"IsBoundStrict") == 0 && !akActor.IsInCombat()
+						If StorageUtil.GetIntValue(akActor,"IsBoundStrict") == 0
+							;disable npc moving
+							if Mode != 0
+								akActor.Setunconscious(true)
+							Endif
 							mpas = Utility.RandomInt (1, 3)
 							if mpas == 1
 								Debug.SendAnimationEvent(akActor,"ZaZAPCHorFA")
@@ -2313,7 +2327,9 @@ EndFunction
 String Function formatString(String src, String part1 = "", String part2 = "", String part3 = "", String part4 = "", String part5 = "")
 	;Debug.Messagebox("json source: " + src)
 	int pos1 = StringUtil.find(src, "%text1")
-	if pos1 != -1
+	if pos1 == 0
+		src = StringUtil.substring("", 0, pos1) + part1 + StringUtil.substring(src, pos1+6)
+	elseif pos1 != -1
 		src = StringUtil.substring(src, 0, pos1) + part1 + StringUtil.substring(src, pos1+6)
 	endIf
 

@@ -26,7 +26,7 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 			endif
 			
 			MME_Storage.changeLactacidCurrent(akTarget, 1)
-		else 
+		elseif !akTarget.IsInCombat() && !akTarget.IsOnMount()
 			int ButtonPressed
 			int count = 0
 			int C = 0
@@ -73,6 +73,7 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 			
 			If !(akTarget.GetSitState() <= 3 && akTarget.GetSitState() > 0)
 				Debug.SendAnimationEvent(akTarget,"ZaZAPCHorFd")
+				akTarget.Setunconscious(true)
 			EndIf
 			
 			MilkQ.SexLab.PickVoice(akTarget).Moan(akTarget, Utility.RandomInt (70, 100), false)
@@ -93,6 +94,7 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 			
 			if !(akTarget.GetSitState() <= 3 && akTarget.GetSitState() > 0)
 				Debug.SendAnimationEvent(akTarget,"IdleForceDefaultState")
+				akTarget.Setunconscious(false)
 			endif
 			
 			if akTarget == PlayerREF && !MilkQ.SexLab.IsActorActive(akTarget)

@@ -11,6 +11,6 @@ EVENT OnActivate(ObjectReference akActionRef)
 		if akActor == MilkQ.PlayerRef
 			Game.ForceThirdPerson()
 		endif
-		MilkQ.Milking(akActor, 0, 0, 0, MilkBarrel)
+		MilkQ.MilkingToContainer(akActor, 0, 0, 0, MilkBarrel)
 	ENDIF
 ENDEVENT
