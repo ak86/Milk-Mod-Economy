@@ -62,6 +62,12 @@ b)	Using Campire mod to craft and place milkpumps
   
 Dev change log:
 
+	v 17-03-2018
+fixed milking not properly ending for actors with armors that cant be stripped(and probably naked)
+changed all(used to be only orc camps) bound milkpumps to produce only half milk for free lactacid
+changed cum addition to milked actor, rather than player
+added ability for modders to add milk to "MilkBarrel" objectreference after milking rather than actor
+
 	v 12-03-2018
 added x10 lactacid trade dialogues for alchemists and farmers
 added option to disable scripts check if mod fails to start(ohh i'll probably gonna regret this)

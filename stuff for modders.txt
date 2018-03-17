@@ -1,0 +1,116 @@
+For Modders:
+[url=https://github.com/ak86/Milk-Mod-Economy]Milk Mod Economy GitHub[/url]
+
+Compiling mod scripts and using CK requires extracted scripts from soft-linked mods. For easier compiling install all plugins as "False", that way you wont need their sources
+
+;Varables in StorageUtil
+;UnsetFloatValue(none,"MME.Progression.Level")
+;UnsetFloatValue(none,"MME.Progression.TimesMilked"
+;UnsetFloatValue(none,"MME.Progression.TimesMilkedAll")
+;UnsetFloatValue(akActor,"MME.MilkMaid.Level")
+;UnsetFloatValue(akActor,"MME.MilkMaid.LactacidCount")
+;UnsetFloatValue(akActor,"MME.MilkMaid.MaidMilkGen")
+;UnsetFloatValue(akActor,"MME.MilkMaid.MilkCount")
+;UnsetFloatValue(akActor,"MME.MilkMaid.PainCount")
+;UnsetFloatValue(akActor,"MME.MilkMaid.BreastBase")
+;UnsetFloatValue(akActor,"MME.MilkMaid.BreastBaseMod")
+;UnsetFloatValue(akActor,"MME.MilkMaid.WeightBase")
+;UnsetFloatValue(akActor,"MME.MilkMaid.TimesMilked")
+;UnsetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM")
+;UnsetFloatValue(akActor,"MME.MilkMaid.MilkingContainerMilksSUM")
+;UnsetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid")
+;UnsetIntValue(akActor,"MME.MilkMaid.MilkingMode")
+;UnsetIntValue(akActor,"MME.MilkMaid.IsSlave")
+;UnsetFloatValue(akActor, "MME.MilkMaid.BreastBaseModPotion")
+;UnsetFloatValue(akActor, "MME.MilkMaid.BreastCount")
+;UnsetFloatValue(akActor, "MME.MilkMaid.BoobIncr")
+;UnsetFloatValue(akActor, "MME.MilkMaid.BoobPerLvl")
+;UnsetFloatValue(akActor, "MME.MilkMaid.MilkMaximum")
+;UnsetFloatValue(akActor, "MME.MilkMaid.MilkMax.Basevalue")
+;UnsetFloatValue(akActor, "MME.MilkMaid.MilkMax.Scalefactor")
+
+Mod sends out "MME_MilkCycleComplete" event after script passes through all milkmaids adding milk
+
+Mod listens to events:
+RegisterForModEvent("MME_AddMilkMaid", "onMME_AddMilkMaid") - makes target a Milkmaid, send by external mod
+RegisterForModEvent("MME_AddMilkSlave", "onMME_AddMilkSlave") - makes target(NOT PLAYER) a MilkSlave, send by external mod
+RegisterForModEvent("MME_Milking", "onMME_Milking") - initiates milking cycle by external mod
+RegisterForModEvent("SlaveToggle",   "OnSlaveToggle") - toggles actor slave mode, adds actor to milkslave faction
+
+SexLab:
+RegisterForModEvent("OrgasmStart", "OnSexLabOrgasm") - applies Lactation effects to milk maids during orgasm if they have 1 milk and reduces their milk by 1, if animation has tag "Masturbation", adds cum/semen potion
+RegisterForModEvent("AnimationStart", "OnSexLabStart") - initiates milking cycle if "3J Straight Breastfeeding" or "3J Lesbian Breastfeeding" animation played on milkmaid
+RegisterForModEvent("StageStart", "OnSexLabStart") - initiates milking cycle if "3J Straight Breastfeeding" or "3J Lesbian Breastfeeding" animation played on milkmaid, this one is used if player have foreplay enabled in sexlab
+
+Example:
+;Send Add Milkmaid Event
+int MME_AddMilkMaid = ModEvent.Create("MME_AddMilkMaid")
+ModEvent.PushForm(MME_AddMilkMaid, akSpeaker/akTarget)
+ModEvent.Send(MME_AddMilkMaid)
+RegisterForModEvent("SlaveToggle",   "OnSlaveToggle") - toggles actor slave mode, add actor to milkslave faction
+
+;Send SlaveToggle Event *untested		this event adds/removes actor from milkslave faction and toggles IsSlave variable, can be used to restrict player milking, see below
+int MME_SlaveToggle = ModEvent.Create("MME_SlaveToggle")
+ModEvent.PushForm(MME_SlaveToggle, akSpeaker/akTarget)
+ModEvent.Send(MME_SlaveToggle)
+
+;Send Add MilkSlave Event (NOT PLAYER) *untested 
+int MME_AddMilkSlave = ModEvent.Create("MME_AddMilkSlave")
+ModEvent.PushForm(MME_AddMilkSlave, akSpeaker/akTarget, Level, Milk) 
+ModEvent.Send(MME_AddMilkSlave)
+
+;Add Milkmaid Event received by MME
+Event onMME_AddMilkMaid(Form Sender)
+	actor akActor = Sender as Actor
+	if MilkQ.MILKmaid.find(akActor) != -1	;Check if target is already milkmaid
+		MilkQ.AssignSlot(akActor)			;make target milkmaid
+	else 
+		Notification( "Target already milkmaid" )
+	endif
+EndEvent
+
+;Send Milking Event
+Function Send_ModEvent_MME_Milking()
+    int handle = ModEvent.Create("MME_Milking")
+    if (handle)
+        ModEvent.PushForm(handle, akActor) ;Actor
+        ModEvent.PushInt(handle, 4) ;Milking Mode, should probably leave at 4
+        ModEvent.PushInt(handle, 0) ;MilkingType, 0 or 1
+        ModEvent.Send(handle)
+    endIf
+EndFunction
+
+;Milking Event received
+Event onMME_Milking(Form Sender, Int Mode, Int MilkingType)
+	actor akActor = Sender as Actor
+	if akActor.GetActorBase().GetSex() == 1
+		int i = MilkQ.MILKmaid.find(akActor)
+		if i != -1
+			MilkQ.Milking(akActor, i, Mode, MilkingType)
+		else 
+			Debug.Notification( "Target is not a milkmaid" )
+		endif
+	else
+		Debug.notification("Only works on females")
+	endif
+EndEvent
+
+;MilkQ.Milking(akActor, i, Mode, MilkingType, objectreference MilkBarrel = none)
+;*i is no longer used but left as it is
+;Mode == 0 - MilkPump Milking\Fuck-Machine
+;Mode == 1 - Other Milking(Mobile), script will change to 2 or 3 or leave as 1 (hand-milking)
+;Mode == 2 - Equipment Milking, set above^
+;Mode == 3 - Living armor Milking, set above^
+;Mode == 4 - Called by other mods, runs milking script, expressions and moans, no animations
+;MilkingType == 0 normal/none milkpump
+;MilkingType == 1 bound/disable player control(enable after milking done)
+;MilkingType == 2 bound/disable player control(enable by other mod)
+;MilkBarrel == container where milk should be stored after milking
+
+Milking and slave configuration:
+milking equipment ( auto/manual milking options, [s]optional lactacid injection[/s]; container for milk to be given to master; type, qty if player leaves enslavement, milk will be given during next milking at milkpump or can be sold)
+-UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.MilkingContainerCumsSUM") - total number of cum in "container"
+-UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.MilkingContainerMilksSUM") - total number of milks in "container", since its all mixed, you wont get race milks(unless you are using simple milks)
+-UnsetFloatValue(MILKmaid[i],"MME.MilkMaid.MilkingContainerLactacid") - lactacid injection(this one is set by master, uses 1 int per hour)
+-UnsetIntValue(MILKmaid[i],"MME.MilkMaid.MilkingMode") - milking mode auto(2)/off(1)/manual(0)*default, if actor is slave and mode is not 0, milking by hotkey is disabled, auto milking will happen every hour if actor have at least 1 milk
+-UnsetIntValue(MILKmaid[i],"MME.MilkMaid.IsSlave") - actor is a slave = 1, slave frameworks mod authors should set this and above to desired value to disable/enable milking and obviously revert after slavery end, it is also would be nice to add actor to milkslavefaction, in case of player that would prevent milking dialogue

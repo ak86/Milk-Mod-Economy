@@ -224,6 +224,32 @@ EndFunction
 ;----C-O-R-E----F-U-N-C-T-I-O-N-S----\
 ;---------------------------------------------------------------------------------------------------------------------
 
+Function InitiateTradeToContainer(int MilkCount, int boobgasmcount, Actor akActor, Objectreference MilkBarrel)
+
+	Potion NfinalPotion = none
+	int NfinalQty = 0
+
+	Potion BfinalPotion = none
+	int BfinalQty = 0
+	
+	if boobgasmcount > 0 && MME_Storage.getMaidLevel(akActor) == 0
+		boobgasmcount = 0
+	endif
+	
+	if (milkCount - boobgasmcount) > 0
+		NfinalPotion = GetMilkType(milkCount, 0, akActor) as Potion
+		NfinalQty = GetMilkQty(milkCount-boobgasmcount)
+	endif
+	
+	if boobgasmcount > 0
+		BfinalPotion = GetMilkType(boobgasmcount, boobgasmcount, akActor) as Potion
+		BfinalQty = boobgasmcount
+	endif
+
+	KeepMilkContainer(NfinalPotion, NfinalQty, 0, MilkBarrel)
+	KeepMilkContainer(BfinalPotion, BfinalQty, 0, MilkBarrel)
+endFunction
+
 Function InitiateTrade(int MilkCount, int boobgasmcount, Actor akActor, bool mobilemilking)
 	Race maidRace = akActor.GetActorBase().GetRace()
 	int marketIndex = GetMarketIndexFromLocation(akActor.GetCurrentLocation())
@@ -423,6 +449,12 @@ Function SellMilk(int marketIndex, int baseTrade, int milkTax, int upkeep, Actor
 	else
 		akActor.AddItem(Gold, finalPayout)
 		akActor.RemoveItem(Gold, upkeep, true)
+	endif
+endFunction
+
+Function KeepMilkContainer(Potion finalPotion, int finalQty, int upkeep, objectreference MilkBarrel)
+	if finalQty > 0
+		MilkBarrel.AddItem(finalPotion, finalQty)
 	endif
 endFunction
 

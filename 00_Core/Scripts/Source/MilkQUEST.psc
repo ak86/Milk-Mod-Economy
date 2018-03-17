@@ -1029,7 +1029,7 @@ EndFunction
 ;functions called by milking scripts
 ;----------------------------------------------------------------------------
 
-Function Milking(Actor akActor, int i, int Mode, int MilkingType)
+Function Milking(Actor akActor, int i, int Mode, int MilkingType, objectreference MilkBarrel = none)
 	;Mode == 0 - Pump Milking
 	;Mode == 1 - Other Milking(hands)
 	;Mode == 2 - Equipment Milking
@@ -1038,6 +1038,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 	;MilkingType == 0 normal/none milkpump
 	;MilkingType == 1 bound/ disable player control
 	;MilkingType == 2 bound/ disable player control, do not enable after milking done
+	;MilkBarrel == container where milk should be stored after milking
 	
 	if akActor.HasSpell( BeingMilkedPassive )
 		;if MilkingType != 1						;prevents msg spam from aidrivenplayer bound milkpump, since its activates script endlessly,
@@ -1848,7 +1849,7 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 		Utility.Wait( 1.0 )
 	endwhile
 	
-	if IsMilkingBlocked == false && Sexlab.IsStrippable(cuirass)
+	if IsMilkingBlocked == false
 		if Mode == 0
 			if BreastRows == 1
 				if akActor.IsEquipped(ZaZMoMSuctionCups)
@@ -1862,11 +1863,11 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 					akActor.RemoveItem(MilkCuirassFuta, 1, true)
 				endif
 			endif
+			If cuirass != None && Sexlab.IsStrippable(cuirass)
+				akActor.equipitem(cuirass, false, true)
+			EndIf
 			If MilkStory && akActor == PlayerREF && (akActorGender != "Male" || (akActorGender == "Male" && MaleMaids))
 				StoryDisplay(1,1,FirstTimeStory)
-			EndIf
-			If cuirass != None 
-				akActor.equipitem(cuirass, false, true)
 			EndIf
 		elseif Mode == 3
 			If MilkStory && akActor == PlayerREF && (akActorGender != "Male" || (akActorGender == "Male" && MaleMaids))
@@ -1883,15 +1884,10 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				Utility.Wait(1)
 				if akActor.IsEquipped(MilkCuirass) && MilkCuirass != cuirass
 					akActor.UnequipItem(MilkCuirass, false, true)
-					if cuirass != None 
-						akActor.equipitem(cuirass, false, true)
-					EndIf
 				elseif akActor.IsEquipped(MilkCuirassFuta) && MilkCuirassFuta != cuirass
 					akActor.UnequipItem(MilkCuirassFuta, false, true)
-					if cuirass != None 
-						akActor.equipitem(cuirass, false, true)
-					EndIf
-				elseif cuirass != None 
+				EndIf
+				if cuirass != None && Sexlab.IsStrippable(cuirass)
 					akActor.equipitem(cuirass, false, true)
 				EndIf
 			endif
@@ -1908,52 +1904,78 @@ Function Milking(Actor akActor, int i, int Mode, int MilkingType)
 				PostMilk(akActor)
 				AddMilkFx(akActor, 2)
 				AddLeak(akActor)
+				
 				if MILKSlave.find(akActor) == -1
 					StorageUtil.AdjustFloatValue(none, "MME.Progression.TimesMilked", bottles)
 					StorageUtil.AdjustFloatValue(none, "MME.Progression.TimesMilkedAll", bottles)
 				endif
-
-				if Mode == 0 || Mode == 2
-					if Mode == 0 && MilkingType != 0 && MilkE.GetMarketIndexFromLocation(akActor.GetCurrentLocation()) == 4
-						bottles = bottles / 2 
-						boobgasmcount = boobgasmcount / 2 
+				
+				if MilkBarrel == none
+					if Mode == 0 || Mode == 2
+						if Mode == 0 && MilkingType != 0 && !FreeLactacid == true ; && MilkE.GetMarketIndexFromLocation(akActor.GetCurrentLocation()) == 4
+							bottles = bottles / 2 
+							boobgasmcount = boobgasmcount / 2 
+						endif
+						if MILKSlave.find(akActor) != -1
+							StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkingContainerMilksSUM", bottles)
+						elseif StorageUtil.GetIntValue(akActor, "MME.MilkMaid.IsSlave") == 1
+							StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkingContainerMilksSUM", bottles)
+							debug.Notification(bottles + " Milk added to container.")
+						elseif CuirassSellsMilk == true																			;old, sells milk through milkpump or with cuirass
+							MilkE.InitiateTrade(bottles + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerMilksSUM") as int, boobgasmcount, akActor, false)
+							StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkingContainerMilksSUM", 0)
+						else																									;new, gives milk to actor
+							MilkE.InitiateTrade(bottles + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerMilksSUM") as int, boobgasmcount, akActor, true)
+							StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkingContainerMilksSUM", 0)
+						endif
 					endif
-					if MILKSlave.find(akActor) != -1
-						StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkingContainerMilksSUM", bottles)
-					elseif StorageUtil.GetIntValue(akActor, "MME.MilkMaid.IsSlave") == 1
-						StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkingContainerMilksSUM", bottles)
-						debug.Notification(bottles + " Milk added to container.")
-					elseif CuirassSellsMilk == true																			;old, sells milk through milkpump or with cuirass
-						MilkE.InitiateTrade(bottles + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerMilksSUM") as int, boobgasmcount, akActor, false)
-						StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkingContainerMilksSUM", 0)
-					else																									;new, gives milk to actor
-						MilkE.InitiateTrade(bottles + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerMilksSUM") as int, boobgasmcount, akActor, true)
-						StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkingContainerMilksSUM", 0)
-					endif
+				else
+					MilkE.InitiateTradeToContainer(bottles + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerMilksSUM") as int, boobgasmcount, akActor, MilkBarrel)
+					StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkingContainerMilksSUM", 0)
 				endif
 			else
-				MilkE.InitiateTrade(bottles + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerMilksSUM") as int, boobgasmcount, akActor, true)
+				if MilkBarrel == none
+					MilkE.InitiateTrade(bottles + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerMilksSUM") as int, boobgasmcount, akActor, true)
+				else
+					MilkE.InitiateTradeToContainer(bottles + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerMilksSUM") as int, boobgasmcount, akActor, MilkBarrel)
+				endif
 			endif
 		endif
 			
 		if cumcount > 0 && CumProduction
-			if IsMilkMaid == true
-				if Mode == 0 || Mode == 2
-					if StorageUtil.GetIntValue(akActor, "MME.MilkMaid.IsSlave") == 1 || MILKSlave.find(akActor) != -1
-						StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkingContainerCumsSUM", cumcount)
-					elseif Mode == 0 || Mode == 2
-						if akActorGender == "Male" 
-							PlayerREF.AddItem(MME_Cums.GetAt(1), cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int)
-						elseif akActorGender == "Female" 
-							PlayerREF.AddItem(MME_Cums.GetAt(0), cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int)
-						elseif akActorGender == "Futa"
-							int futamilk = Utility.RandomInt(0, cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int)
-							PlayerREF.AddItem(MME_Cums.GetAt(3), futamilk)
-							PlayerREF.AddItem(MME_Cums.GetAt(2), cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int - futamilk)
-						endif
-						PlayerREF.RemoveItem(MilkE.Gold, (cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int)*2, true)
-						StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkingContainerCumsSUM", 0)
+			if Mode == 0 || Mode == 2
+				if IsMilkMaid == true && (StorageUtil.GetIntValue(akActor, "MME.MilkMaid.IsSlave") == 1 || MILKSlave.find(akActor) != -1)
+					StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkingContainerCumsSUM", cumcount)
+				elseif Mode == 0 || Mode == 2
+					int cumtype1
+					int cumtype1count
+					int cumtype2
+					int cumtype2count
+					
+					if akActorGender == "Male" 
+						cumtype1 = 1
+						cumtype1count = cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int
+					elseif akActorGender == "Female" 
+						cumtype1 = 0
+						cumtype1count = cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int
+					elseif akActorGender == "Futa"
+						int futamilk = Utility.RandomInt(0, cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int)
+						cumtype1 = 3
+						cumtype1count = futamilk
+						cumtype1 = 2
+						cumtype1count = cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int - futamilk
 					endif
+					
+					if MilkBarrel == none
+						MilkBarrel = akActor
+						if IsMilkMaid == true
+							PlayerREF.RemoveItem(MilkE.Gold, (cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int)*2, true)
+							StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkingContainerCumsSUM", 0)
+						endIf
+					endIf
+					
+					MilkBarrel.AddItem(MME_Cums.GetAt(cumtype1), cumtype1count)
+					MilkBarrel.AddItem(MME_Cums.GetAt(cumtype2), cumtype2count)
 				endif
 			endif
 		endif
