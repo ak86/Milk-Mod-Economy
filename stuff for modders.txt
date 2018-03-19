@@ -95,7 +95,16 @@ Event onMME_Milking(Form Sender, Int Mode, Int MilkingType)
 	endif
 EndEvent
 
-;MilkQ.Milking(akActor, i, Mode, MilkingType, objectreference MilkBarrel = none)
+
+;Function MilkingToContainer(Actor akActor, int i, int Mode, int MilkingType, objectreference MilkBarrel = none)
+;	MilkingCycle(akActor, i, Mode, MilkingType, MilkBarrel)
+;EndFunction
+;
+;Function Milking(Actor akActor, int i, int Mode, int MilkingType)
+;	MilkingCycle(akActor, i, Mode, MilkingType, none)
+;EndFunction
+;
+;Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectreference MilkBarrel = none)
 ;*i is no longer used but left as it is
 ;Mode == 0 - MilkPump Milking\Fuck-Machine
 ;Mode == 1 - Other Milking(Mobile), script will change to 2 or 3 or leave as 1 (hand-milking)

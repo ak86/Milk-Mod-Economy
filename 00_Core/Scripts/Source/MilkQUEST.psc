@@ -771,7 +771,7 @@ Function MilkCycle(Actor akActor, int t)
 					MilkForSpriggan.cast(akActor)
 				endif
 			endif
-		elseif akActor == PlayerREF && !ArmorStrippingDisabled && !Sexlab.IsStrippable(maidArmor)
+		elseif akActor == PlayerREF && !ArmorStrippingDisabled && Sexlab.IsStrippable(maidArmor)
 			if !(maidArmor == TITS4	|| maidArmor == TITS6 || maidArmor == TITS8 || DDi.IsMilkingBlocked_Suit(akActor))
 				;heavy armor	
 				if MilkCnt > 12 && maidArmor.HasKeyword(Game.GetFormFromFile(0x6BBD2, "Skyrim.esm") as keyword)
@@ -1976,8 +1976,8 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 						int futamilk = Utility.RandomInt(0, cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int)
 						cumtype1 = 3
 						cumtype1count = futamilk
-						cumtype1 = 2
-						cumtype1count = cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int - futamilk
+						cumtype2 = 2
+						cumtype2count = cumcount + StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerCumsSUM") as int - futamilk
 					endif
 					
 					if MilkBarrel == none
