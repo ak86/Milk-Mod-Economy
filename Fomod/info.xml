@@ -62,6 +62,10 @@ b)	Using Campire mod to craft and place milkpumps
   
 Dev change log:
 
+	v 19-03-2018
+fixed armor not stripping when breast are full
+fixed incorrect futacum output after milking 
+
 	v 17-03-2018-hf
 prevent lactacid activation to become milkmaid in combat and on mount
 fix for storymaker %text
