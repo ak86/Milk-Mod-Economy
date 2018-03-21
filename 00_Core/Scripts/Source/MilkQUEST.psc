@@ -599,7 +599,7 @@ Function MilkCycle(Actor akActor, int t)
 		MaidLevel = MME_Storage.getMaidLevel(akActor)
 		if LactacidCnt > 0\
 		|| (isPregnant(akActor) && (MilkCnt + MilkTick < MilkMax))
-		;|| ((MaidMilkGen > 0 || isPregnant(akActor)) && (MilkCnt + MilkTick < MilkMax))
+		;|| ((MaidMilkGen > 0 || isPregnant(akActor)) && (MilkCnt + MilkTick < MilkMax))							;increase milk generation
 			if MaidLevelProgressionAffectsMilkGen == 0 || MaidLevel == 0
 				MaidMilkGen += MilkGenValue * BreastRows
 			else
@@ -1364,7 +1364,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 						EndIf
 						If StorageUtil.GetIntValue(akActor,"IsBoundStrict") == 0
 							;disable npc moving
-							if Mode != 0
+							if Mode != 0 && PlayerREF != akActor
 								akActor.Setunconscious(true)
 							Endif
 							mpas = Utility.RandomInt (1, 3)
