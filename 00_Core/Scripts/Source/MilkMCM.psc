@@ -717,10 +717,17 @@ function Page_PluginChecks()
 		AddTextOption("EstrusChaurus", MilkQ.Plugin_EstrusChaurus, OPTION_FLAG_DISABLED)
 			if MilkQ.Plugin_EstrusChaurus
 				AddTextOption("	ChaurusBreeder", (Game.GetFormFromFile(0x19121, "EstrusChaurus.esp") as Spell).GetName(), OPTION_FLAG_DISABLED)
+				AddTextOption("	zzEstrusParasite", (Game.GetFormFromFile(0x160A8, "EstrusChaurus.esp") as Keyword).GetName(), OPTION_FLAG_DISABLED)
 			endif
 		AddTextOption("EstrusSpider", MilkQ.Plugin_EstrusSpider, OPTION_FLAG_DISABLED)
-			if MilkQ.Plugin_EstrusChaurus
+			if MilkQ.Plugin_EstrusSpider
 				AddTextOption("	SpiderBreeder", (Game.GetFormFromFile(0x4e255, "EstrusSpider.esp") as Spell).GetName(), OPTION_FLAG_DISABLED)
+				AddTextOption("	zzEstrusSpiderParasiteKWD", (Game.GetFormFromFile(0x4F2A3, "EstrusSpider.esp") as Keyword).GetName(), OPTION_FLAG_DISABLED)
+			endif
+		AddTextOption("EstrusDwemer", MilkQ.Plugin_EstrusDwemer, OPTION_FLAG_DISABLED)
+			if MilkQ.Plugin_EstrusDwemer
+				AddTextOption("	DwemerBreeder", (Game.GetFormFromFile(0x4e255, "EstrusDwemer.esp") as Spell).GetName(), OPTION_FLAG_DISABLED)
+				AddTextOption("	zzEstrusDwemerParasiteKWD", (Game.GetFormFromFile(0x4F2A3, "EstrusDwemer.esp") as Keyword).GetName(), OPTION_FLAG_DISABLED)
 			endif
 		AddTextOption("BeeingFemale", MilkQ.Plugin_BeeingFemale, OPTION_FLAG_DISABLED)
 			if MilkQ.Plugin_BeeingFemale
@@ -732,27 +739,27 @@ endfunction
 
 function Page_Spell_Constructor()
 	SetCursorFillMode(TOP_TO_BOTTOM)
-		AddHeaderOption("Milk effects configuration")
-			Milk_RaceEffect_T = AddToggleOption("$Milk_RaceEffect", MilkQ.MilkQC.Milk_RaceEffect)
-			Milk_SkillsEffect_T = AddToggleOption("$Milk_SkillsEffect", MilkQ.MilkQC.Milk_SkillsEffect)
-			Milk_LactacidEffect_T = AddToggleOption("$Milk_LactacidEffect", MilkQ.MilkQC.Milk_LactacidEffect)
-			Milk_RNDEffect_T = AddToggleOption("$Milk_RNDEffect", MilkQ.MilkQC.Milk_RNDEffect)
+		AddHeaderOption("$MME_MENU_PAGE_Spells_Milk_Effects_Header")
+			Milk_RaceEffect_T = AddToggleOption("$MME_MENU_PAGE_Spells_Milk_RaceEffect", MilkQ.MilkQC.Milk_RaceEffect)
+			Milk_SkillsEffect_T = AddToggleOption("$MME_MENU_PAGE_Spells_Milk_SkillsEffect", MilkQ.MilkQC.Milk_SkillsEffect)
+			Milk_LactacidEffect_T = AddToggleOption("$MME_MENU_PAGE_Spells_Milk_LactacidEffect", MilkQ.MilkQC.Milk_LactacidEffect)
+			Milk_RNDEffect_T = AddToggleOption("$MME_MENU_PAGE_Spells_Milk_RNDEffect", MilkQ.MilkQC.Milk_RNDEffect)
 
 	SetCursorPosition(1)
-		AddHeaderOption("Debuff effects configuration")
+		AddHeaderOption("$MME_MENU_PAGE_Spells_Debuffs_Header")
 			if MilkQ.MilkQC.ExhaustionMode == 300
-				Exhausion_Debuff_T = AddTextOption("$Exhausion_Debuff timer", "5 min")
+				Exhausion_Debuff_T = AddTextOption("$MME_MENU_PAGE_Spells_Exhaustion_Debuff timer", "5 min")
 			else
-				Exhausion_Debuff_T = AddTextOption("$Exhausion_Debuff timer", "1 day")
+				Exhausion_Debuff_T = AddTextOption("$MME_MENU_PAGE_Spells_Exhaustion_Debuff timer", "1 day")
 			endif
-			ExhaustionDebuff_T = AddToggleOption("$ExhaustionDebuff", MilkQ.MilkQC.ExhaustionDebuff)
-			Unmilked_DeBuffs_Skills_T = AddToggleOption("$Unmilked_DeBuffs_Skills", MilkQ.MilkQC.Unmilked_DeBuffs_Skills)
-			Unmilked_DeBuffs_SPMP_T = AddToggleOption("$Unmilked_DeBuffs_SPMP", MilkQ.MilkQC.Unmilked_DeBuffs_SPMP)
-			Unmilked_DeBuffs_SpeedStamina_T = AddToggleOption("$Unmilked_DeBuffs_SpeedStamina", MilkQ.MilkQC.Unmilked_DeBuffs_SpeedStamina)
+			ExhaustionDebuff_T = AddToggleOption("$MME_MENU_PAGE_Spells_ExhaustionDebuff", MilkQ.MilkQC.ExhaustionDebuff)
+			Unmilked_DeBuffs_Skills_T = AddToggleOption("$MME_MENU_PAGE_Spells_Unmilked_DeBuffs_Skills", MilkQ.MilkQC.Unmilked_DeBuffs_Skills)
+			Unmilked_DeBuffs_SPMP_T = AddToggleOption("$MME_MENU_PAGE_Spells_Unmilked_DeBuffs_SPMP", MilkQ.MilkQC.Unmilked_DeBuffs_SPMP)
+			Unmilked_DeBuffs_SpeedStamina_T = AddToggleOption("$MME_MENU_PAGE_Spells_Unmilked_DeBuffs_SpeedStamina", MilkQ.MilkQC.Unmilked_DeBuffs_SpeedStamina)
 	
 		AddEmptyOption()
-			SkoomaLactacidEffect_T = AddToggleOption("$DisableLactacidSkoomaEffect", MilkQ.DisableSkoomaLactacid)
-			AddSliderOptionST("Spell_Constructor_BreastRowChance_Slider", "$AddBreastRowChance", MilkQ.MilkQC.BrestEnlargement_MultiBreast_Effect)
+			SkoomaLactacidEffect_T = AddToggleOption("$MME_MENU_PAGE_Spells_DisableLactacidSkoomaEffect", MilkQ.DisableSkoomaLactacid)
+			AddSliderOptionST("Spell_Constructor_BreastRowChance_Slider", "$MME_MENU_PAGE_Spells_AddBreastRowChance", MilkQ.MilkQC.BrestEnlargement_MultiBreast_Effect)
 endfunction
 
 function Page_ArmorManagement()

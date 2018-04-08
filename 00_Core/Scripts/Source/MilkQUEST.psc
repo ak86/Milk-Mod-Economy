@@ -215,6 +215,7 @@ Bool Property Plugin_SOS_NSA = false auto
 Bool Property Plugin_SOS_PUBES = false auto
 Bool Property Plugin_EstrusChaurus = false auto
 Bool Property Plugin_EstrusSpider = false auto
+Bool Property Plugin_EstrusDwemer = false auto
 Bool Property Plugin_BeeingFemale = false auto
 Bool Property Plugin_HentaiPregnancy = false auto
 Bool Property Plugin_SexLabProcreation = false auto
@@ -2523,6 +2524,14 @@ Function DLCcheck()
 		Plugin_EstrusSpider = false
 	endif
 	
+	If Game.GetModbyName("EstrusDwemer.esp") != 255
+		debug.Trace("MilkModEconomy EstrusDwemer.esp found")
+		Plugin_EstrusDwemer = true
+	else
+		debug.Trace("MilkModEconomy EstrusDwemer.esp not found")
+		Plugin_EstrusDwemer = false
+	endif
+	
 	If Game.GetModbyName("BeeingFemale.esm") != 255
 		debug.Trace("MilkModEconomy BeeingFemale.esm found")
 		Plugin_BeeingFemale = true
@@ -3230,12 +3239,32 @@ bool Function isPregnant(Actor akActor)
 			debug.Trace("MilkModEconomy EC Pregnancy: " + akActor.GetLeveledActorBase().GetName())
 			Return True
 		endif
+		if akActor.HasKeyword( Game.GetFormFromFile(0x160A8, "EstrusChaurus.esp") as Keyword ) ;zzEstrusParasite Keyword
+			debug.Trace("MilkModEconomy EC Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+			Return True
+		endif
 	endif
 	
 	;Estrus Spider+
 	if Plugin_EstrusSpider
 		if akActor.HasSpell( Game.GetFormFromFile(0x4e255, "EstrusSpider.esp") as Spell ) ;SpiderBreeder spell
 			debug.Trace("MilkModEconomy ES Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+			Return True
+		endif
+		if akActor.HasKeyword( Game.GetFormFromFile(0x4F2A3, "EstrusSpider.esp") as Keyword ) ;zzEstrusSpiderParasiteKWD Keyword
+			debug.Trace("MilkModEconomy EC Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+			Return True
+		endif
+	endif
+	
+	;Estrus Dwemer+
+	if Plugin_EstrusDwemer
+		if akActor.HasSpell( Game.GetFormFromFile(0x4e255, "EstrusDwemer.esp") as Spell ) ;DwemerBreeder spell
+			debug.Trace("MilkModEconomy ED Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+			Return True
+		endif
+		if akActor.HasKeyword( Game.GetFormFromFile(0x4F2A3, "EstrusDwemer.esp") as Keyword ) ;zzEstrusDwemerParasiteKWD Keyword
+			debug.Trace("MilkModEconomy ED Pregnancy: " + akActor.GetLeveledActorBase().GetName())
 			Return True
 		endif
 	endif
