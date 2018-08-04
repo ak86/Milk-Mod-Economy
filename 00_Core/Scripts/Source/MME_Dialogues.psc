@@ -88,7 +88,7 @@ MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	endif
 
 	if akSpeaker.GetLeveledActorBase().GetSex() == 1 || (akSpeaker.GetLeveledActorBase().GetSex() == 0 && MilkQ.MaleMaids)
-;checks if npc has string "Milkslave" or "Milkmaid" in its name and make it milkslave if it is
+;checks if npc has string "Milkslave" or "Milkmaid", "Milk slave" or "Milk maid", "Cow" in its name and make it milkslave if it is
 		if MilkQ.IsNamedMaid(akSpeaker) != 0 && MilkQ.MILKSlave.Find(none) != -1 && MilkQ.MILKSlave.Find(akSpeaker) == -1 && MilkQ.MilkMaid.Find(akSpeaker) == -1 && MilkQ.DialogueForceMilkSlave
 			MilkQ.AssignSlotSlave(akSpeaker, 0, Utility.RandomInt(4))
 		endif

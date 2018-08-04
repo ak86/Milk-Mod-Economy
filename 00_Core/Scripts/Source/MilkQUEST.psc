@@ -164,22 +164,57 @@ Float Property LactacidDecayRate Auto
 
 FormList Property MME_Cums Auto
 FormList Property MME_Foods Auto
-FormList Property MME_Drinks Auto
-FormList Property MME_Milks Auto
-FormList Property MME_Milk_Basic Auto
+FormList Property MME_Drinks Auto			;all fluids
+FormList Property MME_Milks Auto			;all milk
+FormList Property MME_Milk_Basic Auto		;generic milk
 FormList Property MME_Milk_Race Auto
+FormList Property MME_Races Auto
+FormList Property MME_RacesVampire Auto
 FormList Property MME_Milk_Special Auto		;MME_Milk_Succubus+MME_Milk_Vampire+MME_Milk_Werewolf
-FormList Property MME_Milk_Altmer Auto
-FormList Property MME_Milk_Argonian Auto
-FormList Property MME_Milk_Bosmer Auto
-FormList Property MME_Milk_Breton Auto
-FormList Property MME_Milk_Dunmer Auto
-FormList Property MME_Milk_Exotic Auto
-FormList Property MME_Milk_Imperial Auto
-FormList Property MME_Milk_Khajiit Auto
-FormList Property MME_Milk_Nord Auto
-FormList Property MME_Milk_Orc Auto
-FormList Property MME_Milk_Redguard Auto
+FormList Property MME_Milk_Altmer_Normal Auto
+FormList Property MME_Milk_Altmer_Werewolf Auto
+FormList Property MME_Milk_Altmer_Succubus Auto
+FormList Property MME_Milk_Altmer_Vampire Auto
+FormList Property MME_Milk_Argonian_Normal Auto
+FormList Property MME_Milk_Argonian_Werewolf Auto
+FormList Property MME_Milk_Argonian_Succubus Auto
+FormList Property MME_Milk_Argonian_Vampire Auto
+FormList Property MME_Milk_Bosmer_Normal Auto
+FormList Property MME_Milk_Bosmer_Werewolf Auto
+FormList Property MME_Milk_Bosmer_Succubus Auto
+FormList Property MME_Milk_Bosmer_Vampire Auto
+FormList Property MME_Milk_Breton_Normal Auto
+FormList Property MME_Milk_Breton_Werewolf Auto
+FormList Property MME_Milk_Breton_Succubus Auto
+FormList Property MME_Milk_Breton_Vampire Auto
+FormList Property MME_Milk_Dunmer_Normal Auto
+FormList Property MME_Milk_Dunmer_Werewolf Auto
+FormList Property MME_Milk_Dunmer_Succubus Auto
+FormList Property MME_Milk_Dunmer_Vampire Auto
+FormList Property MME_Milk_Exotic_Normal Auto
+FormList Property MME_Milk_Exotic_Werewolf Auto
+FormList Property MME_Milk_Exotic_Succubus Auto
+FormList Property MME_Milk_Exotic_Vampire Auto
+FormList Property MME_Milk_Imperial_Normal Auto
+FormList Property MME_Milk_Imperial_Werewolf Auto
+FormList Property MME_Milk_Imperial_Succubus Auto
+FormList Property MME_Milk_Imperial_Vampire Auto
+FormList Property MME_Milk_Khajiit_Normal Auto
+FormList Property MME_Milk_Khajiit_Werewolf Auto
+FormList Property MME_Milk_Khajiit_Succubus Auto
+FormList Property MME_Milk_Khajiit_Vampire Auto
+FormList Property MME_Milk_Nord_Normal Auto
+FormList Property MME_Milk_Nord_Werewolf Auto
+FormList Property MME_Milk_Nord_Succubus Auto
+FormList Property MME_Milk_Nord_Vampire Auto
+FormList Property MME_Milk_Orc_Normal Auto
+FormList Property MME_Milk_Orc_Werewolf Auto
+FormList Property MME_Milk_Orc_Succubus Auto
+FormList Property MME_Milk_Orc_Vampire Auto
+FormList Property MME_Milk_Redguard_Normal Auto
+FormList Property MME_Milk_Redguard_Werewolf Auto
+FormList Property MME_Milk_Redguard_Succubus Auto
+FormList Property MME_Milk_Redguard_Vampire Auto
 FormList Property MME_Milk_Succubus Auto
 FormList Property MME_Milk_Vampire Auto
 FormList Property MME_Milk_Werewolf Auto
@@ -194,6 +229,7 @@ LeveledItem Property MME_LItemSkooma75RaceMilkLactacid Auto
 
 Faction Property MilkMaidFaction Auto
 Faction Property MilkSlaveFaction Auto
+Faction Property MME_MilkFaction Auto
 
 ;NotificationKey
 Int Property NotificationKey Auto
@@ -546,6 +582,9 @@ Function MilkCycle(Actor akActor, int t)
 	Int   BreastRows = MME_Storage.getBreastRows(akActor)
 	Int MaidLevelProgressionAffectsMilkGen = StorageUtil.GetIntValue(none,"MME.MaidLevelProgressionAffectsMilkGen", missing = 0)
 	Int MaidLevel
+	Float LactacidFactor
+	
+	Bool IsMilkingArmor = false
 	
 	Form maidArmor = akActor.GetWornForm(Armor.GetMaskForSlot(32))
 
@@ -595,53 +634,65 @@ Function MilkCycle(Actor akActor, int t)
 	endif
 	
 	;cycle to generate milk, raise/lower generation
-	Int tmod = t
-	while tmod != 0
-		MaidLevel = MME_Storage.getMaidLevel(akActor)
-		if LactacidCnt > 0\
-		|| (isPregnant(akActor) && (MilkCnt + MilkTick < MilkMax))
-		;|| ((MaidMilkGen > 0 || isPregnant(akActor)) && (MilkCnt + MilkTick < MilkMax))							;increase milk generation
-			if MaidLevelProgressionAffectsMilkGen == 0 || MaidLevel == 0
-				MaidMilkGen += MilkGenValue * BreastRows
-			else
-				MaidMilkGen += MilkGenValue * BreastRows * (MaidLevelProgressionAffectsMilkGen * MaidLevel)
-			endif
-		elseif isPregnant(akActor)
-			;do nothing
-		else																										;reduce milk generation
-			MaidMilkGen -= (MilkGenValue * BreastRows)/ (1 + MaidLevelProgressionAffectsMilkGen * MaidLevel)
-			if MaidMilkGen < 0
-				MaidMilkGen = 0
-			endif
-		endif
-		
-		if (FixedMilkGen || (akActor != PlayerREF && FixedMilkGen4Followers ))										;cheats fixed 0.3 milk prod
-			MilkTickCycle = (BoobTick + MaidMilkGen)/3 
-			MilkTick += MilkTickCycle * (1 + SLA.GetActorArousal(akActor)/100) * MilkProdMod/100
-		elseif MaidMilkGen > 0																						;dynamic milk prod
-			MilkTickCycle = (BoobTick + MaidMilkGen)/3/10															;basic formula
-			if LactacidCnt > 0																						;we have lactacid, apply LactacidMod
-				MilkTickCycle *= LactacidMod
-			endif
-			
-			MilkTick += MilkTickCycle * (1 + SLA.GetActorArousal(akActor)/100) * MilkProdMod/100
-		endif
-		
-		;actor weight scaling, disabled cuz it can cause neck seam
-		;if  WeightUpScale && akActor.GetLeveledActorBase().GetWeight() + 1 < 100 && LactacidCnt > 0
-		;	Float NeckDelta = (akActor.GetLeveledActorBase().GetWeight() / 100) - ((akActor.GetLeveledActorBase().GetWeight() + 1) / 100)
-		;	akActor.GetLeveledActorBase().SetWeight(akActor.GetLeveledActorBase().GetWeight() + 1)
-		;	akActor.UpdateWeight(NeckDelta)
-		;endif
-		
-		if LactacidDecayRate > 0																					;reduce lactacid
+	If (FixedMilkGen || (akActor != PlayerREF && FixedMilkGen4Followers ))												;fixed milkproduction
+		MilkTick = 1.0 / 3 * BreastRows * (1 + SLA.GetActorArousal(akActor)/100) * MilkProdMod/100 * t
+		if LactacidDecayRate > 0																						;reduce lactacid, for purpose of belly decrease
 			LactacidCnt -= LactacidDecayRate
 		elseif LactacidDecayRate == 0
-			LactacidCnt -= MaidMilkGen * LactacidMod / 10
+			LactacidCnt -= MilkTick
 		endif
-		
-		tmod -= 1
-	endwhile
+		if LactacidCnt < 0
+			LactacidCnt = 0
+		endif
+	else																												;dynamic milk production
+		Int tmod1 = t
+		while tmod1 != 0
+			MaidLevel = MME_Storage.getMaidLevel(akActor)
+			LactacidFactor = ((LactacidCnt * LactacidCnt) / LactacidMod / PapyrusUtil.ClampInt(MaidLevel, 1, MaidLevel + 1))
+			if LactacidCnt > 0\
+			|| (isPregnant(akActor) && (MilkCnt + MilkTick < MilkMax))
+			;|| ((MaidMilkGen > 0 || isPregnant(akActor)) && (MilkCnt + MilkTick < MilkMax))							;has lactacid or pregnant and not full, increase milk generation
+				if MaidLevelProgressionAffectsMilkGen == 0 || MaidLevel == 0
+					MaidMilkGen += MilkGenValue * BreastRows
+				else
+					MaidMilkGen += MilkGenValue * BreastRows * (MaidLevelProgressionAffectsMilkGen * MaidLevel)
+				endif
+			elseif isPregnant(akActor)																					;no lactacid, pregnant, full of milk
+				;do nothing
+			else																										;no lactacid, not pregnant, reduce milk generation
+				MaidMilkGen -= (MilkGenValue * BreastRows)/ (1 + MaidLevelProgressionAffectsMilkGen * MaidLevel)
+				if MaidMilkGen < 0
+					MaidMilkGen = 0
+				endif
+			endif
+			
+			float LactacidCycle = 0
+			if MaidMilkGen > 0
+				MilkTickCycle = (BoobTick + MaidMilkGen)/3/10 * (1 + SLA.GetActorArousal(akActor)/100) * MilkProdMod/100;basic milkproduction formula
+				LactacidCycle = PapyrusUtil.ClampFloat(MilkTickCycle * LactacidFactor, 0, LactacidCnt)					;calculate LactacidFactor bonus milkproduction
+				MilkTickCycle = MilkTickCycle + LactacidCycle															;basic+bonus
+				MilkTick += MilkTickCycle																				;final milk production
+			endif
+			
+			;actor weight scaling, disabled cuz it can cause neck seam
+			;if  WeightUpScale && akActor.GetLeveledActorBase().GetWeight() + 1 < 100 && LactacidCnt > 0
+			;	Float NeckDelta = (akActor.GetLeveledActorBase().GetWeight() / 100) - ((akActor.GetLeveledActorBase().GetWeight() + 1) / 100)
+			;	akActor.GetLeveledActorBase().SetWeight(akActor.GetLeveledActorBase().GetWeight() + 1)
+			;	akActor.UpdateWeight(NeckDelta)
+			;endif
+			
+			if LactacidDecayRate > 0																					;reduce lactacid
+				LactacidCnt -= LactacidDecayRate
+			elseif LactacidDecayRate == 0
+				LactacidCnt -= LactacidCycle
+			endif
+			if LactacidCnt < 0
+				LactacidCnt = 0
+			endif
+			
+			tmod1 -= 1
+		endwhile
+	EndIf
 
 	;update actor values
 	If MilkAsMaidTimesMilked
@@ -654,10 +705,6 @@ Function MilkCycle(Actor akActor, int t)
 	MilkCnt += MilkTick
 	PainCnt -= paintick
 	
-	if LactacidCnt < 0
-		LactacidCnt = 0
-	endif
-	
 	if PainCnt < 0
 		PainCnt = 0
 	endif
@@ -668,12 +715,26 @@ Function MilkCycle(Actor akActor, int t)
 	endif
 	SLA.UpdateActorExposure(akActor, t)
 
+	if MilkingEquipment.Find(maidArmor.getname()) != -1\
+	|| maidArmor == MilkCuirass\
+	|| maidArmor == MilkCuirassFuta\
+	|| StringUtil.Find(maidArmor.getname(), "Milk" ) >= 0\
+	|| StringUtil.Find(maidArmor.getname(), "Cow" ) >=0
+		IsMilkingArmor = true
+	endif
+	
 	;play leaking effects, if breast are bigger then max
 	if MilkCnt > MilkMax && PiercingCheck(akActor) != 2
 		If BreastScaleLimit
 			MilkCnt = MilkMax
 		else
-			MilkCnt -= MilkCnt/MilkMax 
+			float bottles = MilkCnt - MilkMax - ((MilkCnt / MilkMax) - 1) * MaidLevel
+			if IsMilkingArmor
+				StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkingContainerMilksSUM", bottles)
+			endIf
+			MilkCnt -= bottles
+
+			;MilkCnt -= (MilkCnt - MilkMax) / MilkCnt/MilkMax 
 		endif
 		if akActor.IsNearPlayer()
 			AddMilkFx(akActor, 1)
@@ -703,7 +764,7 @@ Function MilkCycle(Actor akActor, int t)
 		if  MilkQC.Buffs && akActor.IsNearPlayer()
 			akActor.AddSpell( MME_Spells_Buffs.GetAt(3) as Spell, false )
 			if PainSystem && PainKills
-				akActor.DamageActorValue("Health", 0.5 * akActor.GetBaseActorValue("Health"))
+				akActor.DamageActorValue("Health", 0.5 * akActor.GetActorValue("Health"))
 			endif
 		endif
 		If MilkMsgs && PlayerREF.GetDistance(akActor) < 500
@@ -717,11 +778,7 @@ Function MilkCycle(Actor akActor, int t)
 		
 	;events based on equipped armor(milking,estus etc)
 	if maidArmor != None && MME_Storage.getBreastRows(akActor) == 1
-		if MilkingEquipment.Find(maidArmor.getname()) != -1\
-		|| maidArmor == MilkCuirass\
-		|| maidArmor == MilkCuirassFuta\
-		|| StringUtil.Find(maidArmor.getname(), "Milk" ) >= 0\
-		|| StringUtil.Find(maidArmor.getname(), "Cow" ) >=0
+		if IsMilkingArmor
 			if StorageUtil.GetIntValue(akActor,"MME.MilkMaid.MilkingMode") == 2
 				if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") > 0
 					if LactacidCnt == 0 && MilkCnt <= 1
@@ -775,17 +832,17 @@ Function MilkCycle(Actor akActor, int t)
 		elseif akActor == PlayerREF && !ArmorStrippingDisabled && Sexlab.IsStrippable(maidArmor)
 			if !(maidArmor == TITS4	|| maidArmor == TITS6 || maidArmor == TITS8 || DDi.IsMilkingBlocked_Suit(akActor))
 				;heavy armor	
-				if MilkCnt > 12 && maidArmor.HasKeyword(Game.GetFormFromFile(0x6BBD2, "Skyrim.esm") as keyword)
-					Debug.Notification("Your breasts are too big to fit into your armor")
+				if MilkCnt > 4 && maidArmor.HasKeyword(Game.GetFormFromFile(0x6BBD2, "Skyrim.esm") as keyword)
+					Debug.Notification("Your breasts are too big to fit into your heavy armor")
 					akActor.UnEquipItem(maidArmor)
 				endif
 				;light armor	
 				if MilkCnt > 8 && maidArmor.HasKeyword(Game.GetFormFromFile(0x6BBD3, "Skyrim.esm") as keyword)
-					Debug.Notification("Your breasts are too big to fit into your armor")
+					Debug.Notification("Your breasts are too big to fit into your light armor")
 					akActor.UnEquipItem(maidArmor)
 				endif
 				;clothes
-				if MilkCnt > 4
+				if MilkCnt > 12
 					Debug.Notification("Your breasts are too big to fit into your clothes")
 					akActor.UnEquipItem(maidArmor)
 				endif
@@ -889,6 +946,7 @@ Function AssignSlotSlave(Actor akActor, Int Level, Float Milk)
 		MME_Storage.initializeActor(akActor, Level, Milk)
 		StorageUtil.SetIntValue(akActor,"MME.MilkMaid.IsSlave", 1)
 		akActor.AddToFaction(MilkSlaveFaction)
+		CurrentSize(akActor)
 	Else
 		Debug.notification("No more Milk Slave slots")
 		return
@@ -1021,10 +1079,8 @@ Function CurrentSize(Actor akActor)
 		
 		if BellyScale
 			LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
-		else
-			LactacidCnt = 0
+			BodyMod.SetNodeScale(akActor, "NPC Belly", 1 + LactacidCnt / 2, isFemale)
 		endif
-		BodyMod.SetNodeScale(akActor, "NPC Belly", 1 + LactacidCnt / 2, isFemale)
 	endif
 EndFunction
 
@@ -1098,11 +1154,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 	String akActorGender = akActorSex(akActor)
 	
 	String anivar = ""						;custom animations by MME for DD belt
-	if DDBeltOpen == true					;--vaginal probe
-		anivar += "_02"
-	elseif DDBelt == true					;-anal plug -vaginal probe
-		anivar += "_01"
-	endif
+	String LastAnimation					;save last animation name to not run animation same twice in a row, causing instant disappearance and appearance of animated objects
 	
 	Float LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
 	Float LactacidMax = MME_Storage.getLactacidMaximum(akActor)
@@ -1442,6 +1494,12 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 		endif
 	endif
 		
+	if DDBeltOpen == true					;animation without vaginal probe
+		anivar += "_02"
+	elseif DDBelt == true					;animation without anal plug, vaginal probe
+		anivar += "_01"
+	endif
+	
 	sendVibrationEvent("StartMilkingMachine", akActor, mpas, MilkingType)
 
 ;-----------------------Feeding/Milking/Fuck machine
@@ -1489,10 +1547,12 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 							endif
 							
 							;bound/unbound animation +: no anal/vaginal vairations
-							if MilkingType == 0
-								Debug.SendAnimationEvent(akActor,("ZaZMOMFreeFurn_05"+anivar))
-							elseif MilkingType != 0
-								Debug.SendAnimationEvent(akActor,("ZaZMOMBoundFurn_05"+anivar))
+							if MilkingType == 0 && LastAnimation != "ZaZMOMFreeFurn_05"+anivar
+								LastAnimation = "ZaZMOMFreeFurn_05"
+								Debug.SendAnimationEvent(akActor, LastAnimation+anivar)
+							elseif MilkingType != 0 && LastAnimation != "ZaZMOMBoundFurn_05"+anivar
+								LastAnimation = "ZaZMOMBoundFurn_05"
+								Debug.SendAnimationEvent(akActor, LastAnimation+anivar)
 							endif
 							
 							sendVibrationEvent("FeedingStage", akActor, mpas, MilkingType)
@@ -1560,16 +1620,20 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 			;milkpump animation selector
 			If Mode == 0
 				if MilkingType == 0
-					if mpas == 1
-						Debug.SendAnimationEvent(akActor,("ZaZMOMFreeFurn_11"+anivar))
-					elseif mpas == 2
-						Debug.SendAnimationEvent(akActor,("ZaZMOMFreeFurn_12"+anivar))
+					if mpas == 1 && LastAnimation != "ZaZMOMFreeFurn_11"+anivar
+						LastAnimation = "ZaZMOMFreeFurn_11"
+						Debug.SendAnimationEvent(akActor, LastAnimation+anivar)
+					elseif mpas == 2 && LastAnimation != "ZaZMOMFreeFurn_12"+anivar
+						LastAnimation = "ZaZMOMFreeFurn_12"
+						Debug.SendAnimationEvent(akActor, LastAnimation+anivar)
 					endif
 				elseif MilkingType != 0
-					if mpas == 1
-						Debug.SendAnimationEvent(akActor,("ZaZMOMBoundFurn_11"+anivar))
-					elseif mpas == 2
-						Debug.SendAnimationEvent(akActor,("ZaZMOMBoundFurn_12"+anivar))
+					if mpas == 1 && LastAnimation != "ZaZMOMBoundFurn_11"+anivar
+						LastAnimation = "ZaZMOMBoundFurn_11"
+						Debug.SendAnimationEvent(akActor, LastAnimation+anivar)
+					elseif mpas == 2 && LastAnimation != "ZaZMOMBoundFurn_12"+anivar
+						LastAnimation = "ZaZMOMBoundFurn_12"
+						Debug.SendAnimationEvent(akActor, LastAnimation+anivar)
 					endif
 				endif
 			Endif
@@ -1709,16 +1773,20 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 			;milkpump animation selector
 			If Mode == 0
 				if MilkingType == 0
-					if mpas == 1
-						Debug.SendAnimationEvent(akActor,("ZaZMOMFreeFurn_07"+anivar))
-					elseif mpas == 2
-						Debug.SendAnimationEvent(akActor,("ZaZMOMFreeFurn_08"+anivar))
+					if mpas == 1 && LastAnimation != "ZaZMOMFreeFurn_07"+anivar
+						LastAnimation = "ZaZMOMFreeFurn_07"
+						Debug.SendAnimationEvent(akActor, LastAnimation+anivar)
+					elseif mpas == 2 && LastAnimation != "ZaZMOMFreeFurn_08"+anivar
+						LastAnimation = "ZaZMOMFreeFurn_08"
+						Debug.SendAnimationEvent(akActor, LastAnimation+anivar)
 					endif
 				elseif MilkingType != 0
-					if mpas == 1
-						Debug.SendAnimationEvent(akActor,("ZaZMOMBoundFurn_07"+anivar))
-					elseif mpas == 2
-						Debug.SendAnimationEvent(akActor,("ZaZMOMBoundFurn_08"+anivar))
+					if mpas == 1 && LastAnimation != "ZaZMOMBoundFurn_07"+anivar
+						LastAnimation = "ZaZMOMBoundFurn_07"
+						Debug.SendAnimationEvent(akActor, LastAnimation+anivar)
+					elseif mpas == 2 && LastAnimation != "ZaZMOMBoundFurn_08"+anivar
+						LastAnimation = "ZaZMOMBoundFurn_08"
+						Debug.SendAnimationEvent(akActor, LastAnimation+anivar)
 					endif
 				endif
 			endif
@@ -1913,6 +1981,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 			Debug.SendAnimationEvent(akActor,"IdleForceDefaultState")
 		endif
 		
+		;debug.Notification(Mode + " Mode.")
 		if bottles > 0
 			if IsMilkMaid == true
 				LevelCheck()
@@ -2026,22 +2095,21 @@ Function PostMilk(Actor akActor)
 	;Spell Breasts_Spell = Game.GetFormFromFile(0x7D36A, "milkmodnew.esp") as Spell
 	Float BreastsSize_Node = NetImmerse.GetNodeScale(akActor, "NPC L Breast", false)
 
-	if akActor.HasSpell(MME_Spells_Buffs.GetAt(1) as Spell)
-		akActor.RemoveSpell(MME_Spells_Buffs.GetAt(1) as Spell)
-	endif
-	if akActor.HasSpell(MME_Spells_Buffs.GetAt(2) as Spell)
-		akActor.RemoveSpell(MME_Spells_Buffs.GetAt(2) as Spell)
-	endif
-	if akActor.HasSpell(MME_Spells_Buffs.GetAt(0) as Spell)
-		akActor.RemoveSpell(MME_Spells_Buffs.GetAt(0) as Spell)
-	endif
-		
 	if MilkQC.Buffs != true
 		if akActor.HasSpell(MME_Spells_Buffs.GetAt(3) as Spell)
 			akActor.RemoveSpell(MME_Spells_Buffs.GetAt(3) as Spell)
 		endif
 		if akActor.HasSpell(MME_Spells_Buffs.GetAt(4) as Spell)
 			akActor.RemoveSpell(MME_Spells_Buffs.GetAt(4) as Spell)
+		endif
+		if akActor.HasSpell(MME_Spells_Buffs.GetAt(1) as Spell)
+			akActor.RemoveSpell(MME_Spells_Buffs.GetAt(1) as Spell)
+		endif
+		if akActor.HasSpell(MME_Spells_Buffs.GetAt(2) as Spell)
+			akActor.RemoveSpell(MME_Spells_Buffs.GetAt(2) as Spell)
+		endif
+		if akActor.HasSpell(MME_Spells_Buffs.GetAt(0) as Spell)
+			akActor.RemoveSpell(MME_Spells_Buffs.GetAt(0) as Spell)
 		endif
 	else
 		;Unmilked debuff
@@ -2067,6 +2135,19 @@ Function PostMilk(Actor akActor)
 			(MME_Spells_Buffs.GetAt(0) as Spell).SetNthEffectMagnitude(effectCount, BreastsSize_Node * (1+ akActor.GetLeveledActorBase().GetWeight()/100))
 			effectCount = effectCount + 1
 		endwhile
+		
+		;remove spells
+		if akActor.HasSpell(MME_Spells_Buffs.GetAt(1) as Spell)
+			akActor.RemoveSpell(MME_Spells_Buffs.GetAt(1) as Spell)
+		endif
+		if akActor.HasSpell(MME_Spells_Buffs.GetAt(2) as Spell)
+			akActor.RemoveSpell(MME_Spells_Buffs.GetAt(2) as Spell)
+		endif
+		if akActor.HasSpell(MME_Spells_Buffs.GetAt(0) as Spell)
+			akActor.RemoveSpell(MME_Spells_Buffs.GetAt(0) as Spell)
+		endif
+		
+		;re-add spells
 		akActor.AddSpell(MME_Spells_Buffs.GetAt(0) as Spell, false)
 
 		if MilkCnt / MilkMax <= 0.4
@@ -2133,7 +2214,7 @@ Function MilkCycleMSG(Actor akActor)
 		elseif MilkCnt as int == (MilkMax - 2)
 			debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s nipples swell and tingle.")
 		else
-			debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s" + MilkMsgStage[MilkCnt as int])
+			debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s" + MilkMsgStage[PapyrusUtil.ClampInt(MilkCnt as int, 1, 22)])
 		endif
 	EndIf
 EndFunction
@@ -2659,27 +2740,30 @@ Function MMEfoodlistaddon()
 		i += 1
 	endwhile
 	
+	;add milk to outlaws?
 	if LItemSkooma75.GetNthForm(i) != MME_LItemSkooma75RaceMilkLactacid
 		MME_LItemSkooma75RaceMilkLactacid.Revert()
-
-		int t = 0																			;add 5 lactacid records to skooma LL list(100-75=25% spawn)
+		
+		;add 5 lactacid to skooma LL list(100-75=25% spawn)
+		int t = 0
 		MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Util_Potions.GetAt(t), 1, 1)
 		MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Util_Potions.GetAt(t), 1, 1)
 		MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Util_Potions.GetAt(t), 1, 1)
 		MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Util_Potions.GetAt(t), 1, 1)
 		MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Util_Potions.GetAt(t), 1, 1)
 
-		while t < MME_Milk_Altmer.GetSize()
-			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Altmer.GetAt(t), 1, 1)
-			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Argonian.GetAt(t), 1, 1)
-			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Bosmer.GetAt(t), 1, 1)
-			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Breton.GetAt(t), 1, 1)
-			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Dunmer.GetAt(t), 1, 1)
-			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Imperial.GetAt(t), 1, 1)
-			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Khajiit.GetAt(t), 1, 1)
-			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Nord.GetAt(t), 1, 1)
-			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Orc.GetAt(t), 1, 1)
-			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Redguard.GetAt(t), 1, 1)
+		;add normal races lactacid containing milk to skooma LL list(100-75=25% spawn)
+		while t < MME_Milk_Altmer_Normal.GetSize()
+			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Altmer_Normal.GetAt(t), 1, 1)
+			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Argonian_Normal.GetAt(t), 1, 1)
+			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Bosmer_Normal.GetAt(t), 1, 1)
+			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Breton_Normal.GetAt(t), 1, 1)
+			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Dunmer_Normal.GetAt(t), 1, 1)
+			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Imperial_Normal.GetAt(t), 1, 1)
+			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Khajiit_Normal.GetAt(t), 1, 1)
+			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Nord_Normal.GetAt(t), 1, 1)
+			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Orc_Normal.GetAt(t), 1, 1)
+			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Redguard_Normal.GetAt(t), 1, 1)
 			t += 1
 		endwhile
 		
@@ -2692,24 +2776,27 @@ Function MMEfoodlistaddon()
 		i += 1
 	endwhile
 	
+	;add milk to vendors
 	if LItemFoodInnCommon.GetNthForm(i) != MME_LItemFoodInnCommonMilk
 		MME_LItemFoodInnCommonMilk.Revert()
 
+		;add generic milk
 		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Basic.GetAt(0), 1, 1)
 		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Basic.GetAt(1), 1, 1)
 		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Basic.GetAt(2), 1, 1)
 		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Basic.GetAt(3), 1, 1)
-
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Altmer.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Argonian.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Bosmer.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Breton.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Dunmer.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Imperial.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Khajiit.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Nord.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Orc.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Redguard.GetAt(0), 1, 1)
+		
+		;add simple milk
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Altmer_Normal.GetAt(0), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Argonian_Normal.GetAt(0), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Bosmer_Normal.GetAt(0), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Breton_Normal.GetAt(0), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Dunmer_Normal.GetAt(0), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Imperial_Normal.GetAt(0), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Khajiit_Normal.GetAt(0), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Nord_Normal.GetAt(0), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Orc_Normal.GetAt(0), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Redguard_Normal.GetAt(0), 1, 1)
 
 		LItemFoodInnCommon.AddForm(MME_LItemFoodInnCommonMilk, 1, 1)
 		debug.Trace("MilkModEconomy adding MME_LItemFoodInnCommonMilk list to LItemFoodInnCommon")
@@ -3018,7 +3105,7 @@ Function Armor_Purge()
 	endWhile
 EndFunction
 
-Function VarSetup()
+bool Function VarSetup()
 	UnregisterForAllKeys()
 	debug.Trace("MilkModEconomy variable setup/reset")
 	MilkLvlCap = 10
@@ -3058,9 +3145,9 @@ Function VarSetup()
 	MilkQC.ExhaustionMode = 0
 	MilkQC.BrestEnlargement_MultiBreast_Effect = 5
 	MilkQC.Debug_enabled = 0
-	MME_NPCComments.SetValue(0)
+	MME_NPCComments.SetValue(10)
 	MilkQC.MME_DialogueMilking = True
-	MilkQC.MME_SimpleMilkPotions = True
+	MilkQC.MME_SimpleMilkPotions = False
 	ForcedFeeding = False
 	FixedMilkGen = False
 	FixedMilkGen4Followers = False
@@ -3115,6 +3202,8 @@ Function VarSetup()
 	Strings_setup()
 	Armor_Purge()
 	MMEfoodlistaddon()
+	
+	return true
 EndFunction
 
 Function UNINSTALL()
@@ -3209,6 +3298,21 @@ bool Function isPregnant(Actor akActor)
 		Return True
 	endif
 	
+	;Hentai pregnancy LE/SE
+	Faction HentaiPregnantFaction = ( Game.GetFormFromFile(0x12085, "HentaiPregnancy.esm") as Faction )		;HentaiPregnantFaction
+	if HentaiPregnantFaction
+		if akActor.GetFactionRank(HentaiPregnantFaction) == 2 || akActor.GetFactionRank(HentaiPregnantFaction) == 3
+		debug.Trace("MilkModEconomy SLHP2 Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+			Return True
+		endif
+	endif
+	
+	;Fertility Mode
+	if (StorageUtil.HasIntValue(akActor, "_JSW_FM_PregnantDay") && StorageUtil.GetIntValue(akActor, "_JSW_FM_PregnantDay") > 0)
+		debug.Trace("MilkModEconomy Fertility Mode Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+		Return True
+	endif
+	
 	;SL Hentai pregnancy
 	if SLHP.IsPregnant(akActor) == true
 		debug.Trace("MilkModEconomy SLHP Pregnancy: " + akActor.GetLeveledActorBase().GetName())
@@ -3227,9 +3331,15 @@ bool Function isPregnant(Actor akActor)
 		Return True
 	endif
 	
-	;PSQ SoulGem Pregnancy 2.15 || PSQ SoulGem Pregnancy 2.16 / SexLab SoulGem Pregnancy
-	if StorageUtil.GetIntValue(akActor, "PSQ_SoulGemPregnancyON", 0) != 0 || StorageUtil.GetIntValue(akActor, "PRG_IsPregnant") != 0
-		debug.Trace("MilkModEconomy SGP/PSQ Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+	;SexLab SoulGem Pregnancy
+	if StorageUtil.GetIntValue(akActor, "PRG_IsPregnant") != 0
+		debug.Trace("MilkModEconomy SGP Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+		Return True
+	endif
+	
+	;PlayerSuccubusQuest SoulGem Pregnancy
+	if StorageUtil.GetIntValue(akActor, "PSQ_SoulGemPregnancyON", 0) != 0
+		debug.Trace("MilkModEconomy PSQ Pregnancy: " + akActor.GetLeveledActorBase().GetName())
 		Return True
 	endif
 
@@ -3269,7 +3379,7 @@ bool Function isPregnant(Actor akActor)
 		endif
 	endif
 	
-	;BF 1.14
+	;BeeingFemale
 	if Plugin_BeeingFemale
 		if akActor.HasSpell( Game.GetFormFromFile(0x28a0, "BeeingFemale.esm") as Spell ) ;_BFStatePregnant spell
 			debug.Trace("MilkModEconomy BF Pregnancy: " + akActor.GetLeveledActorBase().GetName())
@@ -3277,7 +3387,7 @@ bool Function isPregnant(Actor akActor)
 		endif
 	endif
 	
-	;EggFactory 1.19
+	;EggFactory
 	If Game.GetModbyName("EggFactory.esp") != 255
 		if akActor.isInFaction( Game.GetFormFromFile(0x1101f, "EggFactory.esp") as Faction ) ;EggFactoryActiveFaction Faction
 			debug.Trace("MilkModEconomy EggFactory Pregnancy: " + akActor.GetLeveledActorBase().GetName())
@@ -3305,9 +3415,9 @@ int Function PiercingCheck(Actor akActor)
 EndFunction
 
 int Function IsNamedMaid(Actor akActor)
-	if StringUtil.Find(akActor.getname(), "Milkmaid" ) >= 0
+	if StringUtil.Find(akActor.getname(), "Milkmaid" ) >= 0 ||  StringUtil.Find(akActor.getname(), "Milk maid" ) >= 0
 		return 1
-	elseif StringUtil.Find(akActor.getname(), "Milkslave" ) >= 0
+	elseif StringUtil.Find(akActor.getname(), "Milkslave" ) >= 0 || StringUtil.Find(akActor.getname(), "Milk slave" ) >= 0
 		return 2
 	elseif StringUtil.Find(akActor.getname(), "Cow" ) >= 0
 		return 3

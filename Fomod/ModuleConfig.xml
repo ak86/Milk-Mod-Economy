@@ -225,30 +225,6 @@
 								</dependencyType>
 							</typeDescriptor>
 						</plugin>
-						<plugin name="ZaZ_Patch">
-							<description>
-								<![CDATA[Patch for ZaZ Animation Pack, will make all dwarven machines from ZaZ pack work as milkpumps, this might conflict with other mods that run scripts on dwarven machines, use at your own risk]]>
-							</description>
-							<conditionFlags>
-								<flag name="ZaZ_Patch">Active</flag>
-							</conditionFlags>
-							<files>
-								<folder source="03_Patches\ZaZ" destination=""/>
-							</files>
-							<typeDescriptor>
-								<dependencyType>
-									<defaultType name="Optional"/>
-									<patterns>
-										<pattern>
-											<dependencies>
-												<fileDependency file="ZaZAnimationPack.esm" state="Active"/>
-											</dependencies>
-											<type name="Recommended"/>
-										</pattern>
-									</patterns>
-								</dependencyType>
-							</typeDescriptor>
-						</plugin>
 						<plugin name="MME_Sandbox">
 							<description>
 								<![CDATA[Patch enables sandbox for milkpumps, any npc can use pumps]]>
@@ -282,6 +258,71 @@
 												<fileDependency file="ZaZAnimationPack.esm" state="Active"/>
 											</dependencies>
 											<type name="Recommended"/>
+										</pattern>
+									</patterns>
+								</dependencyType>
+							</typeDescriptor>
+						</plugin>
+					</plugins>   
+				</group>
+				<group name="ZaZ Animation Pack Support" type="SelectExactlyOne">
+					<plugins order="Explicit">			
+						<plugin name="No Patch">
+							<description>
+								<![CDATA[if you dont have for ZaZ Animation Pack 6.0+ or dont want Zaz dwemer machines to function as milkpumps]]>
+							</description>
+							<conditionFlags>
+								<flag name="ZaZ_Patch">Active</flag>
+							</conditionFlags>
+							<files>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>
+						<plugin name="No sandbox">
+							<description>
+								<![CDATA[Will make dwarven machines from ZaZ pack work as milkpumps, this might conflict with other mods that run scripts on dwarven machines, use at your own risk. No Sandbox - npc ai will ignore furniture]]>
+							</description>
+							<conditionFlags>
+								<flag name="ZaZ_No_sandbox">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="03_Patches\ZaZ" destination=""/>
+							</files>
+							<typeDescriptor>
+								<dependencyType>
+									<defaultType name="Optional"/>
+									<patterns>
+										<pattern>
+											<dependencies>
+												<fileDependency file="ZaZAnimationPack.esm" state="Active"/>
+											</dependencies>
+											<type name="Optional"/>
+										</pattern>
+									</patterns>
+								</dependencyType>
+							</typeDescriptor>
+						</plugin>
+						<plugin name="Sandbox">
+							<description>
+								<![CDATA[Will make dwarven machines from ZaZ pack work as milkpumps, this might conflict with other mods that run scripts on dwarven machines, use at your own risk. Sandbox - npc ai may use furniture on their own]]>
+							</description>
+							<conditionFlags>
+								<flag name="ZaZ_Patch_Sandbox">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="03_Patches\ZaZ Sandbox" destination=""/>
+							</files>
+							<typeDescriptor>
+								<dependencyType>
+									<defaultType name="Optional"/>
+									<patterns>
+										<pattern>
+											<dependencies>
+												<fileDependency file="ZaZAnimationPack.esm" state="Active"/>
+											</dependencies>
+											<type name="Optional"/>
 										</pattern>
 									</patterns>
 								</dependencyType>

@@ -21,7 +21,7 @@ Bool Property Unmilked_DeBuffs_SpeedStamina = True Auto Conditional
 ;Milk effects constructor
 ;----------------------------------------------------------------------------
 
-Bool Property MME_SimpleMilkPotions = True Auto Conditional
+Bool Property MME_SimpleMilkPotions = False Auto Conditional
 
 Bool Property Milk_RaceEffect = True Auto Conditional
 Bool Property Milk_SkillsEffect = True Auto Conditional

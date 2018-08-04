@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>08-04-2018</Version>
+  <Version>30-07-2018</Version>
   <Author>Ed86</Author>
   <Website>https://www.patreon.com/Ed86</Website>
   <Description>
@@ -61,6 +61,71 @@ b)	Using Campire mod to craft and place milkpumps
   
   
 Dev change log:
+
+	v 30-07-2018
+changed belly scaling, so it wont cause conflicts if using old netimmerse option
+animations with "Breastfeeding" tag should cause milking, that is if you find such animations or add tag yourself
+
+	v 17-07-2018
+fixed fixed milk production
+split zaz patch into sandbox/no sandbox versions
+
+	v 10-07-2018
+corrected milk generation with lactacid formula
+changed/added more difficulties(+-0.25% per difficulty), adept(ex-normal) is x1, you need to change those in mcm if you want to see correct difficulty if upgrading
+
+	v 08-07-2018
+fix for armor stripping incorrect order (due to breast milk)
+
+	v 26-06-2018
+khajiits will now give 1 free lactacid after breastfeeding them
+added sexlabnostip to xTITS armor
+changed so final payout inc all fees cant be lower than 0 when selling milk
+lowered economy max tax 80%->75%, so you'll get atleast something, when selling at bad prices
+fixed double upkeep calculation in dialogue trade
+added taxes display to mcm
+disabled debug "Mode" message after milking
+
+	v 16-06-2018
+fix sandbox, zaz esps
+added zaz sandbox
+
+	v 05-06-2018
+fix for SSE Nio
+
+	v 03-06-2018
+reduced milk prices to sane? level
+added pregnancy detection for fertility mode
+
+	v 02-06-2018
+changed milk leaking formula, so most milk above maximum will be lost, unless wearing milkcuirass, then it will be added to milk container and can be retrieved after milking at milkpump
+added mcm ruskii translation
+when milkslave added through event with custom level/milk they will instantly refresh bodysize
+	
+	v 28-05-2018
+fixed potentially lethal health damage drinking breast enlargement potion and triggering multibreast event
+fixed esps: zaz, sandbox, campfire
+
+	v 14-05-2018
+added vampire/werewolf/succubus maidlevel based milks, 120+ milks
+renamed editorids of all milks, so that tey can be filtered into some sense list in ck
+support for SLHP LE/SE
+
+	v 13-05-2018
+readded unmilked/milked buffs
+added vampire/werewolf/succubus formlists
+normalized milk weights to 1
+added some fixes to milkslave creation via event
+
+	v 03-05-2018
+changed milk generation formula
+
+	v 28-04-2018
+merged pumps scripts, removed bound script, now it should be safe to switch pump plugins mid game
+changed how milkpump animations called, animations should be more smooth
+
+	v 11-04-2018
+Full mod conversion test for SE
 
 	v 08-04-2018
 remembered to upload v 26-03-2018

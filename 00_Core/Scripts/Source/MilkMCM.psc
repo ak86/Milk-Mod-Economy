@@ -48,7 +48,7 @@ bool MaidRemove = false
 bool ResetVar = false
 bool uninstall = false
 int MaidlistModeIndex = 0
-int PresetIndex = 1
+int PresetIndex = 3
 int MaidIndex = 0
 int ArmorlistIndex = 0
 int ArmorSlotListIndex = 0
@@ -76,10 +76,13 @@ Function RefreshStrings()
 	Pages[7] = "$MME_MENU_PAGE_Spells_Configuration"
 	Pages[8] = "$MME_MENU_PAGE_Armor_Management"
 	
-	Preset = new string[3]
-	Preset[0] = "$MME_MENU_Preset_Hard"
-	Preset[1] = "$MME_MENU_Preset_Normal"
-	Preset[2] = "$MME_MENU_Preset_Easy"
+	Preset = new string[6]
+	Preset[0] = "$MME_MENU_Preset_Legendary"
+	Preset[1] = "$MME_MENU_Preset_Master"
+	Preset[2] = "$MME_MENU_Preset_Expert"
+	Preset[3] = "$MME_MENU_Preset_Adept"
+	Preset[4] = "$MME_MENU_Preset_Apprentice"
+	Preset[5] = "$MME_MENU_Preset_Novice"
 	
 	Armorlist = new string[4]
 	Armorlist[0] = "--"
@@ -371,7 +374,7 @@ function Page_Settings()
 		
 	SetCursorPosition(1)
 		AddHeaderOption("$MME_MENU_PAGE_Settings_H4")
-			AddMenuOptionST("Difficulty_Menu", "", Preset[PresetIndex])
+			AddMenuOptionST("Difficulty_Menu", "Difficulty:", Preset[PresetIndex])
 			int i = 1
 			while i <= 10
 				AddTextOption("Times milked for level " + i + ":", i*MilkQ.TimesMilkedMult as int, OPTION_FLAG_DISABLED)	
@@ -426,44 +429,44 @@ endfunction
 function Page_Market()
 	SetCursorFillMode(TOP_TO_BOTTOM)
 		AddHeaderOption(MilkQ.MilkE.locWhiterun.GetName())
-			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoWhiterun, OPTION_FLAG_DISABLED)
+			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoWhiterun + " (" + (MilkQ.MilkE.CalculateServiceTaxHelper(MilkQ.MilkE.MilkEcoWhiterun) * 100) as int + ")", OPTION_FLAG_DISABLED)
 			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Demand", RaceMilk[MilkQ.MilkE.MilkDemandWhiterun], OPTION_FLAG_DISABLED)
 			AddEmptyOption()
 		AddHeaderOption(MilkQ.MilkE.locMarkarth.GetName())
-			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoMarkarth, OPTION_FLAG_DISABLED)
+			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoMarkarth + " (" + (MilkQ.MilkE.CalculateServiceTaxHelper(MilkQ.MilkE.MilkEcoWhiterun) * 100) as int + ")", OPTION_FLAG_DISABLED)
 			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Demand", RaceMilk[MilkQ.MilkE.MilkDemandMarkarth], OPTION_FLAG_DISABLED)
 			AddEmptyOption()
 		AddHeaderOption(MilkQ.MilkE.locSolitude.GetName())
-			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoSolitude, OPTION_FLAG_DISABLED)
+			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoSolitude + " (" + (MilkQ.MilkE.CalculateServiceTaxHelper(MilkQ.MilkE.MilkEcoSolitude) * 100) as int + ")", OPTION_FLAG_DISABLED)
 			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Demand", RaceMilk[MilkQ.MilkE.MilkDemandSolitude], OPTION_FLAG_DISABLED)
 			AddEmptyOption()
 		AddHeaderOption(MilkQ.MilkE.locDawnstar.GetName())
-			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoDawnstar, OPTION_FLAG_DISABLED)
+			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoDawnstar + " (" + (MilkQ.MilkE.CalculateServiceTaxHelper(MilkQ.MilkE.MilkEcoDawnstar) * 100) as int + ")", OPTION_FLAG_DISABLED)
 			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Demand", RaceMilk[MilkQ.MilkE.MilkDemandDawnstar], OPTION_FLAG_DISABLED)
 			AddEmptyOption()
 		AddHeaderOption(MilkQ.MilkE.locWindhelm.GetName())
-			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoWindhelm, OPTION_FLAG_DISABLED)
+			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoWindhelm + " (" + (MilkQ.MilkE.CalculateServiceTaxHelper(MilkQ.MilkE.MilkEcoWindhelm) * 100) as int + ")", OPTION_FLAG_DISABLED)
 			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Demand", RaceMilk[MilkQ.MilkE.MilkDemandWindhelm], OPTION_FLAG_DISABLED)
 
 	SetCursorPosition(1)
 		AddHeaderOption(MilkQ.MilkE.locRiften.GetName())
-			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoRiften, OPTION_FLAG_DISABLED)
+			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoRiften + " (" + (MilkQ.MilkE.CalculateServiceTaxHelper(MilkQ.MilkE.MilkEcoRiften) * 100) as int + ")", OPTION_FLAG_DISABLED)
 			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Demand", RaceMilk[MilkQ.MilkE.MilkDemandRiften], OPTION_FLAG_DISABLED)
 			AddEmptyOption()
 		AddHeaderOption(MilkQ.MilkE.locFalkreath.GetName())
-			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoFalkreath, OPTION_FLAG_DISABLED)
+			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoFalkreath + " (" + (MilkQ.MilkE.CalculateServiceTaxHelper(MilkQ.MilkE.MilkEcoFalkreath) * 100) as int + ")", OPTION_FLAG_DISABLED)
 			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Demand", RaceMilk[MilkQ.MilkE.MilkDemandFalkreath], OPTION_FLAG_DISABLED)
 			AddEmptyOption()
 		AddHeaderOption("$MME_MENU_PAGE_Milk_Market_Information_Orcish_Strongholds")
-			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoOrc, OPTION_FLAG_DISABLED)
+			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoOrc + " (" + (MilkQ.MilkE.CalculateServiceTaxHelper(MilkQ.MilkE.MilkEcoOrc) * 100) as int + ")", OPTION_FLAG_DISABLED)
 			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Demand", RaceMilk[MilkQ.MilkE.MilkDemandOrc], OPTION_FLAG_DISABLED)
 			AddEmptyOption()
 		AddHeaderOption("$MME_MENU_PAGE_Milk_Market_Information_Khajiit_Caravaneers")
-			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoCaravan, OPTION_FLAG_DISABLED)
+			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoCaravan + " (" + (MilkQ.MilkE.CalculateServiceTaxHelper(MilkQ.MilkE.MilkEcoCaravan) * 100) as int + ")", OPTION_FLAG_DISABLED)
 			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Demand", RaceMilk[MilkQ.MilkE.MilkDemandCaravan], OPTION_FLAG_DISABLED)
 			AddEmptyOption()
 		AddHeaderOption("$MME_MENU_PAGE_Milk_Market_Information_Solstheim")
-			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoMorrowind, OPTION_FLAG_DISABLED)
+			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Market", MilkQ.MilkE.MilkEcoMorrowind + " (" + (MilkQ.MilkE.CalculateServiceTaxHelper(MilkQ.MilkE.MilkEcoMorrowind) * 100) as int + ")", OPTION_FLAG_DISABLED)
 			AddTextOption("$MME_MENU_PAGE_Milk_Market_Information_Demand", RaceMilk[MilkQ.MilkE.MilkDemandMorrowind], OPTION_FLAG_DISABLED)
 endfunction
 
@@ -549,15 +552,26 @@ function Page_MilkMaidDebug()
 				int   BreastRows = MME_Storage.getBreastRows(MaidlistA[MaidIndex])
 				float MilkMax = MME_Storage.getMilkMaximum(MaidlistA[MaidIndex])
 				float MilkCnt = MME_Storage.getMilkCurrent(MaidlistA[MaidIndex])
+				int   MaidLevel = MME_Storage.getMaidLevel(MaidlistA[MaidIndex])
+				float MaidMilkGen = StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkGen") * BreastRows
 				float MaidBreastsBaseadjust = MME_Storage.getBreastsBaseadjust(MaidlistA[MaidIndex])
 				float LactacidMod = StorageUtil.GetFloatValue(none,"MME.LactacidMod", missing = 10)
-				int   MaidLevel = MME_Storage.getMaidLevel(MaidlistA[MaidIndex])
-				float MaidMilkGen = StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkGen")
+				float LactacidCnt = MME_Storage.getLactacidCurrent(MaidlistA[MaidIndex])
+				float LactacidFactor = ((LactacidCnt * LactacidCnt) / LactacidMod / PapyrusUtil.ClampInt(MaidLevel, 1, MaidLevel + 1))
 				Int MaidLevelProgressionAffectsMilkGen = StorageUtil.GetIntValue(none,"MME.MaidLevelProgressionAffectsMilkGen", missing = 0)
-					if MaidLevelProgressionAffectsMilkGen != 0
-						MaidMilkGen *= MaidLevelProgressionAffectsMilkGen * MaidLevel
-					endif
-				float MilkTick = (MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]) + MaidBoobPerLvl*MaidLevel + MaidMilkGen)/3 * (1 + MilkQ.SLA.GetActorArousal(MaidlistA[MaidIndex])/100)
+				if MaidLevelProgressionAffectsMilkGen != 0
+					MaidMilkGen *= MaidLevelProgressionAffectsMilkGen * MaidLevel
+				endif
+					
+				float MilkTick = 0
+				float FinalMilkTick = 0
+				if MilkQ.FixedMilkGen || (MaidlistA[MaidIndex] != MilkQ.PlayerREF && MilkQ.FixedMilkGen4Followers)
+					MilkTick = 1.0/3 * BreastRows * (1 + MilkQ.SLA.GetActorArousal(MaidlistA[MaidIndex])/100) * MilkQ.MilkProdMod/100
+					FinalMilkTick = MilkTick
+				else
+					MilkTick = (MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]) + MaidMilkGen)/3/10 * (1 + MilkQ.SLA.GetActorArousal(MaidlistA[MaidIndex])/100) * MilkQ.MilkProdMod/100
+					FinalMilkTick = MilkTick + PapyrusUtil.ClampFloat(MilkTick * LactacidFactor, 0, LactacidCnt)
+				endif
 
 				; arousal provides an additional bonus
 				;  value range: 1 <= x <= 2
@@ -579,9 +593,11 @@ function Page_MilkMaidDebug()
 
 				AddTextOptionST("Debug_MM_MaidPregnancy", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S4", MilkQ.isPregnant(MaidlistA[MaidIndex]) as String, OPTION_FLAG_DISABLED)	
 				AddTextOptionST("Debug_MM_MaidGender", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S5", MilkQ.akActorSex(MaidlistA[MaidIndex]) as String, OPTION_FLAG_DISABLED)	
+
 				AddSliderOptionST("Debug_MM_MaidLevel_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S6", MaidLevel)
 				AddSliderOptionST("Debug_MM_MaidTimesMilked_Slider", "$MME_MENU_Times_Milked_(this_level)", MaidTimesMilked as int)
 				AddTextOptionST("Debug_MM_Maid_MilksToNextLevel", "$MME_MENU_Next_Level", ((MaidLevel+1) * MilkQ.TimesMilkedMult - MaidTimesMilked) as int, OPTION_FLAG_DISABLED)	
+
 				AddTextOption("$MME_MENU_PAGE_Debug_MM_Maid_Breast", "", OPTION_FLAG_DISABLED)
 				AddSliderOptionST("Debug_MM_Maid_BreastRows_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S21", BreastRows)
 				AddSliderOptionST("Debug_MM_Maid_BreastBaseSize_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S9", MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]), "{2}")
@@ -589,24 +605,20 @@ function Page_MilkMaidDebug()
 				AddSliderOptionST("Debug_MM_Maid_MaidBoobIncr_Slider", "$MME_MENU_PAGE_Settings_H2_S3", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobIncr"), "{2}")	
 				AddSliderOptionST("Debug_MM_Maid_MaidBoobPerLvl_Slider", "$MME_MENU_PAGE_Settings_H2_S4", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl"), "{2}")
 				AddTextOptionST("Debug_MM_Maid_BreastEffectiveSize", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S11", MilkQ.ReduceFloat(MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]) + MaidBreastsBaseadjust + (MilkCnt*MaidBoobIncr) + (MaidLevel + (MaidTimesMilked / ((MaidLevel + 1) * MilkQ.TimesMilkedMult))) * MaidBoobPerLvl), OPTION_FLAG_DISABLED)
-				AddTextOptionST("Debug_MM_Maid_BellyScaleEffectiveSize", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S22", MilkQ.ReduceFloat(MME_Storage.getLactacidCurrent(MaidlistA[MaidIndex])/2), OPTION_FLAG_DISABLED)
-				AddSliderOptionST("Debug_MM_LactacidCount_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S12", MME_Storage.getLactacidCurrent(MaidlistA[MaidIndex]), "{2}")
+				AddTextOptionST("Debug_MM_Maid_BellyScaleEffectiveSize", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S22", MilkQ.ReduceFloat(LactacidCnt/2), OPTION_FLAG_DISABLED)
+
+				AddSliderOptionST("Debug_MM_LactacidCount_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S12", LactacidCnt, "{2}")
 				if MilkQ.BreastScaleLimit
-					; can MilkMax be updated while MCM page is still open?
-					; (currently shows outdated value if MilkMaxBasevalue or MilkMaxScalefactor has been modified)
 					AddSliderOptionST("Debug_MM_MilkCount_Slider", "Milk stored [Max = " + MilkQ.ReduceFloat(MilkMax) + "]:", MilkCnt, "{2}")
 					AddSliderOptionST("Debug_MM_MilkMax_Basevalue_Slider", "Milk Limit (base value):", MME_Storage.getMilkMaxBasevalue(MaidlistA[MaidIndex]), "{2}")
 					AddSliderOptionST("Debug_MM_MilkMax_Scalefactor_Slider", "Milk Limit (level scale factor):", MME_Storage.getMilkMaxScalefactor(MaidlistA[MaidIndex]), "{2}")
 				else
 					AddSliderOptionST("Debug_MM_MilkCount_Slider", "Milk stored [unlimited]:", MilkCnt, "{2}")
 				endif
-				AddSliderOptionST("Debug_MM_MilkGeneration_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S13", MilkTick * MilkQ.MilkProdMod/100/10 * BreastRows, "{3}")
-				AddTextOptionST("Debug_MM_Maid_Lactacid_Milk_Production_PH", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S15", MilkQ.ReduceFloat(MilkTick * MilkQ.MilkProdMod/100 * BreastRows * LactacidMod/10), OPTION_FLAG_DISABLED)
-;				AddSliderOptionST("Debug_MM_MilkGeneration_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S13", MilkProdPerHour, "{2}")
-;				AddTextOptionST("Debug_MM_MilkGeneration_Effective",         "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S14", MilkQ.ReduceFloat(MilkProdPerHourEff                               ), OPTION_FLAG_DISABLED)
-;				AddTextOptionST("Debug_MM_Maid_Lactacid_Milk_Production_PH", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S15", MilkQ.ReduceFloat(MilkProdPerHourEff * LactacidMod                 ), OPTION_FLAG_DISABLED)
+				AddSliderOptionST("Debug_MM_MilkGeneration_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S13", MilkTick, "{3}")
+				AddTextOptionST("Debug_MM_Maid_Lactacid_Milk_Production_PH", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S15", MilkQ.ReduceFloat(FinalMilkTick), OPTION_FLAG_DISABLED)
 				AddSliderOptionST("Debug_MM_PainCount_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S17", MME_Storage.getPainCurrent(MaidlistA[MaidIndex]), "{2}")
-				AddTextOptionST("Debug_MM_Maid_Pain_Reduction_PH", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S18",  MilkQ.ReduceFloat((MilkTick + MilkMax/10) * MilkQ.MilkProdMod/100), OPTION_FLAG_DISABLED)
+				AddTextOptionST("Debug_MM_Maid_Pain_Reduction_PH", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S18",  MilkQ.ReduceFloat((FinalMilkTick + MilkMax/10)), OPTION_FLAG_DISABLED)
 
 				AddSliderOptionST("Debug_MM_MaidContainerCum_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_ContainerCum", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkingContainerCumsSUM"))
 				AddSliderOptionST("Debug_MM_MaidContainerMilk_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_ContainerMilk", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkingContainerMilksSUM"))
@@ -2112,17 +2124,23 @@ endState
 state Difficulty_Menu
 	event OnMenuOpenST()
 		SetMenuDialogStartIndex(PresetIndex)
-		SetMenuDialogDefaultIndex(1)
+		SetMenuDialogDefaultIndex(3)
 		SetMenuDialogOptions(Preset)
 	endEvent
 
 	event OnMenuAcceptST(int index)
 		PresetIndex = index
 		if PresetIndex == 0
-			MilkQ.TimesMilkedMult = 70
+			MilkQ.TimesMilkedMult = 150
 		elseif PresetIndex == 1
-			MilkQ.TimesMilkedMult = 50
+			MilkQ.TimesMilkedMult = 100
 		elseif PresetIndex == 2
+			MilkQ.TimesMilkedMult = 75
+		elseif PresetIndex == 3
+			MilkQ.TimesMilkedMult = 50
+		elseif PresetIndex == 4
+			MilkQ.TimesMilkedMult = 25
+		elseif PresetIndex == 5
 			MilkQ.TimesMilkedMult = 10
 		endif
 		
@@ -2490,10 +2508,10 @@ state Milking_MilkWithZaZMoMSuctionCups_Toggle
 			MilkQ.MilkNaked = true
 			MilkQ.MilkWithZaZMoMSuctionCups = false
 			toggleVal = "$MME_MENU_PAGE_Milking_H3_S5.1"
-		elseif !MilkQ.MilkWithZaZMoMSuctionCups
-			MilkQ.MilkNaked = false
-			MilkQ.MilkWithZaZMoMSuctionCups = true
-			toggleVal = "$MME_MENU_PAGE_Milking_H3_S5.2"
+;		elseif !MilkQ.MilkWithZaZMoMSuctionCups
+;			MilkQ.MilkNaked = false
+;			MilkQ.MilkWithZaZMoMSuctionCups = true
+;			toggleVal = "$MME_MENU_PAGE_Milking_H3_S5.2"
 		else
 			MilkQ.MilkNaked = false
 			MilkQ.MilkWithZaZMoMSuctionCups = false

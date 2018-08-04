@@ -56,17 +56,17 @@ Event OnObjectEquipped( Form akBaseObject, ObjectReference akReference)
 		Float MilkMax = MME_Storage.getMilkMaximum(akActor)
 		if !(akBaseObject == MilkQ.TITS4 || akBaseObject == MilkQ.TITS6 || akBaseObject == MilkQ.TITS8 || MilkQ.DDi.IsMilkingBlocked_Suit(akActor))
 			;heavy armor	
-			if MilkCnt > 12 && akBaseObject.HasKeyword(Game.GetFormFromFile(0x6BBD2, "Skyrim.esm") as keyword) 
-				Debug.Notification("Your breasts are too big to fit into your armor")
+			if MilkCnt > 4 && akBaseObject.HasKeyword(Game.GetFormFromFile(0x6BBD2, "Skyrim.esm") as keyword) 
+				Debug.Notification("Your breasts are too big to fit into your heavy armor")
 				akActor.UnEquipItem(akBaseObject)
 			endif
 			;light armor	
 			if MilkCnt > 8 && akBaseObject.HasKeyword(Game.GetFormFromFile(0x6BBD3, "Skyrim.esm") as keyword)
-				Debug.Notification("Your breasts are too big to fit into your armor")
+				Debug.Notification("Your breasts are too big to fit into your light armor")
 				akActor.UnEquipItem(akBaseObject)
 			endif
 			;clothes
-			if MilkCnt > 4
+			if MilkCnt > 12
 				Debug.Notification("Your breasts are too big to fit into your clothes")
 				akActor.UnEquipItem(akBaseObject)
 			endif

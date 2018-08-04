@@ -91,7 +91,6 @@ Location Property locTelMithryn Auto
 ;Empty DLC placeholder
 Location Property locMMEEmpty Auto			
 
-FormList Property MME_Races Auto
 Formlist Property MilkTypeFormList Auto
 
 ;Length - 10
@@ -128,16 +127,16 @@ bool Function MilkEconMaintenance()
 	string milk = " Milk"
 	MilkNames = new String[12]
 	MilkNames[0] = "Nothing"
-	MilkNames[1] = MME_Races.GetAt(0).GetName() + milk
-	MilkNames[2] = MME_Races.GetAt(1).GetName() + milk
-	MilkNames[3] = MME_Races.GetAt(2).GetName() + milk
-	MilkNames[4] = MME_Races.GetAt(3).GetName() + milk
-	MilkNames[5] = MME_Races.GetAt(4).GetName() + milk
-	MilkNames[6] = MME_Races.GetAt(5).GetName() + milk
-	MilkNames[7] = MME_Races.GetAt(6).GetName() + milk
-	MilkNames[8] = MME_Races.GetAt(7).GetName() + milk
-	MilkNames[9] = MME_Races.GetAt(8).GetName() + milk
-	MilkNames[10] = MME_Races.GetAt(9).GetName() + milk
+	MilkNames[1] = MilkQ.MME_Races.GetAt(0).GetName() + milk
+	MilkNames[2] = MilkQ.MME_Races.GetAt(1).GetName() + milk
+	MilkNames[3] = MilkQ.MME_Races.GetAt(2).GetName() + milk
+	MilkNames[4] = MilkQ.MME_Races.GetAt(3).GetName() + milk
+	MilkNames[5] = MilkQ.MME_Races.GetAt(4).GetName() + milk
+	MilkNames[6] = MilkQ.MME_Races.GetAt(5).GetName() + milk
+	MilkNames[7] = MilkQ.MME_Races.GetAt(6).GetName() + milk
+	MilkNames[8] = MilkQ.MME_Races.GetAt(7).GetName() + milk
+	MilkNames[9] = MilkQ.MME_Races.GetAt(8).GetName() + milk
+	MilkNames[10] = MilkQ.MME_Races.GetAt(9).GetName() + milk
 	MilkNames[11] = "Exotic" + milk
 	return true
 EndFunction
@@ -181,6 +180,7 @@ Event OnUpdateGameTime()
 		if MilkQ.EconFlag == True
 			RegisterForSingleUpdateGameTimeAt(9.0)
 			MilkEcoCycle()
+			;StorageUtil.SetIntValue(Game.Getplayer(), "MME.MilkMaid.FreeLactacid", MilkQ.MME_Storage.getMaidLevel(Game.Getplayer()) as int)
 		endif
 	else
 		Debug.Trace("MilkModEconomy OnUpdateGameTime divnull is "+divnull+", mod is broken, have a nice day!")
@@ -287,7 +287,7 @@ Function InitiateTrade(int MilkCount, int boobgasmcount, Actor akActor, bool mob
 		BmilkTax = CalculateServiceTax(marketIndex, BbaseTrade)
 	endif
 
-	; multiply value of baseTrade after tax is calculated
+	; multiply value of baseTrade after tax is calculated if there is demand
 	if MilkDemands[marketIndex] == raceIndex
 		NbaseTrade = NbaseTrade * 3 
 		BbaseTrade = BbaseTrade * 3
@@ -423,33 +423,26 @@ Function SellMilkDialogue(int marketIndex, int baseTrade, int milkTax, int upkee
 	if finalPayout < 0
 		finalPayout = 0
 	endif
-	akActor.AddItem(Gold, finalPayout)
 	
-	if upkeep > 0
-		akActor.RemoveItem(Gold, upkeep, true)
-		Debug.Notification("You've made " + finalPayout + " gold. You've been charged " + upkeep + " gold for upkeep.")
-	else
-		Debug.Notification("You've made " + finalPayout + " gold.")
-	endif
+	akActor.AddItem(Gold, finalPayout)
+	Debug.Notification("You've made " + finalPayout + " gold.")
 	UpdateEconomy(marketIndex, baseTrade)
 endFunction
 
 Function SellMilk(int marketIndex, int baseTrade, int milkTax, int upkeep, Actor akActor)
-	UpdateEconomy(marketIndex, baseTrade)
-
-	int finalPayout = baseTrade - milkTax
+	int finalPayout = baseTrade
+	finalPayout = baseTrade - milkTax - upkeep
 	if finalPayout < 0
-		upkeep = upkeep - finalPayout
 		finalPayout = 0
 	endif
-	if MilkQ.PlayerREF.GetDistance(akActor) < 250
+
+	if MilkQ.PlayerREF == akActor
 		MilkQ.PlayerREF.AddItem(Gold, finalPayout)
-		MilkQ.PlayerREF.RemoveItem(Gold, upkeep, true)
-		Debug.Notification("You've made " + finalPayout + " gold. You've been charged " + upkeep + " gold for upkeep.")
+		Debug.Notification("You've made " + finalPayout + " gold.")
 	else
 		akActor.AddItem(Gold, finalPayout)
-		akActor.RemoveItem(Gold, upkeep, true)
 	endif
+	UpdateEconomy(marketIndex, baseTrade)
 endFunction
 
 Function KeepMilkContainer(Potion finalPotion, int finalQty, int upkeep, objectreference MilkBarrel)
@@ -511,13 +504,15 @@ Form Function GetMilkType(int milkCount, int boobgasmcount, Actor milkMaid)
 	endif
 	
 	if boobgasmcount > 0
+		Int SubRace = 0 ; SubRace 0: Normal. 1: Werewolf. 2: Vampire. 3: Succubus
 		;mod detection || mcm manual override
 		if MilkQ.isSuccubus(milkMaid) || StorageUtil.GetIntValue(milkMaid,"MME.MilkMaid.IsSuccubus") == 1
-			return MilkQ.MME_Milk_Succubus.GetAt(0)
+			SubRace = 3
 		elseif MilkQ.isVampire(milkMaid) || StorageUtil.GetIntValue(milkMaid,"MME.MilkMaid.IsVampire") == 1
-			return MilkQ.MME_Milk_Vampire.GetAt(0)
+			SubRace = 2
 		elseif MilkQ.isWerewolf(milkMaid) || StorageUtil.GetIntValue(milkMaid,"MME.MilkMaid.IsWerewolf") == 1
-			return MilkQ.MME_Milk_Werewolf.GetAt(0)
+			SubRace = 1
+		endif
 
 ;drugs and alcohol
 ;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.Skooma") > 0
@@ -529,28 +524,102 @@ Form Function GetMilkType(int milkCount, int boobgasmcount, Actor milkMaid)
 ;		elseif StorageUtil.GetFloatValue(milkMaid,"MME.MilkMaid.BBMead") > 0
 ;			return MilkQ.MME_Milk_Werewolf.GetAt(0)
 
-		elseif maidRace == MME_Races.GetAt(0)
-			return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Altmer, MaidLevel)
-		elseif maidRace == MME_Races.GetAt(1)
-			return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Argonian, MaidLevel)
-		elseif maidRace == MME_Races.GetAt(2)
-			return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Bosmer, MaidLevel)
-		elseif maidRace == MME_Races.GetAt(3)
-			return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Breton, MaidLevel)
-		elseif maidRace == MME_Races.GetAt(4)
-			return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Dunmer, MaidLevel)
-		elseif maidRace == MME_Races.GetAt(5)
-			return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Imperial, MaidLevel)
-		elseif maidRace == MME_Races.GetAt(6)
-			return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Khajiit, MaidLevel)
-		elseif maidRace == MME_Races.GetAt(7)
-			return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Nord, MaidLevel)
-		elseif maidRace == MME_Races.GetAt(8)
-			return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Orc, MaidLevel)
-		elseif maidRace == MME_Races.GetAt(9)
-			return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Redguard, MaidLevel)
-		else 	;maidRace = Custom Race
-			return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Exotic, MaidLevel)
+		if SubRace == 0
+			if maidRace == MilkQ.MME_Races.GetAt(0)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Altmer_Normal, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(1)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Argonian_Normal, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(2)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Bosmer_Normal, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(3)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Breton_Normal, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(4)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Dunmer_Normal, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(5)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Imperial_Normal, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(6)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Khajiit_Normal, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(7)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Nord_Normal, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(8)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Orc_Normal, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(9)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Redguard_Normal, MaidLevel)
+			else 	;maidRace = Custom Race
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Exotic_Normal, MaidLevel)
+			endif
+		elseif SubRace == 1
+			if maidRace == MilkQ.MME_Races.GetAt(0)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Altmer_Werewolf, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(1)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Argonian_Werewolf, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(2)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Bosmer_Werewolf, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(3)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Breton_Werewolf, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(4)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Dunmer_Werewolf, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(5)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Imperial_Werewolf, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(6)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Khajiit_Werewolf, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(7)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Nord_Werewolf, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(8)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Orc_Werewolf, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(9)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Redguard_Werewolf, MaidLevel)
+			else 	;maidRace = Custom Race
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Exotic_Werewolf, MaidLevel)
+			endif
+		elseif SubRace == 3
+			if maidRace == MilkQ.MME_Races.GetAt(0)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Altmer_Succubus, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(1)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Argonian_Succubus, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(2)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Bosmer_Succubus, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(3)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Breton_Succubus, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(4)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Dunmer_Succubus, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(5)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Imperial_Succubus, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(6)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Khajiit_Succubus, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(7)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Nord_Succubus, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(8)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Orc_Succubus, MaidLevel)
+			elseif maidRace == MilkQ.MME_Races.GetAt(9)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Redguard_Succubus, MaidLevel)
+			else 	;maidRace = Custom Race
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Exotic_Succubus, MaidLevel)
+			endif
+		elseif SubRace == 2
+			if maidRace == MilkQ.MME_RacesVampire.GetAt(0)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Altmer_Vampire, MaidLevel)
+			elseif maidRace == MilkQ.MME_RacesVampire.GetAt(1)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Argonian_Vampire, MaidLevel)
+			elseif maidRace == MilkQ.MME_RacesVampire.GetAt(2)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Bosmer_Vampire, MaidLevel)
+			elseif maidRace == MilkQ.MME_RacesVampire.GetAt(3)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Breton_Vampire, MaidLevel)
+			elseif maidRace == MilkQ.MME_RacesVampire.GetAt(4)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Dunmer_Vampire, MaidLevel)
+			elseif maidRace == MilkQ.MME_RacesVampire.GetAt(5)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Imperial_Vampire, MaidLevel)
+			elseif maidRace == MilkQ.MME_RacesVampire.GetAt(6)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Khajiit_Vampire, MaidLevel)
+			elseif maidRace == MilkQ.MME_RacesVampire.GetAt(7)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Nord_Vampire, MaidLevel)
+			elseif maidRace == MilkQ.MME_RacesVampire.GetAt(8)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Orc_Vampire, MaidLevel)
+			elseif maidRace == MilkQ.MME_RacesVampire.GetAt(9)
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Redguard_Vampire, MaidLevel)
+			else 	;maidRace = Custom Race
+				return GetMilkTypeHelper(boobgasmcount, MilkQ.MME_Milk_Exotic_Vampire, MaidLevel)
+			endif
 		endif
 	else
 		if milkCount == 0
@@ -620,45 +689,70 @@ int Function CalculateServiceTax(int marketIndex, int basePayout)
 	int fee = 0
 
 	if marketIndex == 0
-		fee = CalculateServiceTaxHelper(MilkEcoCaravan, basePayout)
+		;fee = CalculateServiceTaxHelper(MilkEcoCaravan, basePayout)
+		fee = (basePayout * CalculateServiceTaxHelper(MilkEcoCaravan)) as int
 	elseif marketIndex == 1
-		fee = CalculateServiceTaxHelper(MilkEcoDawnstar, basePayout)
+		;fee = CalculateServiceTaxHelper(MilkEcoDawnstar, basePayout)
+		fee = (basePayout * CalculateServiceTaxHelper(MilkEcoDawnstar)) as int
 	elseif marketIndex == 2
-		fee = CalculateServiceTaxHelper(MilkEcoFalkreath, basePayout)
+		;fee = CalculateServiceTaxHelper(MilkEcoFalkreath, basePayout)
+		fee = (basePayout * CalculateServiceTaxHelper(MilkEcoFalkreath)) as int
 	elseif marketIndex == 3
-		fee = CalculateServiceTaxHelper(MilkEcoMarkarth, basePayout)
+		;fee = CalculateServiceTaxHelper(MilkEcoMarkarth, basePayout)
+		fee = (basePayout * CalculateServiceTaxHelper(MilkEcoMarkarth)) as int
 	elseif marketIndex == 4
-		fee = CalculateServiceTaxHelper(MilkEcoOrc, basePayout)
+		;fee = CalculateServiceTaxHelper(MilkEcoOrc, basePayout)
+		fee = (basePayout * CalculateServiceTaxHelper(MilkEcoOrc)) as int
 	elseif marketIndex == 5
-		fee = CalculateServiceTaxHelper(MilkEcoRiften, basePayout)
+		;fee = CalculateServiceTaxHelper(MilkEcoRiften, basePayout)
+		fee = (basePayout * CalculateServiceTaxHelper(MilkEcoRiften)) as int
 	elseif marketIndex == 6
-		fee = CalculateServiceTaxHelper(MilkEcoSolitude, basePayout)
+		;fee = CalculateServiceTaxHelper(MilkEcoSolitude, basePayout)
+		fee = (basePayout * CalculateServiceTaxHelper(MilkEcoSolitude)) as int
 	elseif marketIndex == 7
-		fee = CalculateServiceTaxHelper(MilkEcoWhiterun, basePayout)
+		;fee = CalculateServiceTaxHelper(MilkEcoWhiterun, basePayout)
+		fee = (basePayout * CalculateServiceTaxHelper(MilkEcoWhiterun)) as int
 	elseif marketIndex == 8
-		fee = CalculateServiceTaxHelper(MilkEcoWindhelm, basePayout)
+		;fee = CalculateServiceTaxHelper(MilkEcoWindhelm, basePayout)
+		fee = (basePayout * CalculateServiceTaxHelper(MilkEcoWindhelm)) as int
 	elseif marketIndex == 9
-		fee = CalculateServiceTaxHelper(MilkEcoMorrowind, basePayout)
+		;fee = CalculateServiceTaxHelper(MilkEcoMorrowind, basePayout)
+		fee = (basePayout * CalculateServiceTaxHelper(MilkEcoMorrowind)) as int
 	else
 		; Catch all - fee is fixed at 50%
 		fee = basePayout / 2
 	endif
-
 	return fee
 EndFunction
 
-int Function CalculateServiceTaxHelper(int varEco, int basePayout)
-	float fBasePayout = basePayout as float
-	int fee = 0
+;int Function CalculateServiceTaxHelper(int varEco, int basePayout)
+;	float fBasePayout = basePayout as float
+;	int fee = 0
+;	
+;	if varEco < 0
+;		fee = (fBasePayout * 0.75) as int
+;	elseif varEco < 200/(MilkQ.TimesMilkedMult/divnull)
+;		fee = (fBasePayout * 0.50) as int
+;	elseif varEco < 400/(MilkQ.TimesMilkedMult/divnull)
+;		fee = (fBasePayout * 0.25) as int
+;	elseif varEco < 600/(MilkQ.TimesMilkedMult/divnull)
+;		fee = (fBasePayout * 0) as int
+;	endif
+;	
+;	return fee
+;EndFunction
+
+float Function CalculateServiceTaxHelper(int varEco)
+	float fee = 0
 	
 	if varEco < 0
-		fee = (fBasePayout * 0.8) as int
+		fee = 0.75
 	elseif varEco < 200/(MilkQ.TimesMilkedMult/divnull)
-		fee = (fBasePayout * 0.3) as int
+		fee = 0.50
 	elseif varEco < 400/(MilkQ.TimesMilkedMult/divnull)
-		fee = (fBasePayout * 0.2) as int
+		fee = 0.25
 	elseif varEco < 600/(MilkQ.TimesMilkedMult/divnull)
-		fee = (fBasePayout * 0.1) as int
+		fee = 0
 	endif
 	
 	return fee
@@ -711,25 +805,25 @@ EndFunction
 
 int Function GetRaceIndexFromRace(Race maidRace)
 
-	if maidRace == MME_Races.GetAt(0)	;highelf
+	if maidRace == MilkQ.MME_Races.GetAt(0)	;highelf
 		return 1
-	elseif maidRace == MME_Races.GetAt(1)	;argonian
+	elseif maidRace == MilkQ.MME_Races.GetAt(1)	;argonian
 		return 2
-	elseif maidRace == MME_Races.GetAt(2)	;woodelf
+	elseif maidRace == MilkQ.MME_Races.GetAt(2)	;woodelf
 		return 3
-	elseif maidRace == MME_Races.GetAt(3)	;breton
+	elseif maidRace == MilkQ.MME_Races.GetAt(3)	;breton
 		return 4
-	elseif maidRace == MME_Races.GetAt(4)	;darkelf
+	elseif maidRace == MilkQ.MME_Races.GetAt(4)	;darkelf
 		return 5
-	elseif maidRace == MME_Races.GetAt(5)	;imperial
+	elseif maidRace == MilkQ.MME_Races.GetAt(5)	;imperial
 		return 6
-	elseif maidRace == MME_Races.GetAt(6)	;khajiit
+	elseif maidRace == MilkQ.MME_Races.GetAt(6)	;khajiit
 		return 7
-	elseif maidRace == MME_Races.GetAt(7)	;nord
+	elseif maidRace == MilkQ.MME_Races.GetAt(7)	;nord
 		return 8
-	elseif maidRace == MME_Races.GetAt(8)	;orc
+	elseif maidRace == MilkQ.MME_Races.GetAt(8)	;orc
 		return 9
-	elseif maidRace == MME_Races.GetAt(9)	;redguard
+	elseif maidRace == MilkQ.MME_Races.GetAt(9)	;redguard
 		return 10
 	else 									;exotic
 		return 11
@@ -737,35 +831,35 @@ int Function GetRaceIndexFromRace(Race maidRace)
 EndFunction
 
 int Function GetRaceIndexFromMilk(Potion Milk)
-	if MilkQ.MME_Milk_Altmer.Find(Milk) != -1			;highelf
+	if MilkQ.MME_Milk_Altmer_Normal.Find(Milk) != -1			;highelf
 		return 1
-	elseif MilkQ.MME_Milk_Argonian.Find(Milk) != -1		;argonian
+	elseif MilkQ.MME_Milk_Argonian_Normal.Find(Milk) != -1		;argonian
 		return 2
-	elseif MilkQ.MME_Milk_Bosmer.Find(Milk) != -1		;woodelf
+	elseif MilkQ.MME_Milk_Bosmer_Normal.Find(Milk) != -1		;woodelf
 		return 3
-	elseif MilkQ.MME_Milk_Breton.Find(Milk) != -1		;breton
+	elseif MilkQ.MME_Milk_Breton_Normal.Find(Milk) != -1		;breton
 		return 4
-	elseif MilkQ.MME_Milk_Dunmer.Find(Milk) != -1		;darkelf
+	elseif MilkQ.MME_Milk_Dunmer_Normal.Find(Milk) != -1		;darkelf
 		return 5
-	elseif MilkQ.MME_Milk_Imperial.Find(Milk) != -1		;imperial
+	elseif MilkQ.MME_Milk_Imperial_Normal.Find(Milk) != -1		;imperial
 		return 6
-	elseif MilkQ.MME_Milk_Khajiit.Find(Milk) != -1		;khajiit
+	elseif MilkQ.MME_Milk_Khajiit_Normal.Find(Milk) != -1		;khajiit
 		return 7
-	elseif MilkQ.MME_Milk_Nord.Find(Milk) != -1			;nord
+	elseif MilkQ.MME_Milk_Nord_Normal.Find(Milk) != -1			;nord
 		return 8
-	elseif MilkQ.MME_Milk_Orc.Find(Milk) != -1			;orc
+	elseif MilkQ.MME_Milk_Orc_Normal.Find(Milk) != -1			;orc
 		return 9
-	elseif MilkQ.MME_Milk_Redguard.Find(Milk) != -1		;redguard
+	elseif MilkQ.MME_Milk_Redguard_Normal.Find(Milk) != -1		;redguard
 		return 10
-	elseif MilkQ.MME_Milk_Vampire.Find(Milk) != -1		;vampire
+	elseif MilkQ.MME_Milk_Vampire.Find(Milk) != -1				;vampire
 		return 11
-	elseif MilkQ.MME_Milk_Werewolf.Find(Milk) != -1		;werewolf
+	elseif MilkQ.MME_Milk_Werewolf.Find(Milk) != -1				;werewolf
 		return 12
-	elseif MilkQ.MME_Milk_Succubus.Find(Milk) != -1		;succubus
+	elseif MilkQ.MME_Milk_Succubus.Find(Milk) != -1				;succubus
 		return 13
-	elseif MilkQ.MME_Milk_Exotic.Find(Milk) != -1		;exotic
+	elseif MilkQ.MME_Milk_Exotic_Normal.Find(Milk) != -1		;exotic
 		return 13
-	else 												;basic
+	else 														;basic
 		return 14
 	endif
 EndFunction

@@ -137,18 +137,28 @@ endEvent
 Event OnSexLabStart(String _eventName, String _args, Float _argc, Form _sender)
 	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
 	Actor[] actors = MilkQ.SexLab.HookActors(_args)											;0 - actor being sucked, 1 - actor sucking
+	sslBaseAnimation animation = MilkQ.SexLab.HookAnimation(_args)
 	String  animName = getAnimName(_args)
 
 	if (animName == "3J Straight Breastfeeding"\
 	|| animName == "3J Lesbian Breastfeeding"\
 	|| animName == "3Jiou Breastfeeding Lesbian"\
-	|| animName == "3Jiou Breastfeeding Straight")
+	|| animName == "3Jiou Breastfeeding Straight")\
+	|| animation.HasTag("Breastfeeding")
 
 		if MilkQ.MILKmaid.Find(actors[0]) != -1\
 		&& !actors[0].HasSpell( MilkQ.BeingMilkedPassive )\
 		&& (actors[0].GetLeveledActorBase().GetSex() == 1 || (actors[0].GetLeveledActorBase().GetSex() == 0 && MilkQ.MaleMaids))
+			if MME_Storage.getMilkCurrent(actors[0]) >= 1
+
+				actors[1].equipitem(MilkQ.MME_Milk_Basic.GetAt(0), true, true)
+				
+				;khajiit gives lactacid
+				if actors[1].GetLeveledActorBase().GetRace() == Game.GetFormFromFile(0x13745, "Skyrim.esm") as Race
+					actors[0].additem(MilkQ.MME_Util_Potions.GetAt(0), 1)
+				endif
+			endif
 			MilkQ.Milking(actors[0], 0, 4, 0)
-			actors[1].equipitem(MilkQ.MME_Milk_Basic.GetAt(0), true, true)
 		endif
 	endif
 EndEvent
@@ -299,10 +309,6 @@ Function Maintenance()
 	
 	if SexLabUtil.GetVersion() < 15903
 		Debug.MessageBox( "SexLab is too old" + SexLabUtil.GetVersion())
-	endif
-	
-	if zbfUtil.GetVersion() < 600
-		Debug.MessageBox( "Zaz Animation Pack is too old:" + zbfUtil.GetVersion() )
 	endif
 	
 	String File
