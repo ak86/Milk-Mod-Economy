@@ -95,7 +95,6 @@ Event onMME_Milking(Form Sender, Int Mode, Int MilkingType)
 	endif
 EndEvent
 
-
 ;Function MilkingToContainer(Actor akActor, int i, int Mode, int MilkingType, objectreference MilkBarrel = none)
 ;	MilkingCycle(akActor, i, Mode, MilkingType, MilkBarrel)
 ;EndFunction
@@ -106,8 +105,8 @@ EndEvent
 ;
 ;Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectreference MilkBarrel = none)
 ;*i is no longer used but left as it is
-;Mode == 0 - MilkPump Milking\Fuck-Machine
-;Mode == 1 - Other Milking(Mobile), script will change to 2 or 3 or leave as 1 (hand-milking)
+;Mode == 0 - this mode is normal MilkPump Milking\Fuck-Machine
+;Mode == 1 - this mode is for Milking through armor(Mobile), script will change to 2 or 3 or leave as 1 (hand-milking)
 ;Mode == 2 - Equipment Milking, set above^
 ;Mode == 3 - Living armor Milking, set above^
 ;Mode == 4 - Called by other mods, runs milking script, expressions and moans, no animations
@@ -115,6 +114,7 @@ EndEvent
 ;MilkingType == 1 bound/disable player control(enable after milking done)
 ;MilkingType == 2 bound/disable player control(enable by other mod)
 ;MilkBarrel == container where milk should be stored after milking
+;MilkBarrel can probably be an actor itself or any container
 
 Milking and slave configuration:
 milking equipment ( auto/manual milking options, [s]optional lactacid injection[/s]; container for milk to be given to master; type, qty if player leaves enslavement, milk will be given during next milking at milkpump or can be sold)
