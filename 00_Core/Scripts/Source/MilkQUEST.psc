@@ -221,6 +221,8 @@ FormList Property MME_Milk_Werewolf Auto
 FormList Property MME_Util_Potions Auto		; Utility potions
 
 FormList Property MME_Spells_Buffs Auto
+FormList Property MME_Spells_Unmilked Auto
+FormList Property MME_Spells_Wellmilked Auto
 
 LeveledItem Property LItemFoodInnCommon Auto
 LeveledItem Property LItemSkooma75 Auto
@@ -313,6 +315,7 @@ Bool Property Plugin_SlSW = false auto
 ;	Function StoryLAE(int i)												;End Story for Living armor
 ;
 ;---Utility---
+;	String Function formatString(String src, String part)					;inserts string data into json string
 ;	Function MultibreastChange()											;Multibreast management
 ;	Function DLCcheck()														;Checks and updates plugins
 ;	int Function Milklvl0fix()												;Milklevel 0 fix since Math.Celling doesn't work, provides 1 maid slot at level 0
@@ -325,6 +328,8 @@ Bool Property Plugin_SlSW = false auto
 ;	Function AddLeak(Actor akActor)											;Add milk leaking effect(mesh)
 ;	Function RemoveMilkFx1(Actor akActor)									;Remove leaking textures - full breasts
 ;	Function RemoveMilkFx2(Actor akActor)									;Remove leaking textures - after milking
+;	Function DebuffArraySet()												;Set/Reset DeBuff Array and fill it with spells
+;	Function BuffArraySet()													;Set/Reset Buff Array and fill it with spells
 ;	Function MaidRemove(Actor akActor)										;Removes milkmaid[i]/milkslave[i]
 ;	Function MaidReset()													;Maids reset
 ;	Function SlaveReset()													;Slaves reset
@@ -431,9 +436,11 @@ Event OnKeyDown(int keyCode)
 		If HotkeyMode == 1
 			;create uie
 		Else
+			String MaidName
 			If akActor != None
 				If MILKmaid.find(akActor) == -1 && MILKslave.find(akActor) == -1
-					Debug.Notification("akActor is not a milk maid/slave.")
+					MaidName = akActor.GetDisplayName()
+					Debug.Notification(formatString(JsonUtil.GetStringValue("/MME/Strings", "isnotmaidslave"), MaidName))
 					Return
 				EndIf
 			Else
@@ -441,18 +448,25 @@ Event OnKeyDown(int keyCode)
 					akActor = PlayerRef
 					;Alias[0].AddScriptPackage MilkPackage
 				Else
-					Debug.Notification("Player is not a milk maid.")
+					MaidName = PlayerRef.GetDisplayName()
+					Debug.Notification(formatString(JsonUtil.GetStringValue("/MME/Strings", "isnotmaid"), MaidName))
 					Return
 				EndIf
 			EndIf
+			
 			If akActor != None && (MILKmaid.find(akActor) != -1 || MILKslave.find(akActor) != -1)
+				if StorageUtil.SetIntValue(akActor, "MME.MilkMaid.IsAnimating", 1) && akActor.HasSpell( BeingMilkedPassive )						;Changes random animation
+					Debug.SendAnimationEvent(akActor,JsonUtil.StringListGet("/MME/Strings", "standingmilkinganimations", Utility.RandomInt(0, JsonUtil.StringListCount("/MME/Strings", "standingmilkinganimations"))))
+				endif
 				Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 				Float PainCnt = MME_Storage.getPainCurrent(akActor)
 				Float PainMax = MME_Storage.getPainMaximum(akActor)
-				Debug.Notification("Maid: " + akActor.GetLeveledActorBase().GetName()\
-								+ " Milk: " + ReduceFloat(MilkCnt)\
-								+ " Nipples: " + NState(akActor) + " [" + (PainCnt/PainMax*100) as int + "%]"\
-								+ " Lactacid: " + ReduceFloat(MME_Storage.getLactacidCurrent(akActor)))
+				MaidName = akActor.GetDisplayName()
+				Debug.Notification(formatString(JsonUtil.GetStringValue("/MME/Strings", "onkeyeventstatus"),\
+					MaidName,\
+					ReduceFloat(MilkCnt),\
+					NState(akActor) + " [" + (PainCnt/PainMax*100) as int + "%]",\
+					ReduceFloat(MME_Storage.getLactacidCurrent(akActor))))
 			EndIf
 		EndIf
 	EndIf
@@ -467,21 +481,29 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 			If akActor ==  none
 				akActor = PlayerRef
 			EndIf
+			
 			If (Input.IsKeyPressed(42) && Input.IsKeyPressed(54))
 				If akActor.HasSpell( BeingMilkedPassive )
 					akActor.RemoveSpell( BeingMilkedPassive )
 				EndIf
 			ElseIf (Input.IsKeyPressed(42) || Input.IsKeyPressed(54)) || (HoldTime > 2.0)
-				If akActor.HasSpell( BeingMilkedPassive )
-					If akActor == PlayerRef
-						Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
+				String MaidName = akActor.GetDisplayName()
+				If akActor.HasSpell( BeingMilkedPassive )				;restores PC control\resets animation
+					If !StorageUtil.GetIntValue(akActor,"IsBoundStrict") && !SexLab.IsActorActive(akActor)
+						If akActor == PlayerRef
+							Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
+						EndIf
+						Debug.SendAnimationEvent(akActor,"IdleForceDefaultState")
+						StorageUtil.SetIntValue(akActor, "MME.MilkMaid.IsAnimating", 0)
 					EndIf
-					Debug.SendAnimationEvent(akActor,"IdleForceDefaultState")
+
 				ElseIf akActor.HasSpell( MilkForSprigganPassive )
-					Debug.notification(akActor.GetLeveledActorBase().GetName() + " is a host for living armor and can not be milked.")
+					Debug.Notification(formatString(JsonUtil.GetStringValue("/MME/Strings", "onkeyeventspriggan"), MaidName))
+
 				ElseIf StorageUtil.GetIntValue(akActor,"MME.MilkMaid.IsSlave" ) == 1 && StorageUtil.GetIntValue(akActor,"MME.MilkMaid.MilkingMode") != 0
-					Debug.notification(akActor.GetLeveledActorBase().GetName() + " is a slave and not allowed to be milked.")
-				ElseIf (akActor.GetLeveledActorBase().GetSex() == 1 || MaleMaids == true)
+					Debug.Notification(formatString(JsonUtil.GetStringValue("/MME/Strings", "onkeyeventisslave"), MaidName))
+
+				ElseIf akActor.GetLeveledActorBase().GetSex() == 1
 					MilkSelf.cast(akActor)
 				EndIf
 			EndIf
@@ -512,10 +534,10 @@ Function ActorCheck(int t)
 		While i < MilkMaid.Length
 			if MilkMaid[i] != None
 				if MilkMaid[i].IsDead()
-					debug.Trace("MilkModEconomy Actor is dead, removing form MME:" + MilkMaid[i].GetLeveledActorBase().getname())
+					debug.Trace("MilkModEconomy Actor is dead, removing form MME:" + MilkMaid[i].GetDisplayName())
 					SingleMaidReset(MilkMaid[i])
 				elseif (MilkMaid[i].GetLeveledActorBase().GetSex() == 1 || MaleMaids == true)
-					debug.Trace("MilkModEconomy MilkCycle for milkmaid:" + MilkMaid[i].GetLeveledActorBase().getname())
+					debug.Trace("MilkModEconomy MilkCycle for milkmaid:" + MilkMaid[i].GetDisplayName())
 					MilkCycle(MilkMaid[i] , t)
 				endif
 			endif
@@ -527,10 +549,10 @@ Function ActorCheck(int t)
 		While i < MilkSlave.Length
 			if MilkSlave[i] != None
 				if MilkSlave[i].IsDead()
-					debug.Trace("MilkModEconomy Actor is dead, removing form MME:" + MilkSlave[i].GetLeveledActorBase().getname())
+					debug.Trace("MilkModEconomy Actor is dead, removing form MME:" + MilkSlave[i].GetDisplayName())
 					SingleMaidReset(MilkSlave[i])
 				elseif (MilkSlave[i].GetLeveledActorBase().GetSex() == 1 || MaleMaids == true)
-					debug.Trace("MilkModEconomy MilkCycle for MilkSlave:" + MilkSlave[i].GetLeveledActorBase().getname())
+					debug.Trace("MilkModEconomy MilkCycle for MilkSlave:" + MilkSlave[i].GetDisplayName())
 					MilkCycle(MilkSlave[i] , t)
 				endif
 			endif
@@ -579,12 +601,13 @@ Function MilkCycle(Actor akActor, int t)
 	Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 	Float MilkMax = MME_Storage.getMilkMaximum(akActor)
 	Float PainCnt = MME_Storage.getPainCurrent(akActor)
-	Int   BreastRows = MME_Storage.getBreastRows(akActor)
+	Int BreastRows = MME_Storage.getBreastRows(akActor)
 	Int MaidLevelProgressionAffectsMilkGen = StorageUtil.GetIntValue(none,"MME.MaidLevelProgressionAffectsMilkGen", missing = 0)
 	Int MaidLevel
 	Float LactacidFactor
 	
 	Bool IsMilkingArmor = false
+	String MaidName = akActor.GetDisplayName()
 	
 	Form maidArmor = akActor.GetWornForm(Armor.GetMaskForSlot(32))
 
@@ -594,13 +617,13 @@ Function MilkCycle(Actor akActor, int t)
 			BreastBaseMod += 0.01
 			if Utility.RandomInt(0, 100) <= 25
 				if StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkGen") == 0
-					debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s breasts has started lactating.")
+					debug.Notification(MaidName + "'s breasts has started lactating.")
 					StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", 1/3/10)
 					AddMilkFx(akActor, 1)
 					AddLeak(akActor)
 				else
 					StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", MaidMilkGen/3/10)
-					debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s lactation has increased.")
+					debug.Notification(MaidName + "'s lactation has increased.")
 					MaidMilkGen = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkGen")
 				endif
 				if Utility.RandomInt(1, 100) <= MilkQC.BrestEnlargement_MultiBreast_Effect && BreastRows < 4
@@ -771,7 +794,7 @@ Function MilkCycle(Actor akActor, int t)
 			If PlayerREF == akActor
 				Debug.Notification("Your chest hurts, maybe you should rest, some sleeping might relief your pain" )
 			else
-				Debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s chest hurts, maybe you should rest, some sleeping might relief her pain" )
+				Debug.Notification(MaidName + "'s chest hurts, maybe you should rest, some sleeping might relief her pain" )
 			endif
 		endif
 	endif
@@ -894,7 +917,8 @@ Function AssignSlot(Actor akActor)
 		EndIf
 	EndIf
 	MME_Storage.initializeActor(akActor)
-	Debug.Notification(akActor.GetLeveledActorBase().GetName() + " becomes a Milk Maid")
+	String MaidName = akActor.GetDisplayName()
+	Debug.Notification(formatString(JsonUtil.GetStringValue("/MME/Strings", "assignslotmaid"), MaidName))
 	akActor.AddToFaction(MilkMaidFaction)
 EndFunction
 
@@ -910,7 +934,7 @@ Function AssignSlotMaid(Actor akActor)
 		int t = MILKmaid.Find(none,1)
 
 		If t == -1
-			Debug.notification("No more Milk Maid slots")
+			Debug.Notification(JsonUtil.GetStringValue("/MME/Strings", "assignslotnomaidsslots"))
 			return
 		Else
 			While i < MilkMaid.Length
@@ -923,7 +947,7 @@ Function AssignSlotMaid(Actor akActor)
 			;Debug.notification(MilkMaid.Length + " " + count + " " + Milklvl0fix )
 
 			If count >= Milklvl0fix()
-				Debug.notification("No more Milk Maid slots")
+				Debug.Notification(JsonUtil.GetStringValue("/MME/Strings", "assignslotnomaidsslots"))
 				return
 			Else
 				MILKmaid[t] = akActor
@@ -931,13 +955,15 @@ Function AssignSlotMaid(Actor akActor)
 		EndIf
 	EndIf
 	MME_Storage.initializeActor(akActor)
-	Debug.Notification(akActor.GetLeveledActorBase().GetName() + " becomes a Milk Maid")
+	String MaidName = akActor.GetDisplayName()
+	Debug.Notification(formatString(JsonUtil.GetStringValue("/MME/Strings", "assignslotmaid"), MaidName))
 	akActor.AddToFaction(MilkMaidFaction)
 EndFunction
 
 Function AssignSlotSlave(Actor akActor, Int Level, Float Milk)
 	If akActor == PlayerREF
-		Debug.notification("Actor is Player and cannot be milkslave")
+		String MaidName = akActor.GetDisplayName()
+		Debug.Notification(formatString(JsonUtil.GetStringValue("/MME/Strings", "assignslotactorispc"), MaidName))
 		return
 	EndIf
 	int i = MILKSlave.Find(none)
@@ -948,7 +974,7 @@ Function AssignSlotSlave(Actor akActor, Int Level, Float Milk)
 		akActor.AddToFaction(MilkSlaveFaction)
 		CurrentSize(akActor)
 	Else
-		Debug.notification("No more Milk Slave slots")
+		Debug.Notification(JsonUtil.GetStringValue("/MME/Strings", "assignslotnoslaveslots"))
 		return
 	Endif
 EndFunction
@@ -963,7 +989,8 @@ Function AssignSlotSlaveToMaid(Actor akActor)
 			MILKSlave[i] = none
 		endif
 	Else
-		Debug.notification("Actor is not a Milk Slave, something wrong in calling Function AssignSlotSlaveToMaid")
+		String MaidName = akActor.GetDisplayName()
+		Debug.Notification(formatString(JsonUtil.GetStringValue("/MME/Strings", "assignslotstm"), MaidName))
 		return
 	Endif
 EndFunction
@@ -976,7 +1003,7 @@ Function AssignSlotMaidToSlave(Actor akActor)
 		If i != -1
 			MILKSlave[i] = akActor
 		Else
-			Debug.notification("No more Milk Slave slots")
+			Debug.Notification(JsonUtil.GetStringValue("/MME/Strings", "assignslotnoslaveslots"))
 			return
 		Endif
 		StorageUtil.SetIntValue(akActor,"MME.MilkMaid.IsSlave", 1)
@@ -984,7 +1011,8 @@ Function AssignSlotMaidToSlave(Actor akActor)
 		akActor.RemoveFromFaction(MilkMaidFaction)
 		MilkMaid[i] = none
 	Else
-		Debug.notification("Actor is not a Milk maid, something wrong in calling Function AssignSlotMaidToSlave")
+		String MaidName = akActor.GetDisplayName()
+		Debug.Notification(formatString(JsonUtil.GetStringValue("/MME/Strings", "assignslotmts"), MaidName))
 		return
 	Endif
 EndFunction
@@ -1109,7 +1137,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 	
 	if akActor.HasSpell( BeingMilkedPassive )
 		;if MilkingType != 1						;prevents msg spam from aidrivenplayer bound milkpump, since its activates script endlessly,
-			Debug.notification(akActor.GetLeveledActorBase().GetName() + " already being milked, if something went wrong, remove Milking passive spell from Milk Maid debug menu")
+			Debug.notification(akActor.GetDisplayName() + " already being milked, if something went wrong, remove Milking passive spell from Milk Maid debug menu")
 		;endif
 		return									; prevents multiple scripts running
 	endif
@@ -1118,7 +1146,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 	Int soundInstance01
 	Int pain = 1
 	Int bottles = 0			;milked milk\times milked
-	Int MlikExpression
+	Int Expression
 	Int armorcheckloop = 0
 	Int boobgasmcount = 0
 	Int cumcount = 0
@@ -1133,7 +1161,11 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 	Bool StopMilking = false
 	Form maidArmor
 	Form cuirass = akActor.GetWornForm(Armor.GetMaskForSlot(32))
-
+	String CuirassName
+	
+	if cuirass != None
+		CuirassName = cuirass.getname()
+	endif
 	;Devious Devices management
 	Bool DDArmbinder = DDi.IsMilkingBlocked_Armbinder(akActor)
 	Bool DDYoke = DDi.IsMilkingBlocked_Yoke(akActor)
@@ -1152,6 +1184,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 	Bool ZaZGagOpen = zbf.IsWearingZaZGag_Open(akActor)
 	
 	String akActorGender = akActorSex(akActor)
+	String MaidName = akActor.GetDisplayName()
 	
 	String anivar = ""						;custom animations by MME for DD belt
 	String LastAnimation					;save last animation name to not run animation same twice in a row, causing instant disappearance and appearance of animated objects
@@ -1304,7 +1337,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 					;do nothing
 				elseif cuirass != None && !(cuirass == TITS4 || cuirass == TITS6 || cuirass == TITS8)
 					if !(cuirass == MilkCuirass || cuirass == MilkCuirassFuta)\
-					&& !((StringUtil.Find(cuirass.getname(), "Milk" ) >= 0) || (MilkingEquipment.find(cuirass.getname()) >= 0))
+					&& !((StringUtil.Find(CuirassName, "Milk" ) >= 0) || (MilkingEquipment.find(CuirassName) >= 0))
 						akActor.UnequipItem(cuirass, false, true)
 					endif
 					if MilkNaked == false
@@ -1337,42 +1370,42 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 				endif
 				
 				If MilkStory && akActor == PlayerREF && (akActorGender != "Male" || (akActorGender == "Male" && MaleMaids))
-					StoryDisplay(0,1,FirstTimeStory)
+					StoryDisplay("start","milkpump")
 				EndIf
 			EndIf
 		EndIf
 	elseif mode == 4 || StopMilking
 		;do nothing
 	elseif MilkCnt < 1
-		Debug.Notification(akActor.GetLeveledActorBase().getname() + " have no milk!")
+		Debug.Notification(akActor.GetDisplayName() + " have no milk!")
 		akActor.RemoveSpell( BeingMilkedPassive )
 		return
 	else
 		if cuirass != None && !(cuirass == TITS4 || cuirass == TITS6 || cuirass == TITS8) && Sexlab.IsStrippable(cuirass)
 			if BreastRows != 1
 				Mode = 1
-			ElseIf StringUtil.Find(cuirass.getname(), "Milk" ) >= 0 \
-			|| StringUtil.Find(cuirass.getname(), "Cow" ) >= 0 \
-			|| MilkingEquipment.find(cuirass.getname()) >= 0\
+			ElseIf StringUtil.Find(CuirassName, "Milk" ) >= 0 \
+			|| StringUtil.Find(CuirassName, "Cow" ) >= 0 \
+			|| MilkingEquipment.find(CuirassName) >= 0\
 			|| SLSDBra == true\
 			|| DDi.IsWearingDDMilker(akActor) == true
 				Mode = 2
-			ElseIf StringUtil.Find(cuirass.getname(), "Spriggan" ) >= 0 \
-				|| StringUtil.Find(cuirass.getname(), "Living Arm" ) >= 0 \
-				|| StringUtil.Find(cuirass.getname(), "HM Priestess" ) >= 0 \
-				|| StringUtil.Find(cuirass.getname(), "Hermaeus Mora" ) >= 0 \
-				|| BasicLivingArmor.find(cuirass.getname()) >= 0 \
-				|| ParasiteLivingArmor.find(cuirass.getname()) >= 0
+			ElseIf StringUtil.Find(CuirassName, "Spriggan" ) >= 0 \
+				|| StringUtil.Find(CuirassName, "Living Arm" ) >= 0 \
+				|| StringUtil.Find(CuirassName, "HM Priestess" ) >= 0 \
+				|| StringUtil.Find(CuirassName, "Hermaeus Mora" ) >= 0 \
+				|| BasicLivingArmor.find(CuirassName) >= 0 \
+				|| ParasiteLivingArmor.find(CuirassName) >= 0
 				Mode = 3
 				int soundInstance02 = TakeHoldSound.Play(akActor)
 				Utility.Wait( 5.0 )													;wait for possession sound to play
 				If MilkStory && akActor == PlayerREF && (akActorGender != "Male" || (akActorGender == "Male" && MaleMaids))
-					if StringUtil.Find(cuirass.getname(), "Hermaeus Mora" ) >= 0 || StringUtil.Find(cuirass.getname(), "HM Priestess" ) >= 0
-						StoryDisplay(0,3,FirstTimeStory)
-					elseif StringUtil.Find(cuirass.getname(), "Living Arm" ) >= 0
-						StoryDisplay(0,4,FirstTimeStory)
+					if StringUtil.Find(CuirassName, "Hermaeus Mora" ) >= 0 || StringUtil.Find(CuirassName, "HM Priestess" ) >= 0
+						StoryDisplay("start","hermaeusmora")
+					elseif StringUtil.Find(CuirassName, "Living Arm" ) >= 0
+						StoryDisplay("start","livingarmor")
 					else
-						StoryDisplay(0,2,FirstTimeStory)
+						StoryDisplay("start","spriggan")
 					endif
 				Endif
 				Sound.StopInstance( soundInstance02 )
@@ -1431,12 +1464,14 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 						EndIf
 					EndIf
 				EndIf
+				Debug.SendAnimationEvent(akActor,JsonUtil.StringListGet("/MME/Strings", "standingmilkinganimations", Utility.RandomInt(0, JsonUtil.StringListCount("/MME/Strings", "standingmilkinganimations"))))
+				StorageUtil.SetIntValue(akActor, "MME.MilkMaid.IsAnimating", 1)
 			EndIf
 		ElseIf Mode == 1
 			If akActor == PlayerRef
 				Debug.Notification("With your hands bound there is no way you can be milked without somebody's help")
 			Else
-				Debug.Notification("With hands bound there is no way " + akActor.GetLeveledActorBase().GetName() + " can be milked without somebody's help")
+				Debug.Notification("With hands bound there is no way " + akActor.GetDisplayName() + " can be milked without somebody's help")
 			EndIf
 			IsMilkingBlocked = true
 			akActor.RemoveSpell( BeingMilkedPassive )
@@ -1479,7 +1514,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 		;prevent other mods form interrupting milking
 		SexLab.ForbidActor(akActor)
 		akActor.AddToFaction(SexLab.AnimatingFaction)
-		;Debug.Notification(akActor.GetLeveledActorBase().GetName() + " Set to " + SexLab.AnimatingFaction)
+		;Debug.Notification(akActor.GetDisplayName() + " Set to " + SexLab.AnimatingFaction)
 	Endif
 	
 	If PlayerREF == akActor
@@ -1645,13 +1680,13 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 				
 				;if DDGag == false || ZaZGag == false
 					if 	PainCnt >= PainMax
-						MlikExpression = 4
+						Expression = 4
 						SexLab.PickVoice(akActor).Moan(akActor, Utility.RandomInt (70, 100), true)
 					elseif 	PainCnt >= (PainMax/3*2) || ( Mode == 1 )
-						MlikExpression = Utility.RandomInt(2, 4)
+						Expression = Utility.RandomInt(2, 4)
 						SexLab.PickVoice(akActor).Moan(akActor, Utility.RandomInt (30, 100), true)
 					else
-						MlikExpression = Utility.RandomInt(1, 3)
+						Expression = Utility.RandomInt(1, 3)
 						SexLab.PickVoice(akActor).Moan(akActor, Utility.RandomInt (30, 100), false)
 					endif
 				;else
@@ -1659,13 +1694,13 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 				;endif
 				
 				if DDGag == false || ZaZGagOpen == false
-					if MlikExpression == 1
+					if Expression == 1
 						SexLab.GetExpressionByName("Happy").ApplyTo(akActor, Utility.RandomInt(30, 50))
-					elseif MlikExpression == 2
+					elseif Expression == 2
 						SexLab.GetExpressionByName("Pleasure").ApplyTo(akActor, Utility.RandomInt(30, 100))
-					elseif MlikExpression == 3
+					elseif Expression == 3
 						SexLab.GetExpressionByName("Joy").ApplyTo(akActor, Utility.RandomInt(30, 100))
-					elseif MlikExpression == 4
+					elseif Expression == 4
 						SexLab.GetExpressionByName("Pained").ApplyTo(akActor, Utility.RandomInt(50, 70))
 					endif
 				endif
@@ -1709,7 +1744,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 					MilkCnt = MME_Storage.getMilkCurrent(akActor)
 					CurrentSize(akActor)
 					if PlayerREF.GetDistance(akActor) < 500 && MilkMsgs && MilkCntMsgs
-						debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s remaining capacity: " + MilkCnt + ", Milked capacity: " + bottles)
+						debug.Notification(MaidName + "'s remaining capacity: " + MilkCnt + ", Milked capacity: " + bottles)
 					endif
 					if mode == 1 || akActor.GetWornForm(Armor.GetMaskForSlot(32)) == (None || TITS4 || TITS6 || TITS8)
 						AddMilkFx(akActor, 1)
@@ -1719,7 +1754,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 				
 				if StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.MilkGen") == 0 
 					if Utility.RandomInt(0, 100) < 15
-						debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s breasts has started lactating.")
+						debug.Notification(MaidName + "'s breasts has started lactating.")
 						StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", MilkGenValue / 3 / 10 * gush)
 					endif
 				else
@@ -1798,26 +1833,26 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 				
 				;if DDGag == false || ZaZGag == false
 					if 	PainCnt >= PainMax
-						MlikExpression = 4
+						Expression = 4
 						SexLab.PickVoice(akActor).Moan(akActor, Utility.RandomInt (70, 100), true)
 					elseif 	PainCnt >= (PainMax/3*2) || ( Mode == 1 )
-						MlikExpression = Utility.RandomInt(2, 4)
+						Expression = Utility.RandomInt(2, 4)
 						SexLab.PickVoice(akActor).Moan(akActor, Utility.RandomInt (30, 100), true)
 					else
-						MlikExpression = Utility.RandomInt(1, 3)
+						Expression = Utility.RandomInt(1, 3)
 						SexLab.PickVoice(akActor).Moan(akActor, Utility.RandomInt (30, 100), false)
 					endif
 				;else
 				;	zbf.Main.PlayGagSound(akActor)
 				;endif
 				if DDGag == false || ZaZGag == false
-					if MlikExpression == 1
+					if Expression == 1
 						SexLab.GetExpressionByName("Happy").ApplyTo(akActor, Utility.RandomInt(30, 50))
-					elseif MlikExpression == 2
+					elseif Expression == 2
 						SexLab.GetExpressionByName("Pleasure").ApplyTo(akActor, Utility.RandomInt(30, 100))
-					elseif MlikExpression == 3
+					elseif Expression == 3
 						SexLab.GetExpressionByName("Joy").ApplyTo(akActor, Utility.RandomInt(30, 100))
-					elseif MlikExpression == 4
+					elseif Expression == 4
 						SexLab.GetExpressionByName("Pained").ApplyTo(akActor, Utility.RandomInt(50, 70))
 					endif
 				endif
@@ -1840,9 +1875,9 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 				Int exposureValue = ((((bottles + 1) / (MilkCnt + bottles + 1)) * 3 * -20.0)/(1+SLA.GetActorExposureRate(akActor)/3)) as Int
 				if PlayerREF.GetDistance(akActor) < 500 && MilkMsgs 
 					if akActor.HasSpell(MilkingStage)
-						debug.Notification(akActor.GetLeveledActorBase().GetName() + " is having a boobgasm" )
+						Debug.Notification(formatString(JsonUtil.GetStringValue("/MME/Stories", "MilkingBoobgasm"), MaidName))
 					elseif akActor.HasSpell(FuckMachineStage)
-						debug.Notification(akActor.GetLeveledActorBase().GetName() + " is having a orgasm" )
+						Debug.Notification(formatString(JsonUtil.GetStringValue("/MME/Stories", "MilkingOrgasm"), MaidName))
 					endif
 				endif
 				if akActor == PlayerREF && Game.GetCameraState() != 3
@@ -1898,7 +1933,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 				akActor.Setunconscious(false)
 			endif
 			if MilkMsgs 
-				debug.Notification("Milk Pump has milked you dry and releases its bounds.")
+				Debug.Notification(formatString(JsonUtil.GetStringValue("/MME/Stories", "MilkingBoundDone"), MaidName))
 			endif
 		endif
 
@@ -1950,16 +1985,16 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 				akActor.equipitem(cuirass, false, true)
 			EndIf
 			If MilkStory && akActor == PlayerREF && (akActorGender != "Male" || (akActorGender == "Male" && MaleMaids))
-				StoryDisplay(1,1,FirstTimeStory)
+				StoryDisplay("end","milkpump")
 			EndIf
 		elseif Mode == 3
 			If MilkStory && akActor == PlayerREF && (akActorGender != "Male" || (akActorGender == "Male" && MaleMaids))
-				if StringUtil.Find(cuirass.getname(), "Hermaeus Mora" ) >= 0 || StringUtil.Find(cuirass.getname(), "HM Priestess" ) >= 0
-					StoryDisplay(1,3,FirstTimeStory)
-				elseif StringUtil.Find(cuirass.getname(), "Living Arm" ) >= 0
-					StoryDisplay(1,4,FirstTimeStory)
+				if StringUtil.Find(CuirassName, "Hermaeus Mora" ) >= 0 || StringUtil.Find(CuirassName, "HM Priestess" ) >= 0
+					StoryDisplay("end","hermaeusmora")
+				elseif StringUtil.Find(CuirassName, "Living Arm" ) >= 0
+					StoryDisplay("end","livingarmor")
 				else
-					StoryDisplay(1,2,FirstTimeStory)
+					StoryDisplay("end","spriggan")
 				endif
 			EndIf
 		else
@@ -2163,23 +2198,23 @@ Function PostMilk(Actor akActor)
 	
 EndFunction
 
-Function LevelCheck()
-	Float Level = StorageUtil.GetFloatValue(none, "MME.Progression.Level")
+Function LevelCheck()   ; mastery progression levelup messages
 	Float TimesMilked = StorageUtil.GetFloatValue(none, "MME.Progression.TimesMilked")
+	Float Level = StorageUtil.GetFloatValue(none, "MME.Progression.Level")
 	
 	If Level < MilkLvlCap
 		If TimesMilked >= (Level + 1) * TimesMilkedMult
 			StorageUtil.AdjustFloatValue(none,"MME.Progression.Level", 1)
 			StorageUtil.SetFloatValue(none,"MME.Progression.TimesMilked", 0)
 			if MilkMsgs
-				debug.Notification("Maid mastery Level up!")
-				;MilkMsgHyper(Level as int)   ; progression levelup messages, add here something later
+				;debug.Notification("Maid mastery Level up!")
+				debug.messagebox(JsonUtil.StringListGet("/MME/Strings_Lvlup", "masterylevelup", Level as int + 1))
 			endif
 		EndIf
 	EndIf
 EndFunction
 
-Function MaidLevelCheck(Actor akActor)
+Function MaidLevelCheck(Actor akActor)   ; maid progression levelup messages
 	Float MaidTimesMilked = StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.TimesMilked")
 	Int   MaidLevel = MME_Storage.getMaidLevel(akActor)
 	
@@ -2189,8 +2224,11 @@ Function MaidLevelCheck(Actor akActor)
 				MME_Storage.setMaidLevel(akActor, MaidLevel + 1)
 				StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.TimesMilked", - (MaidLevel + 1) * TimesMilkedMult)
 				if MilkMsgs && MaidLevel + 1 <= MilkLvlCap
-					debug.Notification(akActor.GetLeveledActorBase().getname() + " has gained a Milk maid level!")
-					MilkMsgHyper((MaidLevel + 1), akActor)
+					String MaidName = akActor.GetDisplayName()
+					debug.Notification(formatString(JsonUtil.StringListGet("/MME/Strings_Lvlup", "maidlevelup", MaidLevel as int), MaidName))
+					If Game.Getplayer().GetDistance(akActor) < 500
+						debug.messagebox(formatString(JsonUtil.StringListGet("/MME/Strings_Lvlup", "maidlevelup", MaidLevel as int + 1), MaidName, MaidName))
+					endif
 				endif
 			endif
 		endif
@@ -2205,16 +2243,18 @@ EndFunction
 Function MilkCycleMSG(Actor akActor)
 	Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 	Float MilkMax = MME_Storage.getMilkMaximum(akActor)
+	Int MilkStageStrings = JsonUtil.CountStringListPrefix("/MME/Strings_Milkstage", "milkstage")
 
 	If PlayerREF.GetDistance(akActor) < 500 && (MilkCnt as int) >= 1
+		String MaidName = akActor.GetDisplayName()
 		if MilkCnt >= MilkMax && PiercingCheck(akActor) != 2
-			debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s milk is leaking from swollen nipples.")
+			debug.Notification(formatString(JsonUtil.StringListGet("/MME/Strings_Milkstage", "milkstage", MilkStageStrings), MaidName))
 		elseif MilkCnt as int == (MilkMax - 1)
-			debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s swollen nipples become moistened.")
+			debug.Notification(formatString(JsonUtil.StringListGet("/MME/Strings_Milkstage", "milkstage", MilkStageStrings - 1), MaidName))
 		elseif MilkCnt as int == (MilkMax - 2)
-			debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s nipples swell and tingle.")
+			debug.Notification(formatString(JsonUtil.StringListGet("/MME/Strings_Milkstage", "milkstage", MilkStageStrings - 2), MaidName))
 		else
-			debug.Notification(akActor.GetLeveledActorBase().GetName() + "'s" + MilkMsgStage[PapyrusUtil.ClampInt(MilkCnt as int, 1, 22)])
+			debug.Notification(formatString(JsonUtil.StringListGet("/MME/Strings_Milkstage", "milkstage", MilkCnt as int + 1), MaidName))
 		endif
 	EndIf
 EndFunction
@@ -2274,16 +2314,17 @@ EndFunction
 
 Function MilkMsgHyper(int t, Actor akActor)
 	MilkMsgHyper = new String[11]
-		MilkMsgHyper[1] = "As a result of a series of repeated vigorous milkings, " + akActor.GetLeveledActorBase().GetName() + "'s breasts have grown accustomed to the great demand for their precious nectar and have grown bigger in size increasing their capacity! \n [Milk Maid Level: 1]"
-		MilkMsgHyper[2] = "Due to repeated vigorous milkings, " + akActor.GetLeveledActorBase().GetName() + "'s beautiful boobs are adjusting to the great demand for their precious nectar and have grown bigger in size increasing their capacity even further! \n [Milk Maid Level: 2]"
-		MilkMsgHyper[3] = "The repeated vigorous milkings are conditioning " + akActor.GetLeveledActorBase().GetName() + "'s glorious globes to meet the great demand for their precious nectar. They have grown bigger in size increasing their already impressive capacity even further! \n [Milk Maid Level: 3]"
-		MilkMsgHyper[4] = "Repeated vigorous milkings have trained " + akActor.GetLeveledActorBase().GetName() + "'s marvellous milk melons to meet the great demand for their precious nectar. They have grown bigger in size increasing their already amazing capacity even further! \n [Milk Maid Level: 4]"
-		MilkMsgHyper[5] = akActor.GetLeveledActorBase().GetName() + "'s looking forward to these vigorous milkings. Her breasts have grown accustomed to the great demand for their luscious lactation and have grown bigger in size increasing their inhuman capacity even further! \n [Milk Maid Level: 5]"
-		MilkMsgHyper[6] = akActor.GetLeveledActorBase().GetName() + "'s already ample breasts are adjusting to the demand for their precious nectar due to the repeated vigorous milkings. They have grown in size and capacity again! " + akActor.GetLeveledActorBase().GetName() + " enjoys being milked! \n [Milk Maid Level: 6]"
-		MilkMsgHyper[7] = "Due to the regular, vigorous milkings, " + akActor.GetLeveledActorBase().GetName() + "'s breasts have grown even larger and their capacity has increased. Their now bountiful breasts will work to meet the demand for their tasty milk. \n [Milk Maid Level: 7]"
-		MilkMsgHyper[8] = akActor.GetLeveledActorBase().GetName() + " enjoys the repeated and vigorous milking. her breasts continue to grow to meet the demand for their rich nectar. Her now Gigantic Jugs can supply more milk and she enjoys it when people notice her breast size! \n [Milk Maid Level: 8]"
+		String MaidName = akActor.GetDisplayName()
+		MilkMsgHyper[1] = "As a result of a series of repeated vigorous milkings, " + MaidName + "'s breasts have grown accustomed to the great demand for their precious nectar and have grown bigger in size increasing their capacity! \n [Milk Maid Level: 1]"
+		MilkMsgHyper[2] = "Due to repeated vigorous milkings, " + MaidName + "'s beautiful boobs are adjusting to the great demand for their precious nectar and have grown bigger in size increasing their capacity even further! \n [Milk Maid Level: 2]"
+		MilkMsgHyper[3] = "The repeated vigorous milkings are conditioning " + MaidName + "'s glorious globes to meet the great demand for their precious nectar. They have grown bigger in size increasing their already impressive capacity even further! \n [Milk Maid Level: 3]"
+		MilkMsgHyper[4] = "Repeated vigorous milkings have trained " + MaidName + "'s marvellous milk melons to meet the great demand for their precious nectar. They have grown bigger in size increasing their already amazing capacity even further! \n [Milk Maid Level: 4]"
+		MilkMsgHyper[5] = MaidName + "'s looking forward to these vigorous milkings. Her breasts have grown accustomed to the great demand for their luscious lactation and have grown bigger in size increasing their inhuman capacity even further! \n [Milk Maid Level: 5]"
+		MilkMsgHyper[6] = MaidName + "'s already ample breasts are adjusting to the demand for their precious nectar due to the repeated vigorous milkings. They have grown in size and capacity again! " + MaidName + " enjoys being milked! \n [Milk Maid Level: 6]"
+		MilkMsgHyper[7] = "Due to the regular, vigorous milkings, " + MaidName + "'s breasts have grown even larger and their capacity has increased. Their now bountiful breasts will work to meet the demand for their tasty milk. \n [Milk Maid Level: 7]"
+		MilkMsgHyper[8] = MaidName + " enjoys the repeated and vigorous milking. her breasts continue to grow to meet the demand for their rich nectar. Her now Gigantic Jugs can supply more milk and she enjoys it when people notice her breast size! \n [Milk Maid Level: 8]"
 		MilkMsgHyper[9] = "These regular, vigorous milking sessions turn your milkmaid's on! They now have Tremendous Tits with increased size and capacity. Their delicious milk is in demand and they feel sexy when they hear comments about their boobs. \n [Milk Maid Level: 9]"
-		MilkMsgHyper[10] = akActor.GetLeveledActorBase().GetName() + " is now a Master of the Milkmaids with MASSIVE Mammaries! She can supply more milk than an entire herd of cows. And those tits of theirs are the talk of Tamriel. \n [Master Milk Maid]"
+		MilkMsgHyper[10] = MaidName + " is now a Master of the Milkmaids with MASSIVE Mammaries! She can supply more milk than an entire herd of cows. And those tits of theirs are the talk of Tamriel. \n [Master Milk Maid]"
 	debug.messagebox(MilkMsgHyper[t])
 EndFunction
 
@@ -2291,51 +2332,71 @@ EndFunction
 ;Stories
 ;----------------------------------------------------------------------------
 
-Function StoryDisplay(int StoryState , int StoryMode, bool FirstTimeStory)
-;StoryState == 0 - start, 1 - end
-int i
-
-if FirstTimeStory
-	i = 0
-else
-	i = 1
-endif
-
-if StoryMode == 1					;Milkpump milking
-	i = Utility.RandomInt(1, 5) * i
-	If StoryState == 0
-		StoryMPS(i)
-	Elseif StoryState == 1
-		StoryMPE(i)
-	EndIf
+Function StoryDisplay(String StoryState , String StoryType)
+	int i
+	i = Utility.RandomInt(1, JsonUtil.CountStringListPrefix("/MME/Strings_Stories", StoryType + StoryState))
 	
-Elseif StoryMode == 2 				;Spriggan milking
-	i = Utility.RandomInt(1, 3)
-	If StoryState == 0
-		StorySS(i)
-	Elseif StoryState == 1
-		StorySE(i)
-	EndIf
-	
-Elseif StoryMode == 3				;Hermaeus Mora milking
-	i = Utility.RandomInt(1, 2)
-	If StoryState == 0
-		StoryHMS(i)
-	Elseif StoryState == 1
-		StoryHME(i)
-	EndIf
-	
-Elseif StoryMode == 4				;Living armor milking
-	i = Utility.RandomInt(1, 3)
-	If StoryState == 0
-		StoryLAS(i)
-	Elseif StoryState == 1
-		StoryLAE(i)
-	EndIf
-endif
-
-debug.messagebox(Story[i])
+	if StoryType == "milkpump"					;Milkpump only milking story
+		if StorageUtil.GetStringValue(Game.Getplayer(), "MME.FirstTimeStory", True) != True && StoryState != "end"
+			;not a 1st time story
+		else
+			;1st time story start
+			i = 0
+			if StoryState == "end"
+				;1st time story end
+				;remove 1st time story flag
+				StorageUtil.SetStringValue(Game.Getplayer(), "MME.FirstTimeStory", False)
+			endif
+		endif
+	endif
+	debug.messagebox(formatString(JsonUtil.StringListGet("/MME/Strings_Stories", StoryType + StoryState, i), Game.Getplayer().GetDisplayName()))
 EndFunction
+
+; Function StoryDisplay(int StoryState , int StoryMode, bool FirstTimeStory)
+	;StoryState == 0 - start, 1 - end
+	; int i
+
+	; if FirstTimeStory
+		; i = 0
+	; else
+		; i = 1
+	; endif
+
+	; if StoryMode == 1					;Milkpump milking
+		; i = Utility.RandomInt(1, 5) * i
+		; If StoryState == 0
+			; StoryMPS(i)
+		; Elseif StoryState == 1
+			; StoryMPE(i)
+		; EndIf
+		
+	; Elseif StoryMode == 2 				;Spriggan milking
+		; i = Utility.RandomInt(1, 3)
+		; If StoryState == 0
+			; StorySS(i)
+		; Elseif StoryState == 1
+			; StorySE(i)
+		; EndIf
+		
+	; Elseif StoryMode == 3				;Hermaeus Mora milking
+		; i = Utility.RandomInt(1, 2)
+		; If StoryState == 0
+			; StoryHMS(i)
+		; Elseif StoryState == 1
+			; StoryHME(i)
+		; EndIf
+		
+	; Elseif StoryMode == 4				;Living armor milking
+		; i = Utility.RandomInt(1, 3)
+		; If StoryState == 0
+			; StoryLAS(i)
+		; Elseif StoryState == 1
+			; StoryLAE(i)
+		; EndIf
+	; endif
+
+	; debug.messagebox(Story[i])
+; EndFunction
 
 Function StoryMPS(int i)
 	Story = new String[6]
@@ -2377,7 +2438,7 @@ Function StoryHMS(int i)
 	Story = new String[3]
 	Story[0] = "Here could be your story"
 	Story[1] = "The tentacles are reaching for your breasts. The suckers melt with your body. You nearly faint in Hermaeus' presence, feeling his caress, becoming one with his parasite. You feel milk gushing out, ravenous imbibed by the tentacles."
-	Story[2] = "A dark voice pounds in your head: '" + PlayerRef.GetLeveledActorBase().GetName() + ", my favourite mind milker. Let me see what knowledge you acquired for me.' The tentacles caress your breast, dig deep into them, you feel them inside your trembling body, reaching your head, your mind..."
+	Story[2] = "A dark voice pounds in your head: '" + PlayerRef.GetDisplayName() + ", my favourite mind milker. Let me see what knowledge you acquired for me.' The tentacles caress your breast, dig deep into them, you feel them inside your trembling body, reaching your head, your mind..."
 EndFunction
 
 Function StoryHME(int i)
@@ -2441,26 +2502,28 @@ EndFunction
 Function MultiBreastChange(Actor akActor)
 	Float BreastRows = MME_Storage.getBreastRows(akActor)
 	Form cuirass = akActor.GetWornForm(Armor.GetMaskForSlot(32))
+	String akActorName = akActor.GetDisplayName()
+	String CuirassName
 	
 	if !akActor.IsInFaction(MilkSlaveFaction) && !akActor.IsInFaction(MilkMaidFaction)
 		if cuirass == TITS4\ 
 		|| cuirass == TITS6\
 		|| cuirass == TITS8
-			debug.Trace("MilkModEconomy MultiBreastChange() "+akActor.GetLeveledActorBase().GetName()+" is not maid/slave and has multi breast, removing")
+			debug.Trace("MilkModEconomy MultiBreastChange() "+akActorName+" is not maid/slave and has multi breast, removing")
 			akActor.RemoveItem(cuirass, 1, true)
 		endif
-		debug.Trace("MilkModEconomy MultiBreastChange() "+akActor.GetLeveledActorBase().GetName()+" is not maid/slave exiting")
+		debug.Trace("MilkModEconomy MultiBreastChange() "+akActorName+" is not maid/slave exiting")
 		return
 	endif
 	
 	if BreastRows < 1
-		debug.Trace("MilkModEconomy MultiBreastChange() "+akActor.GetLeveledActorBase().GetName()+" BreastRows < 1, resetting to 1")
+		debug.Trace("MilkModEconomy MultiBreastChange() "+akActorName+" BreastRows < 1, resetting to 1")
 		BreastRows = 1
 		StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.BreastRows", 1)
 	endif
 	
 	if BreastRows > 4
-		debug.Trace("MilkModEconomy MultiBreastChange() "+akActor.GetLeveledActorBase().GetName()+" BreastRows > 4, resetting to 4")
+		debug.Trace("MilkModEconomy MultiBreastChange() "+akActorName+" BreastRows > 4, resetting to 4")
 		BreastRows = 4
 		StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.BreastRows", 4)
 	endif
@@ -2846,7 +2909,7 @@ Function Milkmaidinfo()
 			float MilkCnt = MME_Storage.getMilkCurrent(MILKmaid[i])
 			float PainCnt = MME_Storage.getPainCurrent(MILKmaid[i])
 			float PainMax = MME_Storage.getPainMaximum(MILKmaid[i])
-			msg = msg + ("Maid name: " + MilkMaid[i].GetLeveledActorBase().GetName()\
+			msg = msg + ("Maid name: " + MilkMaid[i].GetDisplayName()\
 							+ " Milk: " + ReduceFloat(MilkCnt)\
 							+ " Pain: " + (PainCnt/PainMax*100) as int + "%")
 		endif
@@ -2857,7 +2920,7 @@ Function Milkmaidinfo()
 			float MilkCnt = MME_Storage.getMilkCurrent(MilkSlave[i])
 			float PainCnt = MME_Storage.getPainCurrent(MilkSlave[i])
 			float PainMax = MME_Storage.getPainMaximum(MilkSlave[i])
-			msg = msg + ("Slave name: " + MilkSlave[i].GetLeveledActorBase().GetName()\
+			msg = msg + ("Slave name: " + MilkSlave[i].GetDisplayName()\
 							+ " Milk: " + ReduceFloat(MilkCnt)\
 							+ " Pain: " + (PainCnt/PainMax*100) as int + "%")
 		endif
@@ -2921,10 +2984,10 @@ Function RemoveMilkFx2(Actor akActor)
 EndFunction
 
 Function MaidRemove(Actor akActor)
-		debug.notification("MilkModEconomy existing maid/slave " + akActor.GetLeveledActorBase().GetName() + "resetting")
+		debug.notification("MilkModEconomy existing maid/slave " + akActor.GetDisplayName() + "resetting")
 	If akActor != None
 		MME_BodyMod BodyMod = Quest.GetQuest("MME_MilkQUEST") as MME_BodyMod
-		debug.Trace("MilkModEconomy existing maid/slave " + akActor.GetLeveledActorBase().GetName() + "resetting")
+		debug.Trace("MilkModEconomy existing maid/slave " + akActor.GetDisplayName() + "resetting")
 		
 		;Reset Body mods
 		MaidResetNodes(akActor)
@@ -2989,13 +3052,16 @@ Function MaidRemove(Actor akActor)
 		akActor.RemoveFromFaction(MilkMaidFaction)
 		akActor.RemoveFromFaction(MilkSlaveFaction)
 		MultiBreastChange(akActor)
+		if akActor == Game.Getplayer()
+			StorageUtil.UnSetStringValue(akActor, "MME.FirstTimeStory")
+		endif
 	EndIf
 EndFunction
 
 Function MaidResetNodes(Actor akActor)
 	If akActor != None
 		MME_BodyMod BodyMod = Quest.GetQuest("MME_MilkQUEST") as MME_BodyMod
-		debug.Trace("MilkModEconomy existing maid/slave " + akActor.GetLeveledActorBase().GetName() + "resetting NiO scales")
+		debug.Trace("MilkModEconomy existing maid/slave " + akActor.GetDisplayName() + "resetting NiO scales")
 		
 	;Reset Body mods
 	;Reset NIO
@@ -3291,10 +3357,10 @@ bool Function isSuccubus(Actor akActor)
 EndFunction
 
 bool Function isPregnant(Actor akActor)
-
+	String akActorName = akActor.GetDisplayName()
 	;SL Procreation
 	if SLP.IsPregnant(akActor) == true
-		debug.Trace("MilkModEconomy SLP Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+		debug.Trace("MilkModEconomy SLP Pregnancy: " + akActorName)
 		Return True
 	endif
 	
@@ -3302,55 +3368,55 @@ bool Function isPregnant(Actor akActor)
 	Faction HentaiPregnantFaction = ( Game.GetFormFromFile(0x12085, "HentaiPregnancy.esm") as Faction )		;HentaiPregnantFaction
 	if HentaiPregnantFaction
 		if akActor.GetFactionRank(HentaiPregnantFaction) == 2 || akActor.GetFactionRank(HentaiPregnantFaction) == 3
-		debug.Trace("MilkModEconomy SLHP2 Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+		debug.Trace("MilkModEconomy SLHP2 Pregnancy: " + akActorName)
 			Return True
 		endif
 	endif
 	
 	;Fertility Mode
 	if (StorageUtil.HasIntValue(akActor, "_JSW_FM_PregnantDay") && StorageUtil.GetIntValue(akActor, "_JSW_FM_PregnantDay") > 0)
-		debug.Trace("MilkModEconomy Fertility Mode Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+		debug.Trace("MilkModEconomy Fertility Mode Pregnancy: " + akActorName)
 		Return True
 	endif
 	
 	;SL Hentai pregnancy
 	if SLHP.IsPregnant(akActor) == true
-		debug.Trace("MilkModEconomy SLHP Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+		debug.Trace("MilkModEconomy SLHP Pregnancy: " + akActorName)
 		Return True
 	endif
 
 	;SoulGem Oven 2
 	if StorageUtil.GetFloatValue(akActor, "SGO.Gem.Weight") > 0
-		debug.Trace("MilkModEconomy SGO2 Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+		debug.Trace("MilkModEconomy SGO2 Pregnancy: " + akActorName)
 		Return True
 	endif
 	
 	;SoulGem Oven 3
 	if SGO.IsPregnant(akActor) == true
-		debug.Trace("MilkModEconomy SGO3 Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+		debug.Trace("MilkModEconomy SGO3 Pregnancy: " + akActorName)
 		Return True
 	endif
 	
 	;SexLab SoulGem Pregnancy
 	if StorageUtil.GetIntValue(akActor, "PRG_IsPregnant") != 0
-		debug.Trace("MilkModEconomy SGP Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+		debug.Trace("MilkModEconomy SGP Pregnancy: " + akActorName)
 		Return True
 	endif
 	
 	;PlayerSuccubusQuest SoulGem Pregnancy
 	if StorageUtil.GetIntValue(akActor, "PSQ_SoulGemPregnancyON", 0) != 0
-		debug.Trace("MilkModEconomy PSQ Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+		debug.Trace("MilkModEconomy PSQ Pregnancy: " + akActorName)
 		Return True
 	endif
 
 	;Estrus Chaurus+
 	if Plugin_EstrusChaurus
 		if akActor.HasSpell( Game.GetFormFromFile(0x19121, "EstrusChaurus.esp") as Spell ) ;ChaurusBreeder spell
-			debug.Trace("MilkModEconomy EC Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+			debug.Trace("MilkModEconomy EC Pregnancy: " + akActorName)
 			Return True
 		endif
 		if akActor.HasKeyword( Game.GetFormFromFile(0x160A8, "EstrusChaurus.esp") as Keyword ) ;zzEstrusParasite Keyword
-			debug.Trace("MilkModEconomy EC Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+			debug.Trace("MilkModEconomy EC Pregnancy: " + akActorName)
 			Return True
 		endif
 	endif
@@ -3358,11 +3424,11 @@ bool Function isPregnant(Actor akActor)
 	;Estrus Spider+
 	if Plugin_EstrusSpider
 		if akActor.HasSpell( Game.GetFormFromFile(0x4e255, "EstrusSpider.esp") as Spell ) ;SpiderBreeder spell
-			debug.Trace("MilkModEconomy ES Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+			debug.Trace("MilkModEconomy ES Pregnancy: " + akActorName)
 			Return True
 		endif
 		if akActor.HasKeyword( Game.GetFormFromFile(0x4F2A3, "EstrusSpider.esp") as Keyword ) ;zzEstrusSpiderParasiteKWD Keyword
-			debug.Trace("MilkModEconomy EC Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+			debug.Trace("MilkModEconomy EC Pregnancy: " + akActorName)
 			Return True
 		endif
 	endif
@@ -3370,11 +3436,11 @@ bool Function isPregnant(Actor akActor)
 	;Estrus Dwemer+
 	if Plugin_EstrusDwemer
 		if akActor.HasSpell( Game.GetFormFromFile(0x4e255, "EstrusDwemer.esp") as Spell ) ;DwemerBreeder spell
-			debug.Trace("MilkModEconomy ED Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+			debug.Trace("MilkModEconomy ED Pregnancy: " + akActorName)
 			Return True
 		endif
 		if akActor.HasKeyword( Game.GetFormFromFile(0x4F2A3, "EstrusDwemer.esp") as Keyword ) ;zzEstrusDwemerParasiteKWD Keyword
-			debug.Trace("MilkModEconomy ED Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+			debug.Trace("MilkModEconomy ED Pregnancy: " + akActorName)
 			Return True
 		endif
 	endif
@@ -3382,7 +3448,7 @@ bool Function isPregnant(Actor akActor)
 	;BeeingFemale
 	if Plugin_BeeingFemale
 		if akActor.HasSpell( Game.GetFormFromFile(0x28a0, "BeeingFemale.esm") as Spell ) ;_BFStatePregnant spell
-			debug.Trace("MilkModEconomy BF Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+			debug.Trace("MilkModEconomy BF Pregnancy: " + akActorName)
 			Return True
 		endif
 	endif
@@ -3390,7 +3456,7 @@ bool Function isPregnant(Actor akActor)
 	;EggFactory
 	If Game.GetModbyName("EggFactory.esp") != 255
 		if akActor.isInFaction( Game.GetFormFromFile(0x1101f, "EggFactory.esp") as Faction ) ;EggFactoryActiveFaction Faction
-			debug.Trace("MilkModEconomy EggFactory Pregnancy: " + akActor.GetLeveledActorBase().GetName())
+			debug.Trace("MilkModEconomy EggFactory Pregnancy: " + akActorName)
 			Return True
 		endif
 	endif
@@ -3399,6 +3465,7 @@ bool Function isPregnant(Actor akActor)
 EndFunction
 
 int Function PiercingCheck(Actor akActor)
+
 	int t = 0
 	if DDi.IsMilkingBlocked_PiercingsNipple(akActor) == true
 		t = 1
@@ -3415,11 +3482,12 @@ int Function PiercingCheck(Actor akActor)
 EndFunction
 
 int Function IsNamedMaid(Actor akActor)
-	if StringUtil.Find(akActor.getname(), "Milkmaid" ) >= 0 ||  StringUtil.Find(akActor.getname(), "Milk maid" ) >= 0
+	String akActorName = akActor.getname()
+	if StringUtil.Find(akActorName, "Milkmaid" ) >= 0 ||  StringUtil.Find(akActorName, "Milk maid" ) >= 0
 		return 1
-	elseif StringUtil.Find(akActor.getname(), "Milkslave" ) >= 0 || StringUtil.Find(akActor.getname(), "Milk slave" ) >= 0
+	elseif StringUtil.Find(akActorName, "Milkslave" ) >= 0 || StringUtil.Find(akActorName, "Milk slave" ) >= 0
 		return 2
-	elseif StringUtil.Find(akActor.getname(), "Cow" ) >= 0
+	elseif StringUtil.Find(akActorName, "Cow" ) >= 0
 		return 3
 	else
 		return 0
@@ -3476,7 +3544,7 @@ int Function Pain(Actor akActor, int pain)
 		who = "My"
 		how = "feels"
 	else 
-		who = akActor.GetLeveledActorBase().GetName() + "'s"
+		who = akActor.GetDisplayName() + "'s"
 		how = "looks"
 	endif
 
@@ -3492,7 +3560,7 @@ int Function Pain(Actor akActor, int pain)
 		debug.Notification(who + " nipples jut out in pain demanding release!")
 	endif
 
-	PainCnt += (pain - 0.025*MaidLevel) * (1 - SLA.GetActorArousal(akActor) / 100 * 0.25)
+	PainCnt += (pain - MaidLevel * 0.025) * (1 - SLA.GetActorArousal(akActor) / 100 * 0.25)
 	if PiercingCheck(akActor) == 1
 		PainCnt *= 2 
 	endif

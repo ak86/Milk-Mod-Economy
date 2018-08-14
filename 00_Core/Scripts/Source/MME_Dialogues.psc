@@ -49,8 +49,14 @@ Function Init_Milking(Actor akActor1, Actor akActor2)
 	anims = new sslBaseAnimation[1]
 
 	;sexActors[]: 0 - actor being sucked, 1 - actor sucking
-	sexActors[0] = akActor1
-	sexActors[1] = akActor2
+	;sexActors[0] / akActor1 should probably never be male, but w/e
+	;if akActor1.GetActorBase().GetSex() == 0 && akActor2.GetActorBase().GetSex() == 0
+	;	Debug.Notification(JsonUtil.GetStringValue("/MME/Strings", "MilkingGayWarning"))
+	;	return
+	;else
+		sexActors[0] = akActor1
+		sexActors[1] = akActor2
+	;endif
 
 	if sexActors[1].GetLeveledActorBase().GetSex() == 0 || ((MilkQ.akActorSex(sexActors[1]) == "Futa") && Utility.RandomInt(1, 2) == 1)
 		anims[0] = MilkQ.SexLab.AnimSlots.GetbyRegistrar("zjBreastFeedingVar")		;Straight
