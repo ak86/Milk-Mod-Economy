@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>30-07-2018</Version>
+  <Version>14-08-2018</Version>
   <Author>Ed86</Author>
   <Website>https://www.patreon.com/Ed86</Website>
   <Description>
@@ -61,6 +61,16 @@ b)	Using Campire mod to craft and place milkpumps
   
   
 Dev change log:
+
+	v 14-08-2018
+added ability to change milking animation with notification key
+probably fixes and optimizations, lets hope nothing broken
+changed some notifications to use json files
+changed lvlup,breast,story messages to use json files
+split strings json into sub jsons for stories, lvlup, breast fullness messages
+changed rnd to use jsons
+added new installer options for mod logo
+removed uie option, since it most likely wont ever be done
 
 	v 30-07-2018
 changed belly scaling, so it wont cause conflicts if using old netimmerse option
