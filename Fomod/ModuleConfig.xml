@@ -46,6 +46,36 @@
 								<type name="Optional"/>
 							</typeDescriptor>
 						</plugin>
+						<plugin name="Classic - Colored">
+							<description>
+								<![CDATA[RGB by Z0mBieP00Nani, White Background]]>
+							</description>
+							<image path="Fomod\Screens\Logo\Classic - Colored\MilkLogo.jpg"/>
+							<conditionFlags>
+								<flag name="LogoClassic">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="04_Logo\Classic - Colored" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>
+						<plugin name="Classic - Colored Transparent Background">
+							<description>
+								<![CDATA[RGB by Z0mBieP00Nani, Transparent Background]]>
+							</description>
+							<image path="Fomod\Screens\Logo\Classic - Colored Transparent Background\MilkLogo.jpg"/>
+							<conditionFlags>
+								<flag name="LogoClassic">Active</flag>
+							</conditionFlags>
+							<files>
+								<folder source="04_Logo\Classic - Colored Transparent Background" destination=""/>
+							</files>
+							<typeDescriptor>
+								<type name="Optional"/>
+							</typeDescriptor>
+						</plugin>
 						<plugin name="Colour">
 							<description>
 								<![CDATA[RGB by Saeros]]>
@@ -651,27 +681,6 @@
 								</dependencyType>
 							</typeDescriptor>
 						</plugin>
-						<plugin name="UIExtensions">
-							<description>
-								<![CDATA[Support for uie menu(not working, placeholder).]]>
-							</description>
-							<conditionFlags>
-								<flag name="UIE">On</flag>
-							</conditionFlags>
-							<typeDescriptor>
-								<dependencyType>
-									<defaultType name="Optional"/>
-									<patterns>
-										<pattern>
-											<dependencies>
-												<fileDependency file="UIExtensions.esp" state="Active"/>
-											</dependencies>
-											<type name="Recommended"/>
-										</pattern>
-									</patterns>
-								</dependencyType>
-							</typeDescriptor>
-						</plugin>
 					</plugins>   
 				</group>
 			</optionalFileGroups>
@@ -821,22 +830,6 @@
 				</dependencies>
 				<files>
 					<folder source="05_Plugins\SLP\False" destination=""/>
-				</files>
-			</pattern>
-			<pattern>
-				<dependencies>
-					<flagDependency flag="UIE" value="On"/>
-				</dependencies>
-				<files>
-					<folder source="05_Plugins\UIE\True" destination=""/>
-				</files>
-			</pattern>
-			<pattern>
-				<dependencies>
-					<flagDependency flag="UIE" value=""/>
-				</dependencies>
-				<files>
-					<folder source="05_Plugins\UIE\False" destination=""/>
 				</files>
 			</pattern>
 		</patterns>
