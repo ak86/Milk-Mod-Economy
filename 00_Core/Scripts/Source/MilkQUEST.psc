@@ -18,7 +18,6 @@ MME_SLHP property SLHP auto
 MME_SLP property SLP auto
 MME_PSQ property PSQ auto
 MME_SGO property SGO auto
-MME_UIE property UIE auto
 MME_RND property RND auto
 
 ;Cross-script variables
@@ -2254,7 +2253,7 @@ Function MilkCycleMSG(Actor akActor)
 		elseif MilkCnt as int == (MilkMax - 2)
 			debug.Notification(formatString(JsonUtil.StringListGet("/MME/Strings_Milkstage", "milkstage", MilkStageStrings - 2), MaidName))
 		else
-			debug.Notification(formatString(JsonUtil.StringListGet("/MME/Strings_Milkstage", "milkstage", MilkCnt as int + 1), MaidName))
+			debug.Notification(formatString(JsonUtil.StringListGet("/MME/Strings_Milkstage", "milkstage", MilkCnt as int), MaidName))
 		endif
 	EndIf
 EndFunction

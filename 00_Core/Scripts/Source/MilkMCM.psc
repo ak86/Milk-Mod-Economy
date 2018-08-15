@@ -698,8 +698,6 @@ function Page_PluginChecks()
 		AddTextOption("*SLSD Integration Script", MilkQ.SLSD.IsIntegraged(), OPTION_FLAG_DISABLED)
 		AddEmptyOption()
 
-		AddTextOption("*UIE Integration Script", MilkQ.UIE.IsIntegraged(), OPTION_FLAG_DISABLED)
-
 	SetCursorPosition(1)
 		AddTextOption("iNeed", MilkQ.Plugin_iNeed, OPTION_FLAG_DISABLED)
 		AddTextOption("*iNeed Integration Script", MilkQ.ineed.IsIntegraged(), OPTION_FLAG_DISABLED)

@@ -29,8 +29,8 @@ Function MilkPluginsInfo()
 	String msg = ""
 	String Status = ""
 	int i = 0
-	String [] name = new string[10]
-	Int[] value = new int[10]
+	String [] name = new string[9]
+	Int[] value = new int[9]
 	bool ErrorsFound = False
 
 	;individual check to see if scripts working at all
@@ -65,9 +65,6 @@ Function MilkPluginsInfo()
 	Quest.GetQuest("MME_SOS").stop()
 	Quest.GetQuest("MME_SOS").reset()
 	Quest.GetQuest("MME_SOS").start()
-	Quest.GetQuest("MME_UIE").stop()
-	Quest.GetQuest("MME_UIE").reset()
-	Quest.GetQuest("MME_UIE").start()
 	utility.wait(1) ; wait for quests startup and do their OnInit()
 
 	value[0] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.ddi")
@@ -78,8 +75,7 @@ Function MilkPluginsInfo()
 	value[5] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.slhp")
 	value[6] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.slp")
 	value[7] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.sos")
-	value[8] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.uie")
-	value[9] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.zbf")
+	value[8] = StorageUtil.GetIntValue(none,"MME.PluginsCheck.zbf")
 
 	name[0] = "MME.PluginsCheck.ddi"
 	name[1] = "MME.PluginsCheck.ineed"
@@ -89,8 +85,7 @@ Function MilkPluginsInfo()
 	name[5] = "MME.PluginsCheck.slhp"
 	name[6] = "MME.PluginsCheck.slp"
 	name[7] = "MME.PluginsCheck.sos"
-	name[8] = "MME.PluginsCheck.uie"
-	name[9] = "MME.PluginsCheck.zbf"
+	name[8] = "MME.PluginsCheck.zbf"
 
 	msg = "Milk Mod Economy plugins check:\n"
 	While i < name.Length
@@ -120,6 +115,5 @@ Function MilkPluginsInfo()
 	StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.slhp")
 	StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.slp")
 	StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.sos")
-	StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.uie")
 	StorageUtil.UnSetIntValue(none,"MME.PluginsCheck.zbf")
 EndFunction
