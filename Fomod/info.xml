@@ -63,7 +63,8 @@ b)	Using Campire mod to craft and place milkpumps
 Dev change log:
 
 	v 16-08-2018
-fix for breast fullness message showing incorrect messages
+fix messages
+reverted names detection to GetLeveledActorBase
 
 	v 15-08-2018
 removed uie scripts and stuff related to it
