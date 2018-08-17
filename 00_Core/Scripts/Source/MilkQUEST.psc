@@ -454,7 +454,7 @@ Event OnKeyDown(int keyCode)
 			EndIf
 			
 			If akActor != None && (MILKmaid.find(akActor) != -1 || MILKslave.find(akActor) != -1)
-				if StorageUtil.SetIntValue(akActor, "MME.MilkMaid.IsAnimating", 1) && akActor.HasSpell( BeingMilkedPassive )						;Changes random animation
+				if StorageUtil.SetIntValue(akActor, "MME.MilkMaid.IsAnimating", 1) && akActor.HasSpell( BeingMilkedPassive ) && akActor == PlayerRef && MobileMilkingAnims						;Changes random animation
 					Debug.SendAnimationEvent(akActor,JsonUtil.StringListGet("/MME/Strings", "standingmilkinganimations", Utility.RandomInt(0, JsonUtil.StringListCount("/MME/Strings", "standingmilkinganimations"))))
 				endif
 				Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
@@ -1452,19 +1452,19 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 							if Mode != 0 && PlayerREF != akActor
 								akActor.Setunconscious(true)
 							Endif
-							mpas = Utility.RandomInt (1, 3)
-							if mpas == 1
-								Debug.SendAnimationEvent(akActor,"ZaZAPCHorFA")
-							elseif mpas == 2
-								Debug.SendAnimationEvent(akActor,"ZaZAPCHorFB")
-							elseif mpas == 3
-								Debug.SendAnimationEvent(akActor,"ZaZAPCHorFC")
-							endif
+;							mpas = Utility.RandomInt (1, 3)
+;							if mpas == 1
+;								Debug.SendAnimationEvent(akActor,"ZaZAPCHorFA")
+;							elseif mpas == 2
+;								Debug.SendAnimationEvent(akActor,"ZaZAPCHorFB")
+;							elseif mpas == 3
+;								Debug.SendAnimationEvent(akActor,"ZaZAPCHorFC")
+;							endif
+							Debug.SendAnimationEvent(akActor,JsonUtil.StringListGet("/MME/Strings", "standingmilkinganimations", Utility.RandomInt(0, JsonUtil.StringListCount("/MME/Strings", "standingmilkinganimations"))))
+							StorageUtil.SetIntValue(akActor, "MME.MilkMaid.IsAnimating", 1)
 						EndIf
 					EndIf
 				EndIf
-				Debug.SendAnimationEvent(akActor,JsonUtil.StringListGet("/MME/Strings", "standingmilkinganimations", Utility.RandomInt(0, JsonUtil.StringListCount("/MME/Strings", "standingmilkinganimations"))))
-				StorageUtil.SetIntValue(akActor, "MME.MilkMaid.IsAnimating", 1)
 			EndIf
 		ElseIf Mode == 1
 			If akActor == PlayerRef
