@@ -454,7 +454,7 @@ Event OnKeyDown(int keyCode)
 			EndIf
 			
 			If akActor != None && (MILKmaid.find(akActor) != -1 || MILKslave.find(akActor) != -1)
-				if StorageUtil.SetIntValue(akActor, "MME.MilkMaid.IsAnimating", 1) && akActor.HasSpell( BeingMilkedPassive ) && akActor == PlayerRef && MobileMilkingAnims						;Changes random animation
+				if StorageUtil.GetIntValue(akActor, "MME.MilkMaid.IsAnimating") == 1 && akActor.HasSpell( BeingMilkedPassive ) && akActor == PlayerRef && MobileMilkingAnims						;Changes random animation
 					Debug.SendAnimationEvent(akActor,JsonUtil.StringListGet("/MME/Strings", "standingmilkinganimations", Utility.RandomInt(0, JsonUtil.StringListCount("/MME/Strings", "standingmilkinganimations"))))
 				endif
 				Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
@@ -1141,6 +1141,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 		return									; prevents multiple scripts running
 	endif
 	akActor.AddSpell( BeingMilkedPassive, false )	; prevents multiple scripts running, if removed, milking will stop
+	StorageUtil.SetIntValue(akActor, "MME.MilkMaid.IsAnimating", 0)
 
 	Int soundInstance01
 	Int pain = 1
@@ -1958,6 +1959,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 	If PlayerREF == akActor && mode != 4
 		Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 		Game.SetPlayerAIDriven(false)
+		StorageUtil.SetIntValue(akActor, "MME.MilkMaid.IsAnimating", 0)
 	Endif
 	;justincase
 	akActor.Setunconscious(false)
@@ -2333,7 +2335,7 @@ EndFunction
 
 Function StoryDisplay(String StoryState , String StoryType)
 	int i
-	i = Utility.RandomInt(1, JsonUtil.StringListCount("/MME/Strings_Stories", StoryType + StoryState))
+	i = Utility.RandomInt(1, JsonUtil.StringListCount("/MME/Strings_Stories", StoryType + StoryState) - 1)
 	
 	if StoryType == "milkpump"					;Milkpump only milking story
 		if StorageUtil.GetStringValue(Game.Getplayer(), "MME.FirstTimeStory", True) != True && StoryState != "end"
