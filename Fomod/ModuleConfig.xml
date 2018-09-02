@@ -3,9 +3,6 @@
 	<moduleImage path="Fomod\Screens\module.jpg"/>
 	<moduleDependencies>
 		<fileDependency file="Skyrim.esm" state="Active" />
-		<fileDependency file="Update.esm" state="Active" />
-		<fileDependency file="ZaZAnimationPack.esm" state="Active" />
-		<fileDependency file="SexLab.esm" state="Active" />
 	</moduleDependencies>
 	<installSteps order="Explicit">	
 		<installStep name="Core Setup">
@@ -229,11 +226,11 @@
 						</plugin>				
 					</plugins>   
 				</group>
-				<group name="Patches(can be merged)" type="SelectAny">
+				<group name="Patches" type="SelectAny">
 					<plugins order="Explicit">			
-						<plugin name="HF_Patch">
+						<plugin name="Hearthfire">
 							<description>
-								<![CDATA[Plugin for Hearthfire, adds ability to craft "Jug of Milk" from milk potions at Cooking Pot]]>
+								<![CDATA[Plugin for Hearthfire DLC, adds ability to craft "Jug of Milk" from basic milk potions at Cooking Pot]]>
 							</description>
 							<conditionFlags>
 								<flag name="HF_Patch">Active</flag>
@@ -255,9 +252,9 @@
 								</dependencyType>
 							</typeDescriptor>
 						</plugin>
-						<plugin name="MME_Sandbox">
+						<plugin name="MME Sandbox">
 							<description>
-								<![CDATA[Patch enables sandbox for milkpumps, any npc can use pumps]]>
+								<![CDATA[Enables npc sandboxing for MME milkpumps - any npc can use pumps]]>
 							</description>
 							<conditionFlags>
 								<flag name="Sandbox_Patch">Active</flag>
@@ -269,9 +266,9 @@
 								<type name="Optional"/>
 							</typeDescriptor>				
 						</plugin>
-						<plugin name="MME_MilkpumpFix">
+						<plugin name="Milkpump Collision Fix">
 							<description>
-								<![CDATA[ZAP milking machines collision fix by CherryHotaling]]>
+								<![CDATA[Milking machines collision fix by CherryHotaling - npcs wont stuck in milkpump model, but it may be hard to target milkpumps]]>
 							</description>
 							<conditionFlags>
 								<flag name="MilkpumpCollisionFix">Active</flag>
@@ -280,17 +277,7 @@
 								<folder source="03_Patches\MilkpumpCollisionFix" destination=""/>
 							</files>
 							<typeDescriptor>
-								<dependencyType>
-									<defaultType name="Optional"/>
-									<patterns>
-										<pattern>
-											<dependencies>
-												<fileDependency file="ZaZAnimationPack.esm" state="Active"/>
-											</dependencies>
-											<type name="Recommended"/>
-										</pattern>
-									</patterns>
-								</dependencyType>
+								<type name="Optional"/>
 							</typeDescriptor>
 						</plugin>
 					</plugins>   
