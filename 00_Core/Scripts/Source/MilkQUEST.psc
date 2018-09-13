@@ -225,8 +225,12 @@ FormList Property MME_Spells_Wellmilked Auto
 
 LeveledItem Property LItemFoodInnCommon Auto
 LeveledItem Property LItemSkooma75 Auto
+LeveledItem Property LootCitizenDrinkList75 Auto
+LeveledItem Property LItemApothecaryIngredienstUncommon75 Auto
 LeveledItem Property MME_LItemFoodInnCommonMilk Auto
 LeveledItem Property MME_LItemSkooma75RaceMilkLactacid Auto
+LeveledItem Property MME_LootCitizenDrinkList75 Auto
+LeveledItem Property MME_LItemApothecaryIngredienstUncommon75 Auto
 
 Faction Property MilkMaidFaction Auto
 Faction Property MilkSlaveFaction Auto
@@ -706,7 +710,7 @@ Function MilkCycle(Actor akActor, int t)
 			if LactacidDecayRate > 0																					;reduce lactacid
 				LactacidCnt -= LactacidDecayRate
 			elseif LactacidDecayRate == 0
-				LactacidCnt -= LactacidCycle
+				LactacidCnt -= MilkTickCycle
 			endif
 			if LactacidCnt < 0
 				LactacidCnt = 0
@@ -2798,18 +2802,115 @@ EndFunction
 Function MMEfoodlistaddon()
 	debug.Trace("MilkModEconomy adding MME Leveled lists to base Leveled lists")
 	int i
+	int t = 0
+	
+	i = 0
+	while i < LItemFoodInnCommon.GetNumForms() && LItemFoodInnCommon.GetNthForm(i) != MME_LItemFoodInnCommonMilk
+		i += 1
+	endwhile
+	
+	;add basic/simple non lactacid milk to vendors
+	if LItemFoodInnCommon.GetNthForm(i) != MME_LItemFoodInnCommonMilk
+		;Reset MME LL
+		MME_LItemFoodInnCommonMilk.Revert()
+		;Build MME LL (100% spawn)
+
+		;add generic milk
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Basic.GetAt(0), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Basic.GetAt(1), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Basic.GetAt(2), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Basic.GetAt(3), 1, 1)
+		
+		;add simple milk
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Altmer_Normal.GetAt(t), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Argonian_Normal.GetAt(t), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Bosmer_Normal.GetAt(t), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Breton_Normal.GetAt(t), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Dunmer_Normal.GetAt(t), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Imperial_Normal.GetAt(t), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Khajiit_Normal.GetAt(t), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Nord_Normal.GetAt(t), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Orc_Normal.GetAt(t), 1, 1)
+		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Redguard_Normal.GetAt(t), 1, 1)
+
+		;Add MME LL to game list (100% spawn)
+		LItemFoodInnCommon.AddForm(MME_LItemFoodInnCommonMilk, 1, 1)
+		debug.Trace("MilkModEconomy adding MME_LItemFoodInnCommonMilk list to LItemFoodInnCommon")
+	EndIf
+	
+	i = 0
+	while i < LootCitizenDrinkList75.GetNumForms() && LootCitizenDrinkList75.GetNthForm(i) != MME_LootCitizenDrinkList75
+		i += 1
+	endwhile
+	
+	;add basic/simple non lactacid milk to Npcs/Citizens
+	if LootCitizenDrinkList75.GetNthForm(i) != MME_LootCitizenDrinkList75
+		;Reset MME LL
+		MME_LootCitizenDrinkList75.Revert()
+		;Build MME LL (100% spawn)
+
+		;add generic milk
+		MME_LootCitizenDrinkList75.AddForm(MME_Milk_Basic.GetAt(0), 1, 1)
+		MME_LootCitizenDrinkList75.AddForm(MME_Milk_Basic.GetAt(1), 1, 1)
+		MME_LootCitizenDrinkList75.AddForm(MME_Milk_Basic.GetAt(2), 1, 1)
+		MME_LootCitizenDrinkList75.AddForm(MME_Milk_Basic.GetAt(3), 1, 1)
+		
+		;add simple milk
+		MME_LootCitizenDrinkList75.AddForm(MME_Milk_Altmer_Normal.GetAt(t), 1, 1)
+		MME_LootCitizenDrinkList75.AddForm(MME_Milk_Argonian_Normal.GetAt(t), 1, 1)
+		MME_LootCitizenDrinkList75.AddForm(MME_Milk_Bosmer_Normal.GetAt(t), 1, 1)
+		MME_LootCitizenDrinkList75.AddForm(MME_Milk_Breton_Normal.GetAt(t), 1, 1)
+		MME_LootCitizenDrinkList75.AddForm(MME_Milk_Dunmer_Normal.GetAt(t), 1, 1)
+		MME_LootCitizenDrinkList75.AddForm(MME_Milk_Imperial_Normal.GetAt(t), 1, 1)
+		MME_LootCitizenDrinkList75.AddForm(MME_Milk_Khajiit_Normal.GetAt(t), 1, 1)
+		MME_LootCitizenDrinkList75.AddForm(MME_Milk_Nord_Normal.GetAt(t), 1, 1)
+		MME_LootCitizenDrinkList75.AddForm(MME_Milk_Orc_Normal.GetAt(t), 1, 1)
+		MME_LootCitizenDrinkList75.AddForm(MME_Milk_Redguard_Normal.GetAt(t), 1, 1)
+
+		;Add MME LL to game list (75% spawn)
+		LootCitizenDrinkList75.AddForm(MME_LootCitizenDrinkList75, 1, 1)
+		debug.Trace("MilkModEconomy adding MME_LootCitizenDrinkList75 list to LootCitizenDrinkList75")
+	EndIf
+
+	i = 0
+	while i < LItemApothecaryIngredienstUncommon75.GetNumForms() && LItemApothecaryIngredienstUncommon75.GetNthForm(i) != MME_LItemApothecaryIngredienstUncommon75
+		i += 1
+	endwhile
+	
+	;add special milk with lactacid to alchemists?
+	if LItemApothecaryIngredienstUncommon75.GetNthForm(i) != MME_LItemApothecaryIngredienstUncommon75
+		;Reset MME LL
+		MME_LItemApothecaryIngredienstUncommon75.Revert()
+		;Build MME LL (100% spawn)
+		;add lactacid milk
+		MME_LItemApothecaryIngredienstUncommon75.AddForm(MME_Util_Potions.GetAt(t), 1, 1)
+		MME_LItemApothecaryIngredienstUncommon75.AddForm(MME_Util_Potions.GetAt(t), 1, 1)
+		MME_LItemApothecaryIngredienstUncommon75.AddForm(MME_Util_Potions.GetAt(t), 1, 1)
+		MME_LItemApothecaryIngredienstUncommon75.AddForm(MME_Util_Potions.GetAt(t), 1, 1)
+		MME_LItemApothecaryIngredienstUncommon75.AddForm(MME_Util_Potions.GetAt(t), 1, 1)
+		
+		;add simple special milk
+		MME_LItemApothecaryIngredienstUncommon75.AddForm(MME_Milk_Succubus.GetAt(0), 1, 1)
+		MME_LItemApothecaryIngredienstUncommon75.AddForm(MME_Milk_Vampire.GetAt(0), 1, 1)
+		MME_LItemApothecaryIngredienstUncommon75.AddForm(MME_Milk_Werewolf.GetAt(0), 1, 1)
+
+		;Add MME LL to game list (75% spawn)
+		LItemApothecaryIngredienstUncommon75.AddForm(MME_LItemApothecaryIngredienstUncommon75, 1, 1)
+		debug.Trace("MilkModEconomy adding MME_LItemApothecaryIngredienstUncommon75 list to LItemApothecaryIngredienstUncommon75")
+	EndIf
 	
 	i = 0
 	while i < LItemSkooma75.GetNumForms() && LItemSkooma75.GetNthForm(i) != MME_LItemSkooma75RaceMilkLactacid
 		i += 1
 	endwhile
 	
-	;add milk to outlaws?
+	;add lactacid to outlaws?
 	if LItemSkooma75.GetNthForm(i) != MME_LItemSkooma75RaceMilkLactacid
+		;Reset MME LL
 		MME_LItemSkooma75RaceMilkLactacid.Revert()
-		
-		;add 5 lactacid to skooma LL list(100-75=25% spawn)
-		int t = 0
+		;Build MME LL (100% spawn)
+
+		;add 5 lactacid to skooma LL list
 		MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Util_Potions.GetAt(t), 1, 1)
 		MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Util_Potions.GetAt(t), 1, 1)
 		MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Util_Potions.GetAt(t), 1, 1)
@@ -2830,41 +2931,10 @@ Function MMEfoodlistaddon()
 			MME_LItemSkooma75RaceMilkLactacid.AddForm(MME_Milk_Redguard_Normal.GetAt(t), 1, 1)
 			t += 1
 		endwhile
-		
+		;Add MME LL to game list (75% spawn)
 		LItemSkooma75.AddForm(MME_LItemSkooma75RaceMilkLactacid, 1, 1)
 		debug.Trace("MilkModEconomy adding MME_LItemSkooma75RaceMilkLactacid list to LItemSkooma75")
 	endif
-	
-	i = 0
-	while i < LItemFoodInnCommon.GetNumForms() && LItemFoodInnCommon.GetNthForm(i) != MME_LItemFoodInnCommonMilk
-		i += 1
-	endwhile
-	
-	;add milk to vendors
-	if LItemFoodInnCommon.GetNthForm(i) != MME_LItemFoodInnCommonMilk
-		MME_LItemFoodInnCommonMilk.Revert()
-
-		;add generic milk
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Basic.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Basic.GetAt(1), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Basic.GetAt(2), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Basic.GetAt(3), 1, 1)
-		
-		;add simple milk
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Altmer_Normal.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Argonian_Normal.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Bosmer_Normal.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Breton_Normal.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Dunmer_Normal.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Imperial_Normal.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Khajiit_Normal.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Nord_Normal.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Orc_Normal.GetAt(0), 1, 1)
-		MME_LItemFoodInnCommonMilk.AddForm(MME_Milk_Redguard_Normal.GetAt(0), 1, 1)
-
-		LItemFoodInnCommon.AddForm(MME_LItemFoodInnCommonMilk, 1, 1)
-		debug.Trace("MilkModEconomy adding MME_LItemFoodInnCommonMilk list to LItemFoodInnCommon")
-	EndIf
 EndFunction
 
 Function SlSWfoodlistaddon()

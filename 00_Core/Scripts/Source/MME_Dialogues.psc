@@ -285,7 +285,7 @@ EndFunction
 
 Function Fragment_19(ObjectReference akSpeakerRef)
 	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
-	MilkQ.MilkE.InitiateDialogueTrade(Game.Getplayer(), 5)
+	MilkQ.MilkE.InitiateDialogueTrade(Game.Getplayer(), 3)
 EndFunction
 
 Function Fragment_20(ObjectReference akSpeakerRef)

@@ -251,6 +251,7 @@ Function InitiateTradeToContainer(int MilkCount, int boobgasmcount, Actor akActo
 endFunction
 
 Function InitiateTrade(int MilkCount, int boobgasmcount, Actor akActor, bool mobilemilking)
+	;handles milk selling after milking, one type of basic milk, one type of race milk
 	Race maidRace = akActor.GetActorBase().GetRace()
 	int marketIndex = GetMarketIndexFromLocation(akActor.GetCurrentLocation())
 	int raceIndex = GetRaceIndexFromRace(maidRace)
@@ -289,8 +290,11 @@ Function InitiateTrade(int MilkCount, int boobgasmcount, Actor akActor, bool mob
 
 	; multiply value of baseTrade after tax is calculated if there is demand
 	if MilkDemands[marketIndex] == raceIndex
-		NbaseTrade = NbaseTrade * 3 
+		NbaseTrade = NbaseTrade * 3
 		BbaseTrade = BbaseTrade * 3
+	else
+		NbaseTrade = NbaseTrade * 2
+		BbaseTrade = BbaseTrade * 2
 	endif
 
 	if MilkQ.EconFlag && mobilemilking == false
@@ -314,6 +318,7 @@ Function InitiateTrade(int MilkCount, int boobgasmcount, Actor akActor, bool mob
 endFunction
 
 Function InitiateDialogueTrade(Actor akActor, int MilkType)
+	;handles milk selling through dialogues, many types of milk
 	;MilkType=1 - normal milk
 	;MilkType=2 - race milk 
 	;MilkType=3 - both milk(1+2)
@@ -351,7 +356,21 @@ Function InitiateDialogueTrade(Actor akActor, int MilkType)
 			i += 1
 		endwhile
 	elseif MilkType == 4
-		MilkTypeFormList = MilkQ.MME_Milk_Special
+		i = 0
+		while i < MilkQ.MME_Milk_Succubus.GetSize()
+			MilkTypeFormList.AddForm(MilkQ.MME_Milk_Succubus.GetAt(i))
+			i += 1
+		endwhile
+		i = 0
+		while i < MilkQ.MME_Milk_Vampire.GetSize()
+			MilkTypeFormList.AddForm(MilkQ.MME_Milk_Vampire.GetAt(i))
+			i += 1
+		endwhile
+		i = 0
+		while i < MilkQ.MME_Milk_Werewolf.GetSize()
+			MilkTypeFormList.AddForm(MilkQ.MME_Milk_Werewolf.GetAt(i))
+			i += 1
+		endwhile
 	elseif MilkType == 5
 		i = 0
 		while i < MilkQ.MME_Milk_Basic.GetSize()
@@ -364,8 +383,18 @@ Function InitiateDialogueTrade(Actor akActor, int MilkType)
 			i += 1
 		endwhile
 		i = 0
-		while i < MilkQ.MME_Milk_Special.GetSize()
-			MilkTypeFormList.AddForm(MilkQ.MME_Milk_Special.GetAt(i))
+		while i < MilkQ.MME_Milk_Succubus.GetSize()
+			MilkTypeFormList.AddForm(MilkQ.MME_Milk_Succubus.GetAt(i))
+			i += 1
+		endwhile
+		i = 0
+		while i < MilkQ.MME_Milk_Vampire.GetSize()
+			MilkTypeFormList.AddForm(MilkQ.MME_Milk_Vampire.GetAt(i))
+			i += 1
+		endwhile
+		i = 0
+		while i < MilkQ.MME_Milk_Werewolf.GetSize()
+			MilkTypeFormList.AddForm(MilkQ.MME_Milk_Werewolf.GetAt(i))
 			i += 1
 		endwhile
 	endif
@@ -380,20 +409,20 @@ Function InitiateDialogueTrade(Actor akActor, int MilkType)
 			finalQty = akActor.GetItemCount(MilkTypeFormList.GetAt(i))
 			;Debug.Notification(akActor.GetItemCount(MilkTypeFormList.GetAt(i)) + " " + (MilkTypeFormList.GetAt(i) as potion).GetName())
 			raceIndex = GetRaceIndexFromMilk(finalPotion)
-			upkeep = upkeep + GetUpKeepCost(akActor.GetItemCount(MilkTypeFormList.GetAt(i)))
+			upkeep = upkeep + GetUpKeepCost(finalQty)
 			baseTrade = CalculateBaseTrade(finalPotion, finalQty) * MilkQ.MilkPriceMod
 			if MilkDemands[marketIndex] == raceIndex								; multiply value of baseTrade after tax is calculated
-				finalbaseTrade = baseTrade * 3
+				finalbaseTrade = finalbaseTrade + baseTrade * 3
 			else
-				finalbaseTrade = baseTrade
+				finalbaseTrade = finalbaseTrade + baseTrade * 2
 			endif
-			milkTax = CalculateServiceTax(marketIndex, finalbaseTrade)
 		endif
 		i += 1
 	endwhile
 	;Debug.Notification("marketIndex "+marketIndex+" MilkDemands[marketIndex] "+MilkDemands[marketIndex]+" raceIndex "+raceIndex)
 	;Debug.Notification("upkeep "+upkeep+" baseTrade "+baseTrade+" finalbaseTrade "+finalbaseTrade)
 
+	milkTax = CalculateServiceTax(marketIndex, finalbaseTrade)
 	if MilkType == 5 || marketIndex == 4  || marketIndex == 0
 		upkeep = 0
 		milkTax = 0
@@ -851,16 +880,18 @@ int Function GetRaceIndexFromMilk(Potion Milk)
 		return 9
 	elseif MilkQ.MME_Milk_Redguard_Normal.Find(Milk) != -1		;redguard
 		return 10
-	elseif MilkQ.MME_Milk_Vampire.Find(Milk) != -1				;vampire
-		return 11
-	elseif MilkQ.MME_Milk_Werewolf.Find(Milk) != -1				;werewolf
-		return 12
-	elseif MilkQ.MME_Milk_Succubus.Find(Milk) != -1				;succubus
-		return 13
 	elseif MilkQ.MME_Milk_Exotic_Normal.Find(Milk) != -1		;exotic
+		return 11
+		
+	;these never used in eco
+	elseif MilkQ.MME_Milk_Vampire.Find(Milk) != -1				;vampire
+		return 12
+	elseif MilkQ.MME_Milk_Werewolf.Find(Milk) != -1				;werewolf
 		return 13
-	else 														;basic
+	elseif MilkQ.MME_Milk_Succubus.Find(Milk) != -1				;succubus
 		return 14
+	else 														;basic
+		return 15
 	endif
 EndFunction
 
