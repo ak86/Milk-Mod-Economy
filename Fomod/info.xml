@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>13-09-2018</Version>
+  <Version>24-09-2018</Version>
   <Author>Ed86</Author>
   <Website>https://www.patreon.com/Ed86</Website>
   <Description>
@@ -61,6 +61,10 @@ b)	Using Campire mod to craft and place milkpumps
   
   
 Dev change log:
+
+	v 24-09-2018
+fixed notification key not stoping/aborting milking
+added support for FertilityMode and BeeingFemale babies, they will drink milk every hour if character has 1+ milk, not naked, has no multibreast
 
 	v 13-09-2018
 fixed lactacid reduction formula, was too low

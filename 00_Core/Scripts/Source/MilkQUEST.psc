@@ -492,7 +492,7 @@ Event OnKeyUp(Int KeyCode, Float HoldTime)
 			ElseIf (Input.IsKeyPressed(42) || Input.IsKeyPressed(54)) || (HoldTime > 2.0)
 				String MaidName = akActor.GetLeveledActorBase().GetName()
 				If akActor.HasSpell( BeingMilkedPassive )				;restores PC control\resets animation
-					If !StorageUtil.GetIntValue(akActor,"IsBoundStrict") && !SexLab.IsActorActive(akActor)
+					If !StorageUtil.GetIntValue(akActor,"IsBoundStrict"); && !SexLab.IsActorActive(akActor)
 						If akActor == PlayerRef
 							Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 						EndIf
@@ -610,10 +610,11 @@ Function MilkCycle(Actor akActor, int t)
 	Float LactacidFactor
 	
 	Bool IsMilkingArmor = false
+	Bool IsBabyArmor = false
 	String MaidName = akActor.GetLeveledActorBase().GetName()
 	
 	Form maidArmor = akActor.GetWornForm(Armor.GetMaskForSlot(32))
-
+	
 	;add/remove breast row trigger, cause lactation due to drinking breast inc/dec potion
 	if 	StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastBaseModPotion") != 0
 		if 	StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastBaseModPotion") > 0
@@ -749,6 +750,27 @@ Function MilkCycle(Actor akActor, int t)
 		IsMilkingArmor = true
 	endif
 	
+	if akActor.IsEquipped(Game.GetFormFromFile(0x05E7E, "FertilityMode.esp"))\
+	|| akActor.IsEquipped(Game.GetFormFromFile(0x0BFB8, "FertilityMode.esp"))\
+	|| akActor.IsEquipped(Game.GetFormFromFile(0x0BFB9, "FertilityMode.esp"))\
+	|| akActor.IsEquipped(Game.GetFormFromFile(0x0BFBA, "FertilityMode.esp"))\
+	|| akActor.IsEquipped(Game.GetFormFromFile(0x0BFBB, "FertilityMode.esp"))\
+	|| akActor.IsEquipped(Game.GetFormFromFile(0x105D4, "FertilityMode.esp"))\
+	|| akActor.IsEquipped(Game.GetFormFromFile(0x105D5, "FertilityMode.esp"))\
+	|| akActor.IsEquipped(Game.GetFormFromFile(0x105D6, "FertilityMode.esp"))\
+	|| akActor.IsEquipped(Game.GetFormFromFile(0x5D17D, "BeeingFemale.esm"))\
+	|| akActor.IsEquipped(Game.GetFormFromFile(0x5D17E, "BeeingFemale.esm"))\
+	|| akActor.IsEquipped(Game.GetFormFromFile(0x5D182, "BeeingFemale.esm"))\
+	|| akActor.IsEquipped(Game.GetFormFromFile(0x5D183, "BeeingFemale.esm"))\
+	|| akActor.IsEquipped(Game.GetFormFromFile(0x61CFF, "BeeingFemale.esm"))\
+	|| akActor.IsEquipped(Game.GetFormFromFile(0x61D00, "BeeingFemale.esm"))\
+	|| akActor.IsEquipped(Game.GetFormFromFile(0x61D01, "BeeingFemale.esm"))\
+	|| akActor.IsEquipped(Game.GetFormFromFile(0x61D02, "BeeingFemale.esm"))\
+	|| akActor.IsEquipped(Game.GetFormFromFile(0x61D03, "BeeingFemale.esm"))\
+	|| akActor.IsEquipped(Game.GetFormFromFile(0x61D04, "BeeingFemale.esm"))
+		IsBabyArmor = true
+	endif
+	
 	;play leaking effects, if breast are bigger then max
 	if MilkCnt > MilkMax && PiercingCheck(akActor) != 2
 		If BreastScaleLimit
@@ -804,7 +826,11 @@ Function MilkCycle(Actor akActor, int t)
 		
 	;events based on equipped armor(milking,estus etc)
 	if maidArmor != None && MME_Storage.getBreastRows(akActor) == 1
-		if IsMilkingArmor
+		if IsBabyArmor
+			if MilkCnt >= 1 && akActor.IsNearPlayer()
+				Milking(akActor, 0, 4, 0)
+			endif
+		elseif IsMilkingArmor
 			if StorageUtil.GetIntValue(akActor,"MME.MilkMaid.MilkingMode") == 2
 				if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") > 0
 					if LactacidCnt == 0 && MilkCnt <= 1
