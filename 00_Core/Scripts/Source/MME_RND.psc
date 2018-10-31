@@ -129,109 +129,109 @@ EndFunction
 Function Thirst(Int mod = 0)
 	GlobalVariable RND_State = JsonUtil.GetFormValue("/MME/RND", "RND_State") as GlobalVariable
 
-		if RND_State.GetValue() == 1
-			Actor PlayerRef = Game.GetPlayer()
+	if RND_State.GetValue() == 1
+		Actor PlayerRef = Game.GetPlayer()
 
-			Idle idleDrink = JsonUtil.GetFormValue("/MME/RND", "idleDrink") as Idle
-			Idle ChairDrinkingStart = JsonUtil.GetFormValue("/MME/RND", "ChairDrinkingStart") as Idle
-			Idle idleStop_Loose = JsonUtil.GetFormValue("/MME/RND", "idleStop_Loose") as Idle
+		Idle idleDrink = JsonUtil.GetFormValue("/MME/RND", "idleDrink") as Idle
+		Idle ChairDrinkingStart = JsonUtil.GetFormValue("/MME/RND", "ChairDrinkingStart") as Idle
+		Idle idleStop_Loose = JsonUtil.GetFormValue("/MME/RND", "idleStop_Loose") as Idle
 
-			Potion RND_EmptyBottle03 = JsonUtil.GetFormValue("/MME/RND", "RND_EmptyBottle03") as Potion
-			
-			GlobalVariable RND_ThirstPoints = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstPoints") as GlobalVariable
-			GlobalVariable RND_ThirstPointsPerHour = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstPointsPerHour") as GlobalVariable
-			GlobalVariable RND_ThirstLastUpdateTimeStamp = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLastUpdateTimeStamp") as GlobalVariable
-			GlobalVariable RND_WaterPoints = JsonUtil.GetFormValue("/MME/RND", "RND_WaterPoints") as GlobalVariable
-			GlobalVariable RND_1stPersonMsg = JsonUtil.GetFormValue("/MME/RND", "RND_1stPersonMsg") as GlobalVariable
-			GlobalVariable RND_AnimDrink = JsonUtil.GetFormValue("/MME/RND", "RND_AnimDrink") as GlobalVariable
+		Potion RND_EmptyBottle03 = JsonUtil.GetFormValue("/MME/RND", "RND_EmptyBottle03") as Potion
+		
+		GlobalVariable RND_ThirstPoints = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstPoints") as GlobalVariable
+		GlobalVariable RND_ThirstPointsPerHour = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstPointsPerHour") as GlobalVariable
+		GlobalVariable RND_ThirstLastUpdateTimeStamp = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLastUpdateTimeStamp") as GlobalVariable
+		GlobalVariable RND_WaterPoints = JsonUtil.GetFormValue("/MME/RND", "RND_WaterPoints") as GlobalVariable
+		GlobalVariable RND_1stPersonMsg = JsonUtil.GetFormValue("/MME/RND", "RND_1stPersonMsg") as GlobalVariable
+		GlobalVariable RND_AnimDrink = JsonUtil.GetFormValue("/MME/RND", "RND_AnimDrink") as GlobalVariable
 
-			GlobalVariable RND_ThirstLevel00 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel00") as GlobalVariable
-			GlobalVariable RND_ThirstLevel01 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel01") as GlobalVariable
-			GlobalVariable RND_ThirstLevel02 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel02") as GlobalVariable
-			GlobalVariable RND_ThirstLevel03 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel03") as GlobalVariable
-			GlobalVariable RND_ThirstLevel04 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel04") as GlobalVariable
+		GlobalVariable RND_ThirstLevel00 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel00") as GlobalVariable
+		GlobalVariable RND_ThirstLevel01 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel01") as GlobalVariable
+		GlobalVariable RND_ThirstLevel02 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel02") as GlobalVariable
+		GlobalVariable RND_ThirstLevel03 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel03") as GlobalVariable
+		GlobalVariable RND_ThirstLevel04 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel04") as GlobalVariable
 
-			Spell RND_ThirstSpell00 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell00") as Spell
-			Spell RND_ThirstSpell01 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell01") as Spell
-			Spell RND_ThirstSpell02 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell02") as Spell
-			Spell RND_ThirstSpell03 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell03") as Spell
-			Spell RND_ThirstSpell04 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell04") as Spell
+		Spell RND_ThirstSpell00 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell00") as Spell
+		Spell RND_ThirstSpell01 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell01") as Spell
+		Spell RND_ThirstSpell02 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell02") as Spell
+		Spell RND_ThirstSpell03 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell03") as Spell
+		Spell RND_ThirstSpell04 = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell04") as Spell
 
-			Message RND_ThirstLevel00ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel00ConsumeMessage") as Message
-			Message RND_ThirstLevel01ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel01ConsumeMessage") as Message
-			Message RND_ThirstLevel02ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel02ConsumeMessage") as Message
-			Message RND_ThirstLevel03ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel03ConsumeMessage") as Message
-			Message RND_ThirstLevel04ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel04ConsumeMessage") as Message
+		Message RND_ThirstLevel00ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel00ConsumeMessage") as Message
+		Message RND_ThirstLevel01ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel01ConsumeMessage") as Message
+		Message RND_ThirstLevel02ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel02ConsumeMessage") as Message
+		Message RND_ThirstLevel03ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel03ConsumeMessage") as Message
+		Message RND_ThirstLevel04ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel04ConsumeMessage") as Message
 
-			Message RND_ThirstLevel00ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel00ConsumeMessageB") as Message
-			Message RND_ThirstLevel01ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel01ConsumeMessageB") as Message
-			Message RND_ThirstLevel02ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel02ConsumeMessageB") as Message
-			Message RND_ThirstLevel03ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel03ConsumeMessageB") as Message
-			Message RND_ThirstLevel04ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel04ConsumeMessageB") as Message
+		Message RND_ThirstLevel00ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel00ConsumeMessageB") as Message
+		Message RND_ThirstLevel01ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel01ConsumeMessageB") as Message
+		Message RND_ThirstLevel02ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel02ConsumeMessageB") as Message
+		Message RND_ThirstLevel03ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel03ConsumeMessageB") as Message
+		Message RND_ThirstLevel04ConsumeMessageB = JsonUtil.GetFormValue("/MME/RND", "RND_ThirstLevel04ConsumeMessageB") as Message
 
-			int AdjPoints = Utility.RandomInt(-5,5)
-			RND_ThirstPoints.SetValue(RND_ThirstPoints.GetValue() - RND_WaterPoints.GetValue() - AdjPoints)
+		int AdjPoints = Utility.RandomInt(-5,5)
+		RND_ThirstPoints.SetValue(RND_ThirstPoints.GetValue() - RND_WaterPoints.GetValue() - AdjPoints)
 
-			if RND_ThirstPoints.GetValue() > RND_ThirstLevel04.GetValue()
-				RND_ThirstPoints.SetValue(RND_ThirstLevel04.GetValue())
-			elseif RND_ThirstPoints.GetValue() < 0
-				RND_ThirstPoints.SetValue(0)
-			endif
-		
-			RND_ThirstLastUpdateTimeStamp.SetValue(Utility.GetCurrentGameTime())
-		
-			; new spell to add
-			Spell ThirstSpell = RND_ThirstSpell02
-			Message ThirstLevelMessage = None
-		
-			if RND_ThirstPoints.GetValue() < RND_ThirstLevel01.GetValue()
-				ThirstSpell = RND_ThirstSpell00
-				if RND_1stPersonMsg.GetValue() == 1
-					ThirstLevelMessage = RND_ThirstLevel00ConsumeMessage
-				else
-					ThirstLevelMessage = RND_ThirstLevel00ConsumeMessageB
-				endif
-		
-			elseif RND_ThirstPoints.GetValue() >= RND_ThirstLevel01.GetValue() && RND_ThirstPoints.GetValue() < RND_ThirstLevel02.GetValue()
-				ThirstSpell = RND_ThirstSpell01
-				if RND_1stPersonMsg.GetValue() == 1
-					ThirstLevelMessage = RND_ThirstLevel01ConsumeMessage
-				else
-					ThirstLevelMessage = RND_ThirstLevel01ConsumeMessageB
-				endif
-		
-			elseif RND_ThirstPoints.GetValue() >= RND_ThirstLevel02.GetValue() && RND_ThirstPoints.GetValue() < RND_ThirstLevel03.GetValue()
-				ThirstSpell = RND_ThirstSpell02
-				if RND_1stPersonMsg.GetValue() == 1
-					ThirstLevelMessage = RND_ThirstLevel02ConsumeMessage
-				else
-					ThirstLevelMessage = RND_ThirstLevel02ConsumeMessageB
-				endif
-		
-			elseif RND_ThirstPoints.GetValue() >= RND_ThirstLevel03.GetValue() && RND_ThirstPoints.GetValue() < RND_ThirstLevel04.GetValue()
-				ThirstSpell = RND_ThirstSpell03
-				if RND_1stPersonMsg.GetValue() == 1
-					ThirstLevelMessage = RND_ThirstLevel03ConsumeMessage
-				else
-					ThirstLevelMessage = RND_ThirstLevel03ConsumeMessageB
-				endif
-		
-			elseif RND_ThirstPoints.GetValue() >= RND_ThirstLevel04.GetValue() 
-				ThirstSpell = RND_ThirstSpell04
-				if RND_1stPersonMsg.GetValue() == 1
-					ThirstLevelMessage = RND_ThirstLevel04ConsumeMessage
-				else
-					ThirstLevelMessage = RND_ThirstLevel04ConsumeMessageB
-				endif
-			endif
-		
-			if PlayerREF.HasSpell(ThirstSpell)
-				ThirstLevelMessage.Show()
+		if RND_ThirstPoints.GetValue() > RND_ThirstLevel04.GetValue()
+			RND_ThirstPoints.SetValue(RND_ThirstLevel04.GetValue())
+		elseif RND_ThirstPoints.GetValue() < 0
+			RND_ThirstPoints.SetValue(0)
+		endif
+	
+		RND_ThirstLastUpdateTimeStamp.SetValue(Utility.GetCurrentGameTime())
+	
+		; new spell to add
+		Spell ThirstSpell = RND_ThirstSpell02
+		Message ThirstLevelMessage = None
+	
+		if RND_ThirstPoints.GetValue() < RND_ThirstLevel01.GetValue()
+			ThirstSpell = RND_ThirstSpell00
+			if RND_1stPersonMsg.GetValue() == 1
+				ThirstLevelMessage = RND_ThirstLevel00ConsumeMessage
 			else
-				RemoveThirstSpells()
-				PlayerREF.AddSpell(ThirstSpell, false)
-				ThirstLevelMessage.Show()
+				ThirstLevelMessage = RND_ThirstLevel00ConsumeMessageB
 			endif
+	
+		elseif RND_ThirstPoints.GetValue() >= RND_ThirstLevel01.GetValue() && RND_ThirstPoints.GetValue() < RND_ThirstLevel02.GetValue()
+			ThirstSpell = RND_ThirstSpell01
+			if RND_1stPersonMsg.GetValue() == 1
+				ThirstLevelMessage = RND_ThirstLevel01ConsumeMessage
+			else
+				ThirstLevelMessage = RND_ThirstLevel01ConsumeMessageB
+			endif
+	
+		elseif RND_ThirstPoints.GetValue() >= RND_ThirstLevel02.GetValue() && RND_ThirstPoints.GetValue() < RND_ThirstLevel03.GetValue()
+			ThirstSpell = RND_ThirstSpell02
+			if RND_1stPersonMsg.GetValue() == 1
+				ThirstLevelMessage = RND_ThirstLevel02ConsumeMessage
+			else
+				ThirstLevelMessage = RND_ThirstLevel02ConsumeMessageB
+			endif
+	
+		elseif RND_ThirstPoints.GetValue() >= RND_ThirstLevel03.GetValue() && RND_ThirstPoints.GetValue() < RND_ThirstLevel04.GetValue()
+			ThirstSpell = RND_ThirstSpell03
+			if RND_1stPersonMsg.GetValue() == 1
+				ThirstLevelMessage = RND_ThirstLevel03ConsumeMessage
+			else
+				ThirstLevelMessage = RND_ThirstLevel03ConsumeMessageB
+			endif
+	
+		elseif RND_ThirstPoints.GetValue() >= RND_ThirstLevel04.GetValue() 
+			ThirstSpell = RND_ThirstSpell04
+			if RND_1stPersonMsg.GetValue() == 1
+				ThirstLevelMessage = RND_ThirstLevel04ConsumeMessage
+			else
+				ThirstLevelMessage = RND_ThirstLevel04ConsumeMessageB
+			endif
+		endif
+	
+		if PlayerREF.HasSpell(ThirstSpell)
+			ThirstLevelMessage.Show()
+		else
+			RemoveThirstSpells()
+			PlayerREF.AddSpell(ThirstSpell, false)
+			ThirstLevelMessage.Show()
+		endif
 			
 		PlayerRef.AddItem(RND_EmptyBottle03, 1, true)
 
