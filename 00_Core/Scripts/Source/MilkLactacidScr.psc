@@ -10,7 +10,7 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 	
 	if akTarget.GetLeveledActorBase().GetSex() == 1 || MilkQ.MaleMaids == true
 		String MaidName = akTarget.GetLeveledActorBase().getname()
-		if MilkQ.MILKmaid.find(akTarget) != -1
+		if MilkQ.MILKmaid.find(akTarget) != -1; || MilkQ.MILKSlave.Find(akTarget) != -1
 			if akTarget.HasSpell(MilkQ.MME_Spells_Buffs.GetAt(3) as Spell)\
 			|| akTarget.HasSpell(MilkQ.MME_Spells_Buffs.GetAt(4) as Spell)
 			
@@ -26,7 +26,7 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 			endif
 			
 			MME_Storage.changeLactacidCurrent(akTarget, 1)
-		elseif !akTarget.IsInCombat() && !akTarget.IsOnMount()
+		elseif !akTarget.IsInCombat() && !akTarget.IsOnMount() && MilkQ.MILKSlave.Find(akTarget) == -1
 			int ButtonPressed
 			int count = 0
 			int C = 0
