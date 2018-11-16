@@ -24,12 +24,12 @@ Function Hunger(Int mod = 0)
 		GlobalVariable RND_HungerLevel04 = JsonUtil.GetFormValue("/MME/RND", "RND_HungerLevel04") as GlobalVariable
 		GlobalVariable RND_HungerLevel05 = JsonUtil.GetFormValue("/MME/RND", "RND_HungerLevel05") as GlobalVariable
 
-		Spell RND_HungerSpell00 = JsonUtil.GetFormValue("/MME/RND", "RND_HungerLevel00") as Spell
-		Spell RND_HungerSpell01 = JsonUtil.GetFormValue("/MME/RND", "RND_HungerLevel01") as Spell
-		Spell RND_HungerSpell02 = JsonUtil.GetFormValue("/MME/RND", "RND_HungerLevel02") as Spell
-		Spell RND_HungerSpell03 = JsonUtil.GetFormValue("/MME/RND", "RND_HungerLevel03") as Spell
-		Spell RND_HungerSpell04 = JsonUtil.GetFormValue("/MME/RND", "RND_HungerLevel04") as Spell
-		Spell RND_HungerSpell05 = JsonUtil.GetFormValue("/MME/RND", "RND_HungerLevel05") as Spell
+		Spell RND_HungerSpell00 = JsonUtil.GetFormValue("/MME/RND", "RND_HungerSpell00") as Spell
+		Spell RND_HungerSpell01 = JsonUtil.GetFormValue("/MME/RND", "RND_HungerSpell01") as Spell
+		Spell RND_HungerSpell02 = JsonUtil.GetFormValue("/MME/RND", "RND_HungerSpell02") as Spell
+		Spell RND_HungerSpell03 = JsonUtil.GetFormValue("/MME/RND", "RND_HungerSpell03") as Spell
+		Spell RND_HungerSpell04 = JsonUtil.GetFormValue("/MME/RND", "RND_HungerSpell04") as Spell
+		Spell RND_HungerSpell05 = JsonUtil.GetFormValue("/MME/RND", "RND_HungerSpell05") as Spell
 
 		Message RND_HungerLevel00ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "RND_HungerLevel00ConsumeMessage") as Message
 		Message RND_HungerLevel01ConsumeMessage = JsonUtil.GetFormValue("/MME/RND", "RND_HungerLevel01ConsumeMessage") as Message
@@ -256,13 +256,14 @@ Function RemoveHungerSpells()
 	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "RND_HungerSpell02") as Spell)
 	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "RND_HungerSpell03") as Spell)
 	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "RND_HungerSpell04") as Spell)
+	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "RND_HungerSpell05") as Spell)
 EndFunction
 
 Function RemoveThirstSpells()
 	Actor PlayerRef = Game.GetPlayer()
 	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell00") as Spell)
-	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell00") as Spell)
-	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell00") as Spell)
-	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell00") as Spell)
-	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell00") as Spell)
+	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell01") as Spell)
+	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell02") as Spell)
+	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell03") as Spell)
+	PlayerRef.RemoveSpell(JsonUtil.GetFormValue("/MME/RND", "RND_ThirstSpell04") as Spell)
 EndFunction
