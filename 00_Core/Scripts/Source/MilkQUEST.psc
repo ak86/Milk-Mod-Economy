@@ -626,7 +626,7 @@ Function MilkCycle(Actor akActor, int t)
 					AddMilkFx(akActor, 1)
 					AddLeak(akActor)
 				else
-					StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", MaidMilkGen/3/10)
+					StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkGen", 1/3/10)
 					debug.Notification(MaidName + "'s lactation has increased.")
 					MaidMilkGen = StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkGen")
 				endif
@@ -634,23 +634,21 @@ Function MilkCycle(Actor akActor, int t)
 					StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.AdjustBreastRow", 1)							;add breast row on sleep
 				endif
 			endif
+			;do to ticks to inc breast size, not bound to hours(t) coz im lazy
+			StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.BreastBaseModPotion", -0.01)
 		elseif 	StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastBaseModPotion") < 0
 			BreastBaseMod -= 0.01
 			if Utility.RandomInt(0, 100) <= 25 && BreastRows > 1
 				StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.AdjustBreastRow", -1) 								;remove breast row on sleep
 			endif
+			;do to ticks to dec breast size, not bound to hours(t) coz im lazy
+			StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.BreastBaseModPotion", 0.01)
 		endif
-		StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.BreastBaseModPotion", -0.01)
 		MME_Storage.setBreastsBaseadjust(akActor, BreastBaseMod)
-		BreastBase += BreastBaseMod
+		BreastBaseMod = MME_Storage.getBreastsBaseadjust(akActor)
 	endif
 	
-	;increase breast node if its lower than 1, probably never happens
-	if BreastUpScale && BreastBase + BreastBaseMod < 1
-		BoobTick = BreastBase + BreastBaseMod
-	else
-		BoobTick = BreastBase
-	endif
+	BoobTick = BreastBase + BreastBaseMod
 	
 	if BoobTick <= 0
 		BoobTick = 0.01
@@ -676,6 +674,8 @@ Function MilkCycle(Actor akActor, int t)
 		while tmod1 != 0
 			MaidLevel = MME_Storage.getMaidLevel(akActor)
 			LactacidFactor = ((LactacidCnt * LactacidCnt) / LactacidMod / PapyrusUtil.ClampInt(MaidLevel, 1, MaidLevel + 1))
+			
+			;raise/lower generation
 			if LactacidCnt > 0\
 			|| (isPregnant(akActor) && (MilkCnt + MilkTick < MilkMax))
 			;|| ((MaidMilkGen > 0 || isPregnant(akActor)) && (MilkCnt + MilkTick < MilkMax))							;has lactacid or pregnant and not full, increase milk generation
@@ -693,6 +693,7 @@ Function MilkCycle(Actor akActor, int t)
 				endif
 			endif
 			
+			;generate milk
 			float LactacidCycle = 0
 			if MaidMilkGen > 0
 				MilkTickCycle = (BoobTick + MaidMilkGen)/3/10 * (1 + SLA.GetActorArousal(akActor)/100) * MilkProdMod/100;basic milkproduction formula
@@ -1074,7 +1075,11 @@ Function CurrentSize(Actor akActor)
 				BreastBaseMod += 0.1
 				MME_Storage.setBreastsBaseadjust(akActor, BreastBaseMod)
 			endif
-			BreastBase += BreastBaseMod
+		endif
+		
+		BreastBase += BreastBaseMod
+		if BreastBase <= 0
+			BreastBase = 0.01
 		endif
 
 		;MilkCnt = BreastBase - MilkCnt * MaidBoobIncr

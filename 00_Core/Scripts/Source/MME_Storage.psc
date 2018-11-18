@@ -197,7 +197,7 @@ float function updateMilkCurrent(actor akActor) global
 		return MilkMax
 	else 
 		Debug.Trace("  -> " + MilkCur + " >  " + MilkMax)
-		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", MilkMax)
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", MilkCur)
 		return MilkCur
 	endif
 endfunction
