@@ -95,6 +95,11 @@ endfunction
 
 function setBreastsBaseadjust(actor akActor, float Value) global
 	Debug.Trace("MME_Storage: Triggered setBreastsBaseadjust() for actor " + akActor.GetLeveledActorBase().GetName())
+	;fix Baseadjust, so Basevalue + Baseadjust is not negative
+	float BreastsBasevalue = getBreastsBasevalue(akActor)
+	if value < 0 && BreastsBasevalue * -1 > value
+		value = BreastsBasevalue * -1
+	endif
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBaseMod", Value)
 endfunction
 
@@ -114,6 +119,8 @@ endfunction
 function setBreastsBasevalue(actor akActor, float Value) global
 	Debug.Trace("MME_Storage: Triggered setBreastsBasevalue() for actor " + akActor.GetLeveledActorBase().GetName())
 	StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBase", Value)
+	;fix Baseadjust, so Basevalue + Baseadjust is not negative
+	setBreastsBaseadjust(akActor, getBreastsBaseadjust(akActor))
 endfunction
 
 float function getLactacidCurrent(actor akActor) global

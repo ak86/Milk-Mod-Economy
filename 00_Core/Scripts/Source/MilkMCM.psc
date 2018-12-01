@@ -354,6 +354,7 @@ function Page_Settings()
 			AddSliderOptionST("BreastIncrease_Slider", "$MME_MENU_PAGE_Settings_H2_S3", MilkQ.BoobIncr, "{2}")
 			AddSliderOptionST("BreastIncreasePerLvl_Slider", "$MME_MENU_PAGE_Settings_H2_S4", MilkQ.BoobPerLvl, "{2}")
 			AddToggleOptionST("BreastUpScale_Toggle", "$MME_MENU_PAGE_Settings_H2_S5", MilkQ.BreastUpScale)
+			AddToggleOptionST("BreastVolumeScale_Toggle", "$MME_MENU_PAGE_Settings_H2_S9", MilkQ.BreastVolumeScale)
 
 		AddHeaderOption("$MME_MENU_PAGE_Settings_H3")
 			AddToggleOptionST("Notification_Messages_Toggle", "$MME_MENU_PAGE_Settings_H3_S1", MilkQ.MilkMsgs)
@@ -512,8 +513,8 @@ function Page_Debug()
 			AddToggleOptionST("Debug_MilkWerewolfTransform_Toggle", "$MME_MENU_PAGE_Debug_H4_S3", MilkQ.MilkWerewolfTransform)
 			AddToggleOptionST("Debug_MilkSelf_Spell_Toggle", MilkQ.MilkSelf.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MilkSelf))
 			AddToggleOptionST("Debug_MilkTarget_Spell_Toggle", MilkQ.MilkTarget.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MilkTarget))
-			AddToggleOptionST("Debug_MilkModToggle_Spell_Toggle", MilkQ.MilkModToggle.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MilkModToggle))
-			AddToggleOptionST("Debug_MilkModInfo_Spell_Toggle", MilkQ.MilkModInfo.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MilkModInfo))
+			;AddToggleOptionST("Debug_MilkModToggle_Spell_Toggle", MilkQ.MilkModToggle.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MilkModToggle))
+			;AddToggleOptionST("Debug_MilkModInfo_Spell_Toggle", MilkQ.MilkModInfo.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MilkModInfo))
 
 			AddToggleOptionST("Debug_MME_MakeMilkmaid_Spell_Toggle", MilkQ.MME_MakeMilkmaid_Spell.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_MakeMilkmaid_Spell))
 			AddToggleOptionST("Debug_MME_MakeMilkslave_Spell_Toggle", MilkQ.MME_MakeMilkslave_Spell.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_MakeMilkslave_Spell))
@@ -524,9 +525,9 @@ function Page_Debug()
 			AddToggleOptionST("Debug_ArmorMnanagement_Purge_Spell_Toggle", MilkQ.MME_AM_Purge.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_AM_Purge))
 
 			AddToggleOptionST("Debug_Debug_Spell_Toggle", MilkQ.MME_DebugSpell.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_DebugSpell))
-			AddToggleOptionST("Debug_ResetMaids_Spell_Toggle", MilkQ.MME_ResetMaids.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_ResetMaids))
-			AddToggleOptionST("Debug_ResetMod_Spell_Toggle", MilkQ.MME_ResetMod.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_ResetMod))
-			AddToggleOptionST("Debug_Uninstall_Spell_Toggle", MilkQ.MME_Uninstall.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_Uninstall))
+			;AddToggleOptionST("Debug_ResetMaids_Spell_Toggle", MilkQ.MME_ResetMaids.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_ResetMaids))
+			;AddToggleOptionST("Debug_ResetMod_Spell_Toggle", MilkQ.MME_ResetMod.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_ResetMod))
+			;AddToggleOptionST("Debug_Uninstall_Spell_Toggle", MilkQ.MME_Uninstall.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MME_Uninstall))
 		else
 			AddToggleOptionST("Debug_MilkSelf_Spell_Toggle", MilkQ.MilkSelf.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MilkSelf))
 			AddToggleOptionST("Debug_MilkTarget_Spell_Toggle", MilkQ.MilkTarget.getname(), MilkQ.PlayerREF.HasSpell(MilkQ.MilkTarget))
@@ -554,6 +555,7 @@ function Page_MilkMaidDebug()
 				float MilkCnt = MME_Storage.getMilkCurrent(MaidlistA[MaidIndex])
 				int   MaidLevel = MME_Storage.getMaidLevel(MaidlistA[MaidIndex])
 				float MaidMilkGen = StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.MilkGen") * BreastRows
+				float MaidBreastsBasevalue = MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex])
 				float MaidBreastsBaseadjust = MME_Storage.getBreastsBaseadjust(MaidlistA[MaidIndex])
 				float LactacidMod = StorageUtil.GetFloatValue(none,"MME.LactacidMod", missing = 10)
 				float LactacidCnt = MME_Storage.getLactacidCurrent(MaidlistA[MaidIndex])
@@ -569,10 +571,26 @@ function Page_MilkMaidDebug()
 					MilkTick = 1.0/3 * BreastRows * (1 + MilkQ.SLA.GetActorArousal(MaidlistA[MaidIndex])/100) * MilkQ.MilkProdMod/100
 					FinalMilkTick = MilkTick
 				else
-					MilkTick = (MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]) + MaidMilkGen)/3/10 * (1 + MilkQ.SLA.GetActorArousal(MaidlistA[MaidIndex])/100) * MilkQ.MilkProdMod/100
+					MilkTick = (MaidBreastsBasevalue + MaidMilkGen)/3/10 * (1 + MilkQ.SLA.GetActorArousal(MaidlistA[MaidIndex])/100) * MilkQ.MilkProdMod/100
 					FinalMilkTick = MilkTick + PapyrusUtil.ClampFloat(MilkTick * LactacidFactor, 0, LactacidCnt)
 				endif
 
+				float CurrentSize = ( MilkCnt * MaidBoobIncr ) + ( MaidLevel + ( MaidTimesMilked / (( MaidLevel + 1 ) * MilkQ.TimesMilkedMult ))) * MaidBoobPerLvl
+				float x = 0.0
+				if CurrentSize != 0
+					float dx = 1.0
+					x = CurrentSize/3
+					
+					while dx > 0.1
+						dx = (CurrentSize / (x*x) - x) / 3
+						x += dx
+						if dx < 0
+							dx = -dx
+						endif
+					endwhile
+				endif
+				CurrentSize = MaidBreastsBasevalue + x*(MaidBreastsBasevalue-MaidBreastsBaseadjust)
+				
 				; arousal provides an additional bonus
 				;  value range: 1 <= x <= 2
 ;				float ArousalBonus = 1 + (MilkQ.SLA.GetActorArousal(MaidlistA[MaidIndex])/100)
@@ -600,11 +618,12 @@ function Page_MilkMaidDebug()
 
 				AddTextOption("$MME_MENU_PAGE_Debug_MM_Maid_Breast", "", OPTION_FLAG_DISABLED)
 				AddSliderOptionST("Debug_MM_Maid_BreastRows_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S21", BreastRows)
-				AddSliderOptionST("Debug_MM_Maid_BreastBaseSize_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S9", MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]), "{2}")
+				AddSliderOptionST("Debug_MM_Maid_BreastBaseSize_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S9", MaidBreastsBasevalue, "{2}")
 				AddSliderOptionST("Debug_MM_Maid_BreastBaseSizeModified_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S10", MaidBreastsBaseadjust, "{2}")
 				AddSliderOptionST("Debug_MM_Maid_MaidBoobIncr_Slider", "$MME_MENU_PAGE_Settings_H2_S3", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobIncr"), "{2}")	
 				AddSliderOptionST("Debug_MM_Maid_MaidBoobPerLvl_Slider", "$MME_MENU_PAGE_Settings_H2_S4", StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl"), "{2}")
-				AddTextOptionST("Debug_MM_Maid_BreastEffectiveSize", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S11", MilkQ.ReduceFloat(MME_Storage.getBreastsBasevalue(MaidlistA[MaidIndex]) + MaidBreastsBaseadjust + (MilkCnt*MaidBoobIncr) + (MaidLevel + (MaidTimesMilked / ((MaidLevel + 1) * MilkQ.TimesMilkedMult))) * MaidBoobPerLvl), OPTION_FLAG_DISABLED)
+				;AddTextOptionST("Debug_MM_Maid_BreastEffectiveSize", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S11", MilkQ.ReduceFloat(MaidBreastsBasevalue + MaidBreastsBaseadjust + (MilkCnt*MaidBoobIncr) + (MaidLevel + (MaidTimesMilked / ((MaidLevel + 1) * MilkQ.TimesMilkedMult))) * MaidBoobPerLvl), OPTION_FLAG_DISABLED)
+				AddTextOptionST("Debug_MM_Maid_BreastEffectiveSize", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S11", MilkQ.ReduceFloat(CurrentSize), OPTION_FLAG_DISABLED)
 				AddTextOptionST("Debug_MM_Maid_BellyScaleEffectiveSize", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S22", MilkQ.ReduceFloat(LactacidCnt/2), OPTION_FLAG_DISABLED)
 
 				AddSliderOptionST("Debug_MM_LactacidCount_Slider", "$MME_MENU_PAGE_Debug_Milk_Maid_H1_S12", LactacidCnt, "{2}")
@@ -1191,19 +1210,19 @@ state BreastScale_Toggle
 	endEvent
 endState
 
-state Hotkey_Toggle
-	event OnSelectST()
-		string toggleVal
-		if MilkQ.HotkeyMode == 1 
-			MilkQ.HotkeyMode = 0
-			toggleVal = "Classic"
-		else
-			MilkQ.BreastScale = 1
-			toggleVal = "UI extension"
-		endif
-		SetTextOptionValueST(toggleVal)
-	endEvent
-endState
+;state Hotkey_Toggle
+;	event OnSelectST()
+;		string toggleVal
+;		if MilkQ.HotkeyMode == 1 
+;			MilkQ.HotkeyMode = 0
+;			toggleVal = "Classic"
+;		else
+;			MilkQ.BreastScale = 1
+;			toggleVal = "UI extension"
+;		endif
+;		SetTextOptionValueST(toggleVal)
+;	endEvent
+;endState
 
 ; this setting also enforces the maximum milk limit
 state BreastScaleLimit_Toggle
@@ -1248,6 +1267,21 @@ state BreastUpScale_Toggle
 	
 	event OnHighlightST()
 		SetInfoText("$MME_MENU_PAGE_Settings_H2_S5_Higlight")
+	endEvent
+endState
+
+state BreastVolumeScale_Toggle
+	event OnSelectST()
+		if !MilkQ.BreastVolumeScale
+			MilkQ.BreastVolumeScale = true
+		else
+			MilkQ.BreastVolumeScale = false
+		endif
+		SetToggleOptionValueST(MilkQ.BreastVolumeScale)
+	endEvent
+	
+	event OnHighlightST()
+		SetInfoText("$MME_MENU_PAGE_Settings_H2_S9_Higlight")
 	endEvent
 endState
 
@@ -1573,27 +1607,27 @@ state Debug_MilkWerewolfTransform_Toggle
 	endEvent
 endState
 
-state Debug_MilkModToggle_Spell_Toggle
-	event OnSelectST()
-		if !MilkQ.PlayerREF.HasSpell(MilkQ.MilkModToggle)
-			MilkQ.PlayerREF.AddSpell(MilkQ.MilkModToggle)
-		else
-			MilkQ.PlayerREF.RemoveSpell( MilkQ.MilkModToggle )
-		endif
-		SetToggleOptionValueST(MilkQ.PlayerREF.HasSpell(MilkQ.MilkModToggle))
-	endEvent
-endState
+;state Debug_MilkModToggle_Spell_Toggle
+;	event OnSelectST()
+;		if !MilkQ.PlayerREF.HasSpell(MilkQ.MilkModToggle)
+;			MilkQ.PlayerREF.AddSpell(MilkQ.MilkModToggle)
+;		else
+;			MilkQ.PlayerREF.RemoveSpell( MilkQ.MilkModToggle )
+;		endif
+;		SetToggleOptionValueST(MilkQ.PlayerREF.HasSpell(MilkQ.MilkModToggle))
+;	endEvent
+;endState
 		
-state Debug_MilkModInfo_Spell_Toggle
-	event OnSelectST()
-		if !MilkQ.PlayerREF.HasSpell(MilkQ.MilkModInfo)
-			MilkQ.PlayerREF.AddSpell(MilkQ.MilkModInfo)
-		else
-			MilkQ.PlayerREF.RemoveSpell(MilkQ.MilkModInfo)
-		endif
-		SetToggleOptionValueST(MilkQ.PlayerREF.HasSpell(MilkQ.MilkModInfo))
-	endEvent
-endState
+;state Debug_MilkModInfo_Spell_Toggle
+;	event OnSelectST()
+;		if !MilkQ.PlayerREF.HasSpell(MilkQ.MilkModInfo)
+;			MilkQ.PlayerREF.AddSpell(MilkQ.MilkModInfo)
+;		else
+;			MilkQ.PlayerREF.RemoveSpell(MilkQ.MilkModInfo)
+;		endif
+;		SetToggleOptionValueST(MilkQ.PlayerREF.HasSpell(MilkQ.MilkModInfo))
+;	endEvent
+;endState
 
 state Debug_MilkSelf_Spell_Toggle
 	event OnSelectST()
@@ -1617,38 +1651,38 @@ state Debug_MilkTarget_Spell_Toggle
 	endEvent
 endState
 
-state Debug_ResetMaids_Spell_Toggle
-	event OnSelectST()
-		if !MilkQ.PlayerREF.HasSpell(MilkQ.MME_ResetMaids)
-			MilkQ.PlayerREF.AddSpell(MilkQ.MME_ResetMaids)
-		else
-			MilkQ.PlayerREF.RemoveSpell(MilkQ.MME_ResetMaids)
-		endif
-		SetToggleOptionValueST(MilkQ.PlayerREF.HasSpell(MilkQ.MME_ResetMaids))
-	endEvent
-endState
+;state Debug_ResetMaids_Spell_Toggle
+;	event OnSelectST()
+;		if !MilkQ.PlayerREF.HasSpell(MilkQ.MME_ResetMaids)
+;			MilkQ.PlayerREF.AddSpell(MilkQ.MME_ResetMaids)
+;		else
+;			MilkQ.PlayerREF.RemoveSpell(MilkQ.MME_ResetMaids)
+;		endif
+;		SetToggleOptionValueST(MilkQ.PlayerREF.HasSpell(MilkQ.MME_ResetMaids))
+;	endEvent
+;endState
 
-state Debug_ResetMod_Spell_Toggle
-	event OnSelectST()
-		if !MilkQ.PlayerREF.HasSpell(MilkQ.MME_ResetMod)
-			MilkQ.PlayerREF.AddSpell(MilkQ.MME_ResetMod)
-		else
-			MilkQ.PlayerREF.RemoveSpell(MilkQ.MME_ResetMod)
-		endif
-		SetToggleOptionValueST(MilkQ.PlayerREF.HasSpell(MilkQ.MME_ResetMod))
-	endEvent
-endState
+;state Debug_ResetMod_Spell_Toggle
+;	event OnSelectST()
+;		if !MilkQ.PlayerREF.HasSpell(MilkQ.MME_ResetMod)
+;			MilkQ.PlayerREF.AddSpell(MilkQ.MME_ResetMod)
+;		else
+;			MilkQ.PlayerREF.RemoveSpell(MilkQ.MME_ResetMod)
+;		endif
+;		SetToggleOptionValueST(MilkQ.PlayerREF.HasSpell(MilkQ.MME_ResetMod))
+;	endEvent
+;endState
 
-state Debug_Uninstall_Spell_Toggle
-	event OnSelectST()
-		if !MilkQ.PlayerREF.HasSpell(MilkQ.MME_Uninstall)
-			MilkQ.PlayerREF.AddSpell(MilkQ.MME_Uninstall)
-		else
-			MilkQ.PlayerREF.RemoveSpell(MilkQ.MME_Uninstall)
-		endif
-		SetToggleOptionValueST(MilkQ.PlayerREF.HasSpell(MilkQ.MME_Uninstall))
-	endEvent
-endState
+;state Debug_Uninstall_Spell_Toggle
+;	event OnSelectST()
+;		if !MilkQ.PlayerREF.HasSpell(MilkQ.MME_Uninstall)
+;			MilkQ.PlayerREF.AddSpell(MilkQ.MME_Uninstall)
+;		else
+;			MilkQ.PlayerREF.RemoveSpell(MilkQ.MME_Uninstall)
+;		endif
+;		SetToggleOptionValueST(MilkQ.PlayerREF.HasSpell(MilkQ.MME_Uninstall))
+;	endEvent
+;endState
 
 state Debug_MM_Maid_IsSlave
 	event OnSelectST()
@@ -2250,7 +2284,7 @@ state BreastIncreasePerLvl_Slider
 	event OnSliderOpenST()
 		SetSliderDialogStartValue(MilkQ.BoobPerLvl)
 		SetSliderDialogDefaultValue(0.07)
-		SetSliderDialogRange(0.0, 0.20)
+		SetSliderDialogRange(0.0, 1.0)
 		SetSliderDialogInterval(0.01)
 	endEvent
 
@@ -2268,7 +2302,7 @@ state BreastIncrease_Slider
 	event OnSliderOpenST()
 		SetSliderDialogStartValue(MilkQ.BoobIncr)
 		SetSliderDialogDefaultValue(0.05)
-		SetSliderDialogRange(0.0, 0.30)
+		SetSliderDialogRange(0.0, 1.0)
 		SetSliderDialogInterval(0.01)
 	endEvent
 
@@ -2523,16 +2557,16 @@ state Milking_MilkWithZaZMoMSuctionCups_Toggle
 	endEvent
 endState
 
-state FutaMilkCuirass_Toggle
-	event OnSelectST()
-		if !MilkQ.UseFutaMilkCuirass
-			MilkQ.UseFutaMilkCuirass = true
-		else
-			MilkQ.UseFutaMilkCuirass = false
-		endif
-		SetToggleOptionValueST(MilkQ.UseFutaMilkCuirass)
-	endEvent
-endState
+;state FutaMilkCuirass_Toggle
+;	event OnSelectST()
+;		if !MilkQ.UseFutaMilkCuirass
+;			MilkQ.UseFutaMilkCuirass = true
+;		else
+;			MilkQ.UseFutaMilkCuirass = false
+;		endif
+;		SetToggleOptionValueST(MilkQ.UseFutaMilkCuirass)
+;	endEvent
+;endState
 
 state Feeding_Toggle
 	event OnSelectST()
@@ -2848,7 +2882,7 @@ state Debug_MM_Maid_MaidBoobIncr_Slider
 	event OnSliderOpenST()
 		SetSliderDialogStartValue(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobIncr"))
 		SetSliderDialogDefaultValue(0.05)
-		SetSliderDialogRange(-1, 0.3)
+		SetSliderDialogRange(-1, 1.0)
 		SetSliderDialogInterval(0.01)
 	endEvent
 
@@ -2869,7 +2903,7 @@ state Debug_MM_Maid_MaidBoobPerLvl_Slider
 	event OnSliderOpenST()
 		SetSliderDialogStartValue(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl"))
 		SetSliderDialogDefaultValue(0.07)
-		SetSliderDialogRange(-1, 0.2)
+		SetSliderDialogRange(-1, 1.0)
 		SetSliderDialogInterval(0.01)
 	endEvent
 

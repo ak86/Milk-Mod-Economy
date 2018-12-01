@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>18-11-2018</Version>
+  <Version>01-12-2018</Version>
   <Author>Ed86</Author>
   <Website>https://www.patreon.com/Ed86</Website>
   <Description>
@@ -62,12 +62,19 @@ b)	Using Campire mod to craft and place milkpumps
   
 Dev change log:
 
+	v 01-12-2018
+fixed no animation playing during mobile milking
+removed some mcm debug spells
+added volumetric breast scaling
+increased max mcm slider for boobmilk/level scaling to 1
+increased breast debuff to breast size
+fix to breastsizemod form breast potions
+
 	v 18-11-2018
 fix for leveling up removing milk above milkmax when it shouldnt
 fix for breast reduce potion reducing breasts indefinitly, if you used that potion you need to either reset maid or set basebreastmod to 0 in debug menu
 fix? for breast enlarge potion, it worked only with breastupscale option, now work always
 changed lactation induced by breast enlarge potion to always increase milkgen by 0.033, though its still cosmetic at default mod settings unless maid is pregnant or drunk lactacid
-
 
 	v 16-11-2018
 removed uie from esp

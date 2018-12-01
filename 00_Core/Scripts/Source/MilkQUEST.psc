@@ -108,6 +108,7 @@ Bool Property CuirassSellsMilk = False Auto
 Bool Property MilkStory = False Auto
 Bool Property BreastScaleLimit = False Auto
 Bool Property BreastUpScale = False Auto
+Bool Property BreastVolumeScale = False Auto
 Bool Property WeightUpScale = False Auto
 Bool Property PainKills = True Auto
 Bool Property MaidLvlCap = False Auto
@@ -459,7 +460,7 @@ Event OnKeyDown(int keyCode)
 			
 			If akActor != None && (MILKmaid.find(akActor) != -1 || MILKslave.find(akActor) != -1)
 				if StorageUtil.GetIntValue(akActor, "MME.MilkMaid.IsAnimating") == 1 && akActor.HasSpell( BeingMilkedPassive ) && akActor == PlayerRef && MobileMilkingAnims						;Changes random animation
-					Debug.SendAnimationEvent(akActor,JsonUtil.StringListGet("/MME/Strings", "standingmilkinganimations", Utility.RandomInt(0, JsonUtil.StringListCount("/MME/Strings", "standingmilkinganimations"))))
+					Debug.SendAnimationEvent(akActor,JsonUtil.StringListGet("/MME/Strings", "standingmilkinganimations", Utility.RandomInt(0, JsonUtil.StringListCount("/MME/Strings", "standingmilkinganimations") - 1)))
 				endif
 				Float MilkCnt = MME_Storage.getMilkCurrent(akActor)
 				Float PainCnt = MME_Storage.getPainCurrent(akActor)
@@ -777,13 +778,12 @@ Function MilkCycle(Actor akActor, int t)
 		If BreastScaleLimit
 			MilkCnt = MilkMax
 		else
+			;float bottles = (MilkCnt - MilkMax) / MilkCnt/MilkMax
 			float bottles = MilkCnt - MilkMax - ((MilkCnt / MilkMax) - 1) * MaidLevel
 			if IsMilkingArmor
 				StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkingContainerMilksSUM", bottles)
 			endIf
 			MilkCnt -= bottles
-
-			;MilkCnt -= (MilkCnt - MilkMax) / MilkCnt/MilkMax 
 		endif
 		if akActor.IsNearPlayer()
 			AddMilkFx(akActor, 1)
@@ -1077,7 +1077,9 @@ Function CurrentSize(Actor akActor)
 			endif
 		endif
 		
-		BreastBase += BreastBaseMod
+		if BreastBaseMod < 0 && BreastBase * -1 > BreastBaseMod
+			BreastBaseMod = BreastBase * -1
+		endif
 		if BreastBase <= 0
 			BreastBase = 0.01
 		endif
@@ -1087,7 +1089,24 @@ Function CurrentSize(Actor akActor)
 		;	MilkCnt = 0
 		;endif
 
-		CurrentSize = BreastBase + ( MilkCnt * MaidBoobIncr ) + ( MaidLevel + ( MaidTimesMilked / (( MaidLevel + 1 ) * TimesMilkedMult ))) * MaidBoobPerLvl
+		CurrentSize = ( MilkCnt * MaidBoobIncr ) + ( MaidLevel + ( MaidTimesMilked / (( MaidLevel + 1 ) * TimesMilkedMult ))) * MaidBoobPerLvl
+		float x = CurrentSize
+		if CurrentSize != 0 && BreastVolumeScale
+			float dx = 1.0
+			x = CurrentSize/3
+			
+			while dx > 0.1
+				dx = (CurrentSize / (x*x) - x) / 3
+				x += dx
+				if dx < 0
+					dx = -dx
+				endif
+			endwhile
+		endif
+		;debug.notification(CurrentSize)
+		;CurrentSize = BreastBase + x*(BreastBase+BreastBaseMod)
+		CurrentSize = BreastBase + BreastBaseMod + x
+		;CurrentSize = (BreastBase+BreastBaseMod + CurrentSize)*(1+BreastBaseMod)
 
 		if CurrentSize > BoobMAX && BoobMAX != 0
 			CurrentSize = BoobMAX
@@ -1496,7 +1515,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 ;							elseif mpas == 3
 ;								Debug.SendAnimationEvent(akActor,"ZaZAPCHorFC")
 ;							endif
-							Debug.SendAnimationEvent(akActor,JsonUtil.StringListGet("/MME/Strings", "standingmilkinganimations", Utility.RandomInt(0, JsonUtil.StringListCount("/MME/Strings", "standingmilkinganimations"))))
+							Debug.SendAnimationEvent(akActor,JsonUtil.StringListGet("/MME/Strings", "standingmilkinganimations", Utility.RandomInt(0, JsonUtil.StringListCount("/MME/Strings", "standingmilkinganimations") - 1)))
 							StorageUtil.SetIntValue(akActor, "MME.MilkMaid.IsAnimating", 1)
 						EndIf
 					EndIf
@@ -2165,6 +2184,7 @@ Function PostMilk(Actor akActor)
 	;Spell Wellmilked_Spell = Game.GetFormFromFile(0x39F87, "milkmodnew.esp") as Spell
 	;Spell Breasts_Spell = Game.GetFormFromFile(0x7D36A, "milkmodnew.esp") as Spell
 	Float BreastsSize_Node = NetImmerse.GetNodeScale(akActor, "NPC L Breast", false)
+	Float BreastRows = MME_Storage.getBreastRows(akActor)
 
 	if MilkQC.Buffs != true
 		if akActor.HasSpell(MME_Spells_Buffs.GetAt(3) as Spell)
@@ -2203,7 +2223,7 @@ Function PostMilk(Actor akActor)
 		numEffects = (MME_Spells_Buffs.GetAt(0) as Spell).GetNumEffects()
 		effectCount = 0
 		while (effectCount < numEffects)
-			(MME_Spells_Buffs.GetAt(0) as Spell).SetNthEffectMagnitude(effectCount, BreastsSize_Node * (1+ akActor.GetLeveledActorBase().GetWeight()/100))
+			(MME_Spells_Buffs.GetAt(0) as Spell).SetNthEffectMagnitude(effectCount, BreastRows * Math.pow( 2, BreastsSize_Node) * (1+ akActor.GetLeveledActorBase().GetWeight()/100))
 			effectCount = effectCount + 1
 		endwhile
 		
@@ -3308,6 +3328,7 @@ bool Function VarSetup()
 	BellyScale = true						;scaling is enabled
 	BreastScaleLimit = False				;limit to BoobMAX
 	BreastUpScale = False	;scale to 1
+	BreastVolumeScale = False
 	MaleMaids = False
 	MilkQC.Buffs = True
 	MilkQC.ExhaustionMode = 0
