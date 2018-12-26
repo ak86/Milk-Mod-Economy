@@ -575,21 +575,23 @@ function Page_MilkMaidDebug()
 					FinalMilkTick = MilkTick + PapyrusUtil.ClampFloat(MilkTick * LactacidFactor, 0, LactacidCnt)
 				endif
 
-				float CurrentSize = ( MilkCnt * MaidBoobIncr ) + ( MaidLevel + ( MaidTimesMilked / (( MaidLevel + 1 ) * MilkQ.TimesMilkedMult ))) * MaidBoobPerLvl
-				float x = 0.0
-				if CurrentSize != 0
+				float CurrentSize = MaidBreastsBasevalue + ( MilkCnt * MaidBoobIncr ) + ( MaidLevel + ( MaidTimesMilked / (( MaidLevel + 1 ) * MilkQ.TimesMilkedMult ))) * MaidBoobPerLvl
+				;float x = 0.0
+				if MilkQ.BreastVolumeScale && CurrentSize > MaidBreastsBasevalue
+					CurrentSize += 1 - MaidBreastsBasevalue
 					float dx = 1.0
-					x = CurrentSize/3
+					float x = CurrentSize / 3.0
 					
 					while dx > 0.1
-						dx = (CurrentSize / (x*x) - x) / 3
+						dx = (CurrentSize / (x*x) - x) / 3.0
 						x += dx
-						if dx < 0
+						if dx < 0.0
 							dx = -dx
 						endif
 					endwhile
+					CurrentSize = x*MaidBreastsBasevalue
 				endif
-				CurrentSize = MaidBreastsBasevalue + x*(MaidBreastsBasevalue-MaidBreastsBaseadjust)
+				CurrentSize += MaidBreastsBaseadjust
 				
 				; arousal provides an additional bonus
 				;  value range: 1 <= x <= 2
@@ -2282,17 +2284,27 @@ endState
 
 state BreastIncreasePerLvl_Slider
 	event OnSliderOpenST()
-		SetSliderDialogStartValue(MilkQ.BoobPerLvl)
-		SetSliderDialogDefaultValue(0.07)
-		SetSliderDialogRange(0.0, 1.0)
-		SetSliderDialogInterval(0.01)
+		if MilkQ.BreastVolumeScale
+			SetSliderDialogStartValue(MilkQ.BoobPerLvl)
+			SetSliderDialogDefaultValue(2.0)
+			SetSliderDialogRange(0.0, 6.0)
+			SetSliderDialogInterval(0.1)
+		else
+			SetSliderDialogStartValue(MilkQ.BoobPerLvl)
+			SetSliderDialogDefaultValue(0.7)
+			SetSliderDialogRange(0.0, 3.0)
+			SetSliderDialogInterval(0.01)
+		endif
 	endEvent
 
 	event OnSliderAcceptST(float value)
 		MilkQ.BoobPerLvl = value
-		SetSliderOptionValueST(MilkQ.BoobPerLvl, "{2}")
+		if MilkQ.BreastVolumeScale
+			SetSliderOptionValueST(MilkQ.BoobPerLvl, "{1}")
+		else
+			SetSliderOptionValueST(MilkQ.BoobPerLvl, "{2}")
+		endif
 	endEvent
-
 	event OnHighlightST()
 		SetInfoText("$MME_MENU_PAGE_Settings_H2_S4_Higlight")
 	endEvent
@@ -2301,16 +2313,25 @@ endState
 state BreastIncrease_Slider
 	event OnSliderOpenST()
 		SetSliderDialogStartValue(MilkQ.BoobIncr)
-		SetSliderDialogDefaultValue(0.05)
-		SetSliderDialogRange(0.0, 1.0)
-		SetSliderDialogInterval(0.01)
+		if MilkQ.BreastVolumeScale
+			SetSliderDialogDefaultValue(6.0)
+			SetSliderDialogRange(0.0, 24.0)
+			SetSliderDialogInterval(0.1)
+		else
+			SetSliderDialogDefaultValue(0.05)
+			SetSliderDialogRange(0.0, 0.5)
+			SetSliderDialogInterval(0.01)
+		endif
 	endEvent
 
 	event OnSliderAcceptST(float value)
 		MilkQ.BoobIncr = value
-		SetSliderOptionValueST(MilkQ.BoobIncr, "{2}")
+		if MilkQ.BreastVolumeScale
+			SetSliderOptionValueST(MilkQ.BoobIncr, "{1}")
+		else
+			SetSliderOptionValueST(MilkQ.BoobIncr, "{2}")
+		endif
 	endEvent
-
 	event OnHighlightST()
 		SetInfoText("$MME_MENU_PAGE_Settings_H2_S3_Higlight")
 	endEvent
@@ -2540,10 +2561,10 @@ state Milking_MilkWithZaZMoMSuctionCups_Toggle
 			MilkQ.MilkNaked = true
 			MilkQ.MilkWithZaZMoMSuctionCups = false
 			toggleVal = "$MME_MENU_PAGE_Milking_H3_S5.1"
-;		elseif !MilkQ.MilkWithZaZMoMSuctionCups
-;			MilkQ.MilkNaked = false
-;			MilkQ.MilkWithZaZMoMSuctionCups = true
-;			toggleVal = "$MME_MENU_PAGE_Milking_H3_S5.2"
+		elseif !MilkQ.MilkWithZaZMoMSuctionCups
+			MilkQ.MilkNaked = false
+			MilkQ.MilkWithZaZMoMSuctionCups = true
+			toggleVal = "$MME_MENU_PAGE_Milking_H3_S5.2"
 		else
 			MilkQ.MilkNaked = false
 			MilkQ.MilkWithZaZMoMSuctionCups = false
@@ -2882,7 +2903,7 @@ state Debug_MM_Maid_MaidBoobIncr_Slider
 	event OnSliderOpenST()
 		SetSliderDialogStartValue(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobIncr"))
 		SetSliderDialogDefaultValue(0.05)
-		SetSliderDialogRange(-1, 1.0)
+		SetSliderDialogRange(-1, 24.0)
 		SetSliderDialogInterval(0.01)
 	endEvent
 
@@ -2903,7 +2924,7 @@ state Debug_MM_Maid_MaidBoobPerLvl_Slider
 	event OnSliderOpenST()
 		SetSliderDialogStartValue(StorageUtil.GetFloatValue(MaidlistA[MaidIndex],"MME.MilkMaid.BoobPerLvl"))
 		SetSliderDialogDefaultValue(0.07)
-		SetSliderDialogRange(-1, 1.0)
+		SetSliderDialogRange(-1, 6.0)
 		SetSliderDialogInterval(0.01)
 	endEvent
 
@@ -2923,7 +2944,7 @@ endState
 state Debug_MM_Maid_BreastBaseSizeModified_Slider
 	event OnSliderOpenST()
 		SetSliderDialogStartValue(MME_Storage.getBreastsBaseadjust(MaidlistA[MaidIndex]))
-		SetSliderDialogDefaultValue(1)
+		SetSliderDialogDefaultValue(0)
 		SetSliderDialogRange(0, 3)
 		SetSliderDialogInterval(0.1)
 	endEvent

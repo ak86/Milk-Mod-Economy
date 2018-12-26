@@ -259,6 +259,7 @@ Bool Property Plugin_EstrusChaurus = false auto
 Bool Property Plugin_EstrusSpider = false auto
 Bool Property Plugin_EstrusDwemer = false auto
 Bool Property Plugin_BeeingFemale = false auto
+Bool Property Plugin_FertilityMode = false auto
 Bool Property Plugin_HentaiPregnancy = false auto
 Bool Property Plugin_SexLabProcreation = false auto
 Bool Property Plugin_PSQ = false auto
@@ -752,26 +753,29 @@ Function MilkCycle(Actor akActor, int t)
 		IsMilkingArmor = true
 	endif
 	
-	if akActor.IsEquipped(Game.GetFormFromFile(0x05E7E, "FertilityMode.esp"))\
-	|| akActor.IsEquipped(Game.GetFormFromFile(0x0BFB8, "FertilityMode.esp"))\
-	|| akActor.IsEquipped(Game.GetFormFromFile(0x0BFB9, "FertilityMode.esp"))\
-	|| akActor.IsEquipped(Game.GetFormFromFile(0x0BFBA, "FertilityMode.esp"))\
-	|| akActor.IsEquipped(Game.GetFormFromFile(0x0BFBB, "FertilityMode.esp"))\
-	|| akActor.IsEquipped(Game.GetFormFromFile(0x105D4, "FertilityMode.esp"))\
-	|| akActor.IsEquipped(Game.GetFormFromFile(0x105D5, "FertilityMode.esp"))\
-	|| akActor.IsEquipped(Game.GetFormFromFile(0x105D6, "FertilityMode.esp"))\
-	|| akActor.IsEquipped(Game.GetFormFromFile(0x5D17D, "BeeingFemale.esm"))\
-	|| akActor.IsEquipped(Game.GetFormFromFile(0x5D17E, "BeeingFemale.esm"))\
-	|| akActor.IsEquipped(Game.GetFormFromFile(0x5D182, "BeeingFemale.esm"))\
-	|| akActor.IsEquipped(Game.GetFormFromFile(0x5D183, "BeeingFemale.esm"))\
-	|| akActor.IsEquipped(Game.GetFormFromFile(0x61CFF, "BeeingFemale.esm"))\
-	|| akActor.IsEquipped(Game.GetFormFromFile(0x61D00, "BeeingFemale.esm"))\
-	|| akActor.IsEquipped(Game.GetFormFromFile(0x61D01, "BeeingFemale.esm"))\
-	|| akActor.IsEquipped(Game.GetFormFromFile(0x61D02, "BeeingFemale.esm"))\
-	|| akActor.IsEquipped(Game.GetFormFromFile(0x61D03, "BeeingFemale.esm"))\
-	|| akActor.IsEquipped(Game.GetFormFromFile(0x61D04, "BeeingFemale.esm"))
-		IsBabyArmor = true
-	endif
+	If Plugin_BeeingFemale
+		IsBabyArmor = akActor.IsEquipped(Game.GetFormFromFile(0x5D17D, "BeeingFemale.esm"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x5D17E, "BeeingFemale.esm"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x5D182, "BeeingFemale.esm"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x5D183, "BeeingFemale.esm"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x61CFF, "BeeingFemale.esm"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x61D00, "BeeingFemale.esm"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x61D01, "BeeingFemale.esm"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x61D02, "BeeingFemale.esm"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x61D03, "BeeingFemale.esm"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x61D04, "BeeingFemale.esm"))
+	EndIf
+	
+	if Plugin_FertilityMode && IsBabyArmor == false
+		IsBabyArmor = akActor.IsEquipped(Game.GetFormFromFile(0x05E7E, "FertilityMode.esp"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x0BFB8, "FertilityMode.esp"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x0BFB9, "FertilityMode.esp"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x0BFBA, "FertilityMode.esp"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x0BFBB, "FertilityMode.esp"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x105D4, "FertilityMode.esp"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x105D5, "FertilityMode.esp"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x105D6, "FertilityMode.esp"))
+	endif	
 	
 	;play leaking effects, if breast are bigger then max
 	if MilkCnt > MilkMax && PiercingCheck(akActor) != 2
@@ -838,11 +842,11 @@ Function MilkCycle(Actor akActor, int t)
 						MME_Storage.changeLactacidCurrent(akActor, 1)
 					endif
 					StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid", -1)
-					if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid && akActor.IsNearPlayer()
+					if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid
 						akActor.equipitem(Game.GetFormFromFile(0x57A7A, "Skyrim.esm"),false,true)	;skooma
 					endif
 				endif
-				if MilkCnt >= MilkMax * 0.75 && akActor.IsNearPlayer()
+				if MilkCnt >= MilkMax * 0.75 && akActor.IsNearPlayer() && !SexLab.IsActorActive(akActor)
 					MilkSelf.cast(akActor)
 				endif
 			endif
@@ -854,14 +858,14 @@ Function MilkCycle(Actor akActor, int t)
 		|| StringUtil.Find(maidArmor.getname(), "Tentacle Parasite" ) >= 0\
 		|| BasicLivingArmor.find(maidArmor.getname()) >= 0\
 		|| ParasiteLivingArmor.find(maidArmor.getname()) >= 0
-			if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid && akActor.IsNearPlayer()
-				akActor.equipitem(Game.GetFormFromFile(0x57A7A, "Skyrim.esm"),false,true)	;skooma
-			endif
 			if LactacidCnt == 0 && MilkCnt <= 1
 				MME_Storage.changeLactacidCurrent(akActor, t)
 			endif
+			if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid
+				akActor.equipitem(Game.GetFormFromFile(0x57A7A, "Skyrim.esm"),false,true)	;skooma
+			endif
 			int random = Utility.RandomInt((0-MilkCnt) as int, (MilkMax-MilkCnt) as int)
-			if (random == MilkMax || random < 0) && (akActor.GetLeveledActorBase().GetSex() == 1 || MaleMaids == true) && akActor.IsNearPlayer()
+			if (random == MilkMax || random < 0) && (akActor.GetLeveledActorBase().GetSex() == 1 || MaleMaids == true) && akActor.IsNearPlayer() && !SexLab.IsActorActive(akActor)
 				;Estrus Chaurus+  
 				if (StringUtil.Find(maidArmor.getname(), "Tentacle Armor" ) >= 0 || StringUtil.Find(maidArmor.getname(), "Tentacle Parasite" ) >= 0 || ParasiteLivingArmor.find(maidArmor.getname()) >= 0)\
 				&& Plugin_EstrusChaurus && ECTrigger
@@ -908,7 +912,7 @@ Function MilkCycle(Actor akActor, int t)
 			MME_Storage.changeLactacidCurrent(akActor, t)
 		endif
 		MilkMax = MME_Storage.getMilkMaximum(akActor)
-		if MilkCnt >= MilkMax * 0.75 && akActor.IsNearPlayer()
+		if MilkCnt >= MilkMax * 0.75 && akActor.IsNearPlayer() && !SexLab.IsActorActive(akActor)
 			MilkSelf.cast(akActor)
 		endif
 	endIf
@@ -1089,30 +1093,34 @@ Function CurrentSize(Actor akActor)
 		;	MilkCnt = 0
 		;endif
 
-		CurrentSize = ( MilkCnt * MaidBoobIncr ) + ( MaidLevel + ( MaidTimesMilked / (( MaidLevel + 1 ) * TimesMilkedMult ))) * MaidBoobPerLvl
-		float x = CurrentSize
-		if CurrentSize != 0 && BreastVolumeScale
+		CurrentSize = BreastBase + ( MilkCnt * MaidBoobIncr ) + ( MaidLevel + ( MaidTimesMilked / (( MaidLevel + 1 ) * TimesMilkedMult ))) * MaidBoobPerLvl
+		;debug.notification("CurrentSize pre root = " + CurrentSize)
+		;float x = 0.0
+		if CurrentSize != BreastBase && BreastVolumeScale
+			CurrentSize += 1 - BreastBase ; make sure base volume is 100% [1.00]
 			float dx = 1.0
-			x = CurrentSize/3
+			float x = CurrentSize / 3.0
 			
 			while dx > 0.1
-				dx = (CurrentSize / (x*x) - x) / 3
+				dx = (CurrentSize / (x*x) - x) / 3.0
 				x += dx
-				if dx < 0
+				if dx < 0.0
 					dx = -dx
 				endif
 			endwhile
+			CurrentSize = x*BreastBase ; BreastBase defines base volume
 		endif
-		;debug.notification(CurrentSize)
-		;CurrentSize = BreastBase + x*(BreastBase+BreastBaseMod)
-		CurrentSize = BreastBase + BreastBaseMod + x
-		;CurrentSize = (BreastBase+BreastBaseMod + CurrentSize)*(1+BreastBaseMod)
 
+		;CurrentSize = BreastBase + x*(BreastBase+BreastBaseMod)
+		;CurrentSize = BreastBase + BreastBaseMod + x
+		CurrentSize += BreastBaseMod
+		;debug.notification("CurrentSize = " + CurrentSize)
+		;CurrentSize = (BreastBase+BreastBaseMod + CurrentSize)*(1+BreastBaseMod)
 		if CurrentSize > BoobMAX && BoobMAX != 0
 			CurrentSize = BoobMAX
 		endif
 		
-		If(CurrentSize <= 1)
+		If(CurrentSize <= 1.0)
 			CurveFix = 1.0
 		Else
 			CurveFix = 1.0 - (CurrentSize * BreastCurve)
@@ -2013,8 +2021,8 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 	If PlayerREF == akActor && mode != 4
 		Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 		Game.SetPlayerAIDriven(false)
-		StorageUtil.SetIntValue(akActor, "MME.MilkMaid.IsAnimating", 0)
 	Endif
+	StorageUtil.SetIntValue(akActor, "MME.MilkMaid.IsAnimating", 0)
 	;justincase
 	akActor.Setunconscious(false)
 	
@@ -2738,6 +2746,14 @@ Function DLCcheck()
 	else
 		debug.Trace("MilkModEconomy BeeingFemale.esm not found")
 		Plugin_BeeingFemale = false
+	endif
+	
+	If Game.GetModbyName("FertilityMode.esp") != 255
+		debug.Trace("MilkModEconomy FertilityMode.esp found")
+		Plugin_FertilityMode = true
+	else
+		debug.Trace("MilkModEconomy FertilityMode.esp not found")
+		Plugin_FertilityMode = false
 	endif
 	
 	If Game.GetModbyName("HentaiPregnancy.esm") != 255

@@ -32,31 +32,35 @@ Function SetNodeScale(Actor akActor, string nodeName, float value, bool isFemale
 			EndIf
 		EndIf
 	ElseIf NetImmerse.HasNode(akActor, nodeName, false)
-		if akActor == Game.GetPlayer()																				;update 1st person view/skeleton (player only)
-			If value != 1.0
-				NiOverride.AddNodeTransformScale(akActor, true, isFemale, nodeName, modName, value)
+		if SKSE.GetPluginVersion("NiOverride") >= 6
+			if akActor == Game.GetPlayer()																				;update 1st person view/skeleton (player only)
+				If value != 1.0
+					NiOverride.AddNodeTransformScale(akActor, true, isFemale, nodeName, modName, value)
+				Else
+					NiOverride.RemoveNodeTransformScale(akActor, true, isFemale, nodeName, modName)
+				Endif
+				NiOverride.UpdateNodeTransform(akActor, true, isFemale, nodeName)
+			endif
+			If value != 1.0																								;update 3rd person view/skeleton (player & NPCs)
+				NiOverride.AddNodeTransformScale(akActor, false, isFemale, nodeName, modName, value)
 			Else
-				NiOverride.RemoveNodeTransformScale(akActor, true, isFemale, nodeName, modName)
+				NiOverride.RemoveNodeTransformScale(akActor, false, isFemale, nodeName, modName)
 			Endif
-			NiOverride.UpdateNodeTransform(akActor, true, isFemale, nodeName)
+			NiOverride.UpdateNodeTransform(akActor, false, isFemale, nodeName)
 		endif
-		If value != 1.0																								;update 3rd person view/skeleton (player & NPCs)
-			NiOverride.AddNodeTransformScale(akActor, false, isFemale, nodeName, modName, value)
-		Else
-			NiOverride.RemoveNodeTransformScale(akActor, false, isFemale, nodeName, modName)
-		Endif
-		NiOverride.UpdateNodeTransform(akActor, false, isFemale, nodeName)
 	Endif
 EndFunction
 
 Function RemoveNiONodeScale(Actor akActor, string nodeName, bool isFemale)
 	string modName = "MilkModEconomy"
-	if akActor == Game.GetPlayer()																				;update 1st person view/skeleton (player only)
-		NiOverride.RemoveNodeTransformScale(akActor, true, isFemale, nodeName, modName)
-		NiOverride.UpdateNodeTransform(akActor, true, isFemale, nodeName)
+	if SKSE.GetPluginVersion("NiOverride") >= 6
+		if akActor == Game.GetPlayer()																				;update 1st person view/skeleton (player only)
+			NiOverride.RemoveNodeTransformScale(akActor, true, isFemale, nodeName, modName)
+			NiOverride.UpdateNodeTransform(akActor, true, isFemale, nodeName)
+		endif
+		NiOverride.RemoveNodeTransformScale(akActor, false, isFemale, nodeName, modName)
+		NiOverride.UpdateNodeTransform(akActor, false, isFemale, nodeName)
 	endif
-	NiOverride.RemoveNodeTransformScale(akActor, false, isFemale, nodeName, modName)
-	NiOverride.UpdateNodeTransform(akActor, false, isFemale, nodeName)
 EndFunction
 
 
