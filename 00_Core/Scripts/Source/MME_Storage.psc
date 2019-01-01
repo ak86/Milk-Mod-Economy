@@ -215,7 +215,10 @@ function setMilkCurrent(actor akActor, float Value, bool enforceMaxValue) global
 
 	if enforceMaxValue && MilkQ.PiercingCheck(akActor) != 2
 		float MilkMax = getMilkMaximum(akActor)
-		if Value <= MilkMax
+		if Value <= 0
+			Debug.Trace("  -> " + 0 + " <=  " + MilkMax)
+			StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", 0)
+		elseif Value <= MilkMax
 			Debug.Trace("  -> " + Value + " <=  " + MilkMax)
 			StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", Value)
 		else
@@ -223,8 +226,13 @@ function setMilkCurrent(actor akActor, float Value, bool enforceMaxValue) global
 			StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", MilkMax)
 		endif
 	else
-		Debug.Trace("  -> " + Value + " (no limit enforced)")
-		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", Value)
+		if (Value) <= 0
+			Debug.Trace("  -> " + Value + " (no limit enforced)")
+			StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", 0)
+		else
+			Debug.Trace("  -> " + Value + " (no limit enforced)")
+			StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", Value)
+		endif
 	endif
 endfunction
 
@@ -235,14 +243,20 @@ function changeMilkCurrent(actor akActor, float Delta, bool enforceMaxValue) glo
 
 	if enforceMaxValue && MilkQ.PiercingCheck(akActor) != 2
 		float MilkMax = getMilkMaximum(akActor)
-		if (MilkCur + Delta) <= MilkMax
+		if (MilkCur + Delta) <= 0
+			StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", 0)
+		elseif (MilkCur + Delta) <= MilkMax
 			StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkCount", Delta)
 		else
 			Debug.Trace("MME_Storage.changeMilkCurrent(): " + akActor.GetLeveledActorBase().GetName() + " -> " + (MilkCur + Delta) + ">" + MilkMax)
 			StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", MilkMax)
 		endif
 	else
-		StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkCount", Delta)
+		if (MilkCur + Delta) <= 0
+			StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.MilkCount", 0)
+		else
+			StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkCount", Delta)
+		endif
 	endif
 endfunction
 

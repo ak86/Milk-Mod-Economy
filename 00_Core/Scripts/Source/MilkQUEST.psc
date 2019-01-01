@@ -838,7 +838,7 @@ Function MilkCycle(Actor akActor, int t)
 		elseif IsMilkingArmor
 			if StorageUtil.GetIntValue(akActor,"MME.MilkMaid.MilkingMode") == 2
 				if StorageUtil.GetFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid") > 0
-					if LactacidCnt == 0 && MilkCnt <= 1
+					if LactacidCnt < 1 && MilkCnt <= 1
 						MME_Storage.changeLactacidCurrent(akActor, 1)
 					endif
 					StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.MilkingContainerLactacid", -1)
@@ -858,7 +858,7 @@ Function MilkCycle(Actor akActor, int t)
 		|| StringUtil.Find(maidArmor.getname(), "Tentacle Parasite" ) >= 0\
 		|| BasicLivingArmor.find(maidArmor.getname()) >= 0\
 		|| ParasiteLivingArmor.find(maidArmor.getname()) >= 0
-			if LactacidCnt == 0 && MilkCnt <= 1
+			if LactacidCnt < 1 && MilkCnt <= 1
 				MME_Storage.changeLactacidCurrent(akActor, t)
 			endif
 			if Plugin_SlSW && akActor == PlayerREF && !DisableSkoomaLactacid
@@ -908,7 +908,7 @@ Function MilkCycle(Actor akActor, int t)
 	endif
 	
 	If MILKSlave.Find(akActor) != -1
-		if LactacidCnt == 0 && MilkCnt <= 1
+		if LactacidCnt < 1 && MilkCnt <= 1
 			MME_Storage.changeLactacidCurrent(akActor, t)
 		endif
 		MilkMax = MME_Storage.getMilkMaximum(akActor)

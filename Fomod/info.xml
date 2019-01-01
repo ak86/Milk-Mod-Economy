@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>26-12-2018</Version>
+  <Version>01-01-2019</Version>
   <Author>Ed86</Author>
   <Website>https://www.patreon.com/Ed86</Website>
   <Description>
@@ -61,6 +61,10 @@ b)	Using Campire mod to craft and place milkpumps
   
   
 Dev change log:
+
+	v 01-01-2018
+fixed double milk reduction during sexlab scene orgasm
+changed living armor to feed lactacid if actor has less than 1 lactacid
 
 	v 26-12-2018
 some changes to volumetric scaling
