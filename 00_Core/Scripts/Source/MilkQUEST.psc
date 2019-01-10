@@ -745,12 +745,14 @@ Function MilkCycle(Actor akActor, int t)
 	endif
 	SLA.UpdateActorExposure(akActor, t)
 
-	if MilkingEquipment.Find(maidArmor.getname()) != -1\
-	|| maidArmor == MilkCuirass\
-	|| maidArmor == MilkCuirassFuta\
-	|| StringUtil.Find(maidArmor.getname(), "Milk" ) >= 0\
-	|| StringUtil.Find(maidArmor.getname(), "Cow" ) >=0
-		IsMilkingArmor = true
+	if maidArmor != None
+		if MilkingEquipment.Find(maidArmor.getname()) != -1\
+		|| maidArmor == MilkCuirass\
+		|| maidArmor == MilkCuirassFuta\
+		|| StringUtil.Find(maidArmor.getname(), "Milk" ) >= 0\
+		|| StringUtil.Find(maidArmor.getname(), "Cow" ) >=0
+			IsMilkingArmor = true
+		endif
 	endif
 	
 	If Plugin_BeeingFemale
@@ -3504,11 +3506,13 @@ bool Function isPregnant(Actor akActor)
 	endif
 	
 	;Hentai pregnancy LE/SE
-	Faction HentaiPregnantFaction = ( Game.GetFormFromFile(0x12085, "HentaiPregnancy.esm") as Faction )		;HentaiPregnantFaction
-	if HentaiPregnantFaction
-		if akActor.GetFactionRank(HentaiPregnantFaction) == 2 || akActor.GetFactionRank(HentaiPregnantFaction) == 3
-		debug.Trace("MilkModEconomy SLHP2 Pregnancy: " + akActorName)
-			Return True
+	if Plugin_HentaiPregnancy
+		Faction HentaiPregnantFaction = ( Game.GetFormFromFile(0x12085, "HentaiPregnancy.esm") as Faction )		;HentaiPregnantFaction
+		if HentaiPregnantFaction
+			if akActor.GetFactionRank(HentaiPregnantFaction) == 2 || akActor.GetFactionRank(HentaiPregnantFaction) == 3
+			debug.Trace("MilkModEconomy SLHP2 Pregnancy: " + akActorName)
+				Return True
+			endif
 		endif
 	endif
 	

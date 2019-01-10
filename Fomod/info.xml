@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>01-01-2019</Version>
+  <Version>10-01-2019</Version>
   <Author>Ed86</Author>
   <Website>https://www.patreon.com/Ed86</Website>
   <Description>
@@ -61,6 +61,10 @@ b)	Using Campire mod to craft and place milkpumps
   
   
 Dev change log:
+
+	v 10-01-2019
+fixed errors in papyrus log
+removed nio check, apperantly it doesnt work with SE
 
 	v 01-01-2019
 fixed double milk reduction during sexlab scene orgasm
