@@ -2180,6 +2180,15 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 		akActor.RemoveFromFaction(SexLab.AnimatingFaction)
 	Endif
 	
+	int handle = ModEvent.Create("MME_MilkingDone")
+	if (handle)
+		ModEvent.PushForm(handle, akActor)
+		ModEvent.PushInt(handle, bottles)
+		ModEvent.PushInt(handle, boobgasmcount)
+		ModEvent.PushInt(handle, cumcount)
+		ModEvent.Send(handle)
+	endif
+	
 	If PlayerREF == akActor
         SendModEvent("dhlp-Resume")
 	Endif

@@ -250,7 +250,7 @@ Function Orgasm(Actor akActor, String _args)
 						MME_Storage.changeMilkCurrent(akActor, -1, MilkQ.BreastScaleLimit)
 					endif
 					;MME_Storage.changeMilkCurrent(akActor, -1, MilkQ.BreastScaleLimit)
-					StorageUtil.SetFloatValue(akActor,"MME.MilkMaid.TimesMilked", 1)
+					StorageUtil.AdjustFloatValue(akActor,"MME.MilkMaid.TimesMilked", 1)
 					MilkQ.PostMilk(akActor)
 					MilkQ.AddMilkFx(akActor, 2)
 					MilkQ.AddLeak(akActor)
