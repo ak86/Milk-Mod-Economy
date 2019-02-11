@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>26-01-2019</Version>
+  <Version>11-02-2019</Version>
   <Author>Ed86</Author>
   <Website>https://www.patreon.com/Ed86</Website>
   <Description>
@@ -61,6 +61,10 @@ b)	Using Campire mod to craft and place milkpumps
   
   
 Dev change log:
+
+	v 11-02-2019
+fix mobile milking with cuirass not recognized correctly after 15-12-2018 @sexlabnostrip
+fixed mobile animations not beeing disabled by toggle in some cases
 
 	v 26-01-2019
 fix milking/leveling reset after sexlab orgasm

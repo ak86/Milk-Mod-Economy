@@ -1396,7 +1396,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 		endwhile
 		
 		If IsMilkingBlocked == false && SLSDBra == false
-			if (cuirass != None && Sexlab.IsStrippable(cuirass)) || cuirass == None
+			if (cuirass != None && (Sexlab.IsStrippable(cuirass) || MilkCuirass == cuirass)) || cuirass == None
 				if BreastRows != 1
 					;do nothing
 				elseif cuirass != None && !(cuirass == TITS4 || cuirass == TITS6 || cuirass == TITS8)
@@ -1445,13 +1445,13 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 		akActor.RemoveSpell( BeingMilkedPassive )
 		return
 	else
-		if cuirass != None && !(cuirass == TITS4 || cuirass == TITS6 || cuirass == TITS8) && Sexlab.IsStrippable(cuirass)
+		if cuirass != None && !(cuirass == TITS4 || cuirass == TITS6 || cuirass == TITS8)
 			if BreastRows != 1
 				Mode = 1
 			ElseIf StringUtil.Find(CuirassName, "Milk" ) >= 0 \
 			|| StringUtil.Find(CuirassName, "Cow" ) >= 0 \
-			|| MilkingEquipment.find(CuirassName) >= 0\
-			|| SLSDBra == true\
+			|| MilkingEquipment.find(CuirassName) >= 0 \
+			|| SLSDBra == true \
 			|| DDi.IsWearingDDMilker(akActor) == true
 				Mode = 2
 			ElseIf StringUtil.Find(CuirassName, "Spriggan" ) >= 0 \
@@ -1473,7 +1473,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 					endif
 				Endif
 				Sound.StopInstance( soundInstance02 )
-			ElseIf (DDArmbinder == false && DDYoke == false)
+			ElseIf (DDArmbinder == false && DDYoke == false) && Sexlab.IsStrippable(cuirass)
 				If akActor.GetItemCount(MilkCuirassFuta) > 0 && akActorGender == "Futa" && UseFutaMilkCuirass == true
 					akActor.equipitem(MilkCuirassFuta, true, true)
 					hasInventoryMilkCuirassFuta = true
@@ -1489,7 +1489,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 		ElseIf SLSDBra == true\
 			|| DDi.IsWearingDDMilker(akActor) == true
 				Mode = 2
-		ElseIf !(cuirass == TITS4 || cuirass == TITS6 || cuirass == TITS8) && Sexlab.IsStrippable(cuirass)
+		ElseIf !(cuirass == TITS4 || cuirass == TITS6 || cuirass == TITS8)
 			If (DDArmbinder == false && DDYoke == false)
 				If akActor.GetItemCount(MilkCuirassFuta) > 0 && akActorGender == "Futa" && UseFutaMilkCuirass == true
 					akActor.equipitem(MilkCuirassFuta, true, true)
@@ -1506,7 +1506,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 		If (DDArmbinder == false && DDYoke == false)
 			If IsMilkingBlocked == false && !akActor.IsInCombat() && !akActor.IsOnMount()
 				If mode != 4
-					If MobileMilkingAnims || mode == 1
+					If MobileMilkingAnims
 						If PlayerREF == akActor
 							Game.ForceThirdPerson()
 							Game.DisablePlayerControls(1, 1, 0, 0, 1, 1, 0) ;(True,True,False,False,True,True,True,True,0)
@@ -2046,7 +2046,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 					akActor.RemoveItem(MilkCuirassFuta, 1, true)
 				endif
 			endif
-			If cuirass != None && Sexlab.IsStrippable(cuirass)
+			If cuirass != None && (Sexlab.IsStrippable(cuirass) || MilkCuirass == cuirass)
 				akActor.equipitem(cuirass, false, true)
 			EndIf
 			If MilkStory && akActor == PlayerREF && (akActorGender != "Male" || (akActorGender == "Male" && MaleMaids))
@@ -2070,7 +2070,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 				elseif akActor.IsEquipped(MilkCuirassFuta) && MilkCuirassFuta != cuirass
 					akActor.UnequipItem(MilkCuirassFuta, false, true)
 				EndIf
-				if cuirass != None && Sexlab.IsStrippable(cuirass)
+				if cuirass != None && (Sexlab.IsStrippable(cuirass) || MilkCuirass == cuirass)
 					akActor.equipitem(cuirass, false, true)
 				EndIf
 			endif
