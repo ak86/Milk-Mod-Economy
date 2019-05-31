@@ -448,7 +448,7 @@ endFunction
 
 Function SellMilkDialogue(int marketIndex, int baseTrade, int milkTax, int upkeep, Actor akActor)
 	int finalPayout = baseTrade
-	finalPayout = finalPayout - milkTax - upkeep
+	finalPayout = math.Ceiling((finalPayout - milkTax - upkeep) * MilkQ.TimesMilkedMult/20)
 	if finalPayout < 0
 		finalPayout = 0
 	endif
@@ -460,7 +460,7 @@ endFunction
 
 Function SellMilk(int marketIndex, int baseTrade, int milkTax, int upkeep, Actor akActor)
 	int finalPayout = baseTrade
-	finalPayout = baseTrade - milkTax - upkeep
+	finalPayout = math.Ceiling((finalPayout - milkTax - upkeep) * MilkQ.TimesMilkedMult/20)
 	if finalPayout < 0
 		finalPayout = 0
 	endif

@@ -15,6 +15,7 @@ MME_DDi property DDi auto
 MME_zbf property zbf auto
 MME_SLSD property SLSD auto
 MME_SLHP property SLHP auto
+MME_FM property FM auto
 MME_SLP property SLP auto
 MME_PSQ property PSQ auto
 MME_SGO property SGO auto
@@ -1223,6 +1224,9 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 	Bool FeedOnce = true
 	Bool IsFeedingBlocked = false
 	Bool StopMilking = false
+	Weapon weapR = akActor.GetEquippedWeapon()
+	Weapon weapL = akActor.GetEquippedWeapon(True)
+	Armor Shield = akActor.GetEquippedShield()
 	Form maidArmor
 	Form cuirass = akActor.GetWornForm(Armor.GetMaskForSlot(32))
 	String CuirassName
@@ -1437,6 +1441,15 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 					StoryDisplay("start","milkpump")
 				EndIf
 			EndIf
+			;if weapR
+			;	akActor.UnequipItem(weapR,False,True)
+			;endif
+			;if weapL
+			;	akActor.UnequipItem(weapL,False,True)
+			;endif
+			;if Shield
+			;	akActor.UnequipItem(Shield,False,True)
+			;endif
 		EndIf
 	elseif mode == 4 || StopMilking
 		;do nothing
@@ -2052,6 +2065,15 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 			If MilkStory && akActor == PlayerREF && (akActorGender != "Male" || (akActorGender == "Male" && MaleMaids))
 				StoryDisplay("end","milkpump")
 			EndIf
+			;if weapR
+			;	akActor.EquipItem(weapR,False,True)
+			;endif
+			;if weapL
+			;	akActor.EquipItem(weapL,False,True)
+			;endif
+			;if Shield
+			;	akActor.EquipItem(Shield,False,True)
+			;endif
 		elseif Mode == 3
 			If MilkStory && akActor == PlayerREF && (akActorGender != "Male" || (akActorGender == "Male" && MaleMaids))
 				if StringUtil.Find(CuirassName, "Hermaeus Mora" ) >= 0 || StringUtil.Find(CuirassName, "HM Priestess" ) >= 0
@@ -3519,15 +3541,21 @@ bool Function isPregnant(Actor akActor)
 		Faction HentaiPregnantFaction = ( Game.GetFormFromFile(0x12085, "HentaiPregnancy.esm") as Faction )		;HentaiPregnantFaction
 		if HentaiPregnantFaction
 			if akActor.GetFactionRank(HentaiPregnantFaction) == 2 || akActor.GetFactionRank(HentaiPregnantFaction) == 3
-			debug.Trace("MilkModEconomy SLHP2 Pregnancy: " + akActorName)
+				debug.Trace("MilkModEconomy SLHP2 Pregnancy: " + akActorName)
 				Return True
 			endif
 		endif
 	endif
 	
-	;Fertility Mode
+	;Fertility Mode 1.5
 	if (StorageUtil.HasIntValue(akActor, "_JSW_FM_PregnantDay") && StorageUtil.GetIntValue(akActor, "_JSW_FM_PregnantDay") > 0)
 		debug.Trace("MilkModEconomy Fertility Mode Pregnancy: " + akActorName)
+		Return True
+	endif
+	
+	;Fertility Mode 2+
+	if FM.IsPregnant(akActor) == true
+		debug.Trace("MilkModEconomy FM Pregnancy: " + akActorName)
 		Return True
 	endif
 	

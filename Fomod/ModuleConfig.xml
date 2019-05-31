@@ -647,6 +647,27 @@
 								</dependencyType>
 							</typeDescriptor>
 						</plugin>
+						<plugin name="Fertility Mode 2.x">
+							<description>
+								<![CDATA[Pregnancy detection. DO NOT USE WITH Fertility Mode 1.x]]>
+							</description>
+							<conditionFlags>
+								<flag name="FM">On</flag>
+							</conditionFlags>
+							<typeDescriptor>
+								<dependencyType>
+									<defaultType name="Optional"/>
+									<patterns>
+										<pattern>
+											<dependencies>
+												<fileDependency file="Fertility Mode.esp" state="Active"/>
+											</dependencies>
+											<type name="Recommended"/>
+										</pattern>
+									</patterns>
+								</dependencyType>
+							</typeDescriptor>
+						</plugin>
 						<plugin name="SL Procreation">
 							<description>
 								<![CDATA[Pregnancy detection.]]>
@@ -801,6 +822,22 @@
 				</dependencies>
 				<files>
 					<folder source="05_Plugins\SLHP\False" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="FM" value="On"/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\FM\True" destination=""/>
+				</files>
+			</pattern>
+			<pattern>
+				<dependencies>
+					<flagDependency flag="FM" value=""/>
+				</dependencies>
+				<files>
+					<folder source="05_Plugins\FM\False" destination=""/>
 				</files>
 			</pattern>
 			<pattern>
