@@ -63,6 +63,14 @@ b)	Using Campire mod to craft and place milkpumps
   
 Dev change log:
 
+	v 04-06-2019
+split LE mod into "assets" and "scripts"
+merged LE/SE to same base
+set default multibreast chance to 0
+multibreast no longer come prebuild, use bodyslide
+support for fertility mode 2.x
+added payout for milk trading to be based on selected MME difficulty (more monies for easier difficulties)
+
 	v 11-02-2019
 fix mobile milking with cuirass not recognized correctly after 15-12-2018 @sexlabnostrip
 fixed mobile animations not beeing disabled by toggle in some cases

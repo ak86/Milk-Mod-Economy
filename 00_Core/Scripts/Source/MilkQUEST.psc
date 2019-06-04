@@ -3381,7 +3381,7 @@ bool Function VarSetup()
 	MaleMaids = False
 	MilkQC.Buffs = True
 	MilkQC.ExhaustionMode = 0
-	MilkQC.BrestEnlargement_MultiBreast_Effect = 5
+	MilkQC.BrestEnlargement_MultiBreast_Effect = 0
 	MilkQC.Debug_enabled = 0
 	MME_NPCComments.SetValue(10)
 	MilkQC.MME_DialogueMilking = True
