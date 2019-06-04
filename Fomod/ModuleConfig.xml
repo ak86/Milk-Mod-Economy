@@ -1,5 +1,5 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://qconsulting.ca/fo3/ModConfig5.0.xsd">
-	<moduleName>Milk Mod Economy</moduleName>
+	<moduleName>MilkModEconomy Assets</moduleName>
 	<moduleImage path="Fomod\Screens\module.jpg"/>
 	<moduleDependencies>
 		<fileDependency file="Skyrim.esm" state="Active" />
