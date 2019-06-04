@@ -1,5 +1,5 @@
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="http://qconsulting.ca/fo3/ModConfig5.0.xsd">
-	<moduleName>Milk Mod Economy</moduleName>
+	<moduleName>MilkModEconomy Assets</moduleName>
 	<moduleImage path="Fomod\Screens\module.jpg"/>
 	<moduleDependencies>
 		<fileDependency file="Skyrim.esm" state="Active" />
@@ -58,16 +58,16 @@
 								<type name="Optional"/>
 							</typeDescriptor>
 						</plugin>				
-						<plugin name="UUNP">
+						<plugin name="UNP">
 							<description>
-								<![CDATA[Choose this if you want UUNP body Milking Cuirass]]>
+								<![CDATA[Choose this if you want UNP body Milking Cuirass]]>
 							</description>
-							<image path="Fomod\Screens\UUNP.jpg"/>
+							<image path="Fomod\Screens\UNP.jpg"/>
 							<conditionFlags>
-								<flag name="UUNP">Active</flag>
+								<flag name="UNP">Active</flag>
 							</conditionFlags>
 							<files>
-								<folder source="02_Cuirass\UUNP" destination=""/>
+								<folder source="02_Cuirass\UNP" destination=""/>
 							</files>
 							<typeDescriptor>
 								<type name="Optional"/>
