@@ -70,6 +70,7 @@ set default multibreast chance to 0
 multibreast no longer come prebuild, use bodyslide
 support for fertility mode 2.x
 added payout for milk trading to be based on selected MME difficulty (more monies for easier difficulties)
+removed max lactacid limit when breastsize/level limit enabled
 
 	v 11-02-2019
 fix mobile milking with cuirass not recognized correctly after 15-12-2018 @sexlabnostrip

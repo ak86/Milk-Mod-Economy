@@ -144,12 +144,6 @@ bool function setLactacidCurrent(actor akActor, float Value) global
 		Debug.Trace("MME_Storage: Clamping LactacidCurrent to 0 instead.")
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.LactacidCount", 0)
 		return false
-	elseif Value > LactacidMax && MilkQ.BreastScaleLimit
-		Debug.Trace("MME_Storage: Provided values would result in LactacidCurrent = " + Value)
-		Debug.Trace("MME_Storage: BreastScaleLimit is " + MilkQ.BreastScaleLimit)
-		Debug.Trace("MME_Storage: Clamping LactacidCurrent to " + LactacidMax + " instead.")
-		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.LactacidCount", LactacidMax)
-		return false
 	else
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.LactacidCount", Value)
 		return true
