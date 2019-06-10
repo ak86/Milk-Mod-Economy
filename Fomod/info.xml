@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>04-06-2019</Version>
+  <Version>10-06-2019</Version>
   <Author>Ed86</Author>
   <Website>https://www.patreon.com/Ed86</Website>
   <Description>
@@ -63,6 +63,10 @@ b)	Using Campire mod to craft and place milkpumps
   
 Dev change log:
 
+	v 10-06-2019
+increased max mastery lvl to 40, max maids 5-> 20
+set max mastery lvl for economy to 10
+
 	v 04-06-2019
 split LE mod into "assets" and "scripts"
 merged LE/SE to same base
@@ -80,7 +84,6 @@ fixed mobile animations not beeing disabled by toggle in some cases
 fix milking/leveling reset after sexlab orgasm
 updates for russian translation
 added modevent when milking is done ("MME_MilkingDone", akActor, bottles, boobgasmcount, cumcount)
-
 	
 	v 10-01-2019
 fixed errors in papyrus log

@@ -684,7 +684,7 @@ int Function CalculateBaseTrade(Potion finalPotion, int finalQty)
 		return 0
 	endif
 	int baseTrade = finalPotion.GetGoldValue() * finalQty
-	Float Level = StorageUtil.GetFloatValue(none,"MME.Progression.Level")
+	Float Level = PapyrusUtil.ClampFloat(StorageUtil.GetFloatValue(none,"MME.Progression.Level"), 0, 10)
 
 	; Formula below kind of conforms to the way selling does in game, ignoring potions/enchants
 	float priceFactor

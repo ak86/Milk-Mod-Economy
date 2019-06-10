@@ -2299,7 +2299,7 @@ Function LevelCheck()   ; mastery progression levelup messages
 	Float TimesMilked = StorageUtil.GetFloatValue(none, "MME.Progression.TimesMilked")
 	Float Level = StorageUtil.GetFloatValue(none, "MME.Progression.Level")
 	
-	If Level < MilkLvlCap
+	If Level < 40
 		If TimesMilked >= (Level + 1) * TimesMilkedMult
 			StorageUtil.AdjustFloatValue(none,"MME.Progression.Level", 1)
 			StorageUtil.SetFloatValue(none,"MME.Progression.TimesMilked", 0)
