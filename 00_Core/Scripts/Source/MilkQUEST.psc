@@ -1133,47 +1133,47 @@ Function CurrentSize(Actor akActor)
 		EndIf
 	Endif
 	
+	MME_BodyMod BodyMod = Quest.GetQuest("MME_MilkQUEST") as MME_BodyMod
+	
+	bool isFemale = false
 	if akActor.GetLeveledActorBase().GetSex() == 1
-		MME_BodyMod BodyMod = Quest.GetQuest("MME_MilkQUEST") as MME_BodyMod
-		
-		bool isFemale = false
-		if akActor.GetLeveledActorBase().GetSex() == 1
-			isFemale = true
-		Else
-			isFemale = false
-		endif
-		
-		if CurrentSize > 0
-			;HDT Female / Vampire Lord
-				BodyMod.SetNodeScale(akActor, "NPC L Breast", CurrentSize, isFemale)
-				BodyMod.SetNodeScale(akActor, "NPC R Breast", CurrentSize, isFemale)
-				
-			;Curve fix
-			;HDT Female / Vampire Lord
-				BodyMod.SetNodeScale(akActor, "NPC L Breast01", CurveFix, isFemale)
-				BodyMod.SetNodeScale(akActor, "NPC R Breast01", CurveFix, isFemale)
-
-			;HDT Werewolf
-				BodyMod.SetNodeScale(akActor, "NPC L Breast P1", CurrentSize, isFemale)
-				BodyMod.SetNodeScale(akActor, "NPC R Breast P1", CurrentSize, isFemale)
-				BodyMod.SetNodeScale(akActor, "NPC L Breast P2", CurrentSize, isFemale)
-				BodyMod.SetNodeScale(akActor, "NPC R Breast P2", CurrentSize, isFemale)
-				BodyMod.SetNodeScale(akActor, "NPC L Breast P3", CurrentSize, isFemale)
-				BodyMod.SetNodeScale(akActor, "NPC R Breast P3", CurrentSize, isFemale)
-			
-			;Schlong		this is for male/futa but i have no idea about scaling mechanic
-			;NetImmerse.SetNodeScale(akActor, "NPC L GenitalsScrotum [LGenScrot]", CurrentSize, false)
-			;NetImmerse.SetNodeScale(akActor, "NPC R GenitalsScrotum [RGenScrot]", CurrentSize, false)
-			;FPS
-			;NetImmerse.SetNodeScale(akActor, "NPC L GenitalsScrotum [LGenScrot]", CurrentSize, true)
-			;NetImmerse.SetNodeScale(akActor, "NPC R GenitalsScrotum [RGenScrot]", CurrentSize, true)
-		endif
-		
-		if BellyScale
-			LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
-			BodyMod.SetNodeScale(akActor, "NPC Belly", 1 + LactacidCnt / 2, isFemale)
-		endif
+		isFemale = true
+	Else
+		isFemale = false
 	endif
+	
+	if CurrentSize > 0
+		;HDT Female / Vampire Lord
+			BodyMod.SetNodeScale(akActor, "NPC L Breast", CurrentSize, isFemale)
+			BodyMod.SetNodeScale(akActor, "NPC R Breast", CurrentSize, isFemale)
+			
+		;Curve fix
+		;HDT Female / Vampire Lord
+			BodyMod.SetNodeScale(akActor, "NPC L Breast01", CurveFix, isFemale)
+			BodyMod.SetNodeScale(akActor, "NPC R Breast01", CurveFix, isFemale)
+
+		;HDT Werewolf
+			BodyMod.SetNodeScale(akActor, "NPC L Breast P1", CurrentSize, isFemale)
+			BodyMod.SetNodeScale(akActor, "NPC R Breast P1", CurrentSize, isFemale)
+			BodyMod.SetNodeScale(akActor, "NPC L Breast P2", CurrentSize, isFemale)
+			BodyMod.SetNodeScale(akActor, "NPC R Breast P2", CurrentSize, isFemale)
+			BodyMod.SetNodeScale(akActor, "NPC L Breast P3", CurrentSize, isFemale)
+			BodyMod.SetNodeScale(akActor, "NPC R Breast P3", CurrentSize, isFemale)
+		
+		;Schlong		this is for male/futa but i have no idea about scaling mechanic
+		;NetImmerse.SetNodeScale(akActor, "NPC L GenitalsScrotum [LGenScrot]", CurrentSize, false)
+		;NetImmerse.SetNodeScale(akActor, "NPC R GenitalsScrotum [RGenScrot]", CurrentSize, false)
+		;FPS
+		;NetImmerse.SetNodeScale(akActor, "NPC L GenitalsScrotum [LGenScrot]", CurrentSize, true)
+		;NetImmerse.SetNodeScale(akActor, "NPC R GenitalsScrotum [RGenScrot]", CurrentSize, true)
+	endif
+	
+	if BellyScale
+		LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
+	else
+		LactacidCnt = 0
+	endif
+	BodyMod.SetNodeScale(akActor, "NPC Belly", 1 + LactacidCnt / 2, isFemale)
 EndFunction
 
 ;----------------------------------------------------------------------------
