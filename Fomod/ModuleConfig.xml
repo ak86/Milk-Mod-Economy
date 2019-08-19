@@ -136,20 +136,6 @@
 								<type name="Optional"/>
 							</typeDescriptor>
 						</plugin>				
-						<plugin name="HDT fix(old)">
-							<description>
-								<![CDATA[Choose this if you are using HDT and want breast animation for milking machine, requires: XPMSE 2.06+ skeleton. YOU SHOULD USE NEWER XPMSE BBP RIG OPTION]]>
-							</description>
-							<conditionFlags>
-								<flag name="HDT">HDT</flag>
-							</conditionFlags>
-							<files>
-								<folder source="02_Extra\HDT Rig" destination=""/>
-							</files>
-							<typeDescriptor>
-								<type name="Optional"/>
-							</typeDescriptor>
-						</plugin>				
 						<plugin name="Campfire addon">
 							<description>
 								<![CDATA[Campfire addon, allows crafting and placing milkpumps]]>
