@@ -56,49 +56,46 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 				EndIf
 			EndIf
 			
-			if akTarget == PlayerREF
-				If MilkQ.MilkStory
-					Debug.Messagebox(JsonUtil.GetStringValue("/MME/Strings", "lactacidstory"))
-				EndIf
-				
-				Utility.Wait(1.0)
-				
-				if !MilkQ.SexLab.IsActorActive(akTarget)
-					Game.DisablePlayerControls(1, 1, 0, 0, 1, 1, 0) ;(True,True,False,False,True,True,True,True,0)
-					Game.ForceThirdPerson()
+			If (MilkQ.SexLab.IsValidActor(akTarget))
+				If !(akTarget.GetSitState() <= 3 && akTarget.GetSitState() > 0)
+					if (akTarget == PlayerREF)
+						If MilkQ.MilkStory
+							Debug.Messagebox(JsonUtil.GetStringValue("/MME/Strings", "lactacidstory"))
+						EndIf
+						
+						Utility.Wait(1.0)
+						
+						Game.DisablePlayerControls(1, 1, 0, 0, 1, 1, 0) ;(True,True,False,False,True,True,True,True,0)
+						Game.ForceThirdPerson()
+						Game.ShakeCamera(none, Utility.RandomFloat(0.5 , 1), 10)
+					endif
+					
+					Debug.SendAnimationEvent(akTarget,"ZaZAPCHorFd")
+					akTarget.Setunconscious(true)
+					
+					MilkQ.SexLab.PickVoice(akTarget).Moan(akTarget, Utility.RandomInt (70, 100), false)
+					
+					if akTarget == PlayerREF
+						SendModEvent("PlayerOrgasmStart")
+					endIf
+					
+					Utility.Wait( 10.0 )
+					
+					if akTarget == PlayerREF
+						SendModEvent("PlayerOrgasmEnd")
+					endIf
+					
+					If MilkQ.MilkStory
+						Debug.Messagebox(MilkQ.formatString(JsonUtil.GetStringValue("/MME/Strings", "lactacidorgasm"), MaidName))
+					EndIf
+					
+					Debug.SendAnimationEvent(akTarget,"IdleForceDefaultState")
+					akTarget.Setunconscious(false)
+					
+					if akTarget == PlayerREF && !MilkQ.SexLab.IsActorActive(akTarget)
+						Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
+					endif
 				endif
-				
-				Game.ShakeCamera(none, Utility.RandomFloat(0.5 , 1), 10)
-			endif
-			
-			If !(akTarget.GetSitState() <= 3 && akTarget.GetSitState() > 0)
-				Debug.SendAnimationEvent(akTarget,"ZaZAPCHorFd")
-				akTarget.Setunconscious(true)
-			EndIf
-			
-			MilkQ.SexLab.PickVoice(akTarget).Moan(akTarget, Utility.RandomInt (70, 100), false)
-			
-			if akTarget == PlayerREF
-				SendModEvent("PlayerOrgasmStart")
-			endIf
-			
-			Utility.Wait( 10.0 )
-			
-			if akTarget == PlayerREF
-				SendModEvent("PlayerOrgasmEnd")
-			endIf
-			
-			If MilkQ.MilkStory
-				Debug.Messagebox(MilkQ.formatString(JsonUtil.GetStringValue("/MME/Strings", "lactacidorgasm"), MaidName))
-			EndIf
-			
-			if !(akTarget.GetSitState() <= 3 && akTarget.GetSitState() > 0)
-				Debug.SendAnimationEvent(akTarget,"IdleForceDefaultState")
-				akTarget.Setunconscious(false)
-			endif
-			
-			if akTarget == PlayerREF && !MilkQ.SexLab.IsActorActive(akTarget)
-				Game.EnablePlayerControls() ;(True,True,True,True,True,True,True,True,0)
 			endif
 		endif
 	endif
