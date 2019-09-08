@@ -7,10 +7,7 @@ ObjectReference Property MilkBarrel Auto
 ;----------------------------------------------------------------------------
 EVENT OnActivate(ObjectReference akActionRef)
 	Actor akActor = akActionRef as Actor
-	if !MilkQ.Sexlab.IsValidActor(akActor)
-		return
-	endif
-	IF !akActor.HasSpell( MilkQ.BeingMilkedPassive ) && akActor.GetSitState() <= 3 && akActor.GetSitState() > 0
+	IF !akActor.HasSpell( MilkQ.BeingMilkedPassive ) && akActor.GetSitState() <= 3 && akActor.GetSitState() > 0  && MilkQ.Sexlab.IsValidActor(akActor)
 		if akActor == MilkQ.PlayerRef
 			Game.ForceThirdPerson()
 		endif

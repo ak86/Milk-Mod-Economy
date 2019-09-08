@@ -1205,9 +1205,6 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 		;endif
 		return									; prevents multiple scripts running
 	endif
-	if !Sexlab.IsValidActor(akActor)
-		return
-	endif
 	akActor.AddSpell( BeingMilkedPassive, false )	; prevents multiple scripts running, if removed, milking will stop
 	StorageUtil.SetIntValue(akActor, "MME.MilkMaid.IsAnimating", 0)
 

@@ -5,10 +5,7 @@ MilkQUEST Property MilkQ Auto
 ;----------------------------------------------------------------------------
 EVENT OnActivate(ObjectReference akActionRef)
 	Actor akActor = akActionRef as Actor
-	if !MilkQ.Sexlab.IsValidActor(akActor)
-		return
-	endif
-	IF !akActor.HasSpell( MilkQ.BeingMilkedPassive ) && akActor.GetSitState() <= 3 && akActor.GetSitState() > 0
+	IF !akActor.HasSpell( MilkQ.BeingMilkedPassive ) && akActor.GetSitState() <= 3 && akActor.GetSitState() > 0 && MilkQ.Sexlab.IsValidActor(akActor)
 		;Non bound milking
 		if self.HasKeyword( Game.GetFormFromFile(0x7e3bc, "MilkModNew.esp") as Keyword )\
 		|| self.HasKeyword( Game.GetFormFromFile(0x26D1B , "ZaZAnimationPack.esm") as Keyword )
