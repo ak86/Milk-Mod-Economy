@@ -281,7 +281,7 @@ Function Orgasm(Actor akActor, String _args)
 	endif
 	
 	Actor PlayerRef = Game.Getplayer()
-	if (MilkQ.MILKmaid.Find(akActor) != -1 || akActor == PlayerREF) && MilkQ.CumProduction
+	if  MilkQ.CumProduction && (akActor == PlayerREF || MilkQ.MILKmaid.Find(akActor) != -1) && !(MilkQ.isSuccubus(akActor) || MilkQ.isVampire(akActor))
 		if animation.HasTag("Masturbation")\
 		&& !(MilkQ.DDi.IsWearingBelt(akActor)\
 		|| MilkQ.DDi.IsMilkingBlocked_Armbinder(akActor)\

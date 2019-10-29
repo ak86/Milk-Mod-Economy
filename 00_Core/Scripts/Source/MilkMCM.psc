@@ -480,6 +480,8 @@ function Page_Debug()
 				AddSliderOptionST("Debug_TimesMilked_Overall_Slider", "$MME_MENU_Times_Milked_(overall)", StorageUtil.GetFloatValue(none, "MME.Progression.TimesMilkedAll"))
 				;AddToggleOptionST("Debug_Zaz_Milkpump_Toggle", "$MME_MENU_PAGE_Settings_H1_S11", MilkQ.ZazPumps)
 				AddToggleOptionST("Debug_PC_Pregnancy_Toggle", "$MME_MENU_PAGE_Settings_H1_S10", MilkQ.PlayerCantBeMilkmaid)
+				;AddToggleOptionST("Debug_SexLab_Orgasm_Toggle", "$MME_MENU_PAGE_Settings_H1_S3", MilkQ.SexLabOrgasm)
+				AddToggleOptionST("Debug_PassiveArousalIncrease_Toggle", "$MME_MENU_PAGE_Settings_H1_S14", MilkQ.PassiveArousalIncrease)
 				AddToggleOptionST("Debug_MilkLeak_Particles_Toggle", "$MME_MENU_PAGE_Debug_H1_S5", MilkQ.MilkLeakToggle)
 				AddToggleOptionST("Debug_MilkLeak_Particles_Through_Clothes_Toggle", "$MME_MENU_PAGE_Debug_H1_S6", MilkQ.MilkLeakWearArm)
 				AddToggleOptionST("Debug_MilkLeak_Textures_Toggle", "$MME_MENU_PAGE_Debug_H1_S7", MilkQ.MilkLeakTextures)
@@ -1174,6 +1176,36 @@ state Debug_PC_Pregnancy_Toggle
 	
 	event OnHighlightST()
 		SetInfoText("$MME_MENU_PAGE_Settings_H1_S10_Higlight")
+	endEvent
+endState
+
+;state Debug_SexLab_Orgasm_Toggle
+;	event OnSelectST()
+;		if !MilkQ.SexLabOrgasm
+;			MilkQ.SexLabOrgasm = true
+;		else
+;			MilkQ.SexLabOrgasm = false
+;		endif
+;		SetToggleOptionValueST(MilkQ.SexLabOrgasm)
+;	endEvent
+;	
+;	event OnHighlightST()
+;		SetInfoText("$MME_MENU_PAGE_Settings_H1_S3_Higlight")
+;	endEvent
+;endState
+
+state Debug_PassiveArousalIncrease_Toggle
+	event OnSelectST()
+		if !MilkQ.PassiveArousalIncrease
+			MilkQ.PassiveArousalIncrease = true
+		else
+			MilkQ.PassiveArousalIncrease = false
+		endif
+		SetToggleOptionValueST(MilkQ.PassiveArousalIncrease)
+	endEvent
+	
+	event OnHighlightST()
+		SetInfoText("$MME_MENU_PAGE_Settings_H1_S14_Higlight")
 	endEvent
 endState
 

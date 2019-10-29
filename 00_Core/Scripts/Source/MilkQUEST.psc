@@ -128,6 +128,8 @@ Bool Property MilkWithZaZMoMSuctionCups = False Auto
 Bool Property PainSystem = True Auto
 Bool Property TradeDialogue = True Auto
 Bool Property PlayerCantBeMilkmaid = False Auto
+Bool Property SexLabOrgasm = True Auto
+Bool Property PassiveArousalIncrease = True Auto
 Bool Property ECTrigger = True Auto
 Bool Property ECCrowdControl = True Auto
 Bool Property ZazPumps = False Auto
@@ -261,6 +263,7 @@ Bool Property Plugin_EstrusSpider = false auto
 Bool Property Plugin_EstrusDwemer = false auto
 Bool Property Plugin_BeeingFemale = false auto
 Bool Property Plugin_FertilityMode = false auto
+Bool Property Plugin_FertilityMode2 = false auto
 Bool Property Plugin_HentaiPregnancy = false auto
 Bool Property Plugin_SexLabProcreation = false auto
 Bool Property Plugin_PSQ = false auto
@@ -744,7 +747,10 @@ Function MilkCycle(Actor akActor, int t)
 		RemoveMilkFx1(akActor)
 		RemoveMilkFx2(akActor)
 	endif
-	SLA.UpdateActorExposure(akActor, t)
+	
+	if PassiveArousalIncrease && MilkTick > 0
+		SLA.UpdateActorExposure(akActor, t)
+	endif
 
 	if maidArmor != None
 		if MilkingEquipment.Find(maidArmor.getname()) != -1\
@@ -778,6 +784,17 @@ Function MilkCycle(Actor akActor, int t)
 					|| akActor.IsEquipped(Game.GetFormFromFile(0x105D4, "FertilityMode.esp"))\
 					|| akActor.IsEquipped(Game.GetFormFromFile(0x105D5, "FertilityMode.esp"))\
 					|| akActor.IsEquipped(Game.GetFormFromFile(0x105D6, "FertilityMode.esp"))
+	endif
+	
+	if Plugin_FertilityMode2 && IsBabyArmor == false
+		IsBabyArmor = akActor.IsEquipped(Game.GetFormFromFile(0x08964, "Fertility Mode.esp"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x08ECE, "Fertility Mode.esp"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x08ECF, "Fertility Mode.esp"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x08ED0, "Fertility Mode.esp"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x08ED1, "Fertility Mode.esp"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x08ED2, "Fertility Mode.esp"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x08ED3, "Fertility Mode.esp"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x08ED4, "Fertility Mode.esp"))
 	endif	
 	
 	;play leaking effects, if breast are bigger then max
@@ -2148,7 +2165,7 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 			endif
 		endif
 			
-		if cumcount > 0 && CumProduction
+		if cumcount > 0 && CumProduction && !(isSuccubus(akActor) || isVampire(akActor))
 			if Mode == 0 || Mode == 2
 				if IsMilkMaid == true && (StorageUtil.GetIntValue(akActor, "MME.MilkMaid.IsSlave") == 1 || MILKSlave.find(akActor) != -1)
 					StorageUtil.AdjustFloatValue(akActor, "MME.MilkMaid.MilkingContainerCumsSUM", cumcount)
@@ -2721,7 +2738,7 @@ Function DLCcheck()
 		debug.Trace("MilkModEconomy SOS Equipable Schlong.esp found")
 		Plugin_SOS_EQUIP = true
 	else
-		debug.Trace("MilkModEconomy Schlongs of Skyrim.esp not found")
+		debug.Trace("MilkModEconomy SOS Equipable Schlong.esp not found")
 		Plugin_SOS_EQUIP = false
 	endif
 	
@@ -2787,6 +2804,14 @@ Function DLCcheck()
 	else
 		debug.Trace("MilkModEconomy FertilityMode.esp not found")
 		Plugin_FertilityMode = false
+	endif
+	
+	If Game.GetModbyName("Fertility Mode.esp") != 255
+		debug.Trace("MilkModEconomy Fertility Mode.esp found")
+		Plugin_FertilityMode2 = true
+	else
+		debug.Trace("MilkModEconomy Fertility Mode.esp not found")
+		Plugin_FertilityMode2 = false
 	endif
 	
 	If Game.GetModbyName("HentaiPregnancy.esm") != 255
@@ -3391,6 +3416,8 @@ bool Function VarSetup()
 	FixedMilkGen4Followers = False
 	CuirassSellsMilk = False
 	MaidLvlCap = False
+	SexLabOrgasm = True
+	PassiveArousalIncrease = True
 	MilkAsMaidTimesMilked = False
 	MilkProdMod = 100
 	MilkPriceMod = 1
