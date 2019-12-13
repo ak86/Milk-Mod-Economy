@@ -3662,7 +3662,7 @@ bool Function isPregnant(Actor akActor)
 	
 	;EggFactory
 	If Game.GetModbyName("EggFactory.esp") != 255
-		if akActor.isInFaction( Game.GetFormFromFile(0x1101f, "EggFactory.esp") as Faction ) ;EggFactoryActiveFaction Faction
+		if akActor.isInFaction( Game.GetFormFromFile(0x2943C, "EggFactory.esp") as Faction ) ;EggFactoryPregCheck Faction
 			debug.Trace("MilkModEconomy EggFactory Pregnancy: " + akActorName)
 			Return True
 		endif
