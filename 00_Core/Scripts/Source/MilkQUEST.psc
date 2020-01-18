@@ -2241,9 +2241,9 @@ Function PostMilk(Actor akActor)
 	;Spell Unmilked_Spell = Game.GetFormFromFile(0xD7B, "milkmodnew.esp") as Spell
 	;Spell Wellmilked_Spell = Game.GetFormFromFile(0x39F87, "milkmodnew.esp") as Spell
 	;Spell Breasts_Spell = Game.GetFormFromFile(0x7D36A, "milkmodnew.esp") as Spell
-	Float BreastsSize_Node = NetImmerse.GetNodeScale(akActor, "NPC L Breast", false)
+	Float BreastsSize_Node = MME_Storage.getBreastNodeScale(akActor)
 	Float BreastRows = MME_Storage.getBreastRows(akActor)
-
+	
 	if MilkQC.Buffs != true
 		if akActor.HasSpell(MME_Spells_Buffs.GetAt(3) as Spell)
 			akActor.RemoveSpell(MME_Spells_Buffs.GetAt(3) as Spell)

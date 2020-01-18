@@ -107,10 +107,16 @@ float function getBreastsBasevalue(actor akActor) global
 	Debug.Trace("MME_Storage: Triggered getBreastsBasevalue() for actor " + akActor.GetLeveledActorBase().GetName())
 	if StorageUtil.HasFloatValue(akActor, "MME.MilkMaid.BreastBase")
 		return StorageUtil.GetFloatValue(akActor, "MME.MilkMaid.BreastBase")
+	elseif (NetImmerse.HasNode(akActor, "NPC L Breast", false))
+		; value was not known yet for whatever reason - properly initialise it
+		Debug.Trace("MME_Storage: Called getBreastsBasevalue() but value is not known yet!")
+		float nodescale = NetImmerse.GetNodeScale(akActor, "NPC L Breast", false)
+		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBase", nodescale)
+		return nodescale
 	else
 		; value was not known yet for whatever reason - properly initialise it
-		Debug.Notification("MME_Storage: Called getBreastsBasevalue() but value is not known yet!")
-		float nodescale = NetImmerse.GetNodeScale(akActor, "NPC L Breast", false)
+		Debug.Trace("MME_Storage: Called getBreastsBasevalue() but value is not known yet!")
+		float nodescale = 1
 		StorageUtil.SetFloatValue(akActor, "MME.MilkMaid.BreastBase", nodescale)
 		return nodescale
 	endif
@@ -380,15 +386,16 @@ float function getBreastNodeScale(actor akActor) global
 
 		; <sanity check>
 		if (BreastL != BreastR)
-			Debug.Notification("[MilkModEconomy] " + ActorName + " has differently sized left and right breast!")
-			Debug.Notification("[MilkModEconomy] Asymetric breasts are not supported!")
+			Debug.Trace("[MilkModEconomy] " + ActorName + " has differently sized left and right breast!")
+			Debug.Trace("[MilkModEconomy] Asymetric breasts are not supported!")
 		endif
 		; </sanity check>
 
 		return BreastL
 	else
-		Debug.Notification("[MilkModEconomy] Unsupported skeleton or armor - unable to find breast nodes for '" + ActorName + "'!")
-		Debug.Notification("[MilkModEconomy] (Mod will work but breast growth will have no visible effect.)")
+		;2k2k, smp skeleton?
+		;Debug.Trace("[MilkModEconomy] Unsupported skeleton or armor - unable to find breast nodes for '" + ActorName + "'!")
+		;Debug.Trace("[MilkModEconomy] (Mod will work but breast growth will have no visible effect.)")
 
 		return 1.0
 	endif
