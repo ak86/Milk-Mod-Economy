@@ -37,6 +37,30 @@ EndFunction
 Function SetMorphScale(Actor akActor, string nodeName, float value)
 	string modName = "MilkModEconomy"
 	MilkQUEST MilkQ = Quest.GetQuest("MME_MilkQUEST") as MilkQUEST
+
+	string JsonKey
+	If nodeName == "Breasts"
+		JsonKey = "breasts"
+	ElseIf nodeName == "BreastsSH"
+		JsonKey = "breastssh"
+	ElseIf nodeName == "BreastsSSH"
+		JsonKey = "breastsssh"
+	ElseIf nodeName == "BreastGravity"
+		JsonKey = "breastgravity"
+	ElseIf nodeName == "NippleAreola"
+		JsonKey = "nippleareola"
+	ElseIf nodeName == "DoubleMelon"
+		JsonKey = "doublemelon"
+	ElseIf nodeName == "BreastsFantasy"
+		JsonKey = "breastsfantasy"
+	ElseIf nodeName == "NipplePerkiness"
+		JsonKey = "nippleperkiness"
+	ElseIf nodeName == "NippleLength"
+		JsonKey = "nipplelength"
+	ElseIf nodeName == "PregnancyBelly"
+		JsonKey = "pregnancybelly"
+	EndIf
+	
 	
 	;SE bodyslide notes:
 	;BreastsSH changed to BreastsNewSH
@@ -47,7 +71,7 @@ Function SetMorphScale(Actor akActor, string nodeName, float value)
 	
 	;NetImmerse-Bodyslide converter
 	float bodyslide_value = (value - 1)
-	float bodyslide_scale_modifier = JsonUtil.GetFloatValue("/MME/Bodymorph", nodeName)
+	float bodyslide_scale_modifier = JsonUtil.GetFloatValue("/MME/Bodymorph", JsonKey)
 	float bodyslide_divider_breast = (MilkQ.BoobMAX)
 	float bodyslide_divider_belly = (MME_Storage.getLactacidMaximum(akActor)) ; there is no max in mcm, lets tie it to maid level
 	
