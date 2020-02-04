@@ -26,6 +26,7 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 			endif
 			
 			MME_Storage.changeLactacidCurrent(akTarget, 1)
+			MilkQ.CurrentSize(akTarget)
 		elseif !akTarget.IsInCombat() && !akTarget.IsOnMount() && MilkQ.MILKSlave.Find(akTarget) == -1
 			int ButtonPressed
 			int count = 0
@@ -52,6 +53,7 @@ Event OnEffectStart( Actor akTarget, Actor akCaster )
 					
 					if MilkQ.MILKmaid.find(akTarget) != -1 
 						MME_Storage.changeLactacidCurrent(akTarget, 1)
+						MilkQ.CurrentSize(akTarget)
 					EndIf
 				EndIf
 			EndIf
