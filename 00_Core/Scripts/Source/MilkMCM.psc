@@ -2883,6 +2883,7 @@ state Debug_MM_MaidLevel_Slider
 
 	event OnSliderAcceptST(float value)
 		MME_Storage.setMaidLevel(MaidlistA[MaidIndex], value as int)
+		MilkQ.CurrentSize(MaidlistA[MaidIndex])
 		SetSliderOptionValueST(value)
 	endEvent
 endState
@@ -2997,6 +2998,7 @@ state Debug_MM_LactacidCount_Slider
 
 	event OnSliderAcceptST(float value)
 		MME_Storage.setLactacidCurrent(MaidlistA[MaidIndex], value)
+		MilkQ.CurrentSize(MaidlistA[MaidIndex])
 		SetSliderOptionValueST(value, "{2}")
 	endEvent
 endState
@@ -3074,6 +3076,7 @@ state Debug_MM_MilkCount_Slider
 	event OnSliderAcceptST(float value)
 		; guaranteed to be 'x <= MilkMax' (if the limit applies)
 		MME_Storage.setMilkCurrent(MaidlistA[MaidIndex], value, MilkQ.BreastScaleLimit)
+		MilkQ.CurrentSize(MaidlistA[MaidIndex])
 		SetSliderOptionValueST(value, "{2}")
 	endEvent
 endState
