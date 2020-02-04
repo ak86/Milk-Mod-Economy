@@ -1159,7 +1159,25 @@ Function CurrentSize(Actor akActor)
 		isFemale = false
 	endif
 	
-	if CurrentSize > 0
+	If BreastScale == 3
+		;HDT Female / Vampire Lord
+			BodyMod.RemoveNiONodeScale(akActor, "NPC L Breast", isFemale)
+			BodyMod.RemoveNiONodeScale(akActor, "NPC R Breast", isFemale)
+			
+		;Curve fix
+		;HDT Female / Vampire Lord
+			BodyMod.RemoveNiONodeScale(akActor, "NPC L Breast01", isFemale)
+			BodyMod.RemoveNiONodeScale(akActor, "NPC R Breast01", isFemale)
+
+		;HDT Werewolf
+			BodyMod.RemoveNiONodeScale(akActor, "NPC L Breast P1", isFemale)
+			BodyMod.RemoveNiONodeScale(akActor, "NPC R Breast P1", isFemale)
+			BodyMod.RemoveNiONodeScale(akActor, "NPC L Breast P2", isFemale)
+			BodyMod.RemoveNiONodeScale(akActor, "NPC R Breast P2", isFemale)
+			BodyMod.RemoveNiONodeScale(akActor, "NPC L Breast P3", isFemale)
+			BodyMod.RemoveNiONodeScale(akActor, "NPC R Breast P3", isFemale)
+		
+	elseif CurrentSize > 0
 		;HDT Female / Vampire Lord
 			BodyMod.SetNodeScale(akActor, "NPC L Breast", CurrentSize, isFemale)
 			BodyMod.SetNodeScale(akActor, "NPC R Breast", CurrentSize, isFemale)
@@ -1187,10 +1205,10 @@ Function CurrentSize(Actor akActor)
 	
 	if BellyScale
 		LactacidCnt = MME_Storage.getLactacidCurrent(akActor)
+		BodyMod.SetNodeScale(akActor, "NPC Belly", 1 + LactacidCnt / 2, isFemale)
 	else
-		LactacidCnt = 0
+		BodyMod.RemoveNiONodeScale(akActor, "NPC Belly", isFemale)
 	endif
-	BodyMod.SetNodeScale(akActor, "NPC Belly", 1 + LactacidCnt / 2, isFemale)
 EndFunction
 
 ;----------------------------------------------------------------------------
