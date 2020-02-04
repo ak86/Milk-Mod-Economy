@@ -1,0 +1,41 @@
+/*
+raw value * modifier
+raw value = 0-100% bodyslide morph
+modifiers for bodymorphs
+0 = 0%
+1.0 = 100%
+*/
+
+{
+	"float" : 
+	{
+		#MME milk
+		#hentaipregnancy breasts
+		#EC/ED breasts
+		"Breasts" : 0.5,
+		"BreastsSH" : 0.5,
+		"BreastsSSH" : 0.5,
+		"BreastGravity" : 0.5,
+		"NippleAreola" : 0.5,
+		#MME milk
+		#hentaipregnancy milk
+		#EC/ED breasts
+		"DoubleMelon" : 0.5,
+		"BreastsFantasy" : 0.5,
+		"NipplePerkiness" : 0.5,
+		"NippleLength" : 0.5,
+		
+		#MME lactacid
+		#hentaipregnancy pregnancy
+		#EC/ED pregnancy
+		"PregnancyBelly" : 0.5,
+		
+		#hentaipregnancy pregnancy
+		#EC/ED pregnancy
+		"ChubbyArms" : 0.5,
+		"ChubbyWaist" : 0.5,
+		"ChubbyButt" : 0.5,
+		"ChubbyLegs" : 0.5,
+		"ButtShape2" : 0.5
+	}
+}
