@@ -24,7 +24,6 @@ Function RemoveNiONodeScale(Actor akActor, string nodeName, bool isFemale)
 		ClearMorphScale(akActor, "BreastsSH")
 		ClearMorphScale(akActor, "BreastsSSH")
 		ClearMorphScale(akActor, "BreastGravity")
-		
 		ClearMorphScale(akActor, "NippleAreola")
 		ClearMorphScale(akActor, "DoubleMelon")
 		ClearMorphScale(akActor, "BreastsFantasy")
@@ -48,8 +47,9 @@ Function SetMorphScale(Actor akActor, string nodeName, float value)
 	
 	;NetImmerse-Bodyslide converter
 	float bodyslide_value = (value - 1)
+	float bodyslide_scale_modifier = JsonUtil.GetFloatValue("/MME/Bodymorph", nodeName)
 	float bodyslide_divider_breast = (MilkQ.BoobMAX)
-	float bodyslide_divider_belly = (5)
+	float bodyslide_divider_belly = (MME_Storage.getLactacidMaximum(akActor)) ; there is no max in mcm, lets tie it to maid level
 	
 	if bodyslide_value < 0
 		bodyslide_value = 0
@@ -64,32 +64,32 @@ Function SetMorphScale(Actor akActor, string nodeName, float value)
 	
 	;breast scale
 	If nodeName == "Breasts"
-		NiOverride.SetBodyMorph(akActor, "Breasts", modName, PapyrusUtil.ClampFloat(bodyslide_value / bodyslide_divider_breast, 0, 1))
+		NiOverride.SetBodyMorph(akActor, "Breasts", modName, PapyrusUtil.ClampFloat(bodyslide_value / bodyslide_divider_breast, 0, 1) * bodyslide_scale_modifier)
 	ElseIf nodeName == "BreastsSH"
-		NiOverride.SetBodyMorph(akActor, "BreastsSH", modName, PapyrusUtil.ClampFloat(bodyslide_value / bodyslide_divider_breast, 0, 1))
-		NiOverride.SetBodyMorph(akActor, "BreastsNewSH", modName, PapyrusUtil.ClampFloat(bodyslide_value / bodyslide_divider_breast, 0, 1))
+		NiOverride.SetBodyMorph(akActor, "BreastsSH", modName, PapyrusUtil.ClampFloat(bodyslide_value / bodyslide_divider_breast, 0, 1) * bodyslide_scale_modifier)
+		NiOverride.SetBodyMorph(akActor, "BreastsNewSH", modName, PapyrusUtil.ClampFloat(bodyslide_value / bodyslide_divider_breast, 0, 1) * bodyslide_scale_modifier)
 	ElseIf nodeName == "BreastsSSH"
-		NiOverride.SetBodyMorph(akActor, "BreastsSSH", modName, PapyrusUtil.ClampFloat(bodyslide_value / bodyslide_divider_breast, 0, 1))
+		NiOverride.SetBodyMorph(akActor, "BreastsSSH", modName, PapyrusUtil.ClampFloat(bodyslide_value / bodyslide_divider_breast, 0, 1) * bodyslide_scale_modifier)
 	ElseIf nodeName == "BreastGravity"
-		NiOverride.SetBodyMorph(akActor, "BreastGravity", modName, PapyrusUtil.ClampFloat(bodyslide_value / bodyslide_divider_breast, 0, 1))
-		NiOverride.SetBodyMorph(akActor, "BreastGravity2", modName, PapyrusUtil.ClampFloat(bodyslide_value / bodyslide_divider_breast, 0, 1))
+		NiOverride.SetBodyMorph(akActor, "BreastGravity", modName, PapyrusUtil.ClampFloat(bodyslide_value / bodyslide_divider_breast, 0, 1) * bodyslide_scale_modifier)
+		NiOverride.SetBodyMorph(akActor, "BreastGravity2", modName, PapyrusUtil.ClampFloat(bodyslide_value / bodyslide_divider_breast, 0, 1) * bodyslide_scale_modifier)
 	ElseIf nodeName == "NippleAreola"
-		NiOverride.SetBodyMorph(akActor, "NippleAreola", modName, PapyrusUtil.ClampFloat(bodyslide_value / bodyslide_divider_breast, 0, 1))
-		NiOverride.SetBodyMorph(akActor, "AreolaSize", modName, PapyrusUtil.ClampFloat(bodyslide_value / bodyslide_divider_breast, 0, 1))
+		NiOverride.SetBodyMorph(akActor, "NippleAreola", modName, PapyrusUtil.ClampFloat(bodyslide_value / bodyslide_divider_breast, 0, 1) * bodyslide_scale_modifier)
+		NiOverride.SetBodyMorph(akActor, "AreolaSize", modName, PapyrusUtil.ClampFloat(bodyslide_value / bodyslide_divider_breast, 0, 1) * bodyslide_scale_modifier)
 
 	;belly scale
 	ElseIf nodeName == "PregnancyBelly"
-		NiOverride.SetBodyMorph(akActor, "PregnancyBelly", modName, PapyrusUtil.ClampFloat(bodyslide_value / bodyslide_divider_belly, 0, 1))
+		NiOverride.SetBodyMorph(akActor, "PregnancyBelly", modName, PapyrusUtil.ClampFloat(bodyslide_value / bodyslide_divider_belly, 0, 1) * bodyslide_scale_modifier)
 
 	;breast(milk) scale
 	ElseIf nodeName == "DoubleMelon"
-		NiOverride.SetBodyMorph(akActor, "DoubleMelon", modName, PapyrusUtil.ClampFloat((value) / (bodyslide_divider_breast), 0, 1))
+		NiOverride.SetBodyMorph(akActor, "DoubleMelon", modName, PapyrusUtil.ClampFloat((value) / (bodyslide_divider_breast), 0, 1) * bodyslide_scale_modifier)
 	ElseIf nodeName == "BreastsFantasy"
-		NiOverride.SetBodyMorph(akActor, "BreastsFantasy", modName, PapyrusUtil.ClampFloat((value) / (bodyslide_divider_breast), 0, 1))
+		NiOverride.SetBodyMorph(akActor, "BreastsFantasy", modName, PapyrusUtil.ClampFloat((value) / (bodyslide_divider_breast), 0, 1) * bodyslide_scale_modifier)
 	ElseIf nodeName == "NipplePerkiness"
-		NiOverride.SetBodyMorph(akActor, "NipplePerkiness", modName, PapyrusUtil.ClampFloat((value) / (bodyslide_divider_breast), 0, 1))
+		NiOverride.SetBodyMorph(akActor, "NipplePerkiness", modName, PapyrusUtil.ClampFloat((value) / (bodyslide_divider_breast), 0, 1) * bodyslide_scale_modifier)
 	ElseIf nodeName == "NippleLength"
-		NiOverride.SetBodyMorph(akActor, "NippleLength", modName, PapyrusUtil.ClampFloat((value) / (bodyslide_divider_breast), 0, 1))
+		NiOverride.SetBodyMorph(akActor, "NippleLength", modName, PapyrusUtil.ClampFloat((value) / (bodyslide_divider_breast), 0, 1) * bodyslide_scale_modifier)
 	EndIf
 	NiOverride.UpdateModelWeight(akActor)
 EndFunction
