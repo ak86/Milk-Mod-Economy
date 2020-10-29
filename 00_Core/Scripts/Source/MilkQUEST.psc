@@ -264,6 +264,7 @@ Bool Property Plugin_EstrusDwemer = false auto
 Bool Property Plugin_BeeingFemale = false auto
 Bool Property Plugin_FertilityMode = false auto
 Bool Property Plugin_FertilityMode2 = false auto
+Bool Property Plugin_FertilityMode3 = false auto
 Bool Property Plugin_HentaiPregnancy = false auto
 Bool Property Plugin_SexLabProcreation = false auto
 Bool Property Plugin_PSQ = false auto
@@ -795,7 +796,18 @@ Function MilkCycle(Actor akActor, int t)
 					|| akActor.IsEquipped(Game.GetFormFromFile(0x08ED2, "Fertility Mode.esp"))\
 					|| akActor.IsEquipped(Game.GetFormFromFile(0x08ED3, "Fertility Mode.esp"))\
 					|| akActor.IsEquipped(Game.GetFormFromFile(0x08ED4, "Fertility Mode.esp"))
-	endif	
+	endif
+	
+	if Plugin_FertilityMode3 && IsBabyArmor == false
+		IsBabyArmor = akActor.IsEquipped(Game.GetFormFromFile(0x08964, "Fertility Mode.esm"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x08ECE, "Fertility Mode.esm"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x08ECF, "Fertility Mode.esm"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x08ED0, "Fertility Mode.esm"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x08ED1, "Fertility Mode.esm"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x08ED2, "Fertility Mode.esm"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x08ED3, "Fertility Mode.esm"))\
+					|| akActor.IsEquipped(Game.GetFormFromFile(0x08ED4, "Fertility Mode.esm"))
+	endif
 	
 	;play leaking effects, if breast are bigger then max
 	if MilkCnt > MilkMax && PiercingCheck(akActor) != 2
@@ -2830,6 +2842,14 @@ Function DLCcheck()
 	else
 		debug.Trace("MilkModEconomy Fertility Mode.esp not found")
 		Plugin_FertilityMode2 = false
+	endif
+	
+	If Game.GetModbyName("Fertility Mode.esm") != 255
+		debug.Trace("MilkModEconomy Fertility Mode.esm found")
+		Plugin_FertilityMode3 = true
+	else
+		debug.Trace("MilkModEconomy Fertility Mode.esm not found")
+		Plugin_FertilityMode3 = false
 	endif
 	
 	If Game.GetModbyName("HentaiPregnancy.esm") != 255
