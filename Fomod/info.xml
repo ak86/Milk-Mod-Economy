@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>04-02-2020</Version>
+  <Version>29-10-2020</Version>
   <Author>Ed86</Author>
   <Website>https://www.patreon.com/Ed86</Website>
   <Description>
@@ -62,6 +62,9 @@ b)	Using Campire mod to craft and place milkpumps
   
   
 Dev change log:
+
+	v 29-10-2020
+added Fertility mode 3.x baby armor support
 
 	v 04-02-2020
 changed scaling from compatibility reset node to 1.0, to just remove scaling
