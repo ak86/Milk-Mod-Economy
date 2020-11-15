@@ -576,6 +576,27 @@
 								</dependencyType>
 							</typeDescriptor>
 						</plugin>
+						<plugin name="Fertility Mode 3.x">
+							<description>
+								<![CDATA[Pregnancy detection. DO NOT USE WITH Fertility Mode 1.x]]>
+							</description>
+							<conditionFlags>
+								<flag name="FM">On</flag>
+							</conditionFlags>
+							<typeDescriptor>
+								<dependencyType>
+									<defaultType name="Optional"/>
+									<patterns>
+										<pattern>
+											<dependencies>
+												<fileDependency file="Fertility Mode.esm" state="Active"/>
+											</dependencies>
+											<type name="Recommended"/>
+										</pattern>
+									</patterns>
+								</dependencyType>
+							</typeDescriptor>
+						</plugin>
 						<plugin name="SL Procreation">
 							<description>
 								<![CDATA[Pregnancy detection.]]>
