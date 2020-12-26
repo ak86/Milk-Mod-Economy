@@ -2481,18 +2481,27 @@ Function StoryDisplay(String StoryState , String StoryType)
 	i = Utility.RandomInt(1, JsonUtil.StringListCount("/MME/Strings_Stories", StoryType + StoryState) - 1)
 	
 	if StoryType == "milkpump"					;Milkpump only milking story
-		if StorageUtil.GetStringValue(Game.Getplayer(), "MME.FirstTimeStory", True) != True && StoryState != "end"
+		if (StoryState == "start" && StorageUtil.GetStringValue(Game.Getplayer(), "MME.FirstTimeStoryStart", True) != True)
+			;not a 1st time story
+		elseif (StoryState == "end" && StorageUtil.GetStringValue(Game.Getplayer(), "MME.FirstTimeStoryEnd", True) != True)
 			;not a 1st time story
 		else
-			;1st time story start
+			;1st time story
+			;remove 1st time story flag
 			i = 0
-			if StoryState == "end"
-				;1st time story end
-				;remove 1st time story flag
-				StorageUtil.SetStringValue(Game.Getplayer(), "MME.FirstTimeStory", False)
+			if StoryState == "start"
+				StorageUtil.SetStringValue(Game.Getplayer(), "MME.FirstTimeStoryStart", False)
+			else
+				StorageUtil.SetStringValue(Game.Getplayer(), "MME.FirstTimeStoryEnd", False)
 			endif
 		endif
 	endif
+	;sexlab.log("--")
+	;sexlab.log("StoryType " + StoryType + ", StoryState " + StoryState)
+	;sexlab.log("StringListCount " + JsonUtil.StringListCount("/MME/Strings_Stories", StoryType + StoryState))
+	;sexlab.log("StoryType + StoryState " + StoryType+StoryState)
+	;sexlab.log("i " + i)
+	;sexlab.log("--")
 	debug.messagebox(formatString(JsonUtil.StringListGet("/MME/Strings_Stories", StoryType + StoryState, i), Game.Getplayer().GetLeveledActorBase().GetName()))
 EndFunction
 
@@ -3287,7 +3296,8 @@ Function MaidRemove(Actor akActor)
 		akActor.RemoveFromFaction(MilkSlaveFaction)
 		MultiBreastChange(akActor)
 		if akActor == Game.Getplayer()
-			StorageUtil.UnSetStringValue(akActor, "MME.FirstTimeStory")
+			StorageUtil.UnSetStringValue(akActor, "MME.FirstTimeStoryStart")
+			StorageUtil.UnSetStringValue(akActor, "MME.FirstTimeStoryEnd")
 		endif
 	EndIf
 EndFunction

@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>16-11-2020</Version>
+  <Version>26-12-2020</Version>
   <Author>Ed86</Author>
   <Website>https://www.patreon.com/Ed86</Website>
   <Id>0</Id>
@@ -63,6 +63,9 @@ b)	Using Campire mod to craft and place milkpumps
   
   
 Dev change log:
+
+	v 26-12-2020
+fix milkpump after milk story bug
 
 	v 15-11-2020
 added Fertility mode 3.x fomod option, does same thing as 2.x, but you can click it, oh and you can click both of them, awesome isnt it?
