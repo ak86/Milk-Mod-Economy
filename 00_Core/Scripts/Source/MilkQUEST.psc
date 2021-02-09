@@ -1255,6 +1255,18 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 	akActor.AddSpell( BeingMilkedPassive, false )	; prevents multiple scripts running, if removed, milking will stop
 	StorageUtil.SetIntValue(akActor, "MME.MilkMaid.IsAnimating", 0)
 
+	If !MilkBarrel
+		ObjectReference defaultBarrel = StorageUtil.GetFormValue(akActor, "MME_MilkBarrel_Default") As ObjectReference
+		If defaultBarrel
+			MilkBarrel = defaultBarrel
+		EndIf
+	EndIf
+
+	ObjectReference overrideBarrel = StorageUtil.GetFormValue(akActor, "MME_MilkBarrel_Override") As ObjectReference
+	If overrideBarrel
+		MilkBarrel = overrideBarrel
+	EndIf
+	
 	Int soundInstance01
 	Int pain = 1
 	Int bottles = 0			;milked milk\times milked
