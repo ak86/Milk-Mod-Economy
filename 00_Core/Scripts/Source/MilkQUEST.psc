@@ -2165,16 +2165,16 @@ Function MilkingCycle(Actor akActor, int i, int Mode, int MilkingType, objectref
 		;debug.Notification(Mode + " Mode.")
 		if bottles > 0
 			if IsMilkMaid == true
-				LevelCheck()
-				PostMilk(akActor)
-				AddMilkFx(akActor, 2)
-				AddLeak(akActor)
-				
 				if MILKSlave.find(akActor) == -1
 					StorageUtil.AdjustFloatValue(none, "MME.Progression.TimesMilked", bottles)
 					StorageUtil.AdjustFloatValue(none, "MME.Progression.TimesMilkedAll", bottles)
 				endif
 				
+				LevelCheck()
+				PostMilk(akActor)
+				AddMilkFx(akActor, 2)
+				AddLeak(akActor)
+						
 				if MilkBarrel == none
 					if Mode == 0 || Mode == 2
 						if Mode == 0 && MilkingType != 0 && !FreeLactacid == true ; && MilkE.GetMarketIndexFromLocation(akActor.GetCurrentLocation()) == 4
