@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>09-02-2021</Version>
+  <Version>02-11-2021</Version>
   <Author>Ed86</Author>
   <Website>https://www.patreon.com/Ed86</Website>
   <Id>0</Id>
@@ -63,6 +63,10 @@ b)	Using Campire mod to craft and place milkpumps
   
   
 Dev change log:
+
+	v 02-11-2021
+fixed pregression lvlup being checked before milked milk added to progression counters
+fixed typo in message
 
 	v 09-02-2021
 added storageutil to deposit milk into object
