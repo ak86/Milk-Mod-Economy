@@ -1,6 +1,6 @@
 ﻿<fomod>
   <Name>Milk Mod Economy</Name>
-  <Version>02-11-2021</Version>
+  <Version>24-04-2022</Version>
   <Author>Ed86</Author>
   <Website>https://www.patreon.com/Ed86</Website>
   <Id>0</Id>
@@ -63,6 +63,9 @@ b)	Using Campire mod to craft and place milkpumps
   
   
 Dev change log:
+
+	v 24-04-2022
+added missing sign mesh and texture for fancy milkpump option
 
 	v 02-11-2021
 fixed pregression lvlup being checked before milked milk added to progression counters
