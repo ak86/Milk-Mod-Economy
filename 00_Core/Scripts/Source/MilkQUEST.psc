@@ -2398,7 +2398,7 @@ EndFunction
 
 Function MilkCycleMSG(Actor akActor)
 	Int MilkCnt = Math.Floor(MME_Storage.getMilkCurrent(akActor))
-	Float MilkMax = MME_Storage.getMilkMaximum(akActor)
+	Int MilkMax = Math.Floor(MME_Storage.getMilkMaximum(akActor))
 	Int MilkStageStrings = JsonUtil.StringListCount("/MME/Strings_Milkstage", "milkstage") - 1
 
 	If PlayerREF.GetDistance(akActor) < 500 && (MilkCnt as int) >= 1
@@ -3731,6 +3731,9 @@ bool Function isPregnant(Actor akActor)
 	Return False
 EndFunction
 
+;0 - not pierced
+;1 - pierced
+;2 - plugged
 int Function PiercingCheck(Actor akActor)
 
 	int t = 0
